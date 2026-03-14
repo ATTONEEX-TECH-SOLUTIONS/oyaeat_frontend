@@ -22,11 +22,11 @@ const Navbar = () => {
   const navLinks = [
     { href: "/", label: "Home" },
     { href: "/about", label: "About" },
-    { href: "/vendors", label: "Vendors" },
+     { href: "/restaurant/login", label: "Vendor" },
     { href: "/features", label: "Features" },
     { href: "/downloads", label: "Downloads" },
     { href: "/how-it-works", label: "How it works" },
-    { href: "/restaurant/login", label: "Vendor Login" },
+   
   ];
 
   return (
@@ -42,18 +42,18 @@ const Navbar = () => {
         {/* Logo with Text - BIGGER */}
         <Link href="/" className="flex items-center gap-3 group">
           <div className="relative w-26 h-26 transition-transform duration-300 group-hover:scale-110">
-            <Image
+            {/* <Image
               src={logo}
-              alt="OyaEats Logo"
+              alt="OyaEat Logo"
               fill
               className="object-contain"
               priority
-            />
+            /> */}
           </div>
           <div className="flex flex-col">
             <span className="text-3xl font-black leading-none tracking-tight">
               <span className="text-[#2d5f4f]">Oya</span>
-              <span className={`transition-colors duration-300 ${scrolled ? "text-gray-800" : "text-gray-900"}`}>Eats</span>
+              <span className={`transition-colors duration-300 ${scrolled ? "text-gray-800" : "text-gray-900"}`}>Eat</span>
             </span>
             <span className={`text-[10px] font-medium tracking-wider uppercase transition-colors duration-300 ${scrolled ? "text-gray-500" : "text-gray-600"}`}>
               Fast Delivery

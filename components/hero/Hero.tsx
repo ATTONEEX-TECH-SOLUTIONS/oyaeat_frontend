@@ -15,11 +15,11 @@ const Hero = () => {
           src={kitchenBg}
           alt="Kitchen background"
           fill
-          className="object-cover opacity-80"
+          className="object-cover"
           priority
         />
         {/* Gradient Overlay for readability */}
-        <div className="absolute inset-0 bg-gradient-to-br from-white/40 via-white/30 to-[#2d5f4f]/10"></div>
+        {/* <div className="absolute inset-0 bg-gradient-to-br from-white/40 via-white/30 to-[#2d5f4f]/10"></div> */}
       </div>
 
       {/* Diagonal Slash at Bottom */}
@@ -69,10 +69,13 @@ const Hero = () => {
                   className="w-full pl-12 pr-4 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:border-[#2d5f4f] focus:outline-none transition-colors bg-white/90 backdrop-blur-sm"
                 />
               </div>
-              <button className="px-8 py-4 bg-[#2d5f4f] text-white font-bold text-lg rounded-2xl hover:bg-[#234a3d] transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 group">
+              <Link
+                href="/partner-signup"
+                className="px-8 py-4 bg-[#2d5f4f] text-white font-bold text-lg rounded-2xl hover:bg-[#234a3d] transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 group"
+              >
                 Get Started
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </button>
+              </Link>
             </div>
 
             {/* CTA Buttons */}

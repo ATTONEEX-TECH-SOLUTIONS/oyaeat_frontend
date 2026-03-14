@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { X } from 'lucide-react'
 import { vendorApi, type MenuItem } from '@/lib/api/vendor'
 
@@ -35,49 +35,82 @@ const labelStyle: React.CSSProperties = {
 
 export default function MenuForm({ item, onClose, onCreated, onUpdated }: MenuFormProps) {
   const [formData, setFormData] = useState({
-    name:        item?.name        || '',
-    category:    item?.category    || 'Pizza',
-    price:       item?.price != null ? String(item.price) : '',
+    name: item?.name || '',
+    category: item?.category || 'Pizza',
+    price: item?.price != null ? String(item.price) : '',
     description: item?.description || '',
-    available:   item?.available   ?? true,
-    imageUrl:    item?.imageUrl    || '',
+    available: item?.available ?? true,
   })
 
+  const [imageFile, setImageFile] = useState<File | null>(null)
   const [submitting, setSubmitting] = useState(false)
-  const [error, setError]           = useState('')
+  const [error, setError] = useState('')
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const previewUrl = useMemo(() => {
+    if (imageFile) return URL.createObjectURL(imageFile)
+    return item?.imageUrl || ''
+  }, [imageFile, item?.imageUrl])
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value, type } = e.target
     const checked = (e.target as HTMLInputElement).checked
     setFormData((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }))
   }
 
-  const handleFocus = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleFocus = (
+    e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+  ) => {
     e.currentTarget.style.borderColor = '#2e7d32'
   }
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+
+  const handleBlur = (
+    e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+  ) => {
     e.currentTarget.style.borderColor = '#c8e6c9'
+  }
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null
+
+    if (!file) {
+      setImageFile(null)
+      return
+    }
+
+    if (!file.type.startsWith('image/')) {
+      setError('Please select a valid image file')
+      e.target.value = ''
+      return
+    }
+
+    setError('')
+    setImageFile(file)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
 
-    if (!formData.name.trim())       return setError('Item name is required')
-    if (!formData.category.trim())   return setError('Category is required')
-    if (formData.price === '' || isNaN(Number(formData.price))) return setError('Valid price is required')
+    if (!formData.name.trim()) return setError('Item name is required')
+    if (!formData.category.trim()) return setError('Category is required')
+    if (formData.price === '' || isNaN(Number(formData.price))) {
+      return setError('Valid price is required')
+    }
 
     const payload = {
-      name:        formData.name.trim(),
-      category:    formData.category.trim(),
-      price:       Number(formData.price),
+      name: formData.name.trim(),
+      category: formData.category.trim(),
+      price: Number(formData.price),
       description: formData.description?.trim() || null,
-      available:   Boolean(formData.available),
-      imageUrl:    formData.imageUrl?.trim() || null,
+      available: formData.available,
+      image: imageFile,
     }
 
     try {
       setSubmitting(true)
+
       if (item?.id) {
         const res = await vendorApi.updateMenuItem(item.id, payload)
         onUpdated(res.item)
@@ -93,14 +126,18 @@ export default function MenuForm({ item, onClose, onCreated, onUpdated }: MenuFo
   }
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center p-4 z-50"
-      style={{ backgroundColor: 'rgba(0,0,0,0.45)' }}>
-      <div className="w-full max-w-md rounded-2xl shadow-xl overflow-hidden"
-        style={{ backgroundColor: '#ffffff', border: '1px solid #c8e6c9' }}>
-
-        {/* Modal header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b"
-          style={{ borderColor: '#e8f5e9', backgroundColor: '#f5faf6' }}>
+    <div
+      className="fixed inset-0 flex items-center justify-center p-4 z-50"
+      style={{ backgroundColor: 'rgba(0,0,0,0.45)' }}
+    >
+      <div
+        className="w-full max-w-md rounded-2xl shadow-xl overflow-hidden"
+        style={{ backgroundColor: '#ffffff', border: '1px solid #c8e6c9' }}
+      >
+        <div
+          className="flex items-center justify-between px-6 py-5 border-b"
+          style={{ borderColor: '#e8f5e9', backgroundColor: '#f5faf6' }}
+        >
           <div>
             <h2 className="text-lg font-bold" style={{ color: '#1a5c2a' }}>
               {item ? 'Edit Menu Item' : 'Add Menu Item'}
@@ -109,28 +146,26 @@ export default function MenuForm({ item, onClose, onCreated, onUpdated }: MenuFo
               {item ? 'Update the details below' : 'Fill in the details to add a new item'}
             </p>
           </div>
+
           <button
             onClick={onClose}
             type="button"
             className="p-1.5 rounded-lg transition-colors"
             style={{ color: '#4a7c59' }}
-            onMouseOver={e => (e.currentTarget.style.backgroundColor = '#e8f5e9')}
-            onMouseOut={e  => (e.currentTarget.style.backgroundColor = 'transparent')}
+            onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#e8f5e9')}
+            onMouseOut={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Form body */}
         <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
-
           {error && (
             <div className="text-sm font-medium text-rose-600 bg-rose-50 border border-rose-200 rounded-lg px-4 py-2">
               {error}
             </div>
           )}
 
-          {/* Item name */}
           <div>
             <label style={labelStyle}>Item Name</label>
             <input
@@ -147,7 +182,6 @@ export default function MenuForm({ item, onClose, onCreated, onUpdated }: MenuFo
             />
           </div>
 
-          {/* Category + Price */}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label style={labelStyle}>Category</label>
@@ -171,6 +205,7 @@ export default function MenuForm({ item, onClose, onCreated, onUpdated }: MenuFo
                 <option>Sides</option>
               </select>
             </div>
+
             <div>
               <label style={labelStyle}>Price (₦)</label>
               <input
@@ -189,23 +224,40 @@ export default function MenuForm({ item, onClose, onCreated, onUpdated }: MenuFo
             </div>
           </div>
 
-          {/* Image URL */}
           <div>
-            <label style={labelStyle}>Image URL <span style={{ color: '#a5d6a7', textTransform: 'none', fontWeight: 400 }}>(optional)</span></label>
+            <label style={labelStyle}>
+              Item Image{' '}
+              <span
+                style={{
+                  color: '#a5d6a7',
+                  textTransform: 'none',
+                  fontWeight: 400,
+                }}
+              >
+                (optional)
+              </span>
+            </label>
             <input
-              type="text"
-              name="imageUrl"
-              value={formData.imageUrl}
-              onChange={handleChange}
-              onFocus={handleFocus}
-              onBlur={handleBlur}
-              placeholder="https://..."
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
               style={inputStyle}
               disabled={submitting}
             />
           </div>
 
-          {/* Description */}
+          {previewUrl && (
+            <div>
+              <label style={labelStyle}>Image Preview</label>
+              <img
+                src={previewUrl}
+                alt="Menu preview"
+                className="w-24 h-24 rounded-lg object-cover border"
+                style={{ borderColor: '#c8e6c9' }}
+              />
+            </div>
+          )}
+
           <div>
             <label style={labelStyle}>Description</label>
             <textarea
@@ -221,7 +273,6 @@ export default function MenuForm({ item, onClose, onCreated, onUpdated }: MenuFo
             />
           </div>
 
-          {/* Available toggle */}
           <div className="flex items-center gap-3 py-1">
             <div className="relative">
               <input
@@ -234,7 +285,9 @@ export default function MenuForm({ item, onClose, onCreated, onUpdated }: MenuFo
                 disabled={submitting}
               />
               <div
-                onClick={() => !submitting && setFormData(p => ({ ...p, available: !p.available }))}
+                onClick={() =>
+                  !submitting && setFormData((p) => ({ ...p, available: !p.available }))
+                }
                 className="w-10 h-6 rounded-full cursor-pointer transition-colors flex items-center px-0.5"
                 style={{ backgroundColor: formData.available ? '#1a5c2a' : '#c8e6c9' }}
               >
@@ -244,36 +297,50 @@ export default function MenuForm({ item, onClose, onCreated, onUpdated }: MenuFo
                 />
               </div>
             </div>
+
             <label
               htmlFor="available"
               className="text-sm cursor-pointer select-none"
               style={{ color: '#1a5c2a', fontWeight: 500 }}
-              onClick={() => !submitting && setFormData(p => ({ ...p, available: !p.available }))}
+              onClick={() =>
+                !submitting && setFormData((p) => ({ ...p, available: !p.available }))
+              }
             >
               Available for ordering
             </label>
           </div>
 
-          {/* Actions */}
           <div className="flex gap-3 pt-2">
             <button
               type="button"
               onClick={onClose}
               disabled={submitting}
               className="flex-1 py-2.5 rounded-lg text-sm font-semibold border transition-colors"
-              style={{ backgroundColor: '#ffffff', color: '#1a5c2a', borderColor: '#c8e6c9' }}
-              onMouseOver={e => (e.currentTarget.style.backgroundColor = '#f5faf6')}
-              onMouseOut={e  => (e.currentTarget.style.backgroundColor = '#ffffff')}
+              style={{
+                backgroundColor: '#ffffff',
+                color: '#1a5c2a',
+                borderColor: '#c8e6c9',
+              }}
+              onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#f5faf6')}
+              onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#ffffff')}
             >
               Cancel
             </button>
+
             <button
               type="submit"
               disabled={submitting}
               className="flex-1 py-2.5 rounded-lg text-sm font-semibold text-white transition-colors"
-              style={{ backgroundColor: submitting ? '#4a7c59' : '#1a5c2a', cursor: submitting ? 'not-allowed' : 'pointer' }}
-              onMouseOver={e => { if (!submitting) e.currentTarget.style.backgroundColor = '#14491f' }}
-              onMouseOut={e  => { if (!submitting) e.currentTarget.style.backgroundColor = '#1a5c2a' }}
+              style={{
+                backgroundColor: submitting ? '#4a7c59' : '#1a5c2a',
+                cursor: submitting ? 'not-allowed' : 'pointer',
+              }}
+              onMouseOver={(e) => {
+                if (!submitting) e.currentTarget.style.backgroundColor = '#14491f'
+              }}
+              onMouseOut={(e) => {
+                if (!submitting) e.currentTarget.style.backgroundColor = '#1a5c2a'
+              }}
             >
               {submitting ? 'Saving…' : item ? 'Update Item' : 'Add Item'}
             </button>

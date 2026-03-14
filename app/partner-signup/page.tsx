@@ -76,7 +76,7 @@ const PartnerSignup = () => {
   const navLinks = [
     { href: "/", label: "Home" },
     { href: "/about", label: "About" },
-    { href: "/vendors", label: "Vendors" },
+    { href: "/restaurant/login", label: "Vendors" },
     { href: "/features", label: "Features" },
     { href: "/downloads", label: "Downloads" },
     { href: "/how-it-works", label: "How it works" },
@@ -135,7 +135,7 @@ const PartnerSignup = () => {
         </svg>
       ),
       rating: 5,
-      text: "Since joining OyaEats, our orders have increased by 300%! The platform is easy to use and customer support is excellent."
+      text: "Since joining OyaEat, our orders have increased by 300%! The platform is easy to use and customer support is excellent."
     },
     {
       name: "Amina Ibrahim",
@@ -146,7 +146,7 @@ const PartnerSignup = () => {
         </svg>
       ),
       rating: 5,
-      text: "OyaEats helped us reach customers we never could before. The delivery service is reliable and our sales have grown significantly."
+      text: "OyaEat helped us reach customers we never could before. The delivery service is reliable and our sales have grown significantly."
     },
     {
       name: "Tunde Adeleke",
@@ -163,7 +163,7 @@ const PartnerSignup = () => {
 
   const faqs = [
     {
-      question: "How much does it cost to partner with OyaEats?",
+      question: "How much does it cost to partner with OyaEat?",
       answer: "Registration is completely free! We only charge a small commission on each successful order. No hidden fees or upfront costs."
     },
     {
@@ -194,19 +194,19 @@ const PartnerSignup = () => {
       <nav className="fixed top-0 w-full z-50">
         <div className="max-w-[1400px] mx-auto px-8 flex items-center justify-between h-20">
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="relative w-26 h-26 transition-transform duration-300 group-hover:scale-110">
+            {/* <div className="relative w-26 h-26 transition-transform duration-300 group-hover:scale-110">
               <Image
                 src={logo}
-                alt="OyaEats Logo"
+                alt="OyaEat Logo"
                 fill
                 className="object-contain"
                 priority
               />
-            </div>
+            </div> */}
             <div className="flex flex-col">
               <span className="text-3xl font-black leading-none tracking-tight">
                 <span className="text-[#2d5f4f]">Oya</span>
-                <span className="text-gray-900">Eats</span>
+                <span className="text-gray-900">Eat</span>
               </span>
               <span className="text-[10px] font-medium tracking-wider uppercase text-gray-600">
                 Fast Delivery
@@ -240,15 +240,15 @@ const PartnerSignup = () => {
         <div className="lg:w-1/2 w-full px-6 lg:px-16 py-12 lg:py-20 flex items-center">
           <div className="w-full max-w-xl mx-auto">
             <h1 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6 leading-tight">
-              Build your business<br />online with OyaEats
+              Build your business<br />online with OyaEat
             </h1>
 
             <div className="space-y-4">
               <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                Start selling through OyaEats
+                Start selling through OyaEat
               </h2>
               <p className="text-gray-700 mb-8">
-                Registering on OyaEats has never been easier. Become a partner now.
+                Registering on OyaEat has never been easier. Become a partner now.
               </p>
 
               <form onSubmit={handleSubmit} className="space-y-5">
@@ -432,7 +432,7 @@ const PartnerSignup = () => {
               What our partners say
             </h2>
             <p className="text-xl text-gray-600">
-              Join thousands of successful businesses already growing with OyaEats
+              Join thousands of successful businesses already growing with OyaEat
             </p>
           </div>
 
@@ -521,13 +521,13 @@ const PartnerSignup = () => {
                 <div className="relative w-12 h-12">
                   <Image
                     src={logo}
-                    alt="OyaEats Logo"
+                    alt="OyaEat Logo"
                     fill
                     className="object-contain brightness-0 invert"
                   />
                 </div>
                 <span className="text-2xl font-black">
-                  <span className="text-[#2d5f4f]">Oya</span>Eats
+                  <span className="text-[#2d5f4f]">Oya</span>Eat
                 </span>
               </div>
               <p className="text-gray-400 mb-6">
@@ -581,7 +581,7 @@ const PartnerSignup = () => {
                   <svg className="w-5 h-5 mr-3 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
-                  <span>partners@oyaeats.com</span>
+                  <span>partners@oyaeat.com</span>
                 </li>
                 <li className="flex items-start">
                   <svg className="w-5 h-5 mr-3 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -602,7 +602,7 @@ const PartnerSignup = () => {
 
           <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm mb-4 md:mb-0">
-              © 2026 OyaEats. All rights reserved.
+              © 2026 OyaEat. All rights reserved.
             </p>
             <div className="flex gap-6 text-sm">
               <a href="#" className="text-gray-400 hover:text-white transition-colors">Privacy Policy</a>

@@ -1,10 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import logo from "@/public/spalsh_oyaeat (3).png";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface DocumentUpload {
   id: string;
@@ -17,10 +15,14 @@ interface DocumentUpload {
 
 const VerifyBusinessPage = () => {
   const router = useRouter();
-  const [businessName, setBusinessName] = useState("");
+  const searchParams = useSearchParams();
+
+  const [businessName, setBusinessName] = useState("your business");
   const [businessId, setBusinessId] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [pageLoading, setPageLoading] = useState(true);
   const [error, setError] = useState("");
+
   const [documents, setDocuments] = useState<DocumentUpload[]>([
     {
       id: "business-license",
@@ -64,35 +66,90 @@ const VerifyBusinessPage = () => {
     },
   ]);
 
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+  const API_BASE_URL =
+    process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
   useEffect(() => {
-    // Get business data from sessionStorage
-    const data = sessionStorage.getItem('businessData');
-    if (data) {
-      const parsedData = JSON.parse(data);
-      setBusinessName(parsedData.businessName || "your business");
-      setBusinessId(parsedData.businessId || "");
+    try {
+      const token = localStorage.getItem("authToken");
+
+      if (!token) {
+        router.replace("/restaurant/login");
+        return;
+      }
+
+      const queryBusinessId = searchParams.get("businessId");
+      const queryBusinessName = searchParams.get("businessName");
+
+      let storedBusinessId = "";
+      let storedBusinessName = "";
+
+      const sessionData = sessionStorage.getItem("businessData");
+      const localData = localStorage.getItem("businessData");
+
+      if (sessionData) {
+        const parsed = JSON.parse(sessionData);
+        storedBusinessId = parsed?.businessId ? String(parsed.businessId) : "";
+        storedBusinessName = parsed?.businessName || "";
+      }
+
+      if (!storedBusinessId && localData) {
+        const parsed = JSON.parse(localData);
+        storedBusinessId = parsed?.businessId ? String(parsed.businessId) : "";
+        storedBusinessName = parsed?.businessName || "";
+      }
+
+      const finalBusinessId = queryBusinessId || storedBusinessId;
+      const finalBusinessName =
+        queryBusinessName || storedBusinessName || "your business";
+
+      if (!finalBusinessId) {
+        setError("Missing business information. Please add your business again.");
+        router.replace("/partner-signup/add-business");
+        return;
+      }
+
+      setBusinessId(finalBusinessId);
+      setBusinessName(finalBusinessName);
+
+      // refresh storage so both are available
+      const payload = {
+        businessId: finalBusinessId,
+        businessName: finalBusinessName,
+      };
+
+      sessionStorage.setItem("businessData", JSON.stringify(payload));
+      localStorage.setItem("businessData", JSON.stringify(payload));
+    } catch {
+      setError("Unable to load business information. Please try again.");
+      router.replace("/partner-signup/add-business");
+      return;
+    } finally {
+      setPageLoading(false);
     }
-  }, []);
+  }, [router, searchParams]);
 
   const handleFileChange = (id: string, file: File | null) => {
-    setDocuments(docs =>
-      docs.map(doc =>
-        doc.id === id
-          ? { ...doc, file, uploaded: !!file }
-          : doc
+    setDocuments((docs) =>
+      docs.map((doc) =>
+        doc.id === id ? { ...doc, file, uploaded: !!file } : doc
       )
     );
+
     if (error) setError("");
   };
 
   const handleSubmit = async () => {
-    // Check if all required documents are uploaded
-    const allUploaded = documents.every(doc => doc.uploaded);
-    
+    const allUploaded = documents.every((doc) => doc.uploaded);
+
     if (!allUploaded) {
       setError("Please upload all required documents before continuing.");
+      return;
+    }
+
+    if (!businessId) {
+      setError("Missing business ID. Please go back and add your business again.");
+      router.push("/partner-signup/add-business");
       return;
     }
 
@@ -100,72 +157,74 @@ const VerifyBusinessPage = () => {
     setError("");
 
     try {
-      // Create FormData for file upload
       const formData = new FormData();
-      
-      documents.forEach(doc => {
+
+      documents.forEach((doc) => {
         if (doc.file) {
           formData.append(doc.apiKey, doc.file);
         }
       });
 
-     const token = localStorage.getItem('authToken')
+      const token = localStorage.getItem("authToken");
       if (!token) {
-        setError('You are not logged in. Please login again.')
-        router.push('/restaurant/login') // or your vendor login route
-        return
+        setError("You are not logged in. Please login again.");
+        router.push("/restaurant/login");
+        return;
       }
 
-      const response = await fetch(`${API_BASE_URL}/vendor/${businessId}/upload-documents`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      });
+      const response = await fetch(
+        `${API_BASE_URL}/vendor/${businessId}/upload-documents`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        }
+      );
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        throw new Error(data.message || "Failed to upload documents");
+        throw new Error(data?.message || "Failed to upload documents");
       }
 
-      // Navigate to success page or dashboard
-      router.push('/partner-signup/success');
+      router.push("/partner-signup/success");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to upload documents. Please try again.");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to upload documents. Please try again."
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const allDocumentsUploaded = documents.every(doc => doc.uploaded);
-  const uploadedCount = documents.filter(doc => doc.uploaded).length;
+  const allDocumentsUploaded = documents.every((doc) => doc.uploaded);
+  const uploadedCount = documents.filter((doc) => doc.uploaded).length;
+
+  if (pageLoading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <p className="text-gray-600">Loading business details...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      {/* Header */}
       <header className="py-6 px-8 border-b border-gray-200">
         <Link href="/" className="flex items-center gap-2">
-          <div className="relative w-8 h-8">
-            <Image
-              src={logo}
-              alt="OyaEats Logo"
-              fill
-              className="object-contain"
-            />
-          </div>
           <span className="text-xl font-bold">
             <span className="text-[#2d5f4f]">Oya</span>
-            <span className="text-gray-900">Eats</span>
+            <span className="text-gray-900">Eat</span>
           </span>
         </Link>
       </header>
 
-      {/* Main Content */}
       <div className="flex-1 px-6 py-8">
         <div className="w-full max-w-4xl mx-auto">
-          {/* Progress Indicator */}
           <div className="mb-8">
             <div className="flex items-center gap-4 mb-4">
               <div className="flex items-center gap-2">
@@ -179,7 +238,9 @@ const VerifyBusinessPage = () => {
                 <div className="w-8 h-8 bg-[#2d5f4f] text-white rounded-full flex items-center justify-center font-semibold">
                   2
                 </div>
-                <span className="text-[#2d5f4f] font-semibold">Verify Business</span>
+                <span className="text-[#2d5f4f] font-semibold">
+                  Verify Business
+                </span>
               </div>
             </div>
           </div>
@@ -188,7 +249,8 @@ const VerifyBusinessPage = () => {
             Verify your business
           </h1>
           <p className="text-gray-600 mb-8">
-            Please upload the following documents to verify {businessName}. All documents are required for approval.
+            Please upload the following documents to verify {businessName}. All
+            documents are required for approval.
           </p>
 
           {error && (
@@ -197,7 +259,6 @@ const VerifyBusinessPage = () => {
             </div>
           )}
 
-          {/* Progress Summary */}
           <div className="bg-gray-50 rounded-lg p-4 mb-8">
             <div className="flex justify-between items-center mb-2">
               <span className="text-sm font-medium text-gray-700">
@@ -211,11 +272,10 @@ const VerifyBusinessPage = () => {
               <div
                 className="bg-[#2d5f4f] h-2 rounded-full transition-all duration-300"
                 style={{ width: `${(uploadedCount / documents.length) * 100}%` }}
-              ></div>
+              />
             </div>
           </div>
 
-          {/* Document Upload Cards */}
           <div className="space-y-6 mb-8">
             {documents.map((doc) => (
               <div
@@ -238,14 +298,25 @@ const VerifyBusinessPage = () => {
                         </span>
                       )}
                     </div>
+
                     <p className="text-sm text-gray-600 mb-4">
                       {doc.description}
                     </p>
-                    
+
                     {doc.file && (
                       <div className="flex items-center gap-2 text-sm text-gray-700 bg-white rounded px-3 py-2 border border-gray-200">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+                          />
                         </svg>
                         <span className="truncate">{doc.file.name}</span>
                         <span className="text-gray-500 text-xs">
@@ -271,17 +342,19 @@ const VerifyBusinessPage = () => {
                         className="hidden"
                         disabled={isSubmitting}
                       />
-                      <div className={`px-6 py-2 rounded-lg font-semibold transition-all duration-300 ${
-                        isSubmitting
-                          ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                          : doc.uploaded
-                          ? "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                          : "bg-[#2d5f4f] text-white hover:bg-[#234a3d]"
-                      }`}>
+                      <div
+                        className={`px-6 py-2 rounded-lg font-semibold transition-all duration-300 ${
+                          isSubmitting
+                            ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                            : doc.uploaded
+                            ? "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                            : "bg-[#2d5f4f] text-white hover:bg-[#234a3d]"
+                        }`}
+                      >
                         {doc.uploaded ? "Replace" : "Upload"}
                       </div>
                     </label>
-                    
+
                     {doc.uploaded && (
                       <button
                         onClick={() => handleFileChange(doc.id, null)}
@@ -297,22 +370,34 @@ const VerifyBusinessPage = () => {
             ))}
           </div>
 
-          {/* Info Box */}
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-8">
             <div className="flex gap-3">
-              <svg className="w-6 h-6 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <svg
+                className="w-6 h-6 text-blue-600 flex-shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
               </svg>
               <div>
-                <h4 className="font-semibold text-blue-900 mb-1">Important Information</h4>
+                <h4 className="font-semibold text-blue-900 mb-1">
+                  Important Information
+                </h4>
                 <p className="text-sm text-blue-800">
-                  All documents will be reviewed within 2-3 business days. Make sure all documents are clear, valid, and up to date. Accepted formats: PDF, JPG, PNG (Max size: 5MB per file).
+                  All documents will be reviewed within 2-3 business days. Make
+                  sure all documents are clear, valid, and up to date. Accepted
+                  formats: PDF, JPG, PNG (Max size: 5MB per file).
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Buttons */}
           <div className="flex gap-4">
             <button
               type="button"
@@ -322,22 +407,13 @@ const VerifyBusinessPage = () => {
             >
               Back
             </button>
+
             <button
               onClick={handleSubmit}
               disabled={!allDocumentsUploaded || isSubmitting}
               className="flex-1 bg-[#2d5f4f] hover:bg-[#234a3d] text-white font-semibold py-3 rounded-lg transition-all duration-300 disabled:bg-gray-300 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? (
-                <span className="flex items-center justify-center">
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Uploading...
-                </span>
-              ) : (
-                "Submit for Review"
-              )}
+              {isSubmitting ? "Uploading..." : "Submit for Review"}
             </button>
           </div>
         </div>

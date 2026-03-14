@@ -16,14 +16,14 @@ const SuccessPage = () => {
           <div className="relative w-8 h-8">
             <Image
               src={logo}
-              alt="OyaEats Logo"
+              alt="OyaEat Logo"
               fill
               className="object-contain"
             />
           </div>
           <span className="text-xl font-bold">
             <span className="text-[#2d5f4f]">Oya</span>
-            <span className="text-gray-900">Eats</span>
+            <span className="text-gray-900">Eat</span>
           </span>
         </Link>
       </header>
@@ -45,7 +45,7 @@ const SuccessPage = () => {
           </h1>
           
           <p className="text-lg text-gray-600 mb-8">
-            Thank you for partnering with OyaEats. Your business information and documents have been submitted for review.
+            Thank you for partnering with OyaEat. Your business information and documents have been submitted for review.
           </p>
 
           <div className="bg-gray-50 rounded-lg p-6 mb-8 text-left">

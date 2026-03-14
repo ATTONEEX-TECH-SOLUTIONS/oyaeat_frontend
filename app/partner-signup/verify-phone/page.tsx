@@ -120,17 +120,11 @@ const VerifyPhone = () => {
       {/* Simple Header */}
       <header className="py-6 px-8">
         <Link href="/" className="flex items-center gap-2">
-          <div className="relative w-8 h-8">
-            <Image
-              src={logo}
-              alt="OyaEats Logo"
-              fill
-              className="object-contain"
-            />
-          </div>
+          
+          
           <span className="text-xl font-bold">
             <span className="text-[#2d5f4f]">Oya</span>
-            <span className="text-gray-900">Eats</span>
+            <span className="text-gray-900">Eat</span>
           </span>
         </Link>
       </header>

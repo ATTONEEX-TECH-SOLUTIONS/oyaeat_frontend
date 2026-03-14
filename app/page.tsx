@@ -18,7 +18,7 @@ export default function Home() {
       rating: 4.0,
       time: '30 Mins',
       price: '200 for two',
-      image: '/restaurants/1.jpg'
+      image: '/landing/9.jpg'
     },
     {
       id: 2,
@@ -27,7 +27,7 @@ export default function Home() {
       rating: 3.2,
       time: '30 Mins',
       price: '165 for two',
-      image: '/restaurants/2.jpg'
+      image: '/landing/2.jpg'
     },
     {
       id: 3,
@@ -36,7 +36,7 @@ export default function Home() {
       rating: 0,
       time: '20 Mins',
       price: '₹200',
-      image: '/restaurants/3.jpg'
+      image: '/landing/3.jpg'
     },
     {
       id: 4,
@@ -45,7 +45,7 @@ export default function Home() {
       rating: 0,
       time: '25 Mins',
       price: '₹98',
-      image: '/restaurants/4.jpg'
+      image: '/landing/4.jpg'
     },
     {
       id: 5,
@@ -54,7 +54,7 @@ export default function Home() {
       rating: 4.5,
       time: '40 Mins',
       price: '300 for two',
-      image: '/restaurants/5.jpg'
+      image: '/landing/5.jpg'
     },
     {
       id: 6,
@@ -63,7 +63,7 @@ export default function Home() {
       rating: 4.5,
       time: '25 Mins',
       price: '250 for two',
-      image: '/restaurants/6.jpg'
+      image: '/landing/6.jpg'
     },
     {
       id: 7,
@@ -72,7 +72,7 @@ export default function Home() {
       rating: 0,
       time: '20 Mins',
       price: '₹200',
-      image: '/restaurants/7.jpg'
+      image: '/landing/7.jpg'
     },
     {
       id: 8,
@@ -81,56 +81,56 @@ export default function Home() {
       rating: 0,
       time: '45 Mins',
       price: '₹80',
-      image: '/restaurants/8.jpg'
+      image: '/landing/8.jpg'
     }
   ];
 
-  const recommendedItems = [
-    {
-      id: 1,
-      name: 'Baked Pizza Wrap - Vegetarian',
-      restaurant: 'Italian - wraps & rolls',
-      price: '₹208',
-      time: '35 Mins',
-      rating: 0,
-      image: '/food/1.jpg'
-    },
-    {
-      id: 2,
-      name: 'Butter Chicken Pizza - 8 Serve',
-      restaurant: 'butter portions',
-      price: '₹289',
-      time: '35 Mins',
-      rating: 0,
-      image: '/food/2.jpg'
-    },
-    {
-      id: 3,
-      name: 'Mexican Patty Signature Wraps',
-      restaurant: 'subway',
-      price: '₹273',
-      time: '32 Mins',
-      rating: 0,
-      image: '/food/3.jpg'
-    },
-    {
-      id: 4,
-      name: 'Southwest Chicken Salad',
-      restaurant: 'Morganito',
-      price: '₹220',
-      time: '41 Mins',
-      rating: 0,
-      image: '/food/4.jpg'
-    }
-  ];
+ const recommendedItems = [
+  {
+    id: 1,
+    name: 'Jollof Rice with Grilled Chicken',
+    restaurant: 'Mama Nkechi Kitchen',
+    price: '₦2,500',
+    time: '30 Mins',
+    rating: 4.6,
+    image: '/categories/jollof.jpg'
+  },
+  {
+    id: 2,
+    name: 'Suya with Onions & Pepper',
+    restaurant: 'Abuja Suya Spot',
+    price: '₦1,800',
+    time: '20 Mins',
+    rating: 4.5,
+    image: '/categories/suya.jpg'
+  },
+  {
+    id: 3,
+    name: 'Pounded Yam & Egusi Soup',
+    restaurant: 'Yam & Egusi Corner',
+    price: '₦2,700',
+    time: '35 Mins',
+    rating: 4.4,
+    image: '/landing/pounded-yam-egusi.jpg'
+  },
+  {
+    id: 4,
+    name: 'Pepper Soup (Catfish)',
+    restaurant: 'Pepper Soup Palace',
+    price: '₦3,000',
+    time: '25 Mins',
+    rating: 4.3,
+    image: '/categories/pepper-soup.jpg'
+  }
+];
 
   const categories = [
-    { name: 'Sandwich', image: '/categories/sandwich.jpg' },
-    { name: 'North Indian Thali', image: '/categories/thali.jpg' },
-    { name: 'Egg Breakfast', image: '/categories/egg.jpg' },
-    { name: 'Rolls & Puffs', image: '/categories/rolls.jpg' },
-    { name: 'Salads', image: '/categories/salad.jpg' },
-    { name: 'Biryani Box', image: '/categories/biryani.jpg' }
+{ name: 'Ofada Rice', image: '/categories/ofada.jpg' },
+{ name: 'Amala & Ewedu', image: '/categories/amala.jpg' },
+{ name: 'Moi Moi', image: '/categories/jollof.jpg' },
+{ name: 'Akara & Pap', image: '/categories/puff.jpg' },
+{ name: 'Small Chops', image: '/categories/suya.jpg' },
+{ name: 'Grilled Chicken', image: '/categories/grilled-chicken.jpg' }
   ];
 
   return (
@@ -152,7 +152,7 @@ export default function Home() {
               >
                 <div className="relative h-48 bg-gray-200 overflow-hidden">
                   <img
-                    src={`https://images.unsplash.com/photo-${1565958011703 + restaurant.id}?w=400`}
+                    src={restaurant.image}
                     alt={restaurant.name}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                   />
@@ -200,7 +200,7 @@ export default function Home() {
               >
                 <div className="w-32 h-32 rounded-full overflow-hidden mb-3 border-4 border-white shadow-lg group-hover:border-[#2d5f4f] transition-colors">
                   <img
-                    src={`https://images.unsplash.com/photo-${1551024506 + index * 100000}?w=200`}
+                    src={category.image}
                     alt={category.name}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform"
                   />
@@ -224,7 +224,7 @@ export default function Home() {
               >
                 <div className="relative h-48 bg-gray-200 overflow-hidden">
                   <img
-                    src={`https://images.unsplash.com/photo-${1565299624946 + item.id * 10}?w=400`}
+                    src={item.image}
                     alt={item.name}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                   />
