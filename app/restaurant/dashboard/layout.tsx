@@ -23,10 +23,14 @@ const NAV_ITEMS = [
   { icon: Settings,        label: 'Settings',         href: '/restaurant/dashboard/settings' },
 ];
 
+const API = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000';
+
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const router = useRouter();
-  const [dashboard, setDashboard] = useState<any>(null);
+  const router   = useRouter();
+
+  const [dashboard, setDashboard]         = useState<any>(null);
+  const [profilePicUrl, setProfilePicUrl] = useState<string | null>(null);
 
   useEffect(() => {
     try {
@@ -35,8 +39,21 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     } catch {}
   }, []);
 
-  const business     = dashboard?.businesses?.[0];
-  const businessName = business?.name || 'Vendor Dashboard';
+  useEffect(() => {
+    const businessId = dashboard?.businesses?.[0]?.id;
+    if (!businessId) return;
+    const token = localStorage.getItem('authToken');
+    if (!token) return;
+    fetch(`${API}/vendor/business/${businessId}/settings`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(res => res.ok ? res.json() : null)
+      .then(json => { if (json?.data?.profilePicUrl) setProfilePicUrl(json.data.profilePicUrl); })
+      .catch(() => {});
+  }, [dashboard]);
+
+  const business      = dashboard?.businesses?.[0];
+  const businessName  = business?.name || 'Vendor Dashboard';
   const phoneVerified = dashboard?.phoneVerified === true;
   const role          = dashboard?.role;
 
@@ -61,34 +78,22 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           className="px-5 py-5 border-b border-[#14491f] flex items-center gap-3"
           style={{ backgroundColor: '#14491f' }}
         >
-          {/* White pill so PNG logo is always visible on dark green */}
           <div className="flex-shrink-0 rounded-xl p-2" style={{ backgroundColor: '#ffffff' }}>
-            {/* <img
-              src="/flash (2).png"
-              alt="OyaEats icon"
-              className="h-7 w-7 object-contain"
-            /> */}
+            {/* <img src="/flash (2).png" alt="OyaEats icon" className="h-7 w-7 object-contain" /> */}
           </div>
-
-          {/* Wordmark */}
           <div className="flex flex-col leading-none">
             <span style={{
               fontFamily: "'Montserrat', 'DM Sans', sans-serif",
-              fontWeight: 800,
-              fontSize: '1.15rem',
-              letterSpacing: '-0.01em',
-              lineHeight: 1.1,
+              fontWeight: 800, fontSize: '1.15rem',
+              letterSpacing: '-0.01em', lineHeight: 1.1,
             }}>
               <span style={{ color: '#ffffff' }}>Oya</span>
               <span style={{ color: '#4ade80' }}>Eat</span>
             </span>
             <span style={{
               fontFamily: "'Montserrat', sans-serif",
-              fontWeight: 600,
-              fontSize: '0.5rem',
-              letterSpacing: '0.18em',
-              color: '#a5d6a7',
-              marginTop: '2px',
+              fontWeight: 600, fontSize: '0.5rem',
+              letterSpacing: '0.18em', color: '#a5d6a7', marginTop: '2px',
             }}>
               FAST DELIVERY
             </span>
@@ -102,6 +107,44 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </p>
         </div>
 
+        {/* Business identity card */}
+        <div
+          className="px-5 py-4 border-b border-[#14491f] flex items-center gap-3"
+          style={{ backgroundColor: '#163f22' }}
+        >
+          <div
+            className="w-10 h-10 rounded-full flex-shrink-0 overflow-hidden flex items-center justify-center font-bold text-white text-sm"
+            style={{ backgroundColor: '#2e7d32' }}
+          >
+            {profilePicUrl
+              ? <img src={profilePicUrl} alt={businessName} className="w-full h-full object-cover" />
+              : businessName.charAt(0).toUpperCase()}
+          </div>
+          <div className="flex flex-col gap-1 min-w-0">
+            <p className="text-sm font-semibold truncate" style={{ color: '#ffffff', fontFamily: "'Montserrat', sans-serif" }}>
+              {businessName}
+            </p>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              {phoneVerified ? (
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold border"
+                  style={{ backgroundColor: '#1e4d26', color: '#4ade80', borderColor: '#2e7d32' }}>
+                  ✓ Verified
+                </span>
+              ) : (
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold border bg-rose-900/40 text-rose-300 border-rose-700">
+                  Unverified
+                </span>
+              )}
+              {role && (
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold border"
+                  style={{ backgroundColor: '#1e4d26', color: '#a5d6a7', borderColor: '#2e7d32' }}>
+                  {role}
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+
         {/* Navigation */}
         <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
           {NAV_ITEMS.map((item) => {
@@ -113,9 +156,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 href={item.href}
                 className={cn(
                   'flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-150 text-sm font-medium',
-                  isActive
-                    ? 'bg-[#2e7d32] text-white shadow-sm'
-                    : 'text-white hover:bg-[#14491f]'
+                  isActive ? 'bg-[#2e7d32] text-white shadow-sm' : 'text-white hover:bg-[#14491f]'
                 )}
               >
                 <Icon className={cn('w-5 h-5 flex-shrink-0', isActive ? 'text-white' : 'text-[#a5d6a7]')} />
@@ -128,15 +169,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {/* Bottom actions */}
         <div className="p-4 border-t border-[#14491f] space-y-1">
           <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-white hover:bg-[#14491f] transition-colors">
-            <Bell className="w-5 h-5 text-[#a5d6a7]" />
-            Notifications
+            <Bell className="w-5 h-5 text-[#a5d6a7]" /> Notifications
           </button>
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-white hover:bg-[#14491f] transition-colors"
-          >
-            <LogOut className="w-5 h-5 text-[#a5d6a7]" />
-            Logout
+          <button onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-white hover:bg-[#14491f] transition-colors">
+            <LogOut className="w-5 h-5 text-[#a5d6a7]" /> Logout
           </button>
           <div className="pt-2 text-xs" style={{ color: '#a5d6a7' }}>
             <p>Admin Portal v1.0</p>
@@ -145,58 +182,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
       </aside>
 
-      {/* ── Main content ── */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-
-        {/* Top bar */}
-        <header
-          className="border-b px-8 py-4 flex items-center justify-between h-16 flex-shrink-0"
-          style={{ backgroundColor: '#ffffff', borderColor: '#c8e6c9' }}
-        >
-          <h1 className="text-lg font-bold truncate" style={{ color: '#1a5c2a' }}>
-            {businessName}
-          </h1>
-
-          <div className="flex items-center gap-3">
-            {/* Phone verification badge */}
-            {phoneVerified ? (
-              <span
-                className="px-3 py-1 rounded-full text-xs font-semibold border"
-                style={{ backgroundColor: '#e8f5e9', color: '#2e7d32', borderColor: '#a5d6a7' }}
-              >
-                Phone Verified
-              </span>
-            ) : (
-              <span className="px-3 py-1 rounded-full text-xs font-semibold border bg-rose-50 text-rose-600 border-rose-200">
-                Phone Unverified
-              </span>
-            )}
-
-            {/* Role badge */}
-            {role && (
-              <span
-                className="px-3 py-1 rounded-full text-xs font-semibold border"
-                style={{ backgroundColor: '#f5faf6', color: '#4a7c59', borderColor: '#c8e6c9' }}
-              >
-                {role}
-              </span>
-            )}
-
-            {/* Avatar */}
-            <div
-              className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-white text-sm flex-shrink-0"
-              style={{ backgroundColor: '#1a5c2a' }}
-            >
-              {businessName.charAt(0).toUpperCase()}
-            </div>
-          </div>
-        </header>
-
-        {/* Page content */}
-        <main className="flex-1 overflow-y-auto p-8" style={{ backgroundColor: '#f5faf6' }}>
-          {children}
-        </main>
-      </div>
+      {/* ── Main content — NO padding, pages own their own spacing ── */}
+      <main className="flex-1 overflow-y-auto p-4" style={{ backgroundColor: '#f0f7f1' }}>
+        {children}
+      </main>
     </div>
   );
 }

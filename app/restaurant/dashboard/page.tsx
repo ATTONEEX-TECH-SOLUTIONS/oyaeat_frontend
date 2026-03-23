@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { ShoppingCart, DollarSign, Users, Clock } from 'lucide-react'
+import { ShoppingCart, DollarSign, Users, Clock, Star, Zap, Package } from 'lucide-react'
 import StatCard from './components/stat-card'
 import RecentOrders from './components/recent-orders'
 import SalesChart from './components/sales-chart'
@@ -16,7 +16,6 @@ export default function DashboardPage() {
 
   useEffect(() => {
     let cancelled = false
-
     ;(async () => {
       try {
         setLoading(true)
@@ -33,11 +32,9 @@ export default function DashboardPage() {
           if (cached) setDash(JSON.parse(cached))
         } catch {}
       } finally {
-        if (cancelled) return
-        setLoading(false)
+        if (!cancelled) setLoading(false)
       }
     })()
-
     return () => { cancelled = true }
   }, [])
 
@@ -47,223 +44,134 @@ export default function DashboardPage() {
   const hasBusiness = !!business
 
   const cards = useMemo(() => ({
-    totalOrders:          summary?.totalOrders          ?? 0,
-    revenueToday:         summary?.revenueToday         ?? 0,
-    activeOrders:         summary?.activeOrders         ?? 0,
-    totalCustomers:       summary?.totalCustomers       ?? 0,
-    avgOrderValue:        summary?.avgOrderValue        ?? 0,
-    avgDeliveryTimeMins:  summary?.avgDeliveryTimeMins  ?? 0,
-    customerRating:       summary?.customerRating       ?? 0,
-    avgPrepTimeMins:      summary?.avgPrepTimeMins      ?? 0,
+    totalOrders:         summary?.totalOrders         ?? 0,
+    revenueToday:        summary?.revenueToday        ?? 0,
+    activeOrders:        summary?.activeOrders        ?? 0,
+    totalCustomers:      summary?.totalCustomers      ?? 0,
+    avgOrderValue:       summary?.avgOrderValue       ?? 0,
+    avgDeliveryTimeMins: summary?.avgDeliveryTimeMins ?? 0,
+    customerRating:      summary?.customerRating      ?? 0,
+    avgPrepTimeMins:     summary?.avgPrepTimeMins     ?? 0,
   }), [summary])
 
-  // ── Loading ──────────────────────────────────────────────────────────────
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-[60vh]">
-        <Spinner />
-      </div>
-    )
-  }
+  if (loading) return (
+    <div className="flex items-center justify-center h-[60vh]"><Spinner /></div>
+  )
 
-  // ── Error ────────────────────────────────────────────────────────────────
-  if (error && !dash) {
-    return (
-      <div className="bg-white border border-[#c8e6c9] rounded-xl p-6 shadow-sm">
-        <p className="text-sm font-semibold text-rose-600">Failed to load</p>
-        <p className="text-sm mt-1" style={{ color: '#4a7c59' }}>{error}</p>
-      </div>
-    )
-  }
+  if (error && !dash) return (
+    <div style={{ background: '#fff', border: '1px solid #c8e6c9', borderRadius: 16, padding: 24 }}>
+      <p style={{ color: '#e53935', fontWeight: 600, margin: 0 }}>Failed to load</p>
+      <p style={{ color: '#4a7c59', marginTop: 4, fontSize: 14 }}>{error}</p>
+    </div>
+  )
 
-  // ── No business yet ──────────────────────────────────────────────────────
-  if (!hasBusiness) {
-    return (
-      <div className="space-y-8">
-        <div className="bg-white border border-[#c8e6c9] rounded-xl p-8 shadow-sm">
-          <h2 className="text-2xl font-bold mb-2" style={{ color: '#1a5c2a' }}>
-            Create your restaurant
-          </h2>
-          <p className="mb-6" style={{ color: '#4a7c59' }}>
-            Start setting up your restaurant to begin receiving orders.
-          </p>
-          <Link href="/partner-signup/add-business">
-            <button
-              className="px-6 py-2.5 rounded-lg text-sm font-semibold text-white transition-colors"
-              style={{ backgroundColor: '#1a5c2a' }}
-              onMouseOver={e => (e.currentTarget.style.backgroundColor = '#14491f')}
-              onMouseOut={e => (e.currentTarget.style.backgroundColor = '#1a5c2a')}
-            >
-              Create Restaurant
-            </button>
-          </Link>
-        </div>
-      </div>
-    )
-  }
+  if (!hasBusiness) return (
+    <div style={{ background: '#fff', border: '1px solid #c8e6c9', borderRadius: 16, padding: 32 }}>
+      <h2 style={{ color: '#1a5c2a', fontWeight: 700, fontSize: 22, marginBottom: 8 }}>Create your restaurant</h2>
+      <p style={{ color: '#4a7c59', marginBottom: 24 }}>Start setting up your restaurant to begin receiving orders.</p>
+      <Link href="/partner-signup/add-business">
+        <button style={{ background: '#1a5c2a', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 24px', fontWeight: 600, cursor: 'pointer' }}>
+          Create Restaurant
+        </button>
+      </Link>
+    </div>
+  )
 
-  // ── Pending review ───────────────────────────────────────────────────────
-  if (status === 'pending_review') {
-    return (
-      <div className="space-y-8">
-        <div className="bg-white border border-[#c8e6c9] rounded-xl p-8 shadow-sm">
-          <div
-            className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold mb-4 border"
-            style={{ backgroundColor: '#e8f5e9', color: '#2e7d32', borderColor: '#a5d6a7' }}
-          >
-            Under Review
+  if (status === 'pending_review') return (
+    <div style={{ background: '#fff', border: '1px solid #c8e6c9', borderRadius: 16, padding: 32 }}>
+      <span style={{ background: '#e8f5e9', color: '#2e7d32', border: '1px solid #a5d6a7', borderRadius: 20, padding: '4px 12px', fontSize: 12, fontWeight: 600 }}>Under Review</span>
+      <h2 style={{ color: '#1a5c2a', fontWeight: 700, fontSize: 22, margin: '16px 0 8px' }}>Business review pending</h2>
+      <p style={{ color: '#4a7c59', marginBottom: 24 }}>Your business is under review. You'll be notified once complete.</p>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        {[
+          { label: 'Documents', value: business?.hasDocuments ? '✓ Submitted' : '✗ Missing' },
+          { label: 'Bank Details', value: business?.hasBankDetails ? '✓ Completed' : '✗ Incomplete' },
+        ].map(({ label, value }) => (
+          <div key={label} style={{ background: '#f5faf6', border: '1px solid #c8e6c9', borderRadius: 12, padding: 16 }}>
+            <p style={{ color: '#4a7c59', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 4px' }}>{label}</p>
+            <p style={{ color: '#1a5c2a', fontWeight: 700, fontSize: 16, margin: 0 }}>{value}</p>
           </div>
-          <h2 className="text-2xl font-bold mb-2" style={{ color: '#1a5c2a' }}>
-            Business review pending
-          </h2>
-          <p className="mb-6" style={{ color: '#4a7c59' }}>
-            Your business {business?.name ? <strong>"{business.name}"</strong> : ''} is currently
-            under review. You will be notified once the review is complete.
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="rounded-xl border p-4" style={{ backgroundColor: '#f5faf6', borderColor: '#c8e6c9' }}>
-              <p className="text-xs uppercase tracking-wider font-semibold mb-1" style={{ color: '#4a7c59' }}>Documents</p>
-              <p className="text-lg font-bold" style={{ color: '#1a5c2a' }}>
-                {business?.hasDocuments ? '✓ Submitted' : '✗ Missing'}
-              </p>
-            </div>
-            <div className="rounded-xl border p-4" style={{ backgroundColor: '#f5faf6', borderColor: '#c8e6c9' }}>
-              <p className="text-xs uppercase tracking-wider font-semibold mb-1" style={{ color: '#4a7c59' }}>Bank Details</p>
-              <p className="text-lg font-bold" style={{ color: '#1a5c2a' }}>
-                {business?.hasBankDetails ? '✓ Completed' : '✗ Incomplete'}
-              </p>
-            </div>
-          </div>
-
-          {business?.rejectionReason && (
-            <div className="mt-6 bg-rose-50 border border-rose-200 rounded-xl p-4">
-              <p className="text-sm font-semibold text-rose-600">Rejection Reason</p>
-              <p className="text-sm text-rose-700 mt-1">{business.rejectionReason}</p>
-            </div>
-          )}
-        </div>
+        ))}
       </div>
-    )
-  }
+    </div>
+  )
 
-  // ── Rejected ─────────────────────────────────────────────────────────────
-  if (status === 'rejected') {
-    return (
-      <div className="space-y-8">
-        <div className="bg-white border border-rose-200 rounded-xl p-8 shadow-sm">
-          <div className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold mb-4 border bg-rose-50 text-rose-700 border-rose-200">
-            Rejected
-          </div>
-          <h2 className="text-2xl font-bold mb-2" style={{ color: '#1a5c2a' }}>
-            Business rejected
-          </h2>
-          <p className="mb-6" style={{ color: '#4a7c59' }}>
-            {business?.rejectionReason || 'Please review the requirements and resubmit your application.'}
-          </p>
-          <Link href="/partner-signup/add-business">
-            <button
-              className="px-6 py-2.5 rounded-lg text-sm font-semibold text-white transition-colors"
-              style={{ backgroundColor: '#1a5c2a' }}
-              onMouseOver={e => (e.currentTarget.style.backgroundColor = '#14491f')}
-              onMouseOut={e => (e.currentTarget.style.backgroundColor = '#1a5c2a')}
-            >
-              Update Submission
-            </button>
-          </Link>
-        </div>
-      </div>
-    )
-  }
+  if (status === 'rejected') return (
+    <div style={{ background: '#fff', border: '1px solid #fecaca', borderRadius: 16, padding: 32 }}>
+      <span style={{ background: '#fef2f2', color: '#e53935', border: '1px solid #fecaca', borderRadius: 20, padding: '4px 12px', fontSize: 12, fontWeight: 600 }}>Rejected</span>
+      <h2 style={{ color: '#1a5c2a', fontWeight: 700, fontSize: 22, margin: '16px 0 8px' }}>Business rejected</h2>
+      <p style={{ color: '#4a7c59', marginBottom: 24 }}>{business?.rejectionReason || 'Please review requirements and resubmit.'}</p>
+      <Link href="/partner-signup/add-business">
+        <button style={{ background: '#1a5c2a', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 24px', fontWeight: 600, cursor: 'pointer' }}>Update Submission</button>
+      </Link>
+    </div>
+  )
 
   // ── Approved / Active ────────────────────────────────────────────────────
-  return (
-    <div className="space-y-8">
+  const quickStats = [
+    { label: 'Avg. Order Value', value: `₦${Math.round(cards.avgOrderValue).toLocaleString()}`, icon: DollarSign },
+    { label: 'Delivery Time',    value: cards.avgDeliveryTimeMins ? `${cards.avgDeliveryTimeMins} min` : '—', icon: Zap },
+    { label: 'Customer Rating',  value: cards.customerRating ? `${cards.customerRating}/5.0` : '—', icon: Star },
+    { label: 'Prep Time',        value: cards.avgPrepTimeMins ? `${cards.avgPrepTimeMins} min` : '—', icon: Clock },
+  ]
 
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold" style={{ color: '#1a5c2a' }}>Dashboard</h1>
-        <p className="mt-1 text-sm" style={{ color: '#4a7c59' }}>
-          Welcome back! Here's your restaurant overview.
-        </p>
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+
+      {/* ── Header ── */}
+      <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
+        <div>
+          <h1 style={{ color: '#1a5c2a', fontWeight: 800, fontSize: 28, margin: 0 }}>Dashboard</h1>
+          <p style={{ color: '#4a7c59', fontSize: 13, margin: '4px 0 0' }}>
+            Welcome back! Here's your restaurant overview.
+          </p>
+        </div>
+        {/* Live indicator */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 7, background: '#e8f5e9', border: '1px solid #c8e6c9', borderRadius: 20, padding: '6px 14px' }}>
+          <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#2e7d32', display: 'inline-block', boxShadow: '0 0 0 3px rgba(46,125,50,0.2)' }} />
+          <span style={{ fontSize: 12, fontWeight: 600, color: '#2e7d32' }}>Live</span>
+        </div>
       </div>
 
       {/* ── Stat cards ── */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-        {/*
-          Inside your <StatCard> component, apply these classes:
-            card bg:        bg-white
-            card border:    border border-[#c8e6c9]
-            card shadow:    shadow-sm rounded-xl
-            title text:     text-[#4a7c59] text-sm
-            value text:     text-[#1a5c2a] font-bold text-2xl
-            icon wrapper:   bg-[#e8f5e9] rounded-lg p-2
-            icon color:     text-[#2e7d32]
-            trend up:       text-[#2e7d32]
-            trend down:     text-rose-500
-        */}
-        <StatCard
-          title="Total Orders"
-          value={cards.totalOrders.toLocaleString()}
-          change={0}
-          icon={ShoppingCart}
-          trend="up"
-        />
-        <StatCard
-          title="Revenue Today"
-          value={`₦${Math.round(cards.revenueToday).toLocaleString()}`}
-          change={0}
-          icon={DollarSign}
-          trend="up"
-        />
-        <StatCard
-          title="Active Orders"
-          value={cards.activeOrders.toLocaleString()}
-          change={0}
-          icon={Clock}
-          trend="up"
-        />
-        <StatCard
-          title="Total Customers"
-          value={cards.totalCustomers.toLocaleString()}
-          change={0}
-          icon={Users}
-          trend="up"
-        />
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 18 }}>
+        <StatCard title="Total Orders"    value={cards.totalOrders.toLocaleString()}                icon={ShoppingCart} change={0} trend="up" />
+        <StatCard title="Revenue Today"   value={`₦${Math.round(cards.revenueToday).toLocaleString()}`} icon={DollarSign}   change={0} trend="up" />
+        <StatCard title="Active Orders"   value={cards.activeOrders.toLocaleString()}               icon={Package}      change={0} trend="up" />
+        <StatCard title="Total Customers" value={cards.totalCustomers.toLocaleString()}             icon={Users}        change={0} trend="up" />
       </div>
 
       {/* ── Chart + Quick Stats ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 20 }}>
 
-        {/* Sales chart — spans 2 cols */}
-        <div className="lg:col-span-2 bg-white border border-[#c8e6c9] rounded-xl p-6 shadow-sm">
-          {/*
-            Inside <SalesChart>:
-              line/bar color:   #1a5c2a or #2e7d32
-              grid lines:       #e8f5e9
-              axis text:        #4a7c59
-              tooltip bg:       #1a5c2a  text-white
-          */}
+        {/* Sales chart */}
+        <div style={{ background: '#fff', border: '1px solid #c8e6c9', borderRadius: 16, padding: '24px 24px 16px', boxShadow: '0 1px 4px rgba(26,92,42,0.06)' }}>
           <SalesChart data={dash?.salesSeries || []} />
         </div>
 
-        {/* Quick Stats card */}
-        <div className="bg-white border border-[#c8e6c9] rounded-xl p-6 shadow-sm">
-          <h3 className="font-bold text-lg mb-5" style={{ color: '#1a5c2a' }}>Quick Stats</h3>
+        {/* Quick Stats */}
+        <div style={{ background: '#fff', border: '1px solid #c8e6c9', borderRadius: 16, padding: 24, boxShadow: '0 1px 4px rgba(26,92,42,0.06)' }}>
+          <h3 style={{ color: '#1a5c2a', fontWeight: 700, fontSize: 16, margin: '0 0 20px' }}>Quick Stats</h3>
 
-          <div className="space-y-0">
-            {[
-              { label: 'Avg. Order Value',  value: `₦${Math.round(cards.avgOrderValue).toLocaleString()}` },
-              { label: 'Delivery Time',     value: cards.avgDeliveryTimeMins ? `${cards.avgDeliveryTimeMins} min` : '—' },
-              { label: 'Customer Rating',   value: cards.customerRating ? `${cards.customerRating}/5.0` : '—' },
-              { label: 'Prep Time',         value: cards.avgPrepTimeMins ? `${cards.avgPrepTimeMins} min` : '—' },
-            ].map(({ label, value }, i, arr) => (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+            {quickStats.map(({ label, value, icon: Icon }, i) => (
               <div
                 key={label}
-                className={`flex justify-between items-center py-3 ${i < arr.length - 1 ? 'border-b border-[#e8f5e9]' : ''}`}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '14px 0',
+                  borderBottom: i < quickStats.length - 1 ? '1px solid #e8f5e9' : 'none',
+                }}
               >
-                <span className="text-sm" style={{ color: '#4a7c59' }}>{label}</span>
-                <span className="font-semibold text-sm" style={{ color: '#1a5c2a' }}>{value}</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <div style={{ background: '#e8f5e9', borderRadius: 8, padding: 7, display: 'flex' }}>
+                    <Icon size={14} color="#2e7d32" strokeWidth={2.5} />
+                  </div>
+                  <span style={{ fontSize: 13, color: '#4a7c59' }}>{label}</span>
+                </div>
+                <span style={{ fontWeight: 700, fontSize: 14, color: '#1a5c2a' }}>{value}</span>
               </div>
             ))}
           </div>
@@ -271,14 +179,6 @@ export default function DashboardPage() {
       </div>
 
       {/* ── Recent Orders ── */}
-      {/*
-        Inside <RecentOrders>:
-          table header bg:   bg-[#e8f5e9]
-          header text:       text-[#1a5c2a] font-semibold text-xs uppercase tracking-wide
-          row hover:         hover:bg-[#f5faf6]
-          status badge:      same statusBadge() logic as businesses page
-          link/action color: text-[#2e7d32] hover:underline
-      */}
       <RecentOrders orders={dash?.recentOrders || []} />
     </div>
   )
