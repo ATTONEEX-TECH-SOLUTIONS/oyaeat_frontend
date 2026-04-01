@@ -3,15 +3,18 @@
 import { useState } from 'react'
 import { Sidebar } from '@/app/superadmin/dashboard/components/sidebar'
 import { RidersList } from '@/app/superadmin/dashboard/components/riders-list'
-import { mockRiders } from '@/lib/mockData'
-import type { Rider } from '@/lib/types'
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Search, Plus } from 'lucide-react'
 
 export default function RidersPage() {
-  const [riders, setRiders] = useState<Rider[]>(mockRiders)
+  const [riders, setRiders] = useState<any[]>([
+    { id: '1', firstName: 'John', lastName: 'Doe', email: 'john.d@oyaeat.com', status: 'active', phone: '+2348012345678', vehicle: 'Motorcycle' },
+    { id: '2', firstName: 'Sarah', lastName: 'Adebayo', email: 'sarah.ade@oyaeat.com', status: 'pending', phone: '+2348087654321', vehicle: 'Bicycle' },
+    { id: '3', firstName: 'Michael', lastName: 'Okon', email: 'm.okon@oyaeat.com', status: 'verified', phone: '+2349098765432', vehicle: 'Motorcycle' }
+  ])
   const [searchTerm, setSearchTerm] = useState('')
 
   const filteredRiders = riders.filter(

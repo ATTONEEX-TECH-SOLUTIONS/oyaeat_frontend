@@ -11,7 +11,7 @@ const navItems = [
   { href: '/superadmin/dashboard/businesses', label: 'Businesses', icon: Building2 },
   { href: '/superadmin/dashboard/restaurants', label: 'Restaurants', icon: Users },
   { href: '/superadmin/dashboard/riders', label: 'Riders', icon: Bike },
-  { href: '/superadmin/dashboard/customers', label: 'Customers & Orders', icon: ShoppingCart },
+  { href: '/superadmin/dashboard/orders', label: 'Customers & Orders', icon: ShoppingCart },
   { href: '/superadmin/dashboard/settings', label: 'Settings', icon: Settings },
 ]
 
@@ -23,7 +23,7 @@ export function Sidebar() {
     try {
       localStorage.removeItem('admin_token')
       localStorage.removeItem('admin_user')
-    } catch {}
+    } catch { }
     router.replace('/superadmin/login')
   }
 

@@ -1,5 +1,7 @@
 'use client';
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useRef } from 'react';
+import { toast } from 'sonner';
+import { vendorApi } from '@/lib/api/vendor';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
@@ -11,6 +13,7 @@ import {
   Settings,
   Bell,
   LogOut,
+  Menu,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -31,6 +34,49 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const [dashboard, setDashboard]         = useState<any>(null);
   const [profilePicUrl, setProfilePicUrl] = useState<string | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [pendingOrdersCount, setPendingOrdersCount] = useState(0);
+  const [unreadNotifications, setUnreadNotifications] = useState(1);
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [pathname]);
+
+  const prevCountRef = useRef(0);
+  const hasLoadedRef = useRef(false);
+
+  // Global polling for new orders notification
+  useEffect(() => {
+    const pollForOrders = async () => {
+      try {
+        const data = await vendorApi.getOrders({ page: 1, limit: 50 });
+        const newOrders = Array.isArray(data.orders) ? data.orders : [];
+        const activeCount = newOrders.filter(o => ['pending','preparing','ready','out_for_delivery'].includes(o.status)).length;
+        const pendingCount = newOrders.filter(o => o.status === 'pending').length;
+        
+        setPendingOrdersCount(pendingCount);
+
+        if (hasLoadedRef.current && activeCount > prevCountRef.current) {
+           const newOrderDiff = activeCount - prevCountRef.current;
+           setUnreadNotifications(prev => prev + newOrderDiff);
+
+           toast.success("New Order Received!", {
+             description: "You have a new incoming order to fulfill."
+           });
+           try {
+             new Audio('/bell.mp3').play().catch(() => {});
+           } catch(e) {}
+        }
+        prevCountRef.current = activeCount;
+        hasLoadedRef.current = true;
+      } catch (e) {}
+    };
+
+    pollForOrders();
+    const timer = setInterval(pollForOrders, 10000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     try {
@@ -66,11 +112,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   };
 
   return (
-    <div className="flex h-screen" style={{ backgroundColor: '#f5faf6' }}>
+    <div className="flex h-screen overflow-hidden" style={{ backgroundColor: '#f5faf6' }}>
+
+      {/* Mobile Backdrop */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 lg:hidden" onClick={() => setMobileMenuOpen(false)} />
+      )}
 
       {/* ── Sidebar ── */}
       <aside
-        className="w-64 h-screen flex flex-col sticky top-0 border-r border-[#14491f]"
+        className={`w-64 flex flex-col fixed inset-y-0 left-0 z-50 transform transition-transform duration-300 ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0 lg:static lg:h-screen'} border-r border-[#14491f] shadow-2xl lg:shadow-none`}
         style={{ backgroundColor: '#1a5c2a' }}
       >
         {/* Logo */}
@@ -155,12 +206,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  'flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-150 text-sm font-medium',
+                  'flex items-center justify-between px-4 py-3 rounded-lg transition-all duration-150 text-sm font-medium group',
                   isActive ? 'bg-[#2e7d32] text-white shadow-sm' : 'text-white hover:bg-[#14491f]'
                 )}
               >
-                <Icon className={cn('w-5 h-5 flex-shrink-0', isActive ? 'text-white' : 'text-[#a5d6a7]')} />
-                <span>{item.label}</span>
+                <div className="flex items-center gap-3">
+                  <Icon className={cn('w-5 h-5 flex-shrink-0', isActive ? 'text-white' : 'text-[#a5d6a7] group-hover:text-white transition-colors')} />
+                  <span>{item.label}</span>
+                </div>
+                {item.label === 'Orders' && pendingOrdersCount > 0 && (
+                  <span className="bg-red-500 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full shadow-sm animate-pulse">
+                    {pendingOrdersCount}
+                  </span>
+                )}
               </Link>
             );
           })}
@@ -168,9 +226,21 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
         {/* Bottom actions */}
         <div className="p-4 border-t border-[#14491f] space-y-1">
-          <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-white hover:bg-[#14491f] transition-colors">
-            <Bell className="w-5 h-5 text-[#a5d6a7]" /> Notifications
-          </button>
+          <Link 
+            href="/restaurant/dashboard/notifications" 
+            onClick={() => { setMobileMenuOpen(false); setUnreadNotifications(0); }} 
+            className="w-full flex items-center justify-between px-4 py-3 rounded-lg text-sm font-medium text-white hover:bg-[#14491f] transition-colors group"
+          >
+            <div className="flex items-center gap-3">
+              <Bell className="w-5 h-5 text-[#a5d6a7] group-hover:text-white transition-colors" /> 
+              <span>Notifications</span>
+            </div>
+            {unreadNotifications > 0 && (
+              <span className="bg-red-500 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full shadow-sm">
+                {unreadNotifications}
+              </span>
+            )}
+          </Link>
           <button onClick={handleLogout}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-white hover:bg-[#14491f] transition-colors">
             <LogOut className="w-5 h-5 text-[#a5d6a7]" /> Logout
@@ -183,8 +253,27 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </aside>
 
       {/* ── Main content — NO padding, pages own their own spacing ── */}
-      <main className="flex-1 overflow-y-auto p-4" style={{ backgroundColor: '#f0f7f1' }}>
-        {children}
+      <main className="flex-1 flex flex-col h-screen overflow-hidden min-w-0" style={{ backgroundColor: '#f0f7f1' }}>
+        {/* Mobile Header */}
+        <header className="lg:hidden flex items-center justify-between p-4 bg-white border-b border-gray-200 shrink-0 shadow-sm z-30">
+           <div className="flex items-center gap-3">
+              <button onClick={() => setMobileMenuOpen(true)} className="p-2 -ml-2 text-[#1a5c2a] bg-[#1a5c2a]/10 hover:bg-[#1a5c2a]/20 rounded-lg transition-colors">
+                <Menu className="w-5 h-5" />
+              </button>
+              <span className="font-extrabold text-gray-900 tracking-tight leading-none text-lg">
+                <span className="text-[#2e7d32]">Oya</span>Eat
+              </span>
+           </div>
+           <div className="w-8 h-8 rounded-full bg-[#2e7d32] text-white flex items-center justify-center font-bold text-xs ring-2 ring-white shadow-sm">
+             {profilePicUrl
+              ? <img src={profilePicUrl} alt={businessName} className="w-full h-full object-cover rounded-full" />
+              : businessName.charAt(0).toUpperCase()}
+           </div>
+        </header>
+
+        <div className="flex-1 overflow-y-auto p-4 w-full">
+          {children}
+        </div>
       </main>
     </div>
   );

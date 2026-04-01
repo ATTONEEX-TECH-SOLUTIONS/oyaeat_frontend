@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useRef } from 'react'
+import { toast } from 'sonner'
 import {
   CheckCircle, Clock, Truck, Printer, RefreshCw,
   ChevronDown, ChevronUp, MapPin, Phone, User,
@@ -70,12 +71,13 @@ function StatChip({ label, value, color, bg }: { label: string; value: number; c
 
 // ── Order card ────────────────────────────────────────────────────────────────
 function OrderCard({
-  order, expanded, onToggle, onUpdateStatus,
+  order, expanded, onToggle, onUpdateStatus, onPrint
 }: {
   order: Order
   expanded: boolean
   onToggle: () => void
   onUpdateStatus: (status: OrderStatus) => void
+  onPrint: () => void
 }) {
   const cfg  = getCfg(order.status)
   const next = nextStatus(order.status)
@@ -227,7 +229,7 @@ function OrderCard({
           <div className="flex flex-wrap gap-2 pt-1">
             {/* Print */}
             <button
-              onClick={() => window.print()}
+              onClick={onPrint}
               className="flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-semibold transition-colors"
               style={{ borderColor: C.border, backgroundColor: C.white, color: C.textMuted }}
               onMouseOver={e => (e.currentTarget.style.backgroundColor = '#F0F7F3')}
@@ -276,25 +278,58 @@ export default function OrdersPage() {
   const [loading, setLoading]             = useState(true)
   const [error, setError]                 = useState('')
   const [statusFilter, setStatusFilter]   = useState<OrderStatus | 'all'>('all')
+  const [printOrder, setPrintOrder]       = useState<Order | null>(null)
 
-  const load = async () => {
-    setError('')
-    setLoading(true)
+  const prevCountRef = useRef(0)
+  const hasLoadedRef = useRef(false)
+
+  useEffect(() => {
+    if (printOrder) {
+      const timer = setTimeout(() => {
+        window.print();
+        setTimeout(() => setPrintOrder(null), 1000);
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [printOrder]);
+
+  const load = async (isBackground = false) => {
+    if (!isBackground) setError('')
+    if (!isBackground) setLoading(true)
     try {
       const data = await vendorApi.getOrders({
         status: statusFilter === 'all' ? undefined : statusFilter,
         page: 1,
         limit: 50,
       })
-      setOrders(Array.isArray(data.orders) ? data.orders : [])
+      const newOrders = Array.isArray(data.orders) ? data.orders : []
+      
+      // Notify if new orders arrived
+      const activeCount = newOrders.filter(o => ['pending','preparing','ready','out_for_delivery'].includes(o.status)).length
+      if (isBackground && hasLoadedRef.current && activeCount > prevCountRef.current) {
+         toast.success("New Order Received!", {
+           description: "You have a new incoming order to fulfill."
+         })
+         try {
+           new Audio('/bell.mp3').play().catch(() => {});
+         } catch(e) {}
+      }
+      prevCountRef.current = activeCount;
+      hasLoadedRef.current = true;
+
+      setOrders(newOrders)
     } catch (e: any) {
-      setError(e?.message || 'Failed to load orders')
+      if (!isBackground) setError(e?.message || 'Failed to load orders')
     } finally {
-      setLoading(false)
+      if (!isBackground) setLoading(false)
     }
   }
 
-  useEffect(() => { load() }, [statusFilter])
+  useEffect(() => { 
+    load(false) 
+    const timer = setInterval(() => load(true), 10000)
+    return () => clearInterval(timer)
+  }, [statusFilter])
 
   const counts = useMemo(() => {
     const active    = orders.filter(o => ['pending','preparing','ready','out_for_delivery'].includes(o.status)).length
@@ -314,8 +349,9 @@ export default function OrdersPage() {
   }
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: C.bg }}>
-      <div className="p-6">
+    <>
+      <div className="min-h-screen print:hidden" style={{ backgroundColor: C.bg }}>
+        <div className="p-6">
 
         {/* ── Page header ─────────────────────────────── */}
         <div className="mb-6">
@@ -347,13 +383,24 @@ export default function OrdersPage() {
               <button
                 key={s.key}
                 onClick={() => setStatusFilter(s.key as any)}
-                className="px-3 py-1.5 rounded-xl text-xs font-bold transition-all duration-150 whitespace-nowrap flex-shrink-0"
+                className="px-3 py-1.5 rounded-xl text-xs font-bold transition-all duration-150 whitespace-nowrap flex-shrink-0 flex items-center gap-1.5"
                 style={{
                   backgroundColor: statusFilter === s.key ? C.green : 'transparent',
                   color:           statusFilter === s.key ? C.white : C.textMuted,
                 }}
               >
                 {s.label}
+                {s.key === 'pending' && counts.pending > 0 && (
+                  <span 
+                    className="px-1.5 py-0.5 rounded-full text-[10px] shadow-sm ml-0.5"
+                    style={{
+                      backgroundColor: statusFilter === s.key ? C.white : '#ef4444',
+                      color: statusFilter === s.key ? C.green : C.white
+                    }}
+                  >
+                    {counts.pending}
+                  </span>
+                )}
               </button>
             ))}
           </div>
@@ -422,11 +469,60 @@ export default function OrdersPage() {
                 expanded={expandedOrder === order.id}
                 onToggle={() => setExpandedOrder(expandedOrder === order.id ? null : order.id)}
                 onUpdateStatus={(s) => updateStatus(order.id, s)}
+                onPrint={() => setPrintOrder(order)}
               />
             ))}
           </div>
         )}
       </div>
     </div>
+
+    {/* ── Hidden Thermal Receipt ───────────────────────────────────── */}
+    {printOrder && (
+       <div className="hidden print:block absolute top-0 left-0 bg-white w-[80mm] text-black text-xs font-mono p-4 z-[9999]" style={{ margin: 0 }}>
+         <div className="text-center mb-5">
+           <h2 className="text-2xl font-black uppercase tracking-wider">OyaEat</h2>
+           <p className="text-[10px] font-bold mt-1">Vendor Partner</p>
+           <p className="mt-3 font-bold text-lg border-y border-dashed border-black py-1">Order #{printOrder.id}</p>
+         </div>
+         
+         <div className="mb-5 space-y-1">
+           <p><span className="font-bold">Date:</span> {new Date(printOrder.createdAt).toLocaleString()}</p>
+           <p><span className="font-bold">Customer:</span> {printOrder.customerName}</p>
+           {printOrder.customerPhone && <p><span className="font-bold">Phone:</span> {printOrder.customerPhone}</p>}
+           {printOrder.address && <p><span className="font-bold">Address:</span> {printOrder.address}</p>}
+         </div>
+         
+         <table className="w-full mb-5">
+            <thead>
+              <tr className="border-b border-dashed border-black text-left">
+                <th className="py-1">Qty</th>
+                <th className="py-1">Item</th>
+                <th className="py-1 text-right">Amt</th>
+              </tr>
+            </thead>
+            <tbody className="border-b border-dashed border-black">
+              {printOrder.items?.map(it => (
+                <tr key={it.id}>
+                   <td className="py-2 align-top font-bold">{it.quantity}x</td>
+                   <td className="py-2 pr-2">{it.name}</td>
+                   <td className="py-2 text-right align-top">{(it.price * it.quantity).toLocaleString()}</td>
+                </tr>
+              ))}
+            </tbody>
+         </table>
+         
+         <div className="text-right text-base mb-6">
+            <span className="font-black">Total: ₦{Number(printOrder.total).toLocaleString()}</span>
+         </div>
+         
+         <div className="text-center text-[10px] font-bold space-y-1 mt-8 mb-4">
+            <p>Paid via {printOrder.paymentMethod || 'Card'}</p>
+            <p>Thank you for using OyaEat!</p>
+            <p className="mt-2 text-[8px] font-normal">Printed: {new Date().toLocaleString()}</p>
+         </div>
+       </div>
+    )}
+    </>
   )
 }

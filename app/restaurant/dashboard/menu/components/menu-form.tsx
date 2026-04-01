@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useMemo, useState } from 'react'
-import { X } from 'lucide-react'
+import { X, ImagePlus } from 'lucide-react'
 import { vendorApi, type MenuItem } from '@/lib/api/vendor'
 
 interface MenuFormProps {
@@ -225,38 +225,32 @@ export default function MenuForm({ item, onClose, onCreated, onUpdated }: MenuFo
           </div>
 
           <div>
-            <label style={labelStyle}>
-              Item Image{' '}
-              <span
-                style={{
-                  color: '#a5d6a7',
-                  textTransform: 'none',
-                  fontWeight: 400,
-                }}
-              >
-                (optional)
-              </span>
-            </label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              style={inputStyle}
-              disabled={submitting}
-            />
-          </div>
-
-          {previewUrl && (
-            <div>
-              <label style={labelStyle}>Image Preview</label>
-              <img
-                src={previewUrl}
-                alt="Menu preview"
-                className="w-24 h-24 rounded-lg object-cover border"
-                style={{ borderColor: '#c8e6c9' }}
-              />
+            <label style={labelStyle}>Item Image <span style={{ color: '#a5d6a7', textTransform: 'none', fontWeight: 400 }}>(optional)</span></label>
+            <div 
+              className="relative w-full rounded-xl border-2 border-dashed overflow-hidden flex flex-col items-center justify-center cursor-pointer group transition-colors"
+              style={{ height: '140px', borderColor: '#c8e6c9', backgroundColor: '#fcfdfc' }}
+              onClick={() => document.getElementById('imageUpload')?.click()}
+              onMouseOver={e => e.currentTarget.style.borderColor = '#2e7d32'}
+              onMouseOut={e => e.currentTarget.style.borderColor = '#c8e6c9'}
+            >
+               {previewUrl ? (
+                 <>
+                   <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
+                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                     <span className="text-white font-bold text-sm">Change Image</span>
+                   </div>
+                 </>
+               ) : (
+                 <div className="flex flex-col items-center gap-2" style={{ color: '#4a7c59' }}>
+                   <div className="w-10 h-10 rounded-full bg-[#e8f5e9] flex items-center justify-center text-[#2e7d32] group-hover:bg-[#d8e4dc] transition-colors">
+                      <ImagePlus className="w-5 h-5" />
+                   </div>
+                   <span className="text-xs font-semibold">Click to upload an image</span>
+                 </div>
+               )}
+               <input id="imageUpload" type="file" accept="image/*" className="hidden" onChange={handleFileChange} disabled={submitting} />
             </div>
-          )}
+          </div>
 
           <div>
             <label style={labelStyle}>Description</label>

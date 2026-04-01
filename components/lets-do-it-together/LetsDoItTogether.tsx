@@ -14,7 +14,7 @@ const LetsDoItTogether = () => {
       title: "Become a rider",
       description: "Join our team of riders and earn money on your own schedule",
       buttonText: "Sign Up",
-      link: "/rider-signup"
+      link: "/rider"
     },
     {
       id: 2,
