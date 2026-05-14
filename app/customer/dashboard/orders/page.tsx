@@ -10,6 +10,8 @@ export default function CustomerOrdersPage() {
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
+  const [page, setPage] = useState(1);
+  const limit = 5;
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -40,8 +42,16 @@ export default function CustomerOrdersPage() {
     o.status === filter
   );
 
+  const totalPages = Math.ceil(filteredOrders.length / limit);
+  const paginatedOrders = filteredOrders.slice((page - 1) * limit, page * limit);
+
+  // Reset page when filter changes
+  useEffect(() => {
+    setPage(1);
+  }, [filter]);
+
   return (
-    <div className="max-w-6xl mx-auto space-y-5 animate-in fade-in slide-in-from-bottom-8 duration-700 pb-8">
+    <div className="w-full space-y-5 animate-in fade-in slide-in-from-bottom-8 duration-700 pb-8">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">Order History</h2>
@@ -54,7 +64,7 @@ export default function CustomerOrdersPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-[2rem] border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
+      <div className="bg-card rounded-[2rem] border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
         {loading ? (
           <div className="p-20 flex justify-center items-center text-gray-400 font-bold gap-3">
             <RefreshCcw className="w-6 h-6 animate-spin" /> Fetching your orders...
@@ -69,7 +79,7 @@ export default function CustomerOrdersPage() {
           </div>
         ) : (
           <div className="divide-y divide-gray-50">
-            {filteredOrders.map(order => (
+            {paginatedOrders.map(order => (
               <Link key={order.id} href={`/customer/dashboard/orders/${order.id}`} className="block p-5 sm:p-6 hover:bg-gray-50/50 transition-colors group cursor-pointer flex flex-col sm:flex-row justify-between sm:items-center gap-4">
                 <div className="flex items-center gap-5">
                   <div className="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center text-gray-400 shrink-0 shadow-inner group-hover:bg-[#2d5f4f]/5 group-hover:text-[#2d5f4f] transition-colors">
@@ -78,7 +88,7 @@ export default function CustomerOrdersPage() {
                   <div>
                     <h4 className="font-extrabold text-xl text-gray-900 group-hover:text-[#2d5f4f] transition-colors">{order.business?.name || 'Restaurant'}</h4>
                     <div className="flex items-center gap-3 mt-1.5 text-sm font-semibold text-gray-500 divide-x divide-gray-200">
-                      <span className="pr-3">Order #{order.id}</span>
+                      <span className="pr-3">Order {order.id}</span>
                       <span className="pl-3">{format(new Date(order.createdAt), 'MMM dd, yyyy • p')}</span>
                       <span className="pl-3">{order.items?.length || 0} items</span>
                     </div>
@@ -103,6 +113,30 @@ export default function CustomerOrdersPage() {
                 </div>
               </Link>
             ))}
+          </div>
+        )}
+
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between p-6 border-t border-gray-100">
+            <Button
+              variant="outline"
+              disabled={page <= 1}
+              onClick={() => setPage(p => Math.max(1, p - 1))}
+              className="rounded-xl font-bold border-gray-200 text-gray-700 hover:bg-gray-50 shadow-sm"
+            >
+              Previous
+            </Button>
+            <span className="text-sm font-extrabold text-gray-400 uppercase tracking-wider">
+              Page {page} of {totalPages}
+            </span>
+            <Button
+              variant="outline"
+              disabled={page >= totalPages}
+              onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+              className="rounded-xl font-bold border-gray-200 text-gray-700 hover:bg-gray-50 shadow-sm"
+            >
+              Next
+            </Button>
           </div>
         )}
       </div>

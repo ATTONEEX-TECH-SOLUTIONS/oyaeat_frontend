@@ -14,7 +14,7 @@ const C = {
   greenLight: '#52B788',
   bg:         '#F5F1EB',
   white:      '#FFFFFF',
-  textDark:   '#111C14',
+  textDark:   '#111827',
   textMuted:  '#6B7C6E',
   border:     '#D8E4DC',
   error:      '#C0392B',
@@ -29,26 +29,14 @@ const schema = z.object({
 function IllustrationPanel() {
   return (
     <div
-      className="hidden lg:flex flex-col justify-between p-10 relative overflow-hidden"
-      style={{ backgroundColor: C.green, minHeight: '100%' }}
+      className="hidden lg:flex flex-col justify-between p-10 relative overflow-hidden bg-cover bg-center"
+      style={{ backgroundImage: "url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&q=80')", minHeight: '100%' }}
     >
-      {/* Decorative circles */}
-      <div className="absolute -top-24 -right-24 w-72 h-72 rounded-full opacity-20"
-           style={{ backgroundColor: C.greenMid }} />
-      <div className="absolute -bottom-20 -left-20 w-80 h-80 rounded-full opacity-15"
-           style={{ backgroundColor: C.greenLight }} />
-      <div className="absolute top-1/3 right-12 w-20 h-20 rounded-full opacity-10"
-           style={{ backgroundColor: C.greenLight }} />
-
+      <div className="absolute inset-0 bg-black/60" />
+      
       {/* Brand */}
       <div className="relative z-10">
         <div className="flex items-center gap-3 mb-2">
-          {/* <div className="w-9 h-9 rounded-xl flex items-center justify-center"
-               style={{ backgroundColor: 'rgba(255,255,255,0.15)' }}>
-            <svg width="14" height="18" viewBox="0 0 16 20" fill="none">
-              <path d="M9 1L1 11h7l-1 8 8-10H8l1-8z" fill="white" />
-            </svg>
-          </div> */}
           <div>
             <p className="text-white text-lg font-black tracking-tight">OyaEat</p>
             <p className="text-xs font-semibold tracking-[0.2em]" style={{ color: C.greenLight }}>
@@ -58,91 +46,12 @@ function IllustrationPanel() {
         </div>
       </div>
 
-      {/* Illustration — dashboard/control panel concept */}
-      <div className="relative z-10 flex items-center justify-center flex-1 py-8">
-        <svg viewBox="0 0 300 300" className="w-64 h-64" fill="none" xmlns="http://www.w3.org/2000/svg">
-
-          {/* Main dashboard card */}
-          <rect x="30" y="60" width="240" height="180" rx="14" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" />
-
-          {/* Top bar of card */}
-          <rect x="30" y="60" width="240" height="36" rx="14" fill="rgba(255,255,255,0.12)" />
-          <rect x="30" y="82" width="240" height="14" fill="rgba(255,255,255,0.06)" />
-          {/* Traffic light dots */}
-          <circle cx="52" cy="78" r="5" fill="rgba(255,255,255,0.25)" />
-          <circle cx="67" cy="78" r="5" fill="rgba(255,255,255,0.15)" />
-          <circle cx="82" cy="78" r="5" fill="rgba(255,255,255,0.1)" />
-          {/* Title bar text stub */}
-          <rect x="100" y="74" width="60" height="6" rx="3" fill="rgba(255,255,255,0.2)" />
-
-          {/* Stat row */}
-          <rect x="46" y="112" width="58" height="38" rx="8" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.15)" strokeWidth="1" />
-          <rect x="121" y="112" width="58" height="38" rx="8" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.15)" strokeWidth="1" />
-          <rect x="196" y="112" width="58" height="38" rx="8" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.15)" strokeWidth="1" />
-          {/* Stat numbers */}
-          <rect x="54" y="118" width="24" height="10" rx="3" fill="rgba(255,255,255,0.35)" />
-          <rect x="54" y="132" width="36" height="6" rx="3" fill="rgba(255,255,255,0.15)" />
-          <rect x="129" y="118" width="20" height="10" rx="3" fill={C.greenLight} opacity="0.6" />
-          <rect x="129" y="132" width="36" height="6" rx="3" fill="rgba(255,255,255,0.15)" />
-          <rect x="204" y="118" width="28" height="10" rx="3" fill="rgba(255,255,255,0.35)" />
-          <rect x="204" y="132" width="30" height="6" rx="3" fill="rgba(255,255,255,0.15)" />
-
-          {/* Chart area */}
-          <rect x="46" y="164" width="124" height="56" rx="8" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.12)" strokeWidth="1" />
-          {/* Bar chart bars */}
-          <rect x="58" y="196" width="10" height="16" rx="3" fill="rgba(255,255,255,0.2)" />
-          <rect x="74" y="186" width="10" height="26" rx="3" fill={C.greenLight} opacity="0.5" />
-          <rect x="90" y="191" width="10" height="21" rx="3" fill="rgba(255,255,255,0.2)" />
-          <rect x="106" y="180" width="10" height="32" rx="3" fill={C.greenLight} opacity="0.7" />
-          <rect x="122" y="188" width="10" height="24" rx="3" fill="rgba(255,255,255,0.2)" />
-          <rect x="138" y="183" width="10" height="29" rx="3" fill={C.greenLight} opacity="0.5" />
-
-          {/* Mini list on the right */}
-          <rect x="184" y="164" width="70" height="56" rx="8" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.12)" strokeWidth="1" />
-          <rect x="192" y="175" width="40" height="5" rx="2.5" fill="rgba(255,255,255,0.3)" />
-          <rect x="192" y="185" width="50" height="5" rx="2.5" fill="rgba(255,255,255,0.15)" />
-          <rect x="192" y="195" width="34" height="5" rx="2.5" fill="rgba(255,255,255,0.2)" />
-          <rect x="192" y="205" width="44" height="5" rx="2.5" fill="rgba(255,255,255,0.15)" />
-
-          {/* Shield icon overlay — admin security */}
-          <g transform="translate(128, 20)">
-            <circle cx="22" cy="22" r="22" fill={C.greenMid} opacity="0.6" />
-            <circle cx="22" cy="22" r="22" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5" fill="none" />
-            {/* Shield path */}
-            <path d="M22 11 L32 15.5 L32 22 C32 27.5 27.5 32.5 22 34.5 C16.5 32.5 12 27.5 12 22 L12 15.5 Z"
-                  fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" strokeLinejoin="round" />
-            {/* Check in shield */}
-            <path d="M17 22 L20.5 25.5 L27 19" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-          </g>
-
-          {/* Grid dots decoration */}
-          {[0,1,2,3,4].map(col => [0,1,2].map(row => (
-            <circle
-              key={`${col}-${row}`}
-              cx={20 + col * 12}
-              cy={250 + row * 12}
-              r="1.5"
-              fill="rgba(255,255,255,0.15)"
-            />
-          )))}
-          {[0,1,2,3,4].map(col => [0,1,2].map(row => (
-            <circle
-              key={`r-${col}-${row}`}
-              cx={228 + col * 12}
-              cy={250 + row * 12}
-              r="1.5"
-              fill="rgba(255,255,255,0.15)"
-            />
-          )))}
-        </svg>
-      </div>
-
       {/* Quote */}
       <div className="relative z-10">
         <p className="text-white text-xl font-black leading-snug tracking-tight mb-2">
           Full control,<br />total visibility.
         </p>
-        <p className="text-sm" style={{ color: C.greenLight }}>
+        <p className="text-sm text-gray-300">
           Manage every restaurant, rider, and order on the platform.
         </p>
       </div>
@@ -189,7 +98,7 @@ function Field({
           onBlur={() => { onBlur(); setFocused(false) }}
           onFocus={() => setFocused(true)}
           placeholder={placeholder}
-          className="flex-1 py-3 pr-4 text-sm bg-transparent outline-none"
+          className="flex-1 py-3 pr-4 text-sm bg-transparent outline-none placeholder-gray-400"
           style={{ color: C.textDark }}
         />
       </div>
@@ -225,9 +134,10 @@ export default function AdminLoginPage() {
       const data = await res.json()
       if (data?.token) localStorage.setItem('admin_token', data.token)
       if (data?.admin)  localStorage.setItem('admin_user',  JSON.stringify(data.admin))
+        console.log(data.token);
       router.replace('/superadmin/dashboard')
-    } catch {
-      setError('Network error. Check your connection and try again.')
+    } catch (error) {
+        console.log("JWT ERROR:", error.message);
     } finally {
       setSubmitting(false)
     }

@@ -3,9 +3,10 @@
 import React, { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Home, ShoppingBag, Heart, Settings, Bell, Search, Menu, LogOut, ChevronLeft } from 'lucide-react';
+import { Home, ShoppingBag, Heart, Settings, Bell, Search, Menu, LogOut, ChevronLeft, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 export default function CustomerDashboardLayout({
   children,
@@ -82,6 +83,7 @@ export default function CustomerDashboardLayout({
     { name: 'Overview', href: '/customer/dashboard', icon: Home },
     { name: 'Orders', href: '/customer/dashboard/orders', icon: ShoppingBag },
     { name: 'Favorites', href: '/customer/dashboard/favorites', icon: Heart },
+    { name: 'Support', href: '/customer/dashboard/support', icon: MessageSquare },
     { name: 'Settings', href: '/customer/dashboard/settings', icon: Settings },
   ];
 
@@ -90,19 +92,19 @@ export default function CustomerDashboardLayout({
   const initials = `${user.firstName?.charAt(0) || ''}${user.lastName?.charAt(0) || ''}`.toUpperCase();
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="h-screen bg-background flex overflow-hidden">
       {/* Mobile Backdrop */}
       {mobileMenuOpen && (
         <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 lg:hidden" onClick={() => setMobileMenuOpen(false)} />
       )}
 
       {/* Sidebar Navigation */}
-      <aside className={`w-64 bg-white border-r border-gray-100 flex flex-col fixed inset-y-0 left-0 z-50 transform transition-transform duration-300 ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0 lg:static lg:h-screen'} shadow-[4px_0_24px_rgba(0,0,0,0.02)]`}>
+      <aside className={`w-64 bg-card border-r border-gray-100 flex flex-col fixed inset-y-0 left-0 z-50 transform transition-transform duration-300 ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0 lg:static lg:h-screen'} shadow-[4px_0_24px_rgba(0,0,0,0.02)]`}>
         <div className="p-6 pb-2 border-b border-gray-50">
           <Link href="/customer" className="flex items-center gap-3 group">
-            <div className="w-9 h-9 rounded-xl bg-[#2d5f4f] flex items-center justify-center text-white font-extrabold shadow-md group-hover:scale-105 transition-transform">
+            {/* <div className="w-9 h-9 rounded-xl bg-[#2d5f4f] flex items-center justify-center text-white font-extrabold shadow-md group-hover:scale-105 transition-transform">
               O
-            </div>
+            </div> */}
             <span className="text-xl font-extrabold text-[#2d5f4f] tracking-tight">oyaeat</span>
           </Link>
         </div>
@@ -137,9 +139,9 @@ export default function CustomerDashboardLayout({
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col min-h-screen lg:max-w-[calc(100vw-16rem)] overflow-hidden">
+      <main className="flex-1 flex flex-col h-screen lg:max-w-[calc(100vw-16rem)] overflow-hidden">
         {/* Top Header */}
-        <header className="h-20 bg-white/80 backdrop-blur-xl border-b border-gray-100 flex items-center justify-between px-6 sticky top-0 z-40 transition-all">
+        <header className="h-20 bg-card/80 backdrop-blur-xl border-b border-gray-100 flex items-center justify-between px-6 sticky top-0 z-40 transition-all">
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(true)} className="lg:hidden text-gray-700 bg-gray-50 rounded-full">
               <Menu className="h-4 w-4" />
@@ -187,7 +189,7 @@ export default function CustomerDashboardLayout({
                 
                 {/* Profile Dropdown */}
                 {dropdownOpen && (
-                  <div className="absolute right-0 mt-3 w-56 bg-white rounded-2xl shadow-[0_12px_40px_rgba(0,0,0,0.12)] border border-gray-100 py-2 z-50 animate-in fade-in slide-in-from-top-2">
+                  <div className="absolute right-0 mt-3 w-56 bg-card rounded-2xl shadow-[0_12px_40px_rgba(0,0,0,0.12)] border border-gray-100 py-2 z-50 animate-in fade-in slide-in-from-top-2">
                     <div className="px-5 py-3 border-b border-gray-50 mb-1">
                       <p className="text-sm font-extrabold text-gray-900">{user.firstName} {user.lastName}</p>
                       <p className="text-xs font-medium text-gray-500 truncate mt-0.5">{user.email}</p>
@@ -213,7 +215,7 @@ export default function CustomerDashboardLayout({
         </header>
 
         {/* Dashboard Content */}
-        <div className="flex-1 p-3 sm:p-5 overflow-auto bg-gray-50/50">
+        <div className="flex-1 p-3 sm:p-5 overflow-auto bg-background">
           {children}
         </div>
       </main>

@@ -64,7 +64,7 @@ export function PendingBusinessQueue({
   }
 
   return (
-    <div className="bg-white rounded-lg border border-slate-200 p-6">
+    <div className="bg-card rounded-lg border border-slate-200 p-6">
       <div className="flex items-center justify-between mb-4">
         <div>
           <h3 className="text-lg font-semibold text-slate-900">Pending Businesses</h3>

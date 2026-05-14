@@ -26,7 +26,7 @@ function DocPill({ label, present, icon: Icon }: { label: string; present: boole
       ${present ? 'border-[#D8F0E4] bg-[#F0FBF5]' : 'border-[#FDECEA] bg-[#FEF8F8]'}
     `}>
       <Icon className="h-4 w-4 flex-shrink-0" style={{ color: present ? '#2D6A4F' : '#C0392B' }} />
-      <span className="text-xs font-semibold text-[#111C14]">{label}</span>
+      <span className="text-xs font-semibold text-foreground">{label}</span>
       <span className="ml-auto">
         {present
           ? <Check className="h-3.5 w-3.5" style={{ color: '#2D6A4F' }} />
@@ -42,12 +42,12 @@ export function RestaurantsList({ restaurants, onApprove, onReject }: Restaurant
 
   if (restaurants.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-2xl border border-[#D8E4DC] bg-white py-16 px-6 text-center">
+      <div className="flex flex-col items-center justify-center rounded-2xl border border-border bg-card py-16 px-6 text-center">
         <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[#D8E4DC]">
-          <FileText className="h-6 w-6 text-[#6B7C6E]" />
+          <FileText className="h-6 w-6 text-muted-foreground" />
         </div>
-        <p className="text-base font-bold text-[#111C14]">No restaurants found</p>
-        <p className="mt-1 text-sm text-[#6B7C6E]">Try adjusting your filters or search term.</p>
+        <p className="text-base font-bold text-foreground">No restaurants found</p>
+        <p className="mt-1 text-sm text-muted-foreground">Try adjusting your filters or search term.</p>
       </div>
     )
   }
@@ -66,7 +66,7 @@ export function RestaurantsList({ restaurants, onApprove, onReject }: Restaurant
         return (
           <div
             key={restaurant.id}
-            className="rounded-2xl border border-[#D8E4DC] bg-white overflow-hidden shadow-sm transition-shadow hover:shadow-md"
+            className="rounded-2xl border border-border bg-card overflow-hidden shadow-sm transition-shadow hover:shadow-md"
           >
             {/* ── Row ──────────────────────────────────────── */}
             <div
@@ -83,16 +83,16 @@ export function RestaurantsList({ restaurants, onApprove, onReject }: Restaurant
 
               {/* Name + meta */}
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold text-[#111C14] truncate">{restaurant.name}</p>
-                <p className="text-xs text-[#6B7C6E] mt-0.5 truncate">
+                <p className="text-sm font-bold text-foreground truncate">{restaurant.name}</p>
+                <p className="text-xs text-muted-foreground mt-0.5 truncate">
                   {restaurant.cuisineType} &bull; {restaurant.address}
                 </p>
                 <div className="mt-1.5 flex items-center gap-4">
-                  <span className="flex items-center gap-1 text-xs text-[#6B7C6E]">
+                  <span className="flex items-center gap-1 text-xs text-muted-foreground">
                     <Mail className="h-3 w-3" />
                     {restaurant.email || '—'}
                   </span>
-                  <span className="flex items-center gap-1 text-xs text-[#6B7C6E]">
+                  <span className="flex items-center gap-1 text-xs text-muted-foreground">
                     <Phone className="h-3 w-3" />
                     {restaurant.phone || '—'}
                   </span>
@@ -113,7 +113,7 @@ export function RestaurantsList({ restaurants, onApprove, onReject }: Restaurant
                       {cfg.label}
                     </span>
                   </div>
-                  <p className="text-xs text-[#6B7C6E] mt-0.5">
+                  <p className="text-xs text-muted-foreground mt-0.5">
                     {new Date(restaurant.createdAt).toLocaleDateString('en-GB', {
                       day: '2-digit', month: '2-digit', year: 'numeric',
                     })}
@@ -124,8 +124,8 @@ export function RestaurantsList({ restaurants, onApprove, onReject }: Restaurant
                   style={{ backgroundColor: '#F5F1EB' }}
                 >
                   {isExpanded
-                    ? <ChevronUp   className="h-4 w-4 text-[#6B7C6E]" />
-                    : <ChevronDown className="h-4 w-4 text-[#6B7C6E]" />
+                    ? <ChevronUp   className="h-4 w-4 text-muted-foreground" />
+                    : <ChevronDown className="h-4 w-4 text-muted-foreground" />
                   }
                 </div>
               </div>
@@ -133,11 +133,11 @@ export function RestaurantsList({ restaurants, onApprove, onReject }: Restaurant
 
             {/* ── Expanded panel ───────────────────────────── */}
             {isExpanded && (
-              <div className="border-t border-[#D8E4DC] bg-[#F5F1EB] px-5 py-5 space-y-4">
+              <div className="border-t border-border bg-[#F5F1EB] px-5 py-5 space-y-4">
 
                 {/* Documents */}
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-widest text-[#6B7C6E] mb-3">
+                  <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">
                     Documents
                   </p>
                   <div className="grid grid-cols-3 gap-3">
@@ -181,7 +181,7 @@ export function RestaurantsList({ restaurants, onApprove, onReject }: Restaurant
                     <Button
                       onClick={() => onReject?.(restaurant.id)}
                       variant="outline"
-                      className="flex-1 rounded-xl font-bold border-[#D8E4DC] bg-white text-[#C0392B] hover:bg-red-50 hover:border-red-200 gap-2"
+                      className="flex-1 rounded-xl font-bold border-border bg-card text-[#C0392B] hover:bg-red-50 hover:border-red-200 gap-2"
                     >
                       <X className="h-4 w-4" />
                       Reject

@@ -265,7 +265,7 @@ export default function StaffPage() {
       {loading ? (
         <p className="text-sm" style={{ color: '#4a7c59' }}>Loading staff…</p>
       ) : staff.length === 0 ? (
-        <div className="bg-white border border-[#c8e6c9] rounded-xl p-10 text-center">
+        <div className="bg-card border border-[#c8e6c9] rounded-xl p-10 text-center">
           <Users className="w-10 h-10 mx-auto mb-3" style={{ color: '#a5d6a7' }} />
           <p className="font-semibold" style={{ color: '#1a5c2a' }}>No staff members yet</p>
           <p className="text-sm mt-1" style={{ color: '#4a7c59' }}>Click "Add Staff" to get started.</p>
@@ -276,7 +276,7 @@ export default function StaffPage() {
             const isActive = (member.status || '').toLowerCase() === 'active'
             return (
               <div key={member.id}
-                className="bg-white rounded-xl border shadow-sm flex flex-col transition-colors"
+                className="bg-card rounded-xl border shadow-sm flex flex-col transition-colors"
                 style={{ borderColor: '#c8e6c9' }}
                 onMouseOver={e => (e.currentTarget.style.borderColor = '#2e7d32')}
                 onMouseOut={e  => (e.currentTarget.style.borderColor = '#c8e6c9')}

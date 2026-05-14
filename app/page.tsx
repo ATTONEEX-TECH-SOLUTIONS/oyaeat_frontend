@@ -134,7 +134,7 @@ export default function Home() {
   ];
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-card">
       <Navbar />
 
       {/* Hero Section */}
@@ -148,7 +148,7 @@ export default function Home() {
             {nearbyRestaurants.map((restaurant) => (
               <div
                 key={restaurant.id}
-                className="bg-white rounded-xl overflow-hidden border border-gray-200 hover:shadow-lg hover:border-[#2d5f4f]/30 transition-all cursor-pointer group"
+                className="bg-card rounded-xl overflow-hidden border border-gray-200 hover:shadow-lg hover:border-[#2d5f4f]/30 transition-all cursor-pointer group"
               >
                 <div className="relative h-48 bg-gray-200 overflow-hidden">
                   <img
@@ -156,7 +156,7 @@ export default function Home() {
                     alt={restaurant.name}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                   />
-                  <button className="absolute top-3 right-3 p-2 bg-white rounded-full shadow-md hover:bg-gray-100">
+                  <button className="absolute top-3 right-3 p-2 bg-card rounded-full shadow-md hover:bg-gray-100">
                     <Heart className="w-4 h-4 text-gray-600" />
                   </button>
                 </div>
@@ -220,7 +220,7 @@ export default function Home() {
             {recommendedItems.map((item) => (
               <div
                 key={item.id}
-                className="bg-white rounded-xl overflow-hidden border border-gray-200 hover:shadow-lg hover:border-[#2d5f4f]/30 transition-all cursor-pointer group"
+                className="bg-card rounded-xl overflow-hidden border border-gray-200 hover:shadow-lg hover:border-[#2d5f4f]/30 transition-all cursor-pointer group"
               >
                 <div className="relative h-48 bg-gray-200 overflow-hidden">
                   <img

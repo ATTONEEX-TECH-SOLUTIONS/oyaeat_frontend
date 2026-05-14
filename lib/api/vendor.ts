@@ -38,6 +38,10 @@ export type OrderItem = {
   name: string
   price: number
   quantity: number
+  menuItem?: {
+    imageUrl?: string | null
+    imagePublicId?: string | null
+  }
 }
 
 export type Order = {
@@ -57,6 +61,41 @@ export type SalesPoint = {
   date: string
   revenue: number
   orders: number
+}
+
+// ── Wallet Types ──
+export type WalletTransaction = {
+  id: number
+  amount: number
+  type: 'credit' | 'debit' | 'withdrawal'
+  status: 'pending' | 'completed' | 'failed'
+  description: string
+  createdAt: string
+}
+
+export type WalletData = {
+  balance: number
+  pendingPayouts: number
+  transactions: WalletTransaction[]
+}
+
+// ── Review Types ──
+export type Review = {
+  id: number
+  customerName: string
+  rating: number
+  comment?: string | null
+  orderId?: number
+  createdAt: string
+}
+
+export type ReviewsData = {
+  averageRating: number
+  totalReviews: number
+  distribution: {
+    5: number; 4: number; 3: number; 2: number; 1: number;
+  }
+  reviews: Review[]
 }
 
 export type VendorDashboard = {
@@ -228,4 +267,22 @@ export const vendorApi = {
     request<{ message: string }>(`/vendor/staff/${staffId}`, {
       method: 'DELETE',
     }),
+
+  // Wallet
+  getWallet: () => request<{ wallet: WalletData }>('/vendor/wallet'),
+  requestWithdrawal: (amount: number) =>
+    request<{ message: string }>('/vendor/wallet/withdraw', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ amount }),
+    }),
+
+  // Reviews
+  getReviews: (params?: { page?: number; limit?: number }) => {
+    const q = new URLSearchParams()
+    if (params?.page) q.set('page', String(params.page))
+    if (params?.limit) q.set('limit', String(params.limit))
+    const suffix = q.toString() ? `?${q.toString()}` : ''
+    return request<{ data: ReviewsData; pagination: { total: number; page: number; limit: number; totalPages: number } }>(`/vendor/reviews${suffix}`)
+  },
 }

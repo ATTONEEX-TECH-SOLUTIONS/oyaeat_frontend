@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { BarChart3, Users, Bike, ShoppingCart, Settings, LogOut, Building2 } from 'lucide-react'
+import { BarChart3, Users, Bike, ShoppingCart, Settings, LogOut, Building2, MessageSquare } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 
@@ -12,6 +12,7 @@ const navItems = [
   { href: '/superadmin/dashboard/restaurants', label: 'Restaurants', icon: Users },
   { href: '/superadmin/dashboard/riders', label: 'Riders', icon: Bike },
   { href: '/superadmin/dashboard/orders', label: 'Customers & Orders', icon: ShoppingCart },
+  { href: '/superadmin/dashboard/chat', label: 'Support Inbox', icon: MessageSquare },
   { href: '/superadmin/dashboard/settings', label: 'Settings', icon: Settings },
 ]
 
@@ -124,7 +125,7 @@ export function Sidebar() {
       </nav>
 
       {/* ── Footer ── */}
-      <div className="p-4 border-t border-[#14491f]">
+      <div className="p-4 border-t border-[#14491f] shrink-0 mt-auto">
         <Button
           variant="ghost"
           className="w-full justify-start text-white hover:bg-[#14491f] hover:text-white"

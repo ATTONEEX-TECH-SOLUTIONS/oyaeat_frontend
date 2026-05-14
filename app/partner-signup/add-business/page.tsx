@@ -73,7 +73,7 @@ export default function AddBusinessPage() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // ✅ this fixes the 401
+          Authorization: `Bearer ${token}`, // this fixes the 401
         },
         body: JSON.stringify({
           businessName: formData.businessName,
@@ -168,7 +168,7 @@ export default function AddBusinessPage() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-900 mb-2">
                 Business Name *
               </label>
               <input
@@ -178,7 +178,7 @@ export default function AddBusinessPage() {
                 onChange={handleChange}
                 required
                 disabled={isLoading}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5f4f] focus:border-transparent outline-none disabled:bg-gray-100"
+                className="w-full text-gray-900 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5f4f] focus:border-transparent outline-none disabled:bg-gray-100"
                 placeholder="Enter your business name"
               />
             </div>
@@ -193,7 +193,7 @@ export default function AddBusinessPage() {
                 onChange={handleChange}
                 required
                 disabled={isLoading}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5f4f] focus:border-transparent outline-none disabled:bg-gray-100"
+                className="w-full text-gray-900  px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5f4f] focus:border-transparent outline-none disabled:bg-gray-100"
               >
                 <option value="">Select business type</option>
                 <option value="restaurant">Restaurant</option>
@@ -217,7 +217,7 @@ export default function AddBusinessPage() {
                 onChange={handleChange}
                 required
                 disabled={isLoading}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5f4f] focus:border-transparent outline-none disabled:bg-gray-100"
+                className="w-full text-gray-900  px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5f4f] focus:border-transparent outline-none disabled:bg-gray-100"
                 placeholder="Enter street address"
               />
             </div>
@@ -232,7 +232,7 @@ export default function AddBusinessPage() {
                   onChange={handleChange}
                   required
                   disabled={isLoading}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5f4f] focus:border-transparent outline-none disabled:bg-gray-100"
+                  className="w-full text-gray-900  px-4 py-3 border border-gray-300 rounded-lg  outline-none "
                   placeholder="City"
                 />
               </div>
@@ -245,7 +245,7 @@ export default function AddBusinessPage() {
                   onChange={handleChange}
                   required
                   disabled={isLoading}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5f4f] focus:border-transparent outline-none disabled:bg-gray-100"
+                  className="w-full text-gray-900  px-4 py-3 border border-gray-300 rounded-lg  outline-none "
                   placeholder="State"
                 />
               </div>
@@ -258,7 +258,7 @@ export default function AddBusinessPage() {
                   onChange={handleChange}
                   required
                   disabled={isLoading}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5f4f] focus:border-transparent outline-none disabled:bg-gray-100"
+                  className="w-full text-gray-900  px-4 py-3 border border-gray-300 rounded-lg  outline-none "
                   placeholder="Zip"
                 />
               </div>
@@ -276,7 +276,7 @@ export default function AddBusinessPage() {
                   onChange={handleChange}
                   required
                   disabled={isLoading}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5f4f] focus:border-transparent outline-none disabled:bg-gray-100"
+                  className="w-full text-gray-900  px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5f4f] focus:border-transparent outline-none "
                   placeholder="+234 XXX XXX XXXX"
                 />
               </div>
@@ -291,7 +291,7 @@ export default function AddBusinessPage() {
                   onChange={handleChange}
                   required
                   disabled={isLoading}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5f4f] focus:border-transparent outline-none disabled:bg-gray-100"
+                  className="w-full text-gray-900  px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5f4f] focus:border-transparent outline-none "
                   placeholder="business@example.com"
                 />
               </div>
@@ -307,7 +307,7 @@ export default function AddBusinessPage() {
                 value={formData.website}
                 onChange={handleChange}
                 disabled={isLoading}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5f4f] focus:border-transparent outline-none disabled:bg-gray-100"
+                className="w-full  text-gray-900 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5f4f] focus:border-transparent outline-none "
                 placeholder="https://www.yourbusiness.com"
               />
             </div>
@@ -323,7 +323,7 @@ export default function AddBusinessPage() {
                 required
                 rows={4}
                 disabled={isLoading}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5f4f] focus:border-transparent outline-none resize-none disabled:bg-gray-100"
+                className="w-full text-gray-900  px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5f4f] focus:border-transparent outline-none resize-none "
                 placeholder="Tell us about your business..."
               />
             </div>

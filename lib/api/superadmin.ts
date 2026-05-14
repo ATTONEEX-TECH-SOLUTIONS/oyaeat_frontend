@@ -26,7 +26,7 @@ export type BusinessStats = {
   suspended: number
 }
 
-// ✅ NEW: dashboard metrics including orders + revenue
+// NEW: dashboard metrics including orders + revenue
 export type DashboardMetrics = {
   totalRestaurants: number
   activeRestaurants: number
@@ -45,7 +45,7 @@ function getApiBaseUrl() {
 }
 
 function getTokenOrThrow() {
-  const token = localStorage.getItem('admin_token') // ✅ matches your login
+  const token = localStorage.getItem('admin_token') // matches your login
   if (!token) throw new Error('Admin not logged in. Please login again.')
   return token
 }
@@ -81,7 +81,7 @@ async function request(path: string, options: RequestInit = {}) {
   return json
 }
 
-// ✅ NOTE: routes are /admin/... not /api/admin/...
+// NOTE: routes are /admin/... not /api/admin/...
 export async function fetchBusinessStats(): Promise<BusinessStats> {
   const json = await request('/admin/businesses/stats')
   return json.data as BusinessStats

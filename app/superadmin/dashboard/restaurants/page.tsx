@@ -112,17 +112,17 @@ export default function RestaurantsPage() {
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#52B788] mb-1">
                 Super Admin
               </p>
-              <h1 className="text-2xl font-black tracking-tight text-[#111C14]">
+              <h1 className="text-2xl font-black tracking-tight text-foreground">
                 Restaurants
               </h1>
-              <p className="text-[#6B7C6E] mt-1 text-sm">
+              <p className="text-muted-foreground mt-1 text-sm">
                 All approved and active restaurants on the platform
               </p>
             </div>
 
             {/* Total count badge */}
             {!loading && (
-              <div className="flex items-center gap-2 rounded-2xl border border-[#D8E4DC] bg-white px-5 py-3 shadow-sm">
+              <div className="flex items-center gap-2 rounded-2xl border border-border bg-card px-5 py-3 shadow-sm">
                 <div
                   className="flex h-9 w-9 items-center justify-center rounded-xl"
                   style={{ backgroundColor: '#1B433218' }}
@@ -130,8 +130,8 @@ export default function RestaurantsPage() {
                   <Store className="h-5 w-5" style={{ color: '#1B4332' }} />
                 </div>
                 <div>
-                  <p className="text-xl font-black tracking-tight text-[#111C14]">{restaurants.length}</p>
-                  <p className="text-xs font-semibold uppercase tracking-widest text-[#6B7C6E]">Total</p>
+                  <p className="text-xl font-black tracking-tight text-foreground">{restaurants.length}</p>
+                  <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Total</p>
                 </div>
               </div>
             )}
@@ -140,10 +140,10 @@ export default function RestaurantsPage() {
           {/* ── Search + refresh ─────────────────────────── */}
           <div className="flex gap-3 mb-5">
             <div className="relative flex-1">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6B7C6E]" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search by name or email..."
-                className="pl-10 h-10 rounded-xl border-[#D8E4DC] bg-white text-[#111C14] placeholder:text-[#6B7C6E] focus-visible:ring-[#1B4332] focus-visible:border-[#1B4332]"
+                className="pl-10 h-10 rounded-xl border-border bg-card text-foreground placeholder:text-muted-foreground focus-visible:ring-[#1B4332] focus-visible:border-[#1B4332]"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -152,7 +152,7 @@ export default function RestaurantsPage() {
               variant="outline"
               onClick={fetchAll}
               disabled={loading}
-              className="h-10 rounded-xl border-[#D8E4DC] bg-white text-[#2D6A4F] font-semibold hover:bg-[#F0F7F3] hover:border-[#52B788] transition-all gap-2 px-4"
+              className="h-10 rounded-xl border-border bg-card text-[#2D6A4F] font-semibold hover:bg-[#F0F7F3] hover:border-[#52B788] transition-all gap-2 px-4"
             >
               <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
               {loading ? 'Loading...' : 'Refresh'}
@@ -172,14 +172,14 @@ export default function RestaurantsPage() {
             <div className="flex items-center justify-center py-20">
               <div className="flex flex-col items-center gap-3">
                 <RefreshCw className="h-6 w-6 animate-spin text-[#2D6A4F]" />
-                <p className="text-sm font-medium text-[#6B7C6E]">Loading restaurants...</p>
+                <p className="text-sm font-medium text-muted-foreground">Loading restaurants...</p>
               </div>
             </div>
           )}
 
           {/* ── Results count ─────────────────────────────── */}
           {!loading && (
-            <p className="text-xs font-semibold uppercase tracking-widest text-[#6B7C6E] mb-4">
+            <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-4">
               {filtered.length} {filtered.length === 1 ? 'restaurant' : 'restaurants'}
               {searchTerm && ` matching "${searchTerm}"`}
             </p>

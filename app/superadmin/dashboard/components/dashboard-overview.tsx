@@ -1,5 +1,5 @@
 import { TrendingUp, Users, Bike, ShoppingCart, AlertCircle, CheckCircle } from 'lucide-react'
-import type { DashboardMetrics } from '@/lib/api/superadmin' // ✅ keep types consistent
+import type { DashboardMetrics } from '@/lib/api/superadmin' // keep types consistent
 
 interface DashboardOverviewProps {
   metrics: DashboardMetrics

@@ -121,7 +121,9 @@ export default function DashboardPage() {
       {/* ── Header ── */}
       <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
         <div>
-          <h1 style={{ color: '#1a5c2a', fontWeight: 800, fontSize: 28, margin: 0 }}>Dashboard</h1>
+          <h1 className="truncate max-w-[80vw] lg:max-w-2xl capitalize" style={{ color: '#1a5c2a', fontWeight: 800, fontSize: 28, margin: 0 }}>
+            {business?.name ? `${business.name} Dashboard` : 'Dashboard'}
+          </h1>
           <p style={{ color: '#4a7c59', fontSize: 13, margin: '4px 0 0' }}>
             Welcome back! Here's your restaurant overview.
           </p>

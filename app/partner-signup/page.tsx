@@ -262,7 +262,7 @@ const PartnerSignup = () => {
                   type="text"
                   value={formData.firstName}
                   onChange={(e) => updateFormData("firstName", e.target.value)}
-                  className="w-full px-4 py-3 bg-white/60 backdrop-blur-sm border border-white/40 rounded-lg focus:ring-2 focus:ring-[#2d5f4f] focus:border-transparent focus:bg-white/80 outline-none text-gray-900 placeholder-gray-600 transition-all"
+                  className="w-full px-4 py-3 bg-white backdrop-blur-sm border border-white/40 rounded-lg  outline-none text-gray-900 placeholder-gray-600 transition-all"
                   placeholder="First name *"
                   required
                   disabled={isLoading}
@@ -272,7 +272,7 @@ const PartnerSignup = () => {
                   type="text"
                   value={formData.lastName}
                   onChange={(e) => updateFormData("lastName", e.target.value)}
-                  className="w-full px-4 py-3 bg-white/60 backdrop-blur-sm border border-white/40 rounded-lg focus:ring-2 focus:ring-[#2d5f4f] focus:border-transparent focus:bg-white/80 outline-none text-gray-900 placeholder-gray-600 transition-all"
+                  className="w-full px-4 py-3 bg-white backdrop-blur-sm border border-white/40 rounded-lg  outline-none text-gray-900 placeholder-gray-600 transition-all"
                   placeholder="Last name *"
                   required
                   disabled={isLoading}
@@ -281,7 +281,7 @@ const PartnerSignup = () => {
                 <select
                   value={formData.businessType}
                   onChange={(e) => updateFormData("businessType", e.target.value)}
-                  className="w-full px-4 py-3 bg-white/60 backdrop-blur-sm border border-white/40 rounded-lg focus:ring-2 focus:ring-[#2d5f4f] focus:border-transparent focus:bg-white/80 outline-none text-gray-700 transition-all"
+                  className="w-full px-4 py-3 bg-white backdrop-blur-sm border border-white/40 rounded-lg  outline-none text-gray-700 transition-all"
                   required
                   disabled={isLoading}
                 >
@@ -298,7 +298,7 @@ const PartnerSignup = () => {
                   type="email"
                   value={formData.email}
                   onChange={(e) => updateFormData("email", e.target.value)}
-                  className="w-full px-4 py-3 bg-white/60 backdrop-blur-sm border border-white/40 rounded-lg focus:ring-2 focus:ring-[#2d5f4f] focus:border-transparent focus:bg-white/80 outline-none text-gray-900 placeholder-gray-600 transition-all"
+                  className="w-full px-4 py-3 bg-white backdrop-blur-sm border border-white/40 rounded-lg  outline-none text-gray-900 placeholder-gray-600 transition-all"
                   placeholder="Email *"
                   required
                   disabled={isLoading}
@@ -308,7 +308,7 @@ const PartnerSignup = () => {
                   type="tel"
                   value={formData.phone}
                   onChange={(e) => updateFormData("phone", e.target.value)}
-                  className="w-full px-4 py-3 bg-white/60 backdrop-blur-sm border border-white/40 rounded-lg focus:ring-2 focus:ring-[#2d5f4f] focus:border-transparent focus:bg-white/80 outline-none text-gray-900 placeholder-gray-600 transition-all"
+                  className="w-full px-4 py-3 bg-white backdrop-blur-sm border border-white/40 rounded-lg  outline-none text-gray-900 placeholder-gray-600 transition-all"
                   placeholder="Phone number *"
                   required
                   disabled={isLoading}
@@ -318,7 +318,7 @@ const PartnerSignup = () => {
                   type="password"
                   value={formData.password}
                   onChange={(e) => updateFormData("password", e.target.value)}
-                  className="w-full px-4 py-3 bg-white/60 backdrop-blur-sm border border-white/40 rounded-lg focus:ring-2 focus:ring-[#2d5f4f] focus:border-transparent focus:bg-white/80 outline-none text-gray-900 placeholder-gray-600 transition-all"
+                  className="w-full px-4 py-3 bg-white backdrop-blur-sm border border-white/40 rounded-lg  outline-none text-gray-900 placeholder-gray-600 transition-all"
                   placeholder="Password *"
                   required
                   minLength={8}
@@ -388,7 +388,7 @@ const PartnerSignup = () => {
       </div>
 
       {/* Find the Best Solution Section */}
-      <section className="py-20 px-6 bg-white">
+      <section className="py-20 px-6 bg-[#2d5f4f]">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-4">
@@ -403,7 +403,7 @@ const PartnerSignup = () => {
             {solutions.map((solution, index) => (
               <div
                 key={index}
-                className="bg-gradient-to-br from-[#e8f5f1] to-[#d4ebe5] rounded-2xl p-8 hover:shadow-xl transition-all duration-300 hover:scale-105"
+                className="bg-white rounded-2xl p-8 hover:shadow-xl transition-all duration-300 hover:scale-105"
               >
                 <div className="text-[#2d5f4f] mb-6">{solution.icon}</div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-4">{solution.title}</h3>
@@ -425,7 +425,7 @@ const PartnerSignup = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-20 px-6 bg-gradient-to-br from-[#e8f5f1] to-[#d4ebe5]">
+      <section className="py-20 px-6 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-4">
@@ -440,15 +440,15 @@ const PartnerSignup = () => {
             {testimonials.map((testimonial, index) => (
               <div
                 key={index}
-                className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300"
+                className="bg-[#2d5f4f] rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300"
               >
                 <div className="flex items-center mb-6">
                   <div className="w-16 h-16 bg-gradient-to-br from-[#e8f5f1] to-[#d4ebe5] rounded-full flex items-center justify-center mr-4">
                     {testimonial.avatar}
                   </div>
                   <div>
-                    <h4 className="font-bold text-gray-900">{testimonial.name}</h4>
-                    <p className="text-sm text-gray-600">{testimonial.business}</p>
+                    <h4 className="font-bold text-white">{testimonial.name}</h4>
+                    <p className="text-sm text-white">{testimonial.business}</p>
                   </div>
                 </div>
                 
@@ -460,7 +460,7 @@ const PartnerSignup = () => {
                   ))}
                 </div>
 
-                <p className="text-gray-700 italic">"{testimonial.text}"</p>
+                <p className="text-white italic">"{testimonial.text}"</p>
               </div>
             ))}
           </div>
@@ -468,13 +468,13 @@ const PartnerSignup = () => {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-20 px-6 bg-white">
+      <section className="py-20 px-6 bg-[#2d5f4f]">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-4">
               Frequently Asked Questions
             </h2>
-            <p className="text-xl text-gray-600">
+            <p className="text-xl text-gray-900">
               Got questions? We've got answers
             </p>
           </div>
@@ -502,7 +502,7 @@ const PartnerSignup = () => {
                   </svg>
                 </button>
                 {openFAQ === index && (
-                  <div className="px-6 py-5 bg-gray-50 border-t border-gray-200">
+                  <div className="px-6 py-5 bg-white border-t border-gray-200">
                     <p className="text-gray-700">{faq.answer}</p>
                   </div>
                 )}

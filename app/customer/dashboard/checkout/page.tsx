@@ -128,7 +128,7 @@ export default function CheckoutPage() {
         <div className="md:col-span-2 space-y-6">
           
           {/* Delivery Address */}
-          <section className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative z-10 overflow-hidden">
+          <section className="bg-card rounded-3xl p-6 sm:p-8 border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative z-10 overflow-hidden">
             <h2 className="text-xl sm:text-2xl font-extrabold text-gray-900 mb-6 flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shadow-sm">
                 <MapPin className="w-5 h-5" />
@@ -170,7 +170,7 @@ export default function CheckoutPage() {
           </section>
 
           {/* Payment Method */}
-          <section className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative z-10 overflow-hidden">
+          <section className="bg-card rounded-3xl p-6 sm:p-8 border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative z-10 overflow-hidden">
             <h2 className="text-xl sm:text-2xl font-extrabold text-gray-900 mb-6 flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center shadow-sm">
                 <CreditCard className="w-5 h-5" />
@@ -235,12 +235,12 @@ export default function CheckoutPage() {
                 <Button 
                   onClick={handlePlaceOrder}
                   disabled={loading || cart.length === 0}
-                  className="w-full h-14 rounded-xl text-lg font-extrabold bg-white text-[#2d5f4f] hover:bg-gray-100 shadow-md hover:-translate-y-0.5 transition-all disabled:opacity-70 disabled:hover:translate-y-0"
+                  className="w-full h-14 rounded-xl text-lg font-extrabold bg-card text-[#2d5f4f] hover:bg-gray-100 shadow-md hover:-translate-y-0.5 transition-all disabled:opacity-70 disabled:hover:translate-y-0"
                 >
                   {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Confirm Order'}
                 </Button>
                 
-                <div className="flex items-center justify-center gap-2 text-green-100/90 bg-white/5 py-2.5 rounded-xl border border-white/10 backdrop-blur-sm">
+                <div className="flex items-center justify-center gap-2 text-green-100/90 bg-card/5 py-2.5 rounded-xl border border-white/10 backdrop-blur-sm">
                   <ShieldCheck className="w-4 h-4" />
                   <span className="text-xs font-bold uppercase tracking-wider">100% Encrypted</span>
                 </div>

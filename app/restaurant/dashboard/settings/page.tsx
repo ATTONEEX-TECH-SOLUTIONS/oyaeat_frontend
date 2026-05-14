@@ -67,7 +67,7 @@ function Label({ children }: { children: React.ReactNode }) {
 function Input({ ...props }: React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input {...props}
-      className="w-full px-4 py-3 rounded-xl text-sm border-2 outline-none transition-all duration-150 focus:border-[#2e7d32] bg-white"
+      className="w-full px-4 py-3 rounded-xl text-sm border-2 outline-none transition-all duration-150 focus:border-[#2e7d32] bg-card"
       style={{ borderColor: '#ddeee0', color: '#1a3d20', ...(props.style ?? {}) }}
     />
   );
@@ -76,7 +76,7 @@ function Input({ ...props }: React.InputHTMLAttributes<HTMLInputElement>) {
 function Textarea({ ...props }: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
   return (
     <textarea {...props}
-      className="w-full px-4 py-3 rounded-xl text-sm border-2 outline-none transition-all duration-150 focus:border-[#2e7d32] bg-white resize-none"
+      className="w-full px-4 py-3 rounded-xl text-sm border-2 outline-none transition-all duration-150 focus:border-[#2e7d32] bg-card resize-none"
       style={{ borderColor: '#ddeee0', color: '#1a3d20' }}
     />
   );
@@ -98,6 +98,7 @@ export default function SettingsPage() {
   const [loading, setLoading]   = useState(true);
   const [saving, setSaving]     = useState(false);
   const [tab, setTab]           = useState<TabId>('profile');
+  const [audioVol, setAudioVol] = useState<number>(50);
   const [toast, setToast]       = useState<{ type: 'success' | 'error'; msg: string } | null>(null);
   const [thumbUploading, setThumbUploading] = useState(false);
   const [picUploading, setPicUploading]     = useState(false);
@@ -114,7 +115,16 @@ export default function SettingsPage() {
       .then(j => { if (j?.data) setSettings({ ...DEFAULT, ...j.data }); })
       .catch(() => flash('error', 'Could not load settings.'))
       .finally(() => setLoading(false));
+      
+    const volStr = localStorage.getItem('vendor_audio_volume');
+    if (volStr !== null) setAudioVol(Math.round(parseFloat(volStr) * 100));
   }, []);
+
+  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = parseInt(e.target.value, 10);
+    setAudioVol(val);
+    localStorage.setItem('vendor_audio_volume', (val / 100).toString());
+  };
 
   function flash(type: 'success' | 'error', msg: string) {
     setToast({ type, msg });
@@ -379,11 +389,50 @@ export default function SettingsPage() {
                     <div className="relative flex-shrink-0 ml-6 cursor-pointer" style={{ width: '44px', height: '24px' }}
                       onClick={() => setSettings(p => ({ ...p, notifications: { ...p.notifications, [key]: !val } }))}>
                       <div className="w-full h-full rounded-full transition-colors duration-200" style={{ backgroundColor: val ? '#1a5c2a' : '#d1d5db' }} />
-                      <div className="absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200"
+                      <div className="absolute top-0.5 w-5 h-5 bg-card rounded-full shadow transition-transform duration-200"
                         style={{ left: '2px', transform: val ? 'translateX(20px)' : 'translateX(0)' }} />
                     </div>
                   </label>
                 ))}
+                
+                <div className="pt-5 mt-5 border-t border-gray-100 dark:border-gray-800">
+                  <Label>Alert System Volume</Label>
+                  <p className="text-xs text-gray-500 mb-4">Adjust the loudness of the new order double-chime.</p>
+                  <div className="flex items-center gap-4">
+                    <input 
+                      type="range" min="0" max="100" 
+                      value={audioVol} 
+                      onChange={handleVolumeChange} 
+                      className="flex-1 h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer" 
+                      style={{ accentColor: '#1a5c2a' }}
+                    />
+                    <span className="text-sm font-bold w-9 text-right" style={{ color: '#1a5c2a' }}>{audioVol}%</span>
+                    <button 
+                      onClick={() => {
+                        try {
+                          const audioCtxClass = window.AudioContext || (window as any).webkitAudioContext;
+                          const audioCtx = new audioCtxClass();
+                          const osc = audioCtx.createOscillator();
+                          const gainNode = audioCtx.createGain();
+                          osc.connect(gainNode);
+                          gainNode.connect(audioCtx.destination);
+                          osc.type = 'sine';
+                          osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                          osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
+                          gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+                          gainNode.gain.linearRampToValueAtTime(audioVol / 100, audioCtx.currentTime + 0.05);
+                          gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                          osc.start(audioCtx.currentTime);
+                          osc.stop(audioCtx.currentTime + 0.3);
+                        } catch(e) {}
+                      }}
+                      className="px-4 py-2 text-xs font-bold rounded-xl border-2 hover:bg-gray-50 transition-colors"
+                      style={{ borderColor: '#ddeee0', color: '#1a5c2a' }}
+                    >
+                      Test
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           )}

@@ -27,12 +27,12 @@ export default function StatCard({ title, value, change, icon: Icon, trend }: St
         transition: 'box-shadow 0.2s, transform 0.2s',
       }}
       onMouseEnter={e => {
-        ;(e.currentTarget as HTMLDivElement).style.boxShadow = '0 6px 20px rgba(26,92,42,0.12)'
-        ;(e.currentTarget as HTMLDivElement).style.transform = 'translateY(-2px)'
+        ; (e.currentTarget as HTMLDivElement).style.boxShadow = '0 6px 20px rgba(26,92,42,0.12)'
+          ; (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-2px)'
       }}
       onMouseLeave={e => {
-        ;(e.currentTarget as HTMLDivElement).style.boxShadow = '0 1px 4px rgba(26,92,42,0.06)'
-        ;(e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)'
+        ; (e.currentTarget as HTMLDivElement).style.boxShadow = '0 1px 4px rgba(26,92,42,0.06)'
+          ; (e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)'
       }}
     >
       {/* subtle bg decoration */}
@@ -56,7 +56,7 @@ export default function StatCard({ title, value, change, icon: Icon, trend }: St
         </span>
         <div
           style={{
-            backgroundColor: '#e8f5e9',
+            backgroundColor: 'white',
             borderRadius: 10,
             padding: 8,
             display: 'flex',

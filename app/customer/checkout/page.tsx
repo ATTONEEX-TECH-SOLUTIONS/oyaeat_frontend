@@ -113,7 +113,7 @@ export default function CheckoutPage() {
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-xl sticky top-0 z-40 border-b border-gray-100 px-4 py-4 sm:px-8 flex items-center shadow-sm">
+      <header className="bg-card/80 backdrop-blur-xl sticky top-0 z-40 border-b border-gray-100 px-4 py-4 sm:px-8 flex items-center shadow-sm">
         <div className="flex items-center gap-4">
           <Link href="/customer/cart" className="p-2 sm:p-2.5 bg-gray-50 hover:bg-gray-100 rounded-full transition-colors group">
             <ArrowLeft className="h-5 w-5 text-gray-700 group-hover:-translate-x-0.5 transition-transform" />
@@ -136,7 +136,7 @@ export default function CheckoutPage() {
           <div className="md:col-span-2 space-y-8 pl-1">
             
             {/* Delivery Address */}
-            <section className="bg-white rounded-[2.5rem] p-6 sm:p-8 md:p-10 border border-gray-100 shadow-sm hover:shadow-md transition-shadow relative z-10 overflow-hidden">
+            <section className="bg-card rounded-[2.5rem] p-6 sm:p-8 md:p-10 border border-gray-100 shadow-sm hover:shadow-md transition-shadow relative z-10 overflow-hidden">
               <div className="absolute top-0 right-0 w-40 h-40 bg-blue-500/5 rounded-bl-[100px] -z-10"></div>
               <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-8 flex items-center gap-4">
                 <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center shadow-sm">
@@ -179,7 +179,7 @@ export default function CheckoutPage() {
             </section>
 
             {/* Payment Method */}
-            <section className="bg-white rounded-[2.5rem] p-6 sm:p-8 md:p-10 border border-gray-100 shadow-sm hover:shadow-md transition-shadow relative z-10 overflow-hidden">
+            <section className="bg-card rounded-[2.5rem] p-6 sm:p-8 md:p-10 border border-gray-100 shadow-sm hover:shadow-md transition-shadow relative z-10 overflow-hidden">
               <div className="absolute top-0 right-0 w-40 h-40 bg-orange-500/5 rounded-bl-[100px] -z-10"></div>
               <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-8 flex items-center gap-4">
                 <div className="w-12 h-12 rounded-2xl bg-orange-50 text-orange-600 flex items-center justify-center shadow-sm">
@@ -190,7 +190,7 @@ export default function CheckoutPage() {
               
               <div className="space-y-5">
                 {/* Card Option */}
-                <label onClick={() => setPaymentMethod('card')} className={`block relative border-2 rounded-3xl p-6 cursor-pointer transition-all duration-300 ${paymentMethod === 'card' ? 'border-[#2d5f4f] bg-[#2d5f4f]/5 ring-4 ring-[#2d5f4f]/20 shadow-md transform scale-[1.01]' : 'border-gray-100 hover:border-gray-300 bg-white hover:bg-gray-50'}`}>
+                <label onClick={() => setPaymentMethod('card')} className={`block relative border-2 rounded-3xl p-6 cursor-pointer transition-all duration-300 ${paymentMethod === 'card' ? 'border-[#2d5f4f] bg-[#2d5f4f]/5 ring-4 ring-[#2d5f4f]/20 shadow-md transform scale-[1.01]' : 'border-gray-100 hover:border-gray-300 bg-card hover:bg-gray-50'}`}>
                   <div className="flex items-center gap-5">
                     <div className={`w-7 h-7 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${paymentMethod === 'card' ? 'border-[#2d5f4f]' : 'border-gray-300'}`}>
                       {paymentMethod === 'card' && <div className="w-4 h-4 rounded-full bg-[#2d5f4f] shadow-sm"></div>}
@@ -206,7 +206,7 @@ export default function CheckoutPage() {
                 </label>
 
                 {/* Transfer Option */}
-                <label onClick={() => setPaymentMethod('transfer')} className={`block relative border-2 rounded-3xl p-6 cursor-pointer transition-all duration-300 ${paymentMethod === 'transfer' ? 'border-[#2d5f4f] bg-[#2d5f4f]/5 ring-4 ring-[#2d5f4f]/20 shadow-md transform scale-[1.01]' : 'border-gray-100 hover:border-gray-300 bg-white hover:bg-gray-50'}`}>
+                <label onClick={() => setPaymentMethod('transfer')} className={`block relative border-2 rounded-3xl p-6 cursor-pointer transition-all duration-300 ${paymentMethod === 'transfer' ? 'border-[#2d5f4f] bg-[#2d5f4f]/5 ring-4 ring-[#2d5f4f]/20 shadow-md transform scale-[1.01]' : 'border-gray-100 hover:border-gray-300 bg-card hover:bg-gray-50'}`}>
                   <div className="flex items-center gap-5">
                     <div className={`w-7 h-7 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${paymentMethod === 'transfer' ? 'border-[#2d5f4f]' : 'border-gray-300'}`}>
                       {paymentMethod === 'transfer' && <div className="w-4 h-4 rounded-full bg-[#2d5f4f] shadow-sm"></div>}
@@ -222,7 +222,7 @@ export default function CheckoutPage() {
                 </label>
 
                 {/* Cash Option */}
-                <label onClick={() => setPaymentMethod('cash')} className={`block relative border-2 rounded-3xl p-6 cursor-pointer transition-all duration-300 ${paymentMethod === 'cash' ? 'border-[#2d5f4f] bg-[#2d5f4f]/5 ring-4 ring-[#2d5f4f]/20 shadow-md transform scale-[1.01]' : 'border-gray-100 hover:border-gray-300 bg-white hover:bg-gray-50'}`}>
+                <label onClick={() => setPaymentMethod('cash')} className={`block relative border-2 rounded-3xl p-6 cursor-pointer transition-all duration-300 ${paymentMethod === 'cash' ? 'border-[#2d5f4f] bg-[#2d5f4f]/5 ring-4 ring-[#2d5f4f]/20 shadow-md transform scale-[1.01]' : 'border-gray-100 hover:border-gray-300 bg-card hover:bg-gray-50'}`}>
                   <div className="flex items-center gap-5">
                     <div className={`w-7 h-7 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${paymentMethod === 'cash' ? 'border-[#2d5f4f]' : 'border-gray-300'}`}>
                       {paymentMethod === 'cash' && <div className="w-4 h-4 rounded-full bg-[#2d5f4f] shadow-sm"></div>}
@@ -244,7 +244,7 @@ export default function CheckoutPage() {
            {/* Final Summary */}
            <div className="md:col-span-1">
               <div className="bg-[#2d5f4f] rounded-[2.5rem] p-8 border border-[#1e4035] shadow-2xl sticky top-28 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-blend-soft-light text-white overflow-hidden relative group">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-[60px] -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-1000"></div>
+                <div className="absolute top-0 right-0 w-64 h-64 bg-card/5 rounded-full blur-[60px] -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-1000"></div>
                 <h2 className="text-2xl font-extrabold text-white mb-8 border-b border-white/10 pb-6">Payment Summary</h2>
                 
                 <div className="flex flex-col mb-10 relative z-10">
@@ -258,12 +258,12 @@ export default function CheckoutPage() {
                   <Button 
                     onClick={handlePlaceOrder}
                     disabled={loading || cart.length === 0}
-                    className="w-full h-16 rounded-2xl text-xl font-extrabold bg-white text-[#2d5f4f] hover:bg-gray-100 shadow-xl hover:-translate-y-1 transition-all disabled:opacity-70 disabled:hover:translate-y-0"
+                    className="w-full h-16 rounded-2xl text-xl font-extrabold bg-card text-[#2d5f4f] hover:bg-gray-100 shadow-xl hover:-translate-y-1 transition-all disabled:opacity-70 disabled:hover:translate-y-0"
                   >
                     {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : 'Pay Now'}
                   </Button>
                   
-                  <div className="flex items-center justify-center gap-2 text-green-100 bg-white/10 py-3 rounded-xl border border-white/10 backdrop-blur-sm">
+                  <div className="flex items-center justify-center gap-2 text-green-100 bg-card/10 py-3 rounded-xl border border-white/10 backdrop-blur-sm">
                     <ShieldCheck className="w-5 h-5" />
                     <span className="text-sm font-bold">100% secure & encrypted</span>
                   </div>

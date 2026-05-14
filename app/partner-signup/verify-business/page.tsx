@@ -206,7 +206,7 @@ const VerifyBusinessPage = () => {
 
   if (pageLoading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="min-h-screen bg-card flex items-center justify-center">
         <p className="text-gray-600">Loading business details...</p>
       </div>
     );
@@ -304,7 +304,7 @@ const VerifyBusinessPage = () => {
                     </p>
 
                     {doc.file && (
-                      <div className="flex items-center gap-2 text-sm text-gray-700 bg-white rounded px-3 py-2 border border-gray-200">
+                      <div className="flex items-center gap-2 text-sm text-gray-700 bg-card rounded px-3 py-2 border border-gray-200">
                         <svg
                           className="w-4 h-4"
                           fill="none"

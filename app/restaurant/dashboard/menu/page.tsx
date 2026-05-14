@@ -111,7 +111,7 @@ export default function MenuPage() {
       )}
 
       {/* Table */}
-      <div className="bg-white border border-[#c8e6c9] rounded-xl overflow-hidden shadow-sm">
+      <div className="bg-card border border-[#c8e6c9] rounded-xl overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead style={{ backgroundColor: '#e8f5e9' }}>

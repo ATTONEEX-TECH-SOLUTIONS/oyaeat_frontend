@@ -32,7 +32,7 @@ const C = {
   amberLight: '#F4A620',
   bg:         '#F5F1EB',
   white:      '#FFFFFF',
-  textDark:   '#111C14',
+  textDark:   'inherit',
   textMuted:  '#6B7C6E',
   border:     '#D8E4DC',
   error:      '#C0392B',
@@ -68,10 +68,10 @@ function DocRow({ doc }: { doc: DocumentItem }) {
   const Icon = iconMap[doc.type] ?? FileText
 
   return (
-    <div className="flex items-center justify-between rounded-xl border border-[#D8E4DC] bg-white px-3 py-2.5">
+    <div className="flex items-center justify-between rounded-xl border border-border bg-card px-3 py-2.5">
       <div className="flex items-center gap-2">
         <Icon className="h-4 w-4 flex-shrink-0" style={{ color: C.greenMid }} />
-        <span className="text-xs font-semibold capitalize text-[#111C14]">
+        <span className="text-xs font-semibold capitalize text-foreground">
           {doc.type.replace(/_/g, ' ')}
         </span>
       </div>
@@ -86,7 +86,7 @@ function DocRow({ doc }: { doc: DocumentItem }) {
           View
         </a>
       ) : (
-        <span className="text-xs text-[#6B7C6E]">No file</span>
+        <span className="text-xs text-muted-foreground">No file</span>
       )}
     </div>
   )
@@ -113,7 +113,7 @@ function BusinessCard({
     .split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase()
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-[#D8E4DC] bg-white shadow-sm transition-shadow hover:shadow-md">
+    <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-shadow hover:shadow-md">
 
       {/* ── Row header ──────────────────────────────── */}
       <div

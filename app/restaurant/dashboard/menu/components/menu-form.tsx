@@ -286,7 +286,7 @@ export default function MenuForm({ item, onClose, onCreated, onUpdated }: MenuFo
                 style={{ backgroundColor: formData.available ? '#1a5c2a' : '#c8e6c9' }}
               >
                 <div
-                  className="w-5 h-5 bg-white rounded-full shadow transition-transform"
+                  className="w-5 h-5 bg-card rounded-full shadow transition-transform"
                   style={{ transform: formData.available ? 'translateX(16px)' : 'translateX(0)' }}
                 />
               </div>

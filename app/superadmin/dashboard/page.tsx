@@ -60,7 +60,7 @@ export default function DashboardPage() {
   }, [])
 
   const metrics: DashboardMetrics = useMemo(() => {
-    // ✅ prefer backend metrics (includes orders + revenue)
+    // prefer backend metrics (includes orders + revenue)
     if (dashboardMetrics) return dashboardMetrics
 
     // fallback if metrics endpoint fails (keeps UI stable)
@@ -95,26 +95,26 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="flex min-h-screen bg-white">
+    <div className="flex min-h-screen bg-card">
       <Sidebar />
 
       <main className="flex-1 overflow-auto bg-[#f5faf6]">
         <div className="p-8">
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-[#1a5c2a]">Dashboard</h1>
-            <p className="text-[#4a7c59] mt-2">
+            <p className="text-primary mt-2">
               Welcome back! Here’s your business overview.
             </p>
           </div>
 
           {loading && (
-            <div className="bg-white rounded-lg border border-[#c8e6c9] p-6">
-              <p className="text-[#4a7c59]">Loading dashboard...</p>
+            <div className="bg-card rounded-lg border border-[#c8e6c9] p-6">
+              <p className="text-primary">Loading dashboard...</p>
             </div>
           )}
 
           {error && !loading && (
-            <div className="bg-white rounded-lg border border-red-200 p-6">
+            <div className="bg-card rounded-lg border border-red-200 p-6">
               <p className="text-red-700 font-medium">Failed to load</p>
               <p className="text-red-600 mt-1 text-sm">{error}</p>
             </div>
@@ -133,7 +133,7 @@ export default function DashboardPage() {
                 </div>
 
                 <div className="space-y-4">
-                  <div className="bg-white rounded-lg border border-[#c8e6c9] p-6 shadow-sm">
+                  <div className="bg-card rounded-lg border border-[#c8e6c9] p-6 shadow-sm">
                     <h3 className="text-lg font-semibold text-[#1a5c2a] mb-4">
                       Quick Stats
                     </h3>
@@ -146,7 +146,7 @@ export default function DashboardPage() {
                         { label: 'Suspended', value: stats?.suspended ?? 0 },
                       ].map(({ label, value }) => (
                         <div key={label} className="flex justify-between text-sm">
-                          <span className="text-[#4a7c59]">{label}</span>
+                          <span className="text-primary">{label}</span>
                           <span className="font-semibold text-[#1a5c2a]">{value}</span>
                         </div>
                       ))}

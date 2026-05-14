@@ -201,7 +201,7 @@ const VerifyPhone = () => {
                         onChange={(e) => handleCodeChange(index, e.target.value)}
                         onKeyDown={(e) => handleKeyDown(index, e)}
                         disabled={isVerifying}
-                        className="w-14 h-16 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5f4f] focus:border-[#2d5f4f] outline-none disabled:bg-gray-100"
+                        className="w-14 h-16 text-center text-2xl text-gray-900 font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5f4f] focus:border-[#2d5f4f] outline-none disabled:bg-gray-100"
                       />
                     ))}
                   </div>

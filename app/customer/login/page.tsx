@@ -79,7 +79,7 @@ export default function CustomerLoginPage() {
           </Link>
           
           <div className="max-w-md space-y-6 slide-up-animation">
-            <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-3xl font-extrabold shadow-2xl border border-white/20">
+            <div className="w-14 h-14 rounded-2xl bg-card/20 backdrop-blur-md flex items-center justify-center text-3xl font-extrabold shadow-2xl border border-white/20">
               O
             </div>
             <h1 className="text-5xl font-extrabold leading-tight tracking-tight drop-shadow-lg">
@@ -93,7 +93,7 @@ export default function CustomerLoginPage() {
       </div>
 
       {/* Right side: Login Form */}
-      <div className="flex-1 flex flex-col justify-center px-4 sm:px-12 lg:px-24 xl:px-32 relative bg-white">
+      <div className="flex-1 flex flex-col justify-center px-4 sm:px-12 lg:px-24 xl:px-32 relative bg-card">
         <Link href="/customer" className="absolute top-8 left-8 lg:hidden flex items-center gap-2 text-gray-600 hover:text-gray-900 group bg-gray-50 px-3 py-2 rounded-full shadow-sm">
           <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
           <span className="text-sm font-semibold">Back</span>
@@ -122,7 +122,7 @@ export default function CustomerLoginPage() {
                     value={formData.emailOrPhone}
                     onChange={handleChange}
                     placeholder="Enter your email or phone" 
-                    className="pl-12 h-14 rounded-2xl bg-gray-50 focus-visible:ring-2 focus-visible:ring-[#2d5f4f]/30 focus-visible:bg-white shadow-inner border-gray-100 text-base transition-all"
+                    className="pl-12 h-14 rounded-2xl bg-gray-50 focus-visible:ring-2 focus-visible:ring-[#2d5f4f]/30 focus-visible:bg-card shadow-inner border-gray-100 text-base transition-all"
                   />
                 </div>
               </div>
@@ -142,7 +142,7 @@ export default function CustomerLoginPage() {
                     value={formData.password}
                     onChange={handleChange}
                     placeholder="••••••••" 
-                    className="pl-12 pr-12 h-14 rounded-2xl bg-gray-50 focus-visible:ring-2 focus-visible:ring-[#2d5f4f]/30 focus-visible:bg-white shadow-inner border-gray-100 text-base transition-all"
+                    className="pl-12 pr-12 h-14 rounded-2xl bg-gray-50 focus-visible:ring-2 focus-visible:ring-[#2d5f4f]/30 focus-visible:bg-card shadow-inner border-gray-100 text-base transition-all"
                   />
                   <button 
                     type="button"
@@ -164,16 +164,16 @@ export default function CustomerLoginPage() {
                  <div className="w-full border-t border-gray-100"></div>
                </div>
                <div className="relative flex justify-center text-sm">
-                 <span className="px-4 bg-white text-gray-400 font-bold uppercase tracking-wider text-xs">Or continue with</span>
+                 <span className="px-4 bg-card text-gray-400 font-bold uppercase tracking-wider text-xs">Or continue with</span>
                </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <Button variant="outline" type="button" className="h-14 bg-white border-gray-200 hover:bg-gray-50 hover:border-gray-300 rounded-2xl font-bold shadow-sm transition-all group">
+              <Button variant="outline" type="button" className="h-14 bg-card border-gray-200 hover:bg-gray-50 hover:border-gray-300 rounded-2xl font-bold shadow-sm transition-all group">
                 <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="h-5 w-5 mr-3 group-hover:scale-110 transition-transform" />
                 Google
               </Button>
-              <Button variant="outline" type="button" className="h-14 bg-white border-gray-200 hover:bg-gray-50 hover:border-gray-300 rounded-2xl font-bold shadow-sm text-[#1877F2] transition-all group">
+              <Button variant="outline" type="button" className="h-14 bg-card border-gray-200 hover:bg-gray-50 hover:border-gray-300 rounded-2xl font-bold shadow-sm text-[#1877F2] transition-all group">
                 <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" alt="Facebook" className="h-5 w-5 mr-3 group-hover:scale-110 transition-transform" />
                 Facebook
               </Button>

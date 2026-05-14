@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import type { Rider } from '@/lib/types'
-import { Check, X, Clock, AlertCircle, Bike } from 'lucide-react'
+import { Check, X, Clock, AlertCircle, Bike, Car, Mail, Phone } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 interface RidersListProps {
@@ -19,10 +19,10 @@ const statusConfig = {
   inactive: { icon: X, color: 'text-slate-600', bg: 'bg-slate-50' },
 }
 
-const vehicleEmoji = {
-  bike: '🏍️',
-  scooter: '🛴',
-  car: '🚗',
+const VehicleIcon = {
+  bike: Bike,
+  scooter: Bike,
+  car: Car,
 }
 
 export function RidersList({
@@ -47,7 +47,7 @@ export function RidersList({
         return (
           <div
             key={rider.id}
-            className="bg-white border border-slate-200 rounded-lg overflow-hidden"
+            className="bg-card border border-slate-200 rounded-lg overflow-hidden"
           >
             <div
               className="p-6 cursor-pointer hover:bg-slate-50"
@@ -58,8 +58,11 @@ export function RidersList({
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-slate-200 rounded-full flex items-center justify-center text-xl">
-                      {vehicleEmoji[rider.vehicleType]}
+                    <div className="w-10 h-10 bg-slate-200 rounded-full flex items-center justify-center text-xl text-slate-700">
+                      {(() => {
+                        const IconComponent = VehicleIcon[rider.vehicleType as keyof typeof VehicleIcon] || Bike
+                        return <IconComponent className="w-5 h-5" />
+                      })()}
                     </div>
                     <div>
                       <h3 className="font-semibold text-slate-900">
@@ -71,8 +74,8 @@ export function RidersList({
                     </div>
                   </div>
                   <div className="mt-3 flex items-center gap-4 text-sm">
-                    <span className="text-slate-600">📧 {rider.email}</span>
-                    <span className="text-slate-600">☎️ {rider.phone}</span>
+                    <span className="text-slate-600 flex items-center gap-1.5"><Mail className="w-4 h-4" /> {rider.email}</span>
+                    <span className="text-slate-600 flex items-center gap-1.5"><Phone className="w-4 h-4" /> {rider.phone}</span>
                   </div>
                 </div>
 

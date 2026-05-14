@@ -14,7 +14,7 @@ const C = {
   amber: '#D4860B',
   bg: '#F5F1EB',
   white: '#FFFFFF',
-  textDark: '#111C14',
+  textDark: 'inherit',
   textMuted: '#6B7C6E',
   border: '#D8E4DC',
   error: '#C0392B',
@@ -59,7 +59,7 @@ function IllustrationPanel() {
       <div className="relative z-10">
         <div className="flex items-center gap-3 mb-2">
           <div>
-            <p className="text-white text-lg font-black tracking-tight">OyaEat</p>
+            <p className="text-white text-lg font-black tracking-tight">Oya-Eat</p>
             <p
               className="text-xs font-semibold tracking-[0.2em]"
               style={{ color: C.greenLight }}

@@ -46,14 +46,14 @@ export default function CartPage() {
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-xl sticky top-0 z-40 border-b border-gray-100 px-4 py-4 sm:px-8 flex items-center justify-between shadow-sm">
+      <header className="bg-card/80 backdrop-blur-xl sticky top-0 z-40 border-b border-gray-100 px-4 py-4 sm:px-8 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-4">
           <Link href="/customer" className="p-2 sm:p-2.5 bg-gray-50 hover:bg-gray-100 rounded-full transition-colors group">
             <ArrowLeft className="h-5 w-5 text-gray-700 group-hover:-translate-x-0.5 transition-transform" />
           </Link>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">Your Cart</h1>
         </div>
-        <div className="text-sm font-bold text-gray-500 bg-white shadow-sm px-4 py-2 rounded-full border border-gray-100">
+        <div className="text-sm font-bold text-gray-500 bg-card shadow-sm px-4 py-2 rounded-full border border-gray-100">
           <span className="text-[#2d5f4f] text-base mr-1">{items.length}</span> items
         </div>
       </header>
@@ -64,7 +64,7 @@ export default function CartPage() {
             
             {/* Cart Items */}
             <div className="lg:col-span-2 space-y-6">
-              <div className="bg-white rounded-[2.5rem] p-6 sm:p-8 border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-shadow">
+              <div className="bg-card rounded-[2.5rem] p-6 sm:p-8 border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-shadow">
                 <div className="flex items-center justify-between mb-8 pb-6 border-b border-gray-100">
                    <h2 className="text-2xl font-extrabold text-gray-900 flex items-center gap-3">
                      <ShoppingBag className="w-7 h-7 text-[#2d5f4f]" /> Cart Items
@@ -102,7 +102,7 @@ export default function CartPage() {
                           <div className="flex items-center gap-3 bg-gray-50 border border-gray-200 rounded-2xl p-1.5 shadow-inner">
                             <button 
                               onClick={() => updateQuantity(item.menuItemId, -1)}
-                              className="w-10 h-10 flex items-center justify-center bg-white rounded-xl shadow-sm font-bold text-gray-700 hover:bg-gray-100 hover:text-red-500 transition-all border border-gray-100"
+                              className="w-10 h-10 flex items-center justify-center bg-card rounded-xl shadow-sm font-bold text-gray-700 hover:bg-gray-100 hover:text-red-500 transition-all border border-gray-100"
                             >
                               <Minus className="w-4 h-4" />
                             </button>
@@ -131,7 +131,7 @@ export default function CartPage() {
 
             {/* Order Summary */}
             <div className="lg:col-span-1">
-              <div className="bg-white rounded-[2.5rem] p-6 sm:p-8 border border-gray-100 shadow-xl sticky top-28 before:content-[''] before:absolute before:inset-0 before:bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] before:opacity-[0.03] before:rounded-[2.5rem]">
+              <div className="bg-card rounded-[2.5rem] p-6 sm:p-8 border border-gray-100 shadow-xl sticky top-28 before:content-[''] before:absolute before:inset-0 before:bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] before:opacity-[0.03] before:rounded-[2.5rem]">
                 <h2 className="text-2xl font-extrabold text-gray-900 mb-8 flex items-center gap-3 relative z-10">
                   <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center text-[#2d5f4f]">
                     <Receipt className="w-5 h-5" />
@@ -175,7 +175,7 @@ export default function CartPage() {
 
           </div>
         ) : (
-          <div className="text-center py-24 sm:py-32 bg-white rounded-[3rem] border border-gray-100 shadow-sm max-w-3xl mx-auto flex flex-col items-center justify-center relative overflow-hidden">
+          <div className="text-center py-24 sm:py-32 bg-card rounded-[3rem] border border-gray-100 shadow-sm max-w-3xl mx-auto flex flex-col items-center justify-center relative overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-green-50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-orange-50 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
             

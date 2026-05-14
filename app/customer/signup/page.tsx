@@ -66,7 +66,7 @@ export default function CustomerSignupPage() {
   };
 
   return (
-    <div className="min-h-screen flex bg-white">
+    <div className="min-h-screen flex bg-card">
       {/* Right side: Image Showcase */}
       <div className="hidden lg:flex lg:w-5/12 relative overflow-hidden bg-orange-50 order-2">
         <div className="absolute inset-0 bg-black/40 z-10 transition-opacity duration-700 hover:opacity-20"></div>
@@ -82,7 +82,7 @@ export default function CustomerSignupPage() {
           </Link>
           
           <div className="max-w-md space-y-6 flex flex-col items-end animate-in slide-in-from-right-8 duration-700">
-            <div className="w-16 h-16 rounded-[1.5rem] bg-white/20 backdrop-blur-md flex items-center justify-center text-4xl font-extrabold shadow-2xl border border-white/20">
+            <div className="w-16 h-16 rounded-[1.5rem] bg-card/20 backdrop-blur-md flex items-center justify-center text-4xl font-extrabold shadow-2xl border border-white/20">
               O
             </div>
             <h1 className="text-5xl font-extrabold leading-[1.1] tracking-tight drop-shadow-2xl">
@@ -96,7 +96,7 @@ export default function CustomerSignupPage() {
       </div>
 
       {/* Left side: Signup Form */}
-      <div className="flex-1 flex flex-col justify-center px-4 sm:px-12 lg:px-20 xl:px-28 relative order-1 bg-white overflow-y-auto min-h-screen">
+      <div className="flex-1 flex flex-col justify-center px-4 sm:px-12 lg:px-20 xl:px-28 relative order-1 bg-card overflow-y-auto min-h-screen">
         <Link href="/customer" className="absolute top-6 left-6 lg:hidden flex items-center gap-2 text-gray-600 hover:text-gray-900 group bg-gray-50 px-3 py-2 rounded-full shadow-sm z-50">
           <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
           <span className="text-sm font-semibold">Back</span>
@@ -126,7 +126,7 @@ export default function CustomerSignupPage() {
                     value={formData.firstName}
                     onChange={handleChange}
                     placeholder="John" 
-                    className="pl-12 h-14 rounded-2xl bg-gray-50 focus-visible:ring-2 focus-visible:ring-[#2d5f4f]/30 focus-visible:bg-white shadow-inner border-gray-100 text-base transition-all"
+                    className="pl-12 h-14 rounded-2xl bg-gray-50 focus-visible:ring-2 focus-visible:ring-[#2d5f4f]/30 focus-visible:bg-card shadow-inner border-gray-100 text-base transition-all"
                   />
                 </div>
               </div>
@@ -140,7 +140,7 @@ export default function CustomerSignupPage() {
                     value={formData.lastName}
                     onChange={handleChange}
                     placeholder="Doe" 
-                    className="pl-12 h-14 rounded-2xl bg-gray-50 focus-visible:ring-2 focus-visible:ring-[#2d5f4f]/30 focus-visible:bg-white shadow-inner border-gray-100 text-base transition-all"
+                    className="pl-12 h-14 rounded-2xl bg-gray-50 focus-visible:ring-2 focus-visible:ring-[#2d5f4f]/30 focus-visible:bg-card shadow-inner border-gray-100 text-base transition-all"
                   />
                 </div>
               </div>
@@ -156,7 +156,7 @@ export default function CustomerSignupPage() {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="Enter your email" 
-                  className="pl-12 h-14 rounded-2xl bg-gray-50 focus-visible:ring-2 focus-visible:ring-[#2d5f4f]/30 focus-visible:bg-white shadow-inner border-gray-100 text-base transition-all"
+                  className="pl-12 h-14 rounded-2xl bg-gray-50 focus-visible:ring-2 focus-visible:ring-[#2d5f4f]/30 focus-visible:bg-card shadow-inner border-gray-100 text-base transition-all"
                 />
               </div>
             </div>
@@ -171,7 +171,7 @@ export default function CustomerSignupPage() {
                   value={formData.phone}
                   onChange={handleChange}
                   placeholder="080 1234 5678" 
-                  className="pl-12 h-14 rounded-2xl bg-gray-50 focus-visible:ring-2 focus-visible:ring-[#2d5f4f]/30 focus-visible:bg-white shadow-inner border-gray-100 text-base transition-all"
+                  className="pl-12 h-14 rounded-2xl bg-gray-50 focus-visible:ring-2 focus-visible:ring-[#2d5f4f]/30 focus-visible:bg-card shadow-inner border-gray-100 text-base transition-all"
                 />
               </div>
             </div>
@@ -186,7 +186,7 @@ export default function CustomerSignupPage() {
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="Create a strong password" 
-                  className="pl-12 pr-12 h-14 rounded-2xl bg-gray-50 focus-visible:ring-2 focus-visible:ring-[#2d5f4f]/30 focus-visible:bg-white shadow-inner border-gray-100 text-base transition-all"
+                  className="pl-12 pr-12 h-14 rounded-2xl bg-gray-50 focus-visible:ring-2 focus-visible:ring-[#2d5f4f]/30 focus-visible:bg-card shadow-inner border-gray-100 text-base transition-all"
                 />
                 <button 
                   type="button"

@@ -9,7 +9,7 @@ const SuccessPage = () => {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-card flex flex-col">
       {/* Header */}
       <header className="py-6 px-8">
         <Link href="/" className="flex items-center gap-2">

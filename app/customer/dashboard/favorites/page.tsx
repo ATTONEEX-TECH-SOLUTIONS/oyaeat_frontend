@@ -57,7 +57,7 @@ export default function CustomerFavoritesPage() {
   }, []);
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700 pb-12">
+    <div className="w-full space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700 pb-12">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">Your Favorites</h2>
@@ -65,7 +65,7 @@ export default function CustomerFavoritesPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-[2rem] border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden min-h-[300px]">
+      <div className="bg-card rounded-[2rem] border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden min-h-[300px]">
         {loading ? (
           <div className="flex justify-center items-center h-64 text-gray-400 font-bold gap-3 animate-pulse">
              Fetching your favorite meals...
@@ -87,7 +87,7 @@ export default function CustomerFavoritesPage() {
               <div key={item.menuItemId} className="bg-gray-50/50 rounded-3xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-shadow group flex flex-col justify-between">
                 <div>
                   <div className="flex justify-between items-start mb-3">
-                    <div className="w-14 h-14 bg-white rounded-xl shadow-sm border border-gray-100 flex items-center justify-center shrink-0">
+                    <div className="w-14 h-14 bg-card rounded-xl shadow-sm border border-gray-100 flex items-center justify-center shrink-0">
                       <ShoppingBag className="w-6 h-6 text-orange-500" />
                     </div>
                     <span className="bg-[#2d5f4f]/10 text-[#2d5f4f] text-xs font-bold px-3 py-1.5 rounded-lg border border-[#2d5f4f]/20">
@@ -102,7 +102,7 @@ export default function CustomerFavoritesPage() {
                   <span className="font-extrabold text-xl text-gray-900 flex-1">₦{item.price?.toLocaleString()}</span>
                   
                   <Link href={`/customer/restaurant/${item.restaurantId}`}>
-                    <Button className="rounded-xl px-5 h-10 font-extrabold bg-white text-[#2d5f4f] border border-gray-200 hover:border-[#2d5f4f] hover:bg-gray-50 transition-all shadow-sm">
+                    <Button className="rounded-xl px-5 h-10 font-extrabold bg-card text-[#2d5f4f] border border-gray-200 hover:border-[#2d5f4f] hover:bg-gray-50 transition-all shadow-sm">
                       Order Again
                     </Button>
                   </Link>

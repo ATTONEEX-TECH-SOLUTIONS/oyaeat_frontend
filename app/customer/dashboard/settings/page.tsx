@@ -31,7 +31,7 @@ export default function CustomerSettingsPage() {
   if (!user) return null;
 
   return (
-    <div className="max-w-6xl mx-auto space-y-4 animate-in fade-in slide-in-from-bottom-8 duration-500 pb-10">
+    <div className="w-full space-y-4 animate-in fade-in slide-in-from-bottom-8 duration-500 pb-10">
       <div>
         <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">Account Settings</h2>
         <p className="text-gray-500 font-medium text-sm mt-1">Manage your profile, dietary needs, and app preferences.</p>
@@ -41,7 +41,7 @@ export default function CustomerSettingsPage() {
         
         {/* Sidebar Tabs */}
         <aside className="w-full lg:w-64 shrink-0">
-          <div className="bg-white rounded-[1.5rem] border border-gray-100 shadow-sm p-3 flex flex-col space-y-1">
+          <div className="bg-card rounded-[1.5rem] border border-gray-100 shadow-sm p-3 flex flex-col space-y-1">
             <button 
               onClick={() => setActiveTab('profile')}
               className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all text-sm text-left ${activeTab === 'profile' ? currentTabClass : idleTabClass}`}
@@ -90,7 +90,7 @@ export default function CustomerSettingsPage() {
 
         {/* Content Area */}
         <div className="flex-1">
-          <div className="bg-white rounded-[1.5rem] border border-gray-100 shadow-sm overflow-hidden">
+          <div className="bg-card rounded-[1.5rem] border border-gray-100 shadow-sm overflow-hidden">
             
             {activeTab === 'profile' && (
                <div className="animate-in fade-in zoom-in-95 duration-300">
@@ -132,7 +132,7 @@ export default function CustomerSettingsPage() {
                       <ShieldCheck className="w-5 h-5 text-[#2d5f4f]" /> Connected Accounts & Security
                     </h3>
                     <div className="space-y-4">
-                        <div className="flex items-center justify-between p-4 bg-white rounded-xl border border-gray-200 shadow-sm">
+                        <div className="flex items-center justify-between p-4 bg-card rounded-xl border border-gray-200 shadow-sm">
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 bg-gray-50 rounded-lg flex items-center justify-center border border-gray-100"><Lock className="w-5 h-5 text-gray-500" /></div>
                                 <div>
@@ -142,7 +142,7 @@ export default function CustomerSettingsPage() {
                             </div>
                             <Button variant="outline" size="sm" className="rounded-lg font-bold">Update</Button>
                         </div>
-                        <div className="flex items-center justify-between p-4 bg-white rounded-xl border border-gray-200 shadow-sm">
+                        <div className="flex items-center justify-between p-4 bg-card rounded-xl border border-gray-200 shadow-sm">
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center border border-blue-100"><Facebook className="w-5 h-5 text-blue-600 fill-blue-600" /></div>
                                 <div>
@@ -167,7 +167,7 @@ export default function CustomerSettingsPage() {
                         <h4 className="font-bold text-gray-900 text-sm mb-3">Dietary Lifestyles</h4>
                         <div className="flex flex-wrap gap-2">
                            {['Vegetarian', 'Vegan', 'Pescatarian', 'Keto', 'Halal'].map(diet => (
-                              <button key={diet} className="px-4 py-2 rounded-lg border border-gray-200 bg-white text-sm font-bold text-gray-600 hover:border-[#2d5f4f] hover:text-[#2d5f4f] transition-all focus:bg-[#2d5f4f] focus:text-white">
+                              <button key={diet} className="px-4 py-2 rounded-lg border border-gray-200 bg-card text-sm font-bold text-gray-600 hover:border-[#2d5f4f] hover:text-[#2d5f4f] transition-all focus:bg-[#2d5f4f] focus:text-white">
                                 {diet}
                               </button>
                            ))}
@@ -199,7 +199,7 @@ export default function CustomerSettingsPage() {
                   <div className="space-y-4">
                      <p className="text-sm font-medium text-gray-500 mb-6">Manage how OyaEat handles your personal data.</p>
                      
-                     <div className="p-4 border border-gray-200 rounded-xl bg-white flex justify-between items-center">
+                     <div className="p-4 border border-gray-200 rounded-xl bg-card flex justify-between items-center">
                         <div>
                            <h4 className="text-sm font-bold text-gray-900">Download My Data</h4>
                            <p className="text-xs text-gray-500 mt-0.5">Get a copy of your order history, receipts, and info.</p>

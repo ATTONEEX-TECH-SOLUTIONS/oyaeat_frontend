@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { Eye, CheckCircle, Clock, AlertCircle, XCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -107,22 +108,32 @@ export default function RecentOrders({
   orders: RecentOrder[]
   onView?: (orderId: number) => void
 }) {
+  const [page, setPage] = useState(1)
+  const limit = 5
+  
+  const totalPages = Math.ceil((orders?.length || 0) / limit)
+  const paginatedOrders = orders?.slice((page - 1) * limit, page * limit) || []
+
+  useEffect(() => {
+    setPage(1)
+  }, [orders])
+
   return (
     <div className="bg-card border border-border rounded-lg p-6">
       <h3 className="font-bold text-lg text-foreground mb-6">Recent Orders</h3>
 
       <div className="space-y-3">
-        {!orders?.length ? (
+        {!paginatedOrders?.length ? (
           <div className="text-sm text-muted-foreground">No recent orders.</div>
         ) : (
-          orders.map((order) => (
+          paginatedOrders.map((order) => (
             <div
               key={order.id}
               className="flex items-center justify-between p-4 border border-border rounded-lg hover:border-primary transition"
             >
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
-                  <h4 className="font-semibold text-foreground">#{order.id}</h4>
+                  <h4 className="font-semibold text-foreground">{order.id}</h4>
                   <span
                     className={`text-xs font-medium px-2 py-1 rounded-full ${getStatusColor(
                       order.status,
@@ -163,6 +174,30 @@ export default function RecentOrders({
           ))
         )}
       </div>
+
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between mt-6 pt-4 border-t border-border">
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={page <= 1}
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+          >
+            Previous
+          </Button>
+          <span className="text-sm text-muted-foreground font-medium">
+            Page {page} of {totalPages}
+          </span>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={page >= totalPages}
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+          >
+            Next
+          </Button>
+        </div>
+      )}
     </div>
   )
 }

@@ -103,7 +103,7 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Sales Chart */}
-      <div className="bg-white border border-[#d8e4dc] rounded-2xl p-6 shadow-sm">
+      <div className="bg-card border border-[#d8e4dc] rounded-2xl p-6 shadow-sm">
         <h3 className="font-extrabold text-[#111c14] text-lg mb-6">Revenue & Order Volume</h3>
         <div style={{ width: '100%', height: 300 }}>
           {chartData.length > 0 ? (
@@ -133,7 +133,7 @@ export default function AnalyticsPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Category Pie */}
-        <div className="bg-white border border-[#d8e4dc] rounded-2xl p-6 shadow-sm">
+        <div className="bg-card border border-[#d8e4dc] rounded-2xl p-6 shadow-sm">
           <h3 className="font-extrabold text-[#111c14] text-lg mb-6">Revenue by Category</h3>
           <div style={{ width: '100%', height: 250 }}>
              {categoryData.length > 0 ? (
@@ -155,7 +155,7 @@ export default function AnalyticsPage() {
         </div>
 
         {/* Top Items */}
-        <div className="bg-white border border-[#d8e4dc] rounded-2xl p-6 shadow-sm">
+        <div className="bg-card border border-[#d8e4dc] rounded-2xl p-6 shadow-sm">
           <h3 className="font-extrabold text-[#111c14] text-lg mb-6">Top Selling Items</h3>
           <div className="space-y-5">
             {topItems.length > 0 ? topItems.map((item, idx) => (

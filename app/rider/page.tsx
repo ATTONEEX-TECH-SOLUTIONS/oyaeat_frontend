@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { CheckCircle2, Zap, CircleDollarSign, User, Bike } from "lucide-react";
 
 const RiderSignup = () => {
   const router = useRouter();
@@ -121,7 +122,12 @@ const RiderSignup = () => {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap');
+        /* ── FONTS ─────────────────────────────────────────────
+           Display: Playfair Display — elegant serif, graceful contrast,
+                    warm authority without shouting
+           Body:    Lato — clean humanist sans, calm & highly readable
+        ────────────────────────────────────────────────────── */
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,600&family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&display=swap');
 
         :root {
           --green: #1A6B3C;
@@ -137,24 +143,26 @@ const RiderSignup = () => {
           --text-mid: #3A5A47;
           --text-muted: #7A9A85;
           --shadow-green: rgba(26, 107, 60, 0.15);
+
+          --font-display: 'Playfair Display', Georgia, serif;
+          --font-body: 'Lato', sans-serif;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-          font-family: 'DM Sans', sans-serif;
+          font-family: var(--font-body);
           background: var(--white);
           color: var(--text-dark);
+          -webkit-font-smoothing: antialiased;
         }
-
-        .bebas { font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.04em; }
 
         .dot-grid {
           position: fixed;
           inset: 0;
           pointer-events: none;
           z-index: 0;
-          opacity: 0.4;
+          opacity: 0.35;
           background-image: radial-gradient(circle, #B8DDC5 1px, transparent 1px);
           background-size: 28px 28px;
         }
@@ -167,28 +175,27 @@ const RiderSignup = () => {
         }
 
         @keyframes fadeUp {
-          from { opacity: 0; transform: translateY(32px); }
+          from { opacity: 0; transform: translateY(28px); }
           to { opacity: 1; transform: translateY(0); }
         }
         @keyframes pulse-ring {
           0% { transform: scale(1); opacity: 0.6; }
           100% { transform: scale(1.6); opacity: 0; }
         }
-        @keyframes spin-slow {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
 
-        .fade-up { animation: fadeUp 0.7s ease both; }
-        .delay-1 { animation-delay: 0.1s; }
-        .delay-2 { animation-delay: 0.2s; }
-        .delay-3 { animation-delay: 0.3s; }
-        .delay-4 { animation-delay: 0.4s; }
+        .fade-up { animation: fadeUp 0.75s cubic-bezier(0.22,1,0.36,1) both; }
+        .delay-1 { animation-delay: 0.12s; }
+        .delay-2 { animation-delay: 0.24s; }
+        .delay-3 { animation-delay: 0.36s; }
+        .delay-4 { animation-delay: 0.48s; }
 
         .nav-link {
           position: relative;
-          font-weight: 600;
-          font-size: 0.9rem;
+          font-family: var(--font-body);
+          font-weight: 700;
+          font-size: 0.85rem;
+          letter-spacing: 0.04em;
+          text-transform: uppercase;
           color: var(--text-mid);
           text-decoration: none;
           transition: color 0.2s;
@@ -199,10 +206,9 @@ const RiderSignup = () => {
           content: '';
           position: absolute;
           bottom: 0; left: 0;
-          height: 2px;
+          height: 1.5px;
           width: 0;
           background: var(--green);
-          border-radius: 2px;
           transition: width 0.25s ease;
         }
         .nav-link:hover::after { width: 100%; }
@@ -210,12 +216,14 @@ const RiderSignup = () => {
         .btn-primary {
           background: var(--green);
           color: #fff;
-          font-family: 'DM Sans', sans-serif;
+          font-family: var(--font-body);
           font-weight: 700;
-          font-size: 1rem;
+          font-size: 0.875rem;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
           padding: 14px 32px;
           border: none;
-          border-radius: 8px;
+          border-radius: 6px;
           cursor: pointer;
           transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
           display: inline-flex;
@@ -232,9 +240,9 @@ const RiderSignup = () => {
 
         .perk-card {
           background: var(--white);
-          border: 1.5px solid var(--green-border);
-          border-radius: 16px;
-          padding: 32px;
+          border: 1px solid var(--green-border);
+          border-radius: 12px;
+          padding: 36px 32px;
           transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
           position: relative;
           overflow: hidden;
@@ -243,32 +251,32 @@ const RiderSignup = () => {
           content: '';
           position: absolute;
           top: 0; left: 0; right: 0;
-          height: 3px;
-          background: linear-gradient(90deg, var(--green), transparent);
+          height: 2px;
+          background: var(--green);
           opacity: 0;
           transition: opacity 0.3s;
         }
         .perk-card:hover {
           border-color: var(--green);
           transform: translateY(-4px);
-          box-shadow: 0 12px 32px var(--shadow-green);
+          box-shadow: 0 16px 40px var(--shadow-green);
         }
         .perk-card:hover::before { opacity: 1; }
 
         .faq-item {
-          border-bottom: 1.5px solid var(--green-border);
-          overflow: hidden;
+          border-bottom: 1px solid var(--green-border);
         }
         .faq-btn {
           width: 100%;
-          padding: 24px 0;
+          padding: 22px 0;
           text-align: left;
           background: transparent;
           border: none;
           color: var(--text-dark);
-          font-family: 'DM Sans', sans-serif;
-          font-weight: 600;
-          font-size: 1rem;
+          font-family: var(--font-body);
+          font-weight: 700;
+          font-size: 0.95rem;
+          letter-spacing: 0.01em;
           cursor: pointer;
           display: flex;
           justify-content: space-between;
@@ -280,30 +288,34 @@ const RiderSignup = () => {
 
         .testi-card {
           background: var(--white);
-          border: 1.5px solid var(--green-border);
-          border-radius: 16px;
+          border: 1px solid var(--green-border);
+          border-radius: 12px;
           padding: 32px;
-          position: relative;
-          transition: box-shadow 0.3s;
+          transition: box-shadow 0.3s, transform 0.3s;
         }
         .testi-card:hover {
-          box-shadow: 0 12px 32px var(--shadow-green);
+          box-shadow: 0 12px 36px var(--shadow-green);
+          transform: translateY(-2px);
         }
+
         .earnings-badge {
           background: var(--green-pale);
           border: 1px solid var(--green-border);
           color: var(--green);
-          font-weight: 700;
-          font-size: 0.8rem;
-          padding: 4px 10px;
+          font-family: var(--font-body);
+          font-weight: 900;
+          font-size: 0.78rem;
+          letter-spacing: 0.04em;
+          padding: 4px 12px;
           border-radius: 20px;
           display: inline-block;
+          white-space: nowrap;
         }
 
         .ticker-wrap {
           overflow: hidden;
           background: var(--green);
-          padding: 12px 0;
+          padding: 11px 0;
           white-space: nowrap;
         }
         @keyframes ticker {
@@ -312,7 +324,15 @@ const RiderSignup = () => {
         }
         .ticker-inner {
           display: inline-flex;
-          animation: ticker 20s linear infinite;
+          animation: ticker 22s linear infinite;
+        }
+        .ticker-text {
+          font-family: var(--font-body);
+          font-weight: 700;
+          font-size: 0.78rem;
+          letter-spacing: 0.18em;
+          text-transform: uppercase;
+          color: rgba(255,255,255,0.9);
         }
       `}</style>
 
@@ -324,21 +344,32 @@ const RiderSignup = () => {
         <nav style={{
           position: 'fixed', top: 0, width: '100%', zIndex: 50,
           borderBottom: '1px solid var(--green-border)',
-          backdropFilter: 'blur(12px)',
-          background: 'rgba(255,255,255,0.90)',
+          backdropFilter: 'blur(14px)',
+          background: 'rgba(255,255,255,0.92)',
         }}>
-          <div style={{ maxWidth: 1300, margin: '0 auto', padding: '0 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 72 }}>
-            <Link href="/" style={{ textDecoration: 'none' }}>
-              <div>
-                <span className="bebas" style={{ fontSize: 28, lineHeight: 1 }}>
-                  <span style={{ color: 'var(--green)' }}>Oya</span>
-                  <span style={{ color: 'var(--text-dark)' }}>Eat</span>
-                </span>
-                <div style={{ fontSize: 9, letterSpacing: '0.18em', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase', marginTop: 1 }}>Rider Program</div>
-              </div>
-            </Link>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
+          <div style={{ maxWidth: 1300, margin: '0 auto', padding: '0 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 70 }}>
+            {/* Logo with Text - BIGGER */}
+        <Link href="/" className="flex items-center gap-3 group">
+          <div className="relative w-26 h-26 transition-transform duration-300 group-hover:scale-110">
+            {/* <Image
+              src={logo}
+              alt="OyaEat Logo"
+              fill
+              className="object-contain"
+              priority
+            /> */}
+          </div>
+          <div className="flex flex-col">
+            <span className="text-3xl font-black leading-none tracking-tight">
+              <span className="text-[#2d5f4f]">Oya</span>
+              <span className={`transition-colors duration-300 scrolled ? "text-gray-800" : "text-gray-900"`}>Eat</span>
+            </span>
+            <span className={`text-[10px] font-medium tracking-wider uppercase transition-colors duration-300 scrolled ? "text-gray-500" : "text-gray-600"`}>
+              Fast Delivery
+            </span>
+          </div>
+        </Link>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 36 }}>
               {navLinks.map(l => (
                 <Link key={l.href} href={l.href} className="nav-link">{l.label}</Link>
               ))}
@@ -346,15 +377,17 @@ const RiderSignup = () => {
 
             <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
               <Link href="/rider/login" style={{
-                padding: '10px 20px', fontSize: '0.875rem', fontFamily: 'DM Sans', fontWeight: 600,
-                color: 'var(--green)', border: '1.5px solid var(--green-border)', borderRadius: 8,
+                padding: '9px 20px',
+                fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '0.8rem',
+                letterSpacing: '0.05em', textTransform: 'uppercase',
+                color: 'var(--green)', border: '1px solid var(--green-border)', borderRadius: 6,
                 textDecoration: 'none', transition: 'all 0.2s', background: 'transparent',
               }}
                 onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'var(--green-pale)'; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}>
                 Login
               </Link>
-              <Link href="/rider/register" className="btn-primary" style={{ padding: '10px 24px', fontSize: '0.875rem' }}>
+              <Link href="/rider/register" className="btn-primary" style={{ padding: '9px 22px', fontSize: '0.8rem' }}>
                 Start Riding →
               </Link>
             </div>
@@ -362,44 +395,67 @@ const RiderSignup = () => {
         </nav>
 
         {/* ── HERO ───────────────────────────────────────────── */}
-        <section style={{ paddingTop: 72, minHeight: '100vh', display: 'flex', position: 'relative', overflow: 'hidden', background: 'linear-gradient(135deg, #fff 0%, var(--green-pale) 60%, var(--green-pale2) 100%)' }}>
-          <div className="orb" style={{ width: 600, height: 600, background: 'rgba(26,107,60,0.08)', top: -100, right: -200 }} />
-          <div className="orb" style={{ width: 400, height: 400, background: 'rgba(34,136,63,0.06)', bottom: 0, left: -100 }} />
+        <section style={{
+          paddingTop: 70, minHeight: '100vh', display: 'flex', position: 'relative', overflow: 'hidden',
+          background: 'linear-gradient(135deg, #fff 0%, var(--green-pale) 60%, var(--green-pale2) 100%)',
+        }}>
+          <div className="orb" style={{ width: 560, height: 560, background: 'rgba(26,107,60,0.07)', top: -80, right: -160 }} />
+          <div className="orb" style={{ width: 360, height: 360, background: 'rgba(34,136,63,0.05)', bottom: 0, left: -80 }} />
 
-          <div style={{ maxWidth: 1300, margin: '0 auto', padding: '80px 32px', display: 'flex', gap: 64, alignItems: 'center', width: '100%' }}>
+          <div style={{ maxWidth: 1300, margin: '0 auto', padding: '80px 32px', display: 'flex', gap: 72, alignItems: 'center', width: '100%' }}>
 
-            {/* Left: Copy */}
+            {/* Left */}
             <div style={{ flex: 1 }}>
               <div className="fade-up" style={{
                 display: 'inline-flex', alignItems: 'center', gap: 8,
-                background: 'rgba(26,107,60,0.08)', border: '1px solid rgba(26,107,60,0.25)',
-                borderRadius: 20, padding: '6px 16px', marginBottom: 24,
+                background: 'rgba(26,107,60,0.07)', border: '1px solid rgba(26,107,60,0.2)',
+                borderRadius: 20, padding: '6px 16px', marginBottom: 28,
               }}>
                 <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--green)', display: 'inline-block', animation: 'pulse-ring 1.5s ease infinite' }} />
-                <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--green)' }}>Now hiring riders in Lagos, Abuja & PH</span>
+                <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase', color: 'var(--green)' }}>
+                  Now hiring riders in Lagos, Abuja & PH
+                </span>
               </div>
 
-              <h1 className="bebas fade-up delay-1" style={{ fontSize: 'clamp(64px, 8vw, 100px)', lineHeight: 0.95, marginBottom: 24, color: 'var(--text-dark)' }}>
-                RIDE.<br />
-                <span style={{ color: 'var(--green)', WebkitTextStroke: '2px var(--green)', WebkitTextFillColor: 'transparent' }}>EARN.</span><br />
-                REPEAT.
+              {/* Playfair Display headline — mix upright + italic for calm elegance */}
+              <h1 style={{
+                fontFamily: 'var(--font-display)',
+                fontWeight: 800,
+                fontSize: 'clamp(52px, 7.5vw, 88px)',
+                lineHeight: 1.05,
+                letterSpacing: '-0.01em',
+                marginBottom: 28,
+                color: 'var(--text-dark)',
+              }} className="fade-up delay-1">
+                Ride.<br />
+                <em style={{ color: 'var(--green)', fontStyle: 'italic', fontWeight: 700 }}>Earn.</em><br />
+                Repeat.
               </h1>
 
-              <p className="fade-up delay-2" style={{ fontSize: '1.1rem', color: 'var(--text-mid)', lineHeight: 1.7, maxWidth: 480, marginBottom: 40 }}>
+              <p className="fade-up delay-2" style={{
+                fontFamily: 'var(--font-body)',
+                fontSize: '1.05rem',
+                fontWeight: 300,
+                color: 'var(--text-mid)',
+                lineHeight: 1.8,
+                maxWidth: 460,
+                marginBottom: 40,
+              }}>
                 Turn your motorcycle, bicycle, or car into a money machine. Deliver with OyaEat and earn on your own terms — no boss, no fixed hours, no cap on income.
               </p>
 
               <div className="fade-up delay-3" style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
-                {/* PRIMARY CTA → goes to register page */}
-                <Link href="/rider/register" className="btn-primary" style={{ fontSize: '1.05rem', padding: '16px 36px' }}>
+                <Link href="/rider/register" className="btn-primary" style={{ fontSize: '0.875rem', padding: '15px 36px' }}>
                   Join as a Rider
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}><path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}><path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 </Link>
                 <Link href="/rider/login" style={{
-                  background: 'transparent', border: '1.5px solid var(--green-border)',
-                  color: 'var(--text-mid)', padding: '16px 24px', borderRadius: 8,
-                  fontFamily: 'DM Sans', fontWeight: 600, fontSize: '0.9rem', transition: 'all 0.2s',
-                  textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 8,
+                  background: 'transparent', border: '1px solid var(--green-border)',
+                  color: 'var(--text-mid)', padding: '15px 24px', borderRadius: 6,
+                  fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '0.8rem',
+                  letterSpacing: '0.05em', textTransform: 'uppercase',
+                  transition: 'all 0.2s', textDecoration: 'none',
+                  display: 'inline-flex', alignItems: 'center', gap: 8,
                 }}
                   onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = 'var(--green)'; (e.currentTarget as HTMLElement).style.color = 'var(--green)'; }}
                   onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'var(--green-border)'; (e.currentTarget as HTMLElement).style.color = 'var(--text-mid)'; }}>
@@ -408,43 +464,48 @@ const RiderSignup = () => {
               </div>
 
               {/* Mini stats */}
-              <div className="fade-up delay-4" style={{ display: 'flex', gap: 40, marginTop: 56, paddingTop: 40, borderTop: '1.5px solid var(--green-border)' }}>
+              <div className="fade-up delay-4" style={{ display: 'flex', gap: 48, marginTop: 60, paddingTop: 40, borderTop: '1px solid var(--green-border)' }}>
                 {[['10,000+', 'Active Riders'], ['₦50K+', 'Top Monthly Earning'], ['24hrs', 'Avg. Approval Time']].map(([val, label]) => (
                   <div key={label}>
-                    <div className="bebas" style={{ fontSize: 28, color: 'var(--green)' }}>{val}</div>
-                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 500, marginTop: 2 }}>{label}</div>
+                    <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 26, color: 'var(--green)', lineHeight: 1.1 }}>{val}</div>
+                    <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--text-muted)', marginTop: 5 }}>{label}</div>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Right: Visual CTA card */}
-            <div style={{ width: 420, flexShrink: 0 }}>
+            {/* Right: CTA card */}
+            <div style={{ width: 400, flexShrink: 0 }}>
               <div style={{
                 background: '#fff',
-                border: '1.5px solid var(--green-border)',
-                borderRadius: 20,
+                border: '1px solid var(--green-border)',
+                borderRadius: 16,
                 padding: 36,
                 position: 'relative',
-                boxShadow: '0 16px 48px rgba(26,107,60,0.10)',
+                boxShadow: '0 20px 56px rgba(26,107,60,0.10)',
                 textAlign: 'center',
               }}>
-                <div style={{ position: 'absolute', top: -1, left: 24, right: 24, height: 3, background: 'linear-gradient(90deg, var(--green), transparent)', borderRadius: '0 0 4px 4px' }} />
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'var(--green)', borderRadius: '16px 16px 0 0', opacity: 0.7 }} />
 
-                <div style={{ fontSize: '4rem', marginBottom: 16 }}>🏍️</div>
-                <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--text-dark)', marginBottom: 8 }}>Ready to earn?</h2>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: 28, lineHeight: 1.6 }}>
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 18 }}><Bike size={56} className="text-[#1A6B3C]" /></div>
+
+                <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1.5rem', color: 'var(--text-dark)', marginBottom: 10, lineHeight: 1.25 }}>
+                  Ready to earn?
+                </h2>
+                <p style={{ fontFamily: 'var(--font-body)', fontWeight: 300, color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: 28, lineHeight: 1.75 }}>
                   Join thousands of riders making real money on their own schedule. Free to join, approved in 24 hours.
                 </p>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                  <Link href="/rider/register" className="btn-primary" style={{ width: '100%', justifyContent: 'center', fontSize: '1rem', padding: '15px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  <Link href="/rider/register" className="btn-primary" style={{ width: '100%', justifyContent: 'center', fontSize: '0.85rem', padding: '14px' }}>
                     Apply to Ride →
                   </Link>
                   <Link href="/rider/login" style={{
-                    display: 'block', padding: '14px', border: '1.5px solid var(--green-border)', borderRadius: 8,
-                    textAlign: 'center', color: 'var(--text-mid)', fontFamily: 'DM Sans', fontWeight: 600,
-                    fontSize: '0.9rem', textDecoration: 'none', transition: 'all 0.2s',
+                    display: 'block', padding: '13px', border: '1px solid var(--green-border)', borderRadius: 6,
+                    textAlign: 'center', color: 'var(--text-mid)',
+                    fontFamily: 'var(--font-body)', fontWeight: 700,
+                    fontSize: '0.8rem', letterSpacing: '0.05em', textTransform: 'uppercase',
+                    textDecoration: 'none', transition: 'all 0.2s',
                   }}
                     onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = 'var(--green)'; (e.currentTarget as HTMLElement).style.color = 'var(--green)'; (e.currentTarget as HTMLElement).style.background = 'var(--green-pale)'; }}
                     onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'var(--green-border)'; (e.currentTarget as HTMLElement).style.color = 'var(--text-mid)'; (e.currentTarget as HTMLElement).style.background = 'transparent'; }}>
@@ -452,11 +513,15 @@ const RiderSignup = () => {
                   </Link>
                 </div>
 
-                <div style={{ display: 'flex', justifyContent: 'center', gap: 24, marginTop: 24, paddingTop: 24, borderTop: '1px solid var(--green-border)' }}>
-                  {[['✅', 'Free signup'], ['⚡', '24hr approval'], ['💰', 'Daily pay']].map(([icon, text]) => (
-                    <div key={text} style={{ textAlign: 'center' }}>
-                      <div style={{ fontSize: '1.1rem', marginBottom: 4 }}>{icon}</div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600 }}>{text}</div>
+                <div style={{ display: 'flex', justifyContent: 'center', gap: 28, marginTop: 24, paddingTop: 20, borderTop: '1px solid var(--green-border)' }}>
+                  {[
+                    { icon: <CheckCircle2 size={18} className="mx-auto text-[#1A6B3C]" />, text: 'Free signup' },
+                    { icon: <Zap size={18} className="mx-auto text-[#1A6B3C]" />, text: '24hr approval' },
+                    { icon: <CircleDollarSign size={18} className="mx-auto text-[#1A6B3C]" />, text: 'Daily pay' }
+                  ].map((item, i) => (
+                    <div key={i} style={{ textAlign: 'center' }}>
+                      <div style={{ marginBottom: 5 }}>{item.icon}</div>
+                      <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>{item.text}</div>
                     </div>
                   ))}
                 </div>
@@ -469,10 +534,10 @@ const RiderSignup = () => {
         <div className="ticker-wrap">
           <div className="ticker-inner">
             {[...Array(2)].map((_, i) => (
-              <span key={i} style={{ fontFamily: 'Bebas Neue', fontSize: '1.1rem', letterSpacing: '0.1em', color: '#fff' }}>
-                {['RIDE YOUR WAY', 'EARN DAILY', 'NO FIXED HOURS', 'FREE TO JOIN', 'INSURED RIDERS', 'FAST PAYOUT', '10,000+ RIDERS'].map(t => (
-                  <span key={t} style={{ marginRight: 48 }}>
-                    {t} <span style={{ color: 'rgba(255,255,255,0.35)', marginRight: 48 }}>✦</span>
+              <span key={i} className="ticker-text">
+                {['Ride Your Way', 'Earn Daily', 'No Fixed Hours', 'Free to Join', 'Insured Riders', 'Fast Payout', '10,000+ Riders'].map(t => (
+                  <span key={t} style={{ marginRight: 52 }}>
+                    {t} <span style={{ color: 'rgba(255,255,255,0.3)', marginRight: 52 }}>◆</span>
                   </span>
                 ))}
               </span>
@@ -480,13 +545,12 @@ const RiderSignup = () => {
           </div>
         </div>
 
-        {/* ── WHY RIDE WITH US ───────────────────────────────── */}
+        {/* ── PERKS ──────────────────────────────────────────── */}
         <section style={{ padding: '100px 32px', maxWidth: 1300, margin: '0 auto' }}>
           <div style={{ marginBottom: 64 }}>
-            <div style={{ fontSize: '0.8rem', color: 'var(--green)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 12 }}>Why OyaEat</div>
-            <h2 className="bebas" style={{ fontSize: 'clamp(40px, 5vw, 64px)', lineHeight: 1, color: 'var(--text-dark)' }}>
-              PERKS THAT ACTUALLY<br />
-              <span style={{ color: 'var(--green)' }}>MAKE SENSE</span>
+            <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.72rem', fontWeight: 700, color: 'var(--green)', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 14 }}>Why OyaEat</div>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 'clamp(36px, 4.5vw, 56px)', lineHeight: 1.1, color: 'var(--text-dark)' }}>
+              Perks that actually <em style={{ color: 'var(--green)', fontStyle: 'italic', fontWeight: 700 }}>make sense</em>
             </h2>
           </div>
 
@@ -494,38 +558,45 @@ const RiderSignup = () => {
             {perks.map((p, i) => (
               <div key={i} className="perk-card">
                 <div style={{ color: 'var(--green)', marginBottom: 20 }}>{p.icon}</div>
-                <div className="bebas" style={{ fontSize: 40, color: 'var(--green)', lineHeight: 1, marginBottom: 8 }}>{p.stat}</div>
-                <h3 style={{ fontWeight: 700, fontSize: '1.1rem', marginBottom: 10, color: 'var(--text-dark)' }}>{p.title}</h3>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: 1.6 }}>{p.description}</p>
+                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 38, color: 'var(--green)', lineHeight: 1, marginBottom: 10 }}>{p.stat}</div>
+                <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1.15rem', marginBottom: 10, color: 'var(--text-dark)' }}>{p.title}</h3>
+                <p style={{ fontFamily: 'var(--font-body)', fontWeight: 300, color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: 1.75 }}>{p.description}</p>
               </div>
             ))}
           </div>
         </section>
 
         {/* ── HOW IT WORKS ───────────────────────────────────── */}
-        <section style={{ background: 'var(--green-pale)', padding: '100px 32px', borderTop: '1.5px solid var(--green-border)', borderBottom: '1.5px solid var(--green-border)' }}>
+        <section style={{ background: 'var(--green-pale)', padding: '100px 32px', borderTop: '1px solid var(--green-border)', borderBottom: '1px solid var(--green-border)' }}>
           <div style={{ maxWidth: 1300, margin: '0 auto' }}>
             <div style={{ marginBottom: 64, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: 24 }}>
               <div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--green)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 12 }}>The Process</div>
-                <h2 className="bebas" style={{ fontSize: 'clamp(40px, 5vw, 64px)', lineHeight: 1, color: 'var(--text-dark)' }}>
-                  GO FROM ZERO TO<br />
-                  <span style={{ color: 'var(--green)' }}>EARNING IN 4 STEPS</span>
+                <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.72rem', fontWeight: 700, color: 'var(--green)', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 14 }}>The Process</div>
+                <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 'clamp(36px, 4.5vw, 56px)', lineHeight: 1.1, color: 'var(--text-dark)' }}>
+                  Go from zero to <em style={{ color: 'var(--green)', fontStyle: 'italic', fontWeight: 700 }}>earning</em><br />in 4 simple steps
                 </h2>
               </div>
               <Link href="/rider/register" className="btn-primary">Apply Now →</Link>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 2, position: 'relative' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 2 }}>
               {steps.map((s, i) => (
-                <div key={i} style={{ padding: '32px 24px', borderLeft: i === 0 ? '1.5px solid var(--green-border)' : 'none', borderRight: '1.5px solid var(--green-border)', position: 'relative' }}>
-                  <div className="bebas" style={{ fontSize: 80, lineHeight: 1, color: 'var(--green-border)', marginBottom: -16, userSelect: 'none' }}>{s.num}</div>
+                <div key={i} style={{
+                  padding: '32px 28px',
+                  borderLeft: i === 0 ? '1px solid var(--green-border)' : 'none',
+                  borderRight: '1px solid var(--green-border)',
+                }}>
+                  <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 72, lineHeight: 1, color: 'var(--green-border)', marginBottom: -12, userSelect: 'none' }}>{s.num}</div>
                   <div style={{ position: 'relative', zIndex: 1 }}>
-                    <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(26,107,60,0.1)', border: '1px solid rgba(26,107,60,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
-                      <span style={{ color: 'var(--green)', fontSize: '0.75rem', fontWeight: 700 }}>{i + 1}</span>
+                    <div style={{
+                      width: 34, height: 34, borderRadius: '50%',
+                      background: 'rgba(26,107,60,0.1)', border: '1px solid rgba(26,107,60,0.25)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16,
+                    }}>
+                      <span style={{ fontFamily: 'var(--font-body)', fontWeight: 900, color: 'var(--green)', fontSize: '0.75rem' }}>{i + 1}</span>
                     </div>
-                    <h3 style={{ fontWeight: 700, fontSize: '1.1rem', marginBottom: 10, color: 'var(--text-dark)' }}>{s.title}</h3>
-                    <p style={{ color: 'var(--text-mid)', fontSize: '0.875rem', lineHeight: 1.6 }}>{s.desc}</p>
+                    <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1.1rem', marginBottom: 10, color: 'var(--text-dark)' }}>{s.title}</h3>
+                    <p style={{ fontFamily: 'var(--font-body)', fontWeight: 300, color: 'var(--text-mid)', fontSize: '0.875rem', lineHeight: 1.8 }}>{s.desc}</p>
                   </div>
                 </div>
               ))}
@@ -536,10 +607,9 @@ const RiderSignup = () => {
         {/* ── TESTIMONIALS ───────────────────────────────────── */}
         <section style={{ padding: '100px 32px', maxWidth: 1300, margin: '0 auto' }}>
           <div style={{ marginBottom: 64 }}>
-            <div style={{ fontSize: '0.8rem', color: 'var(--green)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 12 }}>Real Riders</div>
-            <h2 className="bebas" style={{ fontSize: 'clamp(40px, 5vw, 64px)', lineHeight: 1, color: 'var(--text-dark)' }}>
-              STRAIGHT FROM THE<br />
-              <span style={{ color: 'var(--green)' }}>ROAD</span>
+            <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.72rem', fontWeight: 700, color: 'var(--green)', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 14 }}>Real Riders</div>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 'clamp(36px, 4.5vw, 56px)', lineHeight: 1.1, color: 'var(--text-dark)' }}>
+              Straight from <em style={{ color: 'var(--green)', fontStyle: 'italic', fontWeight: 700 }}>the road</em>
             </h2>
           </div>
 
@@ -548,23 +618,24 @@ const RiderSignup = () => {
               <div key={i} className="testi-card">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
                   <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-                    <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'var(--green-pale)', border: '1.5px solid var(--green-border)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <span style={{ fontSize: '1.2rem' }}>🧑</span>
+                    <div style={{ width: 46, height: 46, borderRadius: '50%', background: 'var(--green-pale)', border: '1px solid var(--green-border)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <User size={18} className="text-[#1A6B3C]" />
                     </div>
                     <div>
-                      <div style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--text-dark)' }}>{t.name}</div>
-                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{t.city} · {t.years}</div>
+                      <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.95rem', color: 'var(--text-dark)' }}>{t.name}</div>
+                      <div style={{ fontFamily: 'var(--font-body)', fontWeight: 400, fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: 2 }}>{t.city} · {t.years}</div>
                     </div>
                   </div>
                   <span className="earnings-badge">{t.earnings}</span>
                 </div>
-                <div style={{ color: 'var(--text-mid)', lineHeight: 1.7, fontSize: '0.9rem', position: 'relative', paddingLeft: 20 }}>
-                  <span style={{ position: 'absolute', left: 0, top: -4, fontSize: '2rem', color: 'var(--green)', lineHeight: 1, opacity: 0.3 }}>"</span>
+                {/* Playfair italic is stunning for testimonial quotes */}
+                <div style={{ fontFamily: 'var(--font-display)', fontStyle: 'italic', fontWeight: 400, color: 'var(--text-mid)', lineHeight: 1.75, fontSize: '0.975rem', position: 'relative', paddingLeft: 20 }}>
+                  <span style={{ position: 'absolute', left: 0, top: -8, fontSize: '2.5rem', color: 'var(--green)', lineHeight: 1, opacity: 0.2, fontFamily: 'var(--font-display)' }}>"</span>
                   {t.text}
                 </div>
-                <div style={{ display: 'flex', gap: 2, marginTop: 20 }}>
+                <div style={{ display: 'flex', gap: 3, marginTop: 20 }}>
                   {[...Array(5)].map((_, si) => (
-                    <svg key={si} width="14" height="14" viewBox="0 0 20 20" fill="var(--green)"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                    <svg key={si} width="13" height="13" viewBox="0 0 20 20" fill="var(--green)"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
                   ))}
                 </div>
               </div>
@@ -574,26 +645,27 @@ const RiderSignup = () => {
 
         {/* ── CTA BANNER ─────────────────────────────────────── */}
         <section style={{
-          margin: '0 32px 80px', borderRadius: 24,
+          margin: '0 32px 80px', borderRadius: 20,
           background: 'linear-gradient(135deg, var(--green-dark) 0%, var(--green) 60%, var(--green-light) 100%)',
-          padding: '64px 48px', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          padding: '64px 56px', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
           flexWrap: 'wrap', gap: 32, position: 'relative', overflow: 'hidden',
           boxShadow: '0 20px 60px rgba(26,107,60,0.25)',
         }}>
-          <div style={{ position: 'absolute', right: -40, top: -40, width: 300, height: 300, borderRadius: '50%', background: 'rgba(255,255,255,0.06)' }} />
-          <div style={{ position: 'absolute', right: 80, bottom: -80, width: 200, height: 200, borderRadius: '50%', background: 'rgba(255,255,255,0.04)' }} />
+          <div style={{ position: 'absolute', right: -40, top: -40, width: 280, height: 280, borderRadius: '50%', background: 'rgba(255,255,255,0.05)' }} />
+          <div style={{ position: 'absolute', right: 100, bottom: -80, width: 180, height: 180, borderRadius: '50%', background: 'rgba(255,255,255,0.04)' }} />
           <div style={{ position: 'relative' }}>
-            <h2 className="bebas" style={{ fontSize: 'clamp(36px, 4vw, 56px)', color: '#fff', lineHeight: 1, marginBottom: 8 }}>
-              READY TO HIT THE ROAD?
+            <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 'clamp(30px, 3.5vw, 48px)', color: '#fff', lineHeight: 1.15, marginBottom: 10 }}>
+              Ready to hit the road?
             </h2>
-            <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '1rem' }}>Join 10,000+ riders already earning with OyaEat today.</p>
+            <p style={{ fontFamily: 'var(--font-body)', fontWeight: 300, color: 'rgba(255,255,255,0.75)', fontSize: '1rem' }}>Join 10,000+ riders already earning with OyaEat today.</p>
           </div>
           <Link href="/rider/register" style={{
             background: '#fff', color: 'var(--green)',
-            fontFamily: 'DM Sans', fontWeight: 700, fontSize: '1rem',
-            padding: '16px 36px', border: 'none', borderRadius: 10, cursor: 'pointer',
+            fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '0.85rem',
+            letterSpacing: '0.06em', textTransform: 'uppercase',
+            padding: '15px 36px', border: 'none', borderRadius: 6, cursor: 'pointer',
             transition: 'all 0.2s', whiteSpace: 'nowrap',
-            boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
+            boxShadow: '0 4px 16px rgba(0,0,0,0.12)',
             textDecoration: 'none', display: 'inline-block',
           }}>
             Start Earning Now →
@@ -601,10 +673,12 @@ const RiderSignup = () => {
         </section>
 
         {/* ── FAQ ────────────────────────────────────────────── */}
-        <section style={{ padding: '0 32px 100px', maxWidth: 800, margin: '0 auto' }}>
-          <div style={{ marginBottom: 48, textAlign: 'center' }}>
-            <div style={{ fontSize: '0.8rem', color: 'var(--green)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 12 }}>FAQ</div>
-            <h2 className="bebas" style={{ fontSize: 'clamp(40px, 5vw, 56px)', color: 'var(--text-dark)' }}>GOT QUESTIONS?</h2>
+        <section style={{ padding: '0 32px 100px', maxWidth: 760, margin: '0 auto' }}>
+          <div style={{ marginBottom: 52, textAlign: 'center' }}>
+            <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.72rem', fontWeight: 700, color: 'var(--green)', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 14 }}>FAQ</div>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 'clamp(34px, 4vw, 50px)', color: 'var(--text-dark)', lineHeight: 1.1 }}>
+              Got <em style={{ color: 'var(--green)', fontStyle: 'italic' }}>questions?</em>
+            </h2>
           </div>
 
           <div>
@@ -612,13 +686,13 @@ const RiderSignup = () => {
               <div key={i} className="faq-item">
                 <button className="faq-btn" onClick={() => setOpenFAQ(openFAQ === i ? null : i)}>
                   <span>{faq.question}</span>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}
                     style={{ transform: openFAQ === i ? 'rotate(180deg)' : 'none', transition: 'transform 0.25s', flexShrink: 0, color: 'var(--green)' }}>
                     <path d="M19 9l-7 7-7-7" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </button>
                 {openFAQ === i && (
-                  <div style={{ paddingBottom: 24, color: 'var(--text-mid)', fontSize: '0.95rem', lineHeight: 1.7 }}>
+                  <div style={{ fontFamily: 'var(--font-body)', fontWeight: 300, paddingBottom: 24, color: 'var(--text-mid)', fontSize: '0.95rem', lineHeight: 1.85 }}>
                     {faq.answer}
                   </div>
                 )}
@@ -628,14 +702,14 @@ const RiderSignup = () => {
         </section>
 
         {/* ── FOOTER ─────────────────────────────────────────── */}
-        <footer style={{ borderTop: '1.5px solid var(--green-border)', padding: '64px 32px 40px', background: 'var(--green-pale)' }}>
+        <footer style={{ borderTop: '1px solid var(--green-border)', padding: '64px 32px 40px', background: 'var(--green-pale)' }}>
           <div style={{ maxWidth: 1300, margin: '0 auto' }}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 48, marginBottom: 48 }}>
               <div>
-                <div className="bebas" style={{ fontSize: 28, marginBottom: 12, color: 'var(--text-dark)' }}>
-                  <span style={{ color: 'var(--green)' }}>Oya</span>Eat
+                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 24, marginBottom: 14, color: 'var(--text-dark)', lineHeight: 1 }}>
+                  <span style={{ color: 'var(--green)' }}>Oya</span>-Eat
                 </div>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', lineHeight: 1.7, maxWidth: 240 }}>
+                <p style={{ fontFamily: 'var(--font-body)', fontWeight: 300, color: 'var(--text-muted)', fontSize: '0.875rem', lineHeight: 1.8, maxWidth: 240 }}>
                   Nigeria's fastest growing food delivery platform. Connecting riders to opportunity.
                 </p>
               </div>
@@ -646,11 +720,11 @@ const RiderSignup = () => {
                 { title: 'For Vendors', items: ['Partner Signup', 'Vendor Dashboard', 'Marketing Tools', 'Partner Stories'] },
               ].map(col => (
                 <div key={col.title}>
-                  <h4 style={{ fontWeight: 700, marginBottom: 20, fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-mid)' }}>{col.title}</h4>
+                  <h4 style={{ fontFamily: 'var(--font-body)', fontWeight: 700, marginBottom: 20, fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--text-mid)' }}>{col.title}</h4>
                   <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10 }}>
                     {col.items.map(item => (
                       <li key={item}>
-                        <a href="#" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '0.875rem', transition: 'color 0.2s' }}
+                        <a href="#" style={{ fontFamily: 'var(--font-body)', fontWeight: 300, color: 'var(--text-muted)', textDecoration: 'none', fontSize: '0.875rem', transition: 'color 0.2s' }}
                           onMouseEnter={e => (e.target as HTMLElement).style.color = 'var(--green)'}
                           onMouseLeave={e => (e.target as HTMLElement).style.color = 'var(--text-muted)'}>
                           {item}
@@ -662,11 +736,11 @@ const RiderSignup = () => {
               ))}
             </div>
 
-            <div style={{ borderTop: '1.5px solid var(--green-border)', paddingTop: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
-              <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>© 2026 OyaEat. All rights reserved.</p>
+            <div style={{ borderTop: '1px solid var(--green-border)', paddingTop: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+              <p style={{ fontFamily: 'var(--font-body)', fontWeight: 300, color: 'var(--text-muted)', fontSize: '0.8rem' }}>© 2026 OyaEat. All rights reserved.</p>
               <div style={{ display: 'flex', gap: 24 }}>
                 {['Privacy Policy', 'Terms of Service', 'Cookie Policy'].map(item => (
-                  <a key={item} href="#" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '0.8rem', transition: 'color 0.2s' }}
+                  <a key={item} href="#" style={{ fontFamily: 'var(--font-body)', fontWeight: 300, color: 'var(--text-muted)', textDecoration: 'none', fontSize: '0.8rem', transition: 'color 0.2s' }}
                     onMouseEnter={e => (e.target as HTMLElement).style.color = 'var(--green)'}
                     onMouseLeave={e => (e.target as HTMLElement).style.color = 'var(--text-muted)'}>
                     {item}

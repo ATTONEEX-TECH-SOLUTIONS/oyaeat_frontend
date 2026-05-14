@@ -65,7 +65,7 @@ export default function CartPage() {
           
           {/* Cart Items */}
           <div className="lg:col-span-2 space-y-6">
-            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+            <div className="bg-card rounded-3xl p-6 sm:p-8 border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
               <div className="space-y-8">
                 {items.map((item) => (
                   <div key={item.menuItemId} className="flex flex-col sm:flex-row items-start sm:items-center gap-6 group">
@@ -90,7 +90,7 @@ export default function CartPage() {
                         <div className="flex items-center gap-3 bg-gray-50 border border-gray-200 rounded-[1rem] p-1 shadow-inner">
                           <button 
                             onClick={() => updateQuantity(item.menuItemId, -1)}
-                            className="w-8 h-8 flex items-center justify-center bg-white rounded-xl shadow-sm font-bold text-gray-700 hover:bg-gray-100 hover:text-red-500 transition-all border border-gray-100"
+                            className="w-8 h-8 flex items-center justify-center bg-card rounded-xl shadow-sm font-bold text-gray-700 hover:bg-gray-100 hover:text-red-500 transition-all border border-gray-100"
                           >
                             <Minus className="w-3.5 h-3.5" />
                           </button>
@@ -119,7 +119,7 @@ export default function CartPage() {
 
           {/* Order Summary */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-[2rem] p-6 sm:p-8 border border-gray-100 shadow-xl sticky top-28 before:content-[''] before:absolute before:inset-0 before:bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] before:opacity-[0.03] before:rounded-[2rem]">
+            <div className="bg-card rounded-[2rem] p-6 sm:p-8 border border-gray-100 shadow-xl sticky top-28 before:content-[''] before:absolute before:inset-0 before:bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] before:opacity-[0.03] before:rounded-[2rem]">
               <h2 className="text-xl font-extrabold text-gray-900 mb-6 flex items-center gap-3 relative z-10">
                 <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center text-[#2d5f4f]">
                   <Receipt className="w-5 h-5" />
@@ -159,7 +159,7 @@ export default function CartPage() {
 
         </div>
       ) : (
-        <div className="text-center py-20 bg-white rounded-3xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] max-w-2xl mx-auto flex flex-col items-center">
+        <div className="text-center py-20 bg-card rounded-3xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] max-w-2xl mx-auto flex flex-col items-center">
           <div className="w-24 h-24 bg-gray-50 rounded-[2rem] flex items-center justify-center mb-6 shadow-inner border border-gray-100">
             <ShoppingCart className="w-10 h-10 text-gray-300" />
           </div>

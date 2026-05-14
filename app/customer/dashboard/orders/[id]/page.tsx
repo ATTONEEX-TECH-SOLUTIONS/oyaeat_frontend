@@ -59,18 +59,18 @@ export default function OrderTrackingPage() {
   else if (order.status === 'delivered') currentStep = 4;
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-6 duration-500 pb-12">
+    <div className="w-full space-y-6 animate-in fade-in slide-in-from-bottom-6 duration-500 pb-12">
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={() => router.back()} className="rounded-full bg-white shadow-sm hover:bg-gray-50">
+        <Button variant="ghost" size="icon" onClick={() => router.back()} className="rounded-full bg-card shadow-sm hover:bg-gray-50">
            <ArrowLeft className="w-5 h-5" />
         </Button>
         <div>
-          <h2 className="text-2xl font-extrabold text-gray-900 tracking-tight">Tracking Order #{order.id}</h2>
+          <h2 className="text-2xl font-extrabold text-gray-900 tracking-tight">Tracking Order {order.id}</h2>
           <p className="text-gray-500 font-medium text-sm mt-0.5">{order.business?.name} • {format(new Date(order.createdAt), 'p')}</p>
         </div>
       </div>
 
-      <div className="bg-white rounded-[2rem] p-6 sm:p-8 border border-gray-100 shadow-sm relative overflow-hidden">
+      <div className="bg-card rounded-[2rem] p-6 sm:p-8 border border-gray-100 shadow-sm relative overflow-hidden">
          {/* Live Map Mock */}
          <div className="h-48 md:h-64 bg-gray-100 rounded-2xl mb-8 relative overflow-hidden border border-gray-200">
             <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=1200&q=80" alt="Map Route" className="w-full h-full object-cover opacity-50 contrast-125 saturate-50" />
@@ -109,9 +109,9 @@ export default function OrderTrackingPage() {
                   const isCurrent = index === currentStep;
                   return (
                      <div key={s.id} className="flex flex-col items-center gap-2">
-                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-500 shadow-sm border-2 relative bg-white ${isCompleted ? 'border-[#2d5f4f]' : 'border-gray-100'}`}>
+                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-500 shadow-sm border-2 relative bg-card ${isCompleted ? 'border-[#2d5f4f]' : 'border-gray-100'}`}>
                            <Icon className={`w-5 h-5 ${isCompleted ? 'text-[#2d5f4f]' : 'text-gray-300'} ${isCurrent ? 'animate-pulse' : ''}`} />
-                           {isCompleted && <CheckCircle2 className="w-4 h-4 text-[#2d5f4f] absolute -bottom-1 -right-1 bg-white rounded-full" />}
+                           {isCompleted && <CheckCircle2 className="w-4 h-4 text-[#2d5f4f] absolute -bottom-1 -right-1 bg-card rounded-full" />}
                         </div>
                         <span className={`text-[10px] sm:text-xs font-bold uppercase tracking-wider text-center ${isCompleted ? 'text-gray-900' : 'text-gray-400'}`}>{s.label}</span>
                      </div>
@@ -132,7 +132,7 @@ export default function OrderTrackingPage() {
                      <p className="font-extrabold text-sm text-gray-900">John Doe (Rider)</p>
                      <p className="text-xs font-semibold text-gray-500">Honda Courier • KJA-123XD</p>
                   </div>
-                  <Button size="icon" variant="outline" className="rounded-full bg-white shadow-sm border-gray-200"><Phone className="w-4 h-4 text-[#2d5f4f]" /></Button>
+                  <Button size="icon" variant="outline" className="rounded-full bg-card shadow-sm border-gray-200"><Phone className="w-4 h-4 text-[#2d5f4f]" /></Button>
                </div>
             </div>
             <div>
