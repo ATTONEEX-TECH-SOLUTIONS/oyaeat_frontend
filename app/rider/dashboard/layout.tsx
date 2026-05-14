@@ -117,8 +117,10 @@ export default function RiderDashboardLayout({
                 lineHeight: 1,
               }}
             >
-              <span style={{ color: "#ffffff" }}>Oya</span>
-              <span style={{ color: "#4ade80" }}>Eat</span>
+            <span className="text-3xl font-black leading-none tracking-tight">
+              <span className="text-[#2d5f4f]">Oya</span>
+              <span className={`transition-colors duration-300 scrolled ? "text-gray-800" : "text-gray-900"`}>Eat</span>
+            </span>
             </span>
             <span
               style={{
