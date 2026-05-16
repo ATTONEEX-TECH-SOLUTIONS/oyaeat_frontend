@@ -16,12 +16,6 @@ const CUISINES = [
   { id: 'asian', name: 'Asian', icon: UtensilsCrossed }
 ];
 
-const PROMOS = [
-  { id: 1, title: '20% Off Jollof Fiesta', desc: 'Valid until 5PM today', bg: 'bg-gradient-to-r from-orange-500 to-red-500' },
-  { id: 2, title: 'Free Delivery', desc: 'On orders above ₦5,000', bg: 'bg-gradient-to-r from-blue-500 to-teal-500' },
-  { id: 3, title: 'New: Bature Brewery', desc: 'Craft beers & grills', bg: 'bg-gradient-to-r from-purple-500 to-indigo-500' },
-];
-
 function DashboardContent() {
   const [user, setUser] = useState<any>(null);
   const [recentOrders, setRecentOrders] = useState<any[]>([]);
@@ -31,18 +25,22 @@ function DashboardContent() {
   const [loadingOrders, setLoadingOrders] = useState(true);
   const [loadingRestaurants, setLoadingRestaurants] = useState(true);
 
-  const searchParams = useSearchParams();
-  const rawQuery = searchParams?.get('q') || '';
-
-  const [activeCategory, setActiveCategory] = useState('all');
+  // ── Dynamic Promotional Campaign States ──
+  const [promos, setPromos] = useState<any[]>([]);
   const [activePromo, setActivePromo] = useState(0);
 
+  const searchParams = useSearchParams();
+  const rawQuery = searchParams?.get('q') || '';
+  const [activeCategory, setActiveCategory] = useState('all');
+
+  // Auto-rotating timer scaled securely against dynamic array size
   useEffect(() => {
+    if (promos.length === 0) return;
     const timer = setInterval(() => {
-      setActivePromo((prev) => (prev + 1) % PROMOS.length);
+      setActivePromo((prev) => (prev + 1) % promos.length);
     }, 4500);
     return () => clearInterval(timer);
-  }, []);
+  }, [promos.length]);
 
   useEffect(() => {
     const userData = localStorage.getItem('customer_user');
@@ -62,7 +60,33 @@ function DashboardContent() {
     } else {
       setLoadingOrders(false);
     }
+
+    // Trigger promotional data synchronization on page mount
+    fetchLivePromos();
   }, []);
+
+  const fetchLivePromos = async () => {
+    try {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+      const res = await fetch(`${API_URL}/public/promos`);
+      const json = await res.json();
+      
+      if (json.success && json.data?.length > 0) {
+        setPromos(json.data);
+      } else {
+        // High-fidelity fallback defaults if database collections are currently empty
+        setPromos([
+          { id: 'f1', title: 'Welcome to OyaEat!', desc: 'Explore delicious meals near you', bgGradient: 'from-[#2d5f4f] to-slate-800' },
+          { id: 'f2', title: 'Free Delivery Weekend', desc: 'On orders above ₦5,000 totals', bgGradient: 'from-blue-500 to-teal-500' }
+        ]);
+      }
+    } catch (err) {
+      console.error("Failed to sync promo deck metrics:", err);
+      setPromos([
+        { id: 'f1', title: 'Fresh Food, Fast Delivery', desc: 'Browse trending restaurants below', bgGradient: 'from-orange-500 to-red-500' }
+      ]);
+    }
+  };
 
   const toggleLike = (e: React.MouseEvent, restaurant: any) => {
     e.preventDefault();
@@ -81,7 +105,6 @@ function DashboardContent() {
     } catch (e) { }
   };
 
-  // Update category when rawQuery changes (if it matches a category)
   useEffect(() => {
     if (rawQuery && CUISINES.find(c => c.id === rawQuery.toLowerCase())) {
       setActiveCategory(rawQuery.toLowerCase());
@@ -105,7 +128,6 @@ function DashboardContent() {
       if (data.success) {
         setRecentOrders(data.data.orders);
 
-        // Extract frequent items for quick reorder
         const itemsMap = new Map();
         data.data.orders.forEach((order: any) => {
           order.items?.forEach((item: any) => {
@@ -124,7 +146,7 @@ function DashboardContent() {
           });
         });
         const sortedItems = Array.from(itemsMap.values()).sort((a, b) => b.orderCount - a.orderCount);
-        setFrequentItems(sortedItems.slice(0, 4)); // top 4 items
+        setFrequentItems(sortedItems.slice(0, 4));
       }
     } catch (e) {
       console.error(e);
@@ -161,7 +183,7 @@ function DashboardContent() {
   return (
     <div className="w-full space-y-5 animate-in fade-in slide-in-from-bottom-8 duration-700 pb-8">
 
-      {/* 1. Header / Welcome & Promos */}
+      {/* 1. Header / Welcome & Dynamic Promotional Carousel */}
       {!rawQuery && (
         <div className="flex flex-col xl:flex-row gap-6">
           {/* Welcome Tile */}
@@ -176,7 +198,7 @@ function DashboardContent() {
               </div>
               <div className="mt-8">
                 <Link href="#restaurants">
-                  <Button className="rounded-xl px-5 py-5 text-sm font-extrabold bg-card text-[#2d5f4f] hover:bg-gray-100 shadow-xl hover:-translate-y-0.5 transition-all group/btn flex items-center gap-2">
+                  <Button className="rounded-xl px-5 py-5 text-sm font-extrabold bg-white text-[#2d5f4f] hover:bg-gray-100 shadow-xl hover:-translate-y-0.5 transition-all group/btn flex items-center gap-2">
                     Explore Menu <TrendingUp className="h-4 w-4 text-orange-500 group-hover/btn:rotate-12 transition-transform" />
                   </Button>
                 </Link>
@@ -184,12 +206,13 @@ function DashboardContent() {
             </div>
           </div>
 
-          {/* Auto-Rotating Promo Card */}
+          {/* Auto-Rotating Promo Banner Card */}
           <div className="xl:w-[400px] h-[200px] xl:h-[auto] shrink-0 relative rounded-3xl overflow-hidden shadow-lg cursor-pointer group">
-            {PROMOS.map((promo, index) => (
-              <div
-                key={promo.id}
-                className={`absolute inset-0 w-full h-full ${promo.bg} p-6 flex flex-col justify-between transition-opacity duration-1000 ease-in-out transform ${index === activePromo ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}
+            {promos.map((promo, index) => (
+              <Link 
+                href={promo.businessId ? `/customer/dashboard/restaurant/${promo.businessId}` : '#restaurants'}
+                key={promo.id || index}
+                className={`absolute inset-0 w-full h-full bg-gradient-to-r ${promo.bgGradient || 'from-orange-500 to-red-500'} p-6 flex flex-col justify-between transition-opacity duration-1000 ease-in-out transform ${index === activePromo ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}
               >
                 <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-300"></div>
                 <div className="relative z-10 text-white">
@@ -197,13 +220,16 @@ function DashboardContent() {
                   <h3 className="font-extrabold text-xl xl:text-3xl leading-tight mb-2 drop-shadow-md">{promo.title}</h3>
                   <p className="text-white/90 text-sm xl:text-base font-semibold drop-shadow-sm">{promo.desc}</p>
                 </div>
-                {/* Pagination Dots */}
-                <div className="absolute bottom-5 right-6 flex gap-1.5 z-20">
-                  {PROMOS.map((_, i) => (
-                    <div key={i} className={`h-1.5 rounded-full transition-all duration-500 ${i === activePromo ? 'w-5 bg-card border border-white/20 shadow-sm' : 'w-2 bg-card/40'}`}></div>
-                  ))}
-                </div>
-              </div>
+                
+                {/* Pagination Tracking Indicators */}
+                {promos.length > 1 && (
+                  <div className="absolute bottom-5 right-6 flex gap-1.5 z-20">
+                    {promos.map((_, i) => (
+                      <div key={i} className={`h-1.5 rounded-full transition-all duration-500 ${i === activePromo ? 'w-5 bg-white border border-white/20 shadow-sm' : 'w-2 bg-white/40'}`}></div>
+                    ))}
+                  </div>
+                )}
+              </Link>
             ))}
           </div>
         </div>
@@ -211,7 +237,7 @@ function DashboardContent() {
 
       {/* 2. Active Order Tracker */}
       {activeOrder && !rawQuery && (
-        <div className="bg-card rounded-3xl p-5 sm:p-6 border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-md transition-shadow">
+        <div className="bg-white rounded-3xl p-5 sm:p-6 border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-md transition-shadow">
           <h3 className="text-lg font-extrabold text-gray-900 mb-4 flex items-center gap-2 tracking-tight">
             <Activity className="h-5 w-5 text-orange-500 animate-bounce" />
             Active Order Setup
@@ -228,7 +254,7 @@ function DashboardContent() {
             </div>
             <div className="flex-1 w-full md:max-w-xs relative h-3 bg-gray-100 rounded-full overflow-hidden border border-gray-200 shadow-inner">
               <div
-                className="absolute top-0 left-0 h-full bg-gradient-to-r from-orange-400 to-[#2d5f4f] rounded-full transition-all duration-1000 ease-out flex items-center justify-end pr-2 text-[8px] text-white font-extrabold"
+                className="absolute top-0 left-0 h-full bg-gradient-to-r from-orange-400 to-[#2d5f4f] rounded-full transition-all duration-1000 ease-out"
                 style={{ width: activeOrder.status === 'pending' ? '15%' : activeOrder.status === 'preparing' ? '40%' : activeOrder.status === 'ready' ? '65%' : activeOrder.status === 'out_for_delivery' ? '85%' : '100%' }}
               ></div>
             </div>
@@ -253,30 +279,37 @@ function DashboardContent() {
             Order it again
           </h3>
           <div className="flex gap-4 overflow-x-auto pb-4 pt-2 -mx-4 px-4 sm:mx-0 sm:px-0 hide-scrollbar snap-x">
-            {frequentItems.map(item => (
-              <Link href={`/customer/dashboard/restaurant/${item.restaurantId}`} key={item.menuItemId} className="snap-start shrink-0 w-[240px] bg-card rounded-[1.5rem] overflow-hidden border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-lg transition-all group flex flex-col justify-between">
-                <div className="h-32 w-full bg-gray-100 overflow-hidden relative">
-                  <img
-                    src={item.menuItem?.imageUrl || item.imageUrl || item.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=400&q=80'}
-                    alt={item.name}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=400&q=80'; }}
-                  />
-                </div>
-                <div className="p-4 flex flex-col justify-between flex-1 bg-card relative -mt-1 rounded-t-2xl">
-                  <div>
-                    <h4 className="font-extrabold text-gray-900 text-base line-clamp-1 group-hover:text-[#2d5f4f] transition-colors mb-1">{item.name}</h4>
-                    <p className="text-xs font-semibold text-gray-500 mb-2">{item.restaurantName}</p>
+            {frequentItems.map(item => {
+              const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+              const menuItemImg = item.menuItem?.imageUrl || item.imageUrl || item.image;
+              const finalMenuItemImgUrl = menuItemImg
+                ? (menuItemImg.startsWith('http') ? menuItemImg : `${API_URL}${menuItemImg}`)
+                : 'https://unsplash.com';
+
+              return (
+                <Link href={`/customer/dashboard/restaurant/${item.restaurantId}`} key={item.menuItemId} className="snap-start shrink-0 w-[240px] bg-white rounded-[1.5rem] overflow-hidden border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-lg transition-all group flex flex-col justify-between">
+                  <div className="h-32 w-full bg-gray-100 overflow-hidden relative">
+                    <img
+                      src={finalMenuItemImgUrl}
+                      alt={item.name}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
                   </div>
-                  <div className="flex items-end justify-between mt-1">
-                    <span className="font-extrabold text-gray-900 text-lg">₦{item.price ? item.price.toLocaleString() : '0'}</span>
-                    <div className="w-8 h-8 rounded-full bg-gray-50 group-hover:bg-[#2d5f4f]/10 text-gray-400 group-hover:text-[#2d5f4f] flex items-center justify-center transition-colors">
-                      <ArrowRight className="w-4 h-4" />
+                  <div className="p-4 flex flex-col justify-between flex-1 bg-white relative -mt-1 rounded-t-2xl">
+                    <div>
+                      <h4 className="font-extrabold text-gray-900 text-base line-clamp-1 group-hover:text-[#2d5f4f] transition-colors mb-1">{item.name}</h4>
+                      <p className="text-xs font-semibold text-gray-500 mb-2">{item.restaurantName}</p>
+                    </div>
+                    <div className="flex items-end justify-between mt-1">
+                      <span className="font-extrabold text-gray-900 text-lg">₦{item.price ? item.price.toLocaleString() : '0'}</span>
+                      <div className="w-8 h-8 rounded-full bg-gray-50 group-hover:bg-[#2d5f4f]/10 text-gray-400 group-hover:text-[#2d5f4f] flex items-center justify-center transition-colors">
+                        <ArrowRight className="w-4 h-4" />
+                      </div>
                     </div>
                   </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </div>
         </div>
       )}
@@ -289,7 +322,7 @@ function DashboardContent() {
             onClick={() => setActiveCategory(cat.id)}
             className={`shrink-0 flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm transition-all shadow-sm border ${activeCategory === cat.id
                 ? 'bg-[#2d5f4f] border-[#2d5f4f] text-white'
-                : 'bg-card border-gray-200 text-gray-600 hover:border-[#2d5f4f]/30 hover:shadow-md'
+                : 'bg-white border-gray-200 text-gray-600 hover:border-[#2d5f4f]/30 hover:shadow-md'
               }`}
           >
             <cat.icon className="w-4 h-4" />
@@ -298,7 +331,7 @@ function DashboardContent() {
         ))}
       </div>
 
-      {/* 5. Restaurants List */}
+      {/* 5. Restaurants List Section */}
       <div id="restaurants" className="pt-2 min-h-[400px]">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-2xl font-extrabold text-gray-900 flex items-center gap-3 tracking-tight">
@@ -310,82 +343,127 @@ function DashboardContent() {
         </div>
 
         {loadingRestaurants ? (
-          <div className="flex flex-col items-center justify-center py-24 bg-card rounded-3xl border border-gray-100 shadow-sm">
+          <div className="flex flex-col items-center justify-center py-24 bg-white rounded-3xl border border-gray-100 shadow-sm">
             <RefreshCcw className="h-8 w-8 text-[#2d5f4f] animate-spin mb-4" />
             <p className="font-bold text-gray-500">Discovering places...</p>
           </div>
         ) : restaurants.length === 0 ? (
-          <div className="text-center py-24 bg-card rounded-3xl border border-gray-100 shadow-sm flex flex-col items-center">
+          <div className="text-center py-24 bg-white rounded-3xl border border-gray-100 shadow-sm flex flex-col items-center">
             <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
               <Store className="w-8 h-8 text-gray-300" />
             </div>
             <p className="text-gray-900 font-extrabold text-xl mb-2">No restaurants found</p>
             <p className="text-gray-500 font-medium max-w-sm mx-auto">Try selecting a different category or searching for something else.</p>
-            <Button onClick={() => setActiveCategory('all')} variant="outline" className="mt-6 rounded-xl font-bold bg-card text-gray-700 shadow-sm">View All</Button>
+            <Button onClick={() => setActiveCategory('all')} variant="outline" className="mt-6 rounded-xl font-bold bg-white text-gray-700 shadow-sm">View All</Button>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 xl:gap-8">
-            {restaurants.map(rest => (
-              <Link key={rest.id} href={`/customer/dashboard/restaurant/${rest.id}`} className="bg-card rounded-[2rem] overflow-hidden shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col h-full">
-                <div className="relative h-[200px] bg-card p-1">
-                  <div className="flex gap-1 h-full w-full">
-                    {/* Main Image */}
-                    <div className="w-2/3 h-full relative overflow-hidden rounded-tl-[1.8rem] rounded-bl-xl">
-                      <img
-                        src={rest.thumbnailUrl || '/categories/jollof.jpg'}
-                        alt={rest.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                        onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80'; }}
-                      />
-                      <div className="absolute top-2 left-2 px-2.5 py-1.5 bg-card/95 backdrop-blur-md rounded-xl shadow-md text-[10px] sm:text-xs font-extrabold text-gray-900 flex items-center gap-1.5 z-10">
-                        <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span> Open
-                      </div>
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    </div>
+            {restaurants.map((rest: any) => {
+              const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+              const gallery = rest.galleryImages || [];
 
-                    {/* Small Images */}
-                    <div className="w-1/3 flex flex-col gap-1 h-full">
-                      <div className="h-1/2 w-full relative overflow-hidden rounded-tr-[1.8rem] rounded-br-md">
-                        <img
-                          src={rest.menuItems?.[0]?.imageUrl || 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=400&q=80'}
-                          alt={rest.menuItems?.[0]?.name || "Food 2"}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out delay-75"
-                          onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=400&q=80'; }}
-                        />
-                        <button onClick={(e) => toggleLike(e, rest)} className="absolute top-2 right-2 p-1.5 bg-card/90 backdrop-blur-md rounded-full shadow-sm hover:bg-gray-50 transition-colors z-10 group/heart">
-                          <Heart className={`w-3.5 h-3.5 transition-colors ${likedRestaurants.some(r => r.id === rest.id) ? 'fill-red-500 text-red-500' : 'text-gray-400 group-hover/heart:text-red-500 group-hover/heart:fill-red-500'}`} />
-                        </button>
+              // Unpack and secure real Cloudinary asset links from your new gallery relationship
+              const firstGalleryItem = gallery[0]?.imageUrl || '';
+              const mainBanner = firstGalleryItem.startsWith('http') 
+                ? firstGalleryItem 
+                : `${API_BASE_URL}${firstGalleryItem}`;
+
+              const subUrlOne = gallery[1]?.imageUrl || '';
+              const subPreviewOne = subUrlOne.startsWith('http') 
+                ? subUrlOne 
+                : `${API_BASE_URL}${subUrlOne}`;
+
+              const subUrlTwo = gallery[2]?.imageUrl || '';
+              const subPreviewTwo = subUrlTwo.startsWith('http') 
+                ? subUrlTwo 
+                : `${API_BASE_URL}${subUrlTwo}`;
+
+              return (
+                <Link key={rest.id} href={`/customer/dashboard/restaurant/${rest.id}`} className="bg-white rounded-[2rem] overflow-hidden shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col h-full">
+                  <div className="relative h-[200px] bg-white p-1">
+                    <div className="flex gap-1 h-full w-full">
+                      
+                      {/* Left Block: Main Banner View */}
+                      <div className={`h-full relative overflow-hidden rounded-tl-[1.8rem] rounded-bl-xl transition-all ${gallery.length > 1 ? 'w-2/3' : 'w-full rounded-tr-[1.8rem] rounded-br-xl'}`}>
+                        {firstGalleryItem ? (
+                          <img
+                            src={mainBanner}
+                            alt={rest.name}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-slate-100 flex items-center justify-center text-xs text-slate-400 font-bold">
+                            No Banner Added
+                          </div>
+                        )}
+                        <div className="absolute top-2 left-2 px-2.5 py-1.5 bg-white/95 backdrop-blur-md rounded-xl shadow-md text-[10px] sm:text-xs font-extrabold text-gray-900 flex items-center gap-1.5 z-10">
+                          <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span> Open
+                        </div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                       </div>
-                      <div className="h-1/2 w-full relative overflow-hidden rounded-br-xl rounded-tr-md">
-                        <img
-                          src={rest.menuItems?.[1]?.imageUrl || 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=400&q=80'}
-                          alt={rest.menuItems?.[1]?.name || "Food 3"}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out delay-150"
-                          onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=400&q=80'; }}
-                        />
-                      </div>
+
+                      {/* Right Block: Dynamic Side Previews */}
+                      {gallery.length > 1 && (
+                        <div className="w-1/3 flex flex-col gap-1 h-full">
+                          <div className="h-1/2 w-full relative overflow-hidden rounded-tr-[1.8rem] rounded-br-md">
+                            {subUrlOne ? (
+                              <img
+                                src={subPreviewOne}
+                                alt="Showcase layout 2"
+                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out delay-75"
+                              />
+                            ) : (
+                              <div className="w-full h-full bg-slate-50" />
+                            )}
+                            <div 
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                toggleLike(e, rest);
+                              }}
+                              className="absolute top-2 right-2 p-1.5 bg-white/90 backdrop-blur-md rounded-full shadow-sm hover:bg-gray-50 transition-colors z-10 cursor-pointer group/heart"
+                            >
+                              <Heart className={`w-3.5 h-3.5 transition-colors ${likedRestaurants.some((r: any) => r.id === rest.id) ? 'fill-red-500 text-red-500' : 'text-gray-400 group-hover/heart:text-red-500 group-hover/heart:fill-red-500'}`} />
+                            </div>
+                          </div>
+                          <div className="h-1/2 w-full relative overflow-hidden rounded-br-xl rounded-tr-md">
+                            {subUrlTwo ? (
+                              <img
+                                src={subPreviewTwo}
+                                alt="Showcase layout 3"
+                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out delay-150"
+                              />
+                            ) : (
+                              <div className="w-full h-full bg-slate-50" />
+                            )}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
-                </div>
-                <div className="p-5 flex flex-col justify-between flex-1 relative bg-card">
-                  <div>
-                    <div className="flex justify-between items-start mb-1.5">
-                      <h4 className="font-extrabold text-gray-900 text-lg line-clamp-1 pr-2 group-hover:text-[#2d5f4f] transition-colors">{rest.name}</h4>
-                      <div className="flex items-center gap-1 bg-yellow-50 px-1.5 py-0.5 rounded-lg text-yellow-700 text-xs font-extrabold border border-yellow-100 tracking-tight">
-                        <span>4.8</span><Star className="w-3 h-3 fill-current" />
+                  
+                  <div className="p-5 flex flex-col justify-between flex-1 relative bg-white">
+                    <div>
+                      <div className="flex justify-between items-start mb-1.5">
+                        <h4 className="font-extrabold text-gray-900 text-lg line-clamp-1 pr-2 group-hover:text-[#2d5f4f] transition-colors">{rest.name}</h4>
+                        <div className="flex items-center gap-1 bg-yellow-50 px-1.5 py-0.5 rounded-lg text-yellow-700 text-xs font-extrabold border border-yellow-100 tracking-tight">
+                          <span>4.8</span><Star className="w-3 h-3 fill-current" />
+                        </div>
                       </div>
+                      <p className="text-gray-500 text-xs font-bold leading-relaxed">{rest.type || 'Restaurant'} • {rest.city}</p>
                     </div>
-                    <p className="text-gray-500 text-xs font-bold leading-relaxed">{rest.type || 'Restaurant'} • {rest.city}</p>
+                    <div className="flex items-center justify-between text-xs pt-4 mt-4 border-t border-gray-50">
+                      <span className="text-gray-600 font-bold bg-gray-50 px-2 py-1 rounded border border-gray-100">
+                        Min. ₦{(rest.minimumOrder || 0).toLocaleString()}
+                      </span>
+                      <span className="text-[#2d5f4f] font-extrabold group-hover:translate-x-1 transition-transform inline-flex items-center uppercase tracking-wider text-[10px]">
+                        View Menu <ChevronRight className="w-3.5 h-3.5 ml-0.5" />
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center justify-between text-xs pt-4 mt-4 border-t border-gray-50">
-                    <span className="text-gray-600 font-bold bg-gray-50 px-2 py-1 rounded border border-gray-100">₦1000 Delivery</span>
-                    <span className="text-[#2d5f4f] font-extrabold group-hover:translate-x-1 transition-transform inline-flex items-center uppercase tracking-wider text-[10px]">
-                      View Menu <ChevronRight className="w-3.5 h-3.5 ml-0.5" />
-                    </span>
-                  </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </div>
         )}
       </div>
@@ -396,8 +474,8 @@ function DashboardContent() {
 
 export default function CustomerDashboardPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-gray-500 font-bold">Loading dashboard...</div>}>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-gray-500 font-bold bg-gray-50">Loading dashboard...</div>}>
       <DashboardContent />
     </Suspense>
-  )
+  );
 }

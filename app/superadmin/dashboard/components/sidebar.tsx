@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { BarChart3, Users, Bike, ShoppingCart, Settings, LogOut, Building2, MessageSquare } from 'lucide-react'
+import { BarChart3, Users, Bike, ShoppingCart, Settings, LogOut, Building2, MessageSquare, Megaphone } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 
@@ -14,6 +14,7 @@ const navItems = [
   { href: '/superadmin/dashboard/orders', label: 'Customers & Orders', icon: ShoppingCart },
   { href: '/superadmin/dashboard/chat', label: 'Support Inbox', icon: MessageSquare },
   { href: '/superadmin/dashboard/settings', label: 'Settings', icon: Settings },
+  {href: '/superadmin/dashboard/broadcasts',  label: 'Advert Broadcasts', icon: Megaphone },
 ]
 
 export function Sidebar() {

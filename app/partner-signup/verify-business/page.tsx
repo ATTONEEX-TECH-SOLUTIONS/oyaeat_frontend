@@ -189,7 +189,7 @@ const VerifyBusinessPage = () => {
         throw new Error(data?.message || "Failed to upload documents");
       }
 
-      router.push("/partner-signup/success");
+      router.push(`/partner-signup/gallery?businessId=${businessId}`);
     } catch (err) {
       setError(
         err instanceof Error

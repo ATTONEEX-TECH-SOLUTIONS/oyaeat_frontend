@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import {
   Save, MapPin, Clock, Bell, Camera, ImagePlus,
   Loader2, CheckCircle2, AlertCircle, Store, Globe,
-  ChevronRight, User2,
+  ChevronRight, User2, Grid, Upload, Trash2, Sparkles
 } from 'lucide-react';
 
 const API = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000';
@@ -47,10 +47,11 @@ const DEFAULT: Settings = {
   notifications: { newOrders: true, orderUpdates: true, systemAlerts: true, promotions: false },
 };
 
-type TabId = 'profile' | 'hours' | 'delivery' | 'notifications';
+type TabId = 'profile' | 'gallery' | 'hours' | 'delivery' | 'notifications';
 
 const TABS: { id: TabId; label: string; icon: React.ReactNode }[] = [
   { id: 'profile',       label: 'Profile',      icon: <Store className="w-4 h-4" /> },
+  { id: 'gallery',       label: 'Customer Card Gallery', icon: <Grid className="w-4 h-4" /> },
   { id: 'hours',         label: 'Hours',         icon: <Clock className="w-4 h-4" /> },
   { id: 'delivery',      label: 'Delivery',      icon: <MapPin className="w-4 h-4" /> },
   { id: 'notifications', label: 'Notifications', icon: <Bell className="w-4 h-4" /> },
@@ -73,14 +74,17 @@ function Input({ ...props }: React.InputHTMLAttributes<HTMLInputElement>) {
   );
 }
 
-function Textarea({ ...props }: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
+function Textarea({ value, ...props }: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
   return (
-    <textarea {...props}
+    <textarea 
+      {...props}
+      value={value ?? ""} // ✅ FIX: Force empty string if description is null
       className="w-full px-4 py-3 rounded-xl text-sm border-2 outline-none transition-all duration-150 focus:border-[#2e7d32] bg-card resize-none"
       style={{ borderColor: '#ddeee0', color: '#1a3d20' }}
     />
   );
 }
+
 
 function SectionTitle({ icon, children }: { icon: React.ReactNode; children: React.ReactNode }) {
   return (
@@ -107,13 +111,26 @@ export default function SettingsPage() {
   const thumbRef = useRef<HTMLInputElement>(null);
   const picRef   = useRef<HTMLInputElement>(null);
 
+  // Storefront Gallery States
+  const [currentGallery, setCurrentGallery] = useState<any[]>([]);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [previews, setPreviews] = useState<string[]>([]);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
+
   useEffect(() => {
     const id = getBusinessId();
     if (!id) { setLoading(false); return; }
-    fetch(`${API}/vendor/business/${id}/settings`, { headers: authHeaders() })
+    
+    // Fetch profile and populate embedded showcase galleries automatically
+    fetch(`${API}/vendor/business/${id}`, { headers: authHeaders() })
       .then(r => r.ok ? r.json() : null)
-      .then(j => { if (j?.data) setSettings({ ...DEFAULT, ...j.data }); })
-      .catch(() => flash('error', 'Could not load settings.'))
+      .then(j => { 
+        if (j?.business) {
+          setSettings({ ...DEFAULT, businessId: j.business.id, businessName: j.business.name, ...j.business });
+          setCurrentGallery(j.business.galleryImages || []);
+        } 
+      })
+      .catch(() => flash('error', 'Could not load store profile details.'))
       .finally(() => setLoading(false));
       
     const volStr = localStorage.getItem('vendor_audio_volume');
@@ -180,6 +197,77 @@ export default function SettingsPage() {
     finally { setUploading(false); }
   }
 
+  // Showcase Gallery Handlers
+  const handleFileSelection = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const filesArray = Array.from(e.target.files);
+      if (currentGallery.length + selectedFiles.length + filesArray.length > 5) {
+        alert("Layout rule: You can only have up to 5 storefront display gallery images.");
+        return;
+      }
+      setSelectedFiles(prev => [...prev, ...filesArray]);
+      const newPreviews = filesArray.map(file => URL.createObjectURL(file));
+      setPreviews(prev => [...prev, ...newPreviews]);
+    }
+  };
+
+  const clearPendingSelection = (index: number) => {
+    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+    setPreviews(prev => prev.filter((_, i) => i !== index));
+  };
+
+  async function handleGallerySubmit() {
+    if (selectedFiles.length === 0) return;
+    setSaving(true);
+    try {
+      const multipartData = new FormData();
+      selectedFiles.forEach(file => {
+        multipartData.append('gallery', file);
+      });
+
+      const res = await fetch(`${API}/vendor/${settings.businessId}/upload-gallery`, {
+        method: 'POST',
+        headers: authHeaders(),
+        body: multipartData
+      });
+
+      const json = await res.json();
+      if (res.ok) {
+        flash('success', 'Gallery updated successfully!');
+        if (json.gallery) setCurrentGallery(prev => [...prev, ...json.gallery]);
+        setSelectedFiles([]);
+        setPreviews([]);
+      } else {
+        flash('error', json.message || 'Gallery upload failed.');
+      }
+    } catch {
+      flash('error', 'Network sync failed.');
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function handleDeleteImage(imageId: number) {
+    if (!window.confirm("Delete this photo from your consumer display rotation?")) return;
+    setDeletingId(imageId);
+    try {
+      const res = await fetch(`${API}/vendor/gallery/${imageId}`, {
+        method: 'DELETE',
+        headers: authHeaders()
+      });
+      if (res.ok) {
+        setCurrentGallery(prev => prev.filter(img => img.id !== imageId));
+        flash('success', 'Photo removed!');
+      } else {
+        flash('error', 'Failed to remove photo.');
+      }
+    } catch {
+      flash('error', 'Network error occurred.');
+    } finally {
+      setDeletingId(null);
+    }
+  }
+
   if (loading) return (
     <div className="w-full h-full flex items-center justify-center" style={{ minHeight: '100vh', backgroundColor: '#f0f7f1' }}>
       <Loader2 className="w-8 h-8 animate-spin" style={{ color: '#1a5c2a' }} />
@@ -190,14 +278,9 @@ export default function SettingsPage() {
   const picSrc   = picPreview   || settings.profilePicUrl;
 
   return (
-    /*
-     * Fills the full <main> — no padding on this wrapper.
-     * min-h-screen ensures it always covers the viewport height.
-     * The inner column is max-w-3xl and centred with mx-auto + px padding.
-     */
     <div className="w-full min-h-screen" style={{ backgroundColor: '#f0f7f1' }}>
 
-      {/* Toast */}
+      {/* Toast notifications */}
       {toast && (
         <div className="fixed top-5 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2.5 px-5 py-3 rounded-2xl shadow-xl text-sm font-semibold"
           style={{
@@ -209,14 +292,13 @@ export default function SettingsPage() {
         </div>
       )}
 
-      {/* ── Centred content column ── */}
-      <div className="w-full  px-6 py-8 space-y-5">
+      <div className="w-full px-6 py-8 space-y-5">
 
         {/* ══ Hero card ══ */}
         <div className="w-full rounded-2xl overflow-hidden"
           style={{ backgroundColor: '#ffffff', border: '1px solid #ddeee0', boxShadow: '0 2px 12px rgba(0,0,0,0.05)' }}>
 
-          {/* Banner */}
+          {/* Banner cover upload target photo */}
           <div className="relative w-full cursor-pointer group" style={{ height: '168px', backgroundColor: '#c8e6c9' }}
             onClick={() => thumbRef.current?.click()}>
             {thumbSrc
@@ -234,11 +316,11 @@ export default function SettingsPage() {
               onChange={e => { const f = e.target.files?.[0]; if (f) uploadImage(f, 'thumbnail', 'thumbnail', setThumbUploading, setThumbPreview, 'thumbnailUrl'); }} />
           </div>
 
-          {/* Profile strip */}
+          {/* Profile strip branding row */}
           <div className="px-8 pb-6" style={{ marginTop: '-44px' }}>
             <div className="flex items-end gap-5">
 
-              {/* Avatar — 88px circle */}
+              {/* Avatar logo layout circle container */}
               <div
                 className="relative flex-shrink-0 cursor-pointer group"
                 style={{
@@ -260,7 +342,7 @@ export default function SettingsPage() {
                   onChange={e => { const f = e.target.files?.[0]; if (f) uploadImage(f, 'profile-pic', 'profilePic', setPicUploading, setPicPreview, 'profilePicUrl'); }} />
               </div>
 
-              {/* Name + city */}
+              {/* Text metadata identities descriptors block */}
               <div className="flex-1 min-w-0 pb-1">
                 <p className="text-lg font-bold truncate" style={{ color: '#1a3d20', fontFamily: "'Montserrat', sans-serif" }}>
                   {settings.businessName || 'Your Restaurant'}
@@ -270,18 +352,20 @@ export default function SettingsPage() {
                 </p>
               </div>
 
-              {/* Quick save */}
-              <button onClick={handleSave} disabled={saving}
-                className="flex-shrink-0 flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-all disabled:opacity-60"
-                style={{ backgroundColor: '#1a5c2a', boxShadow: '0 2px 8px rgba(26,92,42,0.25)' }}>
-                {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                {saving ? 'Saving…' : 'Save'}
-              </button>
+              {/* Top context action bars */}
+              {tab !== 'gallery' && (
+                <button onClick={handleSave} disabled={saving}
+                  className="flex-shrink-0 flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-all disabled:opacity-60"
+                  style={{ backgroundColor: '#1a5c2a', boxShadow: '0 2px 8px rgba(26,92,42,0.25)' }}>
+                  {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                  {saving ? 'Saving…' : 'Save'}
+                </button>
+              )}
             </div>
           </div>
         </div>
 
-        {/* ══ Tab nav ══ */}
+        {/* ══ Tab Navigation items matrix selection rows ══ */}
         <div className="w-full flex gap-1 p-1 rounded-2xl" style={{ backgroundColor: '#ddeee0' }}>
           {TABS.map(t => (
             <button key={t.id} onClick={() => setTab(t.id)}
@@ -294,11 +378,11 @@ export default function SettingsPage() {
           ))}
         </div>
 
-        {/* ══ Tab panel ══ */}
+        {/* ══ Tab panel screens wrapper context ══ */}
         <div className="w-full rounded-2xl"
           style={{ backgroundColor: '#ffffff', border: '1px solid #ddeee0', boxShadow: '0 2px 12px rgba(0,0,0,0.05)' }}>
 
-          {/* PROFILE */}
+          {/* PROFILE SUBPANEL */}
           {tab === 'profile' && (
             <div className="p-8 space-y-6">
               <SectionTitle icon={<Store className="w-4 h-4" />}>Restaurant Information</SectionTitle>
@@ -325,7 +409,104 @@ export default function SettingsPage() {
             </div>
           )}
 
-          {/* HOURS */}
+          {/* CUSTOMER SHOWCASE GALLERY MANAGEMENT TAB PANEL */}
+          {tab === 'gallery' && (
+            <div className="p-8 space-y-8 animate-in fade-in duration-200">
+              <SectionTitle icon={<Grid className="w-4 h-4" />}>Marketplace Grid Gallery</SectionTitle>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                {/* Active Live List Panel */}
+                <div className="p-5 rounded-2xl border space-y-4" style={{ backgroundColor: '#f9fbf9', borderColor: '#ddeee0' }}>
+                  <h4 className="text-[11px] font-bold uppercase tracking-wider flex items-center gap-1.5" style={{ color: '#1a5c2a' }}>
+                    Active Showcase Photos ({currentGallery.length}/5)
+                  </h4>
+                  
+                  {currentGallery.length === 0 ? (
+                    <div className="border border-dashed rounded-xl p-8 text-center text-xs text-slate-400 bg-white" style={{ borderColor: '#ddeee0' }}>
+                      No showcase photos found. Add images below to build your grid view layout.
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-3">
+                      {currentGallery.map((img: any) => (
+                        <div key={img.id} className="relative h-24 border bg-white rounded-xl overflow-hidden shadow-sm group" style={{ borderColor: '#ddeee0' }}>
+                          <img src={img.imageUrl} alt="Marketplace Display" className="w-full h-full object-cover" />
+                          
+                          <button
+                            type="button"
+                            disabled={deletingId !== null}
+                            onClick={() => handleDeleteImage(img.id)}
+                            className="absolute top-1.5 right-1.5 p-1.5 bg-white/95 backdrop-blur-sm rounded-lg text-slate-400 hover:text-red-600 shadow-sm transition-all opacity-0 group-hover:opacity-100"
+                          >
+                            {deletingId === img.id ? (
+                              <Loader2 className="w-3.5 h-3.5 animate-spin text-slate-500" />
+                            ) : (
+                              <Trash2 className="w-3.5 h-3.5" />
+                            )}
+                          </button>
+                          <div className="absolute top-1.5 left-1.5 bg-green-600 text-white p-0.5 rounded shadow group-hover:opacity-0 transition-opacity">
+                            <CheckCircle2 className="w-3 h-3" />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  <p className="text-[10px] leading-relaxed" style={{ color: '#5a8a6a' }}>
+                    💡 Tip: Enforced design constraint requires **at least 3 photos** to format the multi-image mosaic layout cleanly on customer feeds.
+                  </p>
+                </div>
+
+                {/* File Picker Upload Manager Panel */}
+                <div className="space-y-4 flex flex-col justify-between">
+                  <div className="space-y-4">
+                    <h4 className="text-[11px] font-bold uppercase tracking-wider flex items-center gap-1.5" style={{ color: '#1a5c2a' }}>
+                      <Upload className="w-3.5 h-3.5" /> Stage New Images
+                    </h4>
+                    
+                    <div className="border-2 border-dashed rounded-xl p-6 text-center relative transition-all group cursor-pointer"
+                      style={{ backgroundColor: '#f9fbf9', borderColor: '#ddeee0' }}>
+                      <ImagePlus className="w-6 h-6 mx-auto mb-1.5 group-hover:scale-105 transition-transform" style={{ color: '#4a7c59' }} />
+                      <span className="text-xs font-bold block" style={{ color: '#1a3d20' }}>Browse Disk Files</span>
+                      <input type="file" multiple accept="image/*" onChange={handleFileSelection} className="absolute inset-0 opacity-0 cursor-pointer" />
+                    </div>
+
+                    {previews.length > 0 && (
+                      <div className="space-y-2">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Staged additions:</span>
+                        <div className="grid grid-cols-3 gap-2">
+                          {previews.map((blob, idx) => (
+                            <div key={idx} className="relative h-14 rounded-lg overflow-hidden border bg-white shadow-sm" style={{ borderColor: '#ddeee0' }}>
+                              <img src={blob} alt="Staged photo" className="w-full h-full object-cover" />
+                              <button 
+                                type="button" 
+                                onClick={() => clearPendingSelection(idx)}
+                                className="absolute top-1 right-1 p-1 bg-white/90 rounded-md text-slate-400 hover:text-red-500 shadow"
+                              >
+                                <Trash2 className="w-3 h-3" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <button 
+                    onClick={handleGallerySubmit} 
+                    disabled={saving || selectedFiles.length === 0}
+                    className="w-full py-2.5 rounded-xl text-sm font-bold text-white transition-all disabled:opacity-60 flex items-center justify-center gap-2 mt-4"
+                    style={{ backgroundColor: '#1a5c2a', boxShadow: '0 2px 8px rgba(26,92,42,0.25)' }}
+                  >
+                    {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                    {saving ? 'Syncing Gallery...' : 'Publish Showcase Deck'}
+                  </button>
+                </div>
+
+              </div>
+            </div>
+          )}
+
+          {/* HOURS SUBPANEL */}
           {tab === 'hours' && (
             <div className="p-8 space-y-6">
               <SectionTitle icon={<Clock className="w-4 h-4" />}>Operating Hours</SectionTitle>
@@ -342,7 +523,7 @@ export default function SettingsPage() {
             </div>
           )}
 
-          {/* DELIVERY */}
+          {/* DELIVERY SUBPANEL */}
           {tab === 'delivery' && (
             <div className="p-8 space-y-6">
               <SectionTitle icon={<MapPin className="w-4 h-4" />}>Delivery Settings</SectionTitle>
@@ -366,7 +547,7 @@ export default function SettingsPage() {
             </div>
           )}
 
-          {/* NOTIFICATIONS */}
+                    {/* NOTIFICATIONS */}
           {tab === 'notifications' && (
             <div className="p-8 space-y-4">
               <SectionTitle icon={<Bell className="w-4 h-4" />}>Notification Preferences</SectionTitle>
@@ -436,13 +617,17 @@ export default function SettingsPage() {
               </div>
             </div>
           )}
+
         </div>
 
         {/* ══ Bottom save bar ══ */}
         <div className="w-full flex items-center justify-between px-6 py-4 rounded-2xl mb-8"
           style={{ backgroundColor: '#ffffff', border: '1px solid #ddeee0', boxShadow: '0 2px 12px rgba(0,0,0,0.05)' }}>
           <p className="text-xs" style={{ color: '#5a8a6a' }}>
-            Changes apply to all customers immediately after saving.
+            {tab === 'gallery' 
+              ? 'Showcase photos publish to the marketplace immediately after saving.'
+              : 'Changes apply to all customers immediately after saving.'
+            }
           </p>
           <div className="flex gap-3">
             <button onClick={() => window.location.reload()}
@@ -450,11 +635,17 @@ export default function SettingsPage() {
               style={{ borderColor: '#ddeee0', color: '#4a7c59' }}>
               Discard
             </button>
-            <button onClick={handleSave} disabled={saving}
+            
+            <button 
+              onClick={tab === 'gallery' ? handleGallerySubmit : handleSave} 
+              disabled={saving || (tab === 'gallery' && selectedFiles.length === 0)}
               className="flex items-center gap-2 px-6 py-2 rounded-xl text-sm font-bold text-white transition-all disabled:opacity-60"
               style={{ backgroundColor: '#1a5c2a', boxShadow: '0 2px 8px rgba(26,92,42,0.25)' }}>
               {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-              {saving ? 'Saving…' : 'Save Changes'}
+              {saving 
+                ? (tab === 'gallery' ? 'Syncing Gallery…' : 'Saving…') 
+                : (tab === 'gallery' ? 'Publish Gallery' : 'Save Changes')
+              }
             </button>
           </div>
         </div>
