@@ -13,8 +13,9 @@ const navItems = [
   { href: '/superadmin/dashboard/riders', label: 'Riders', icon: Bike },
   { href: '/superadmin/dashboard/orders', label: 'Customers & Orders', icon: ShoppingCart },
   { href: '/superadmin/dashboard/chat', label: 'Support Inbox', icon: MessageSquare },
+   {href: '/superadmin/dashboard/broadcasts',  label: 'Advert Broadcasts', icon: Megaphone },
   { href: '/superadmin/dashboard/settings', label: 'Settings', icon: Settings },
-  {href: '/superadmin/dashboard/broadcasts',  label: 'Advert Broadcasts', icon: Megaphone },
+ 
 ]
 
 export function Sidebar() {

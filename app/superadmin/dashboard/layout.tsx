@@ -7,7 +7,7 @@ export default function SuperAdminDashboardLayout({
 }) {
   return (
     <div className="min-h-screen">
-      {/* later you can add sidebar/topbar here */}
+      
       {children}
     </div>
   );

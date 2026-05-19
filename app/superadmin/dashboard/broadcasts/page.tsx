@@ -1,17 +1,10 @@
-'use client'
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import { Sidebar } from '@/app/superadmin/dashboard/components/sidebar';
-import { Megaphone, Zap, Clock, Loader2, Trash2, CheckCircle, Sparkles, PlusCircle, Store } from 'lucide-react';
+import { Megaphone, Clock, Loader2, Sparkles, PlusCircle, Store, Upload, Image as ImageIcon, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-
-const GRADIENTS = [
-  { id: 'g1', name: 'OyaEat Emerald', class: 'from-[#2d5f4f] to-slate-800' },
-  { id: 'g2', name: 'Jollof Sunset', class: 'from-orange-500 to-red-500' },
-  { id: 'g3', name: 'Ocean Teal', class: 'from-blue-500 to-teal-500' },
-  { id: 'g4', name: 'Neon Purple', class: 'from-purple-500 to-indigo-500' },
-];
 
 export default function AdminBroadcastPage() {
   const [loading, setLoading] = useState(true);
@@ -19,12 +12,15 @@ export default function AdminBroadcastPage() {
   const [broadcasts, setBroadcasts] = useState<any[]>([]);
   const [approvedBusinesses, setApprovedBusinesses] = useState<any[]>([]);
 
-  // Form states
+  // Form inputs tracking states
   const [targetBusinessId, setTargetBusinessId] = useState('');
   const [title, setTitle] = useState('');
   const [desc, setDesc] = useState('');
-  const [selectedGradient, setSelectedGradient] = useState('from-orange-500 to-red-500');
   const [durationHours, setDurationHours] = useState('24');
+  
+  // File upload and local state visual references
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
@@ -40,15 +36,30 @@ export default function AdminBroadcastPage() {
     initPage();
   }, []);
 
+  const getAuthToken = (): string | null => {
+    if (typeof window === 'undefined') return null;
+    return localStorage.getItem('authToken') || 
+           localStorage.getItem('admin_token') || 
+           localStorage.getItem('vendor_token');
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setSelectedFile(file);
+      setPreviewUrl(URL.createObjectURL(file));
+    }
+  };
+
   const fetchApprovedRestaurants = async () => {
     try {
-      const token = localStorage.getItem('authToken') || localStorage.getItem('vendor_token');
+      const token = getAuthToken();
       if (!token) return;
 
       const res = await fetch(`${API_BASE_URL}/admin/broadcasts/approved-list`, {
+        method: 'GET',
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      
       const json = await res.json();
       if (json.success && Array.isArray(json.businesses)) {
         setApprovedBusinesses(json.businesses);
@@ -63,57 +74,94 @@ export default function AdminBroadcastPage() {
       const res = await fetch(`${API_BASE_URL}/public/promos`);
       const json = await res.json();
       if (json.success) {
-        setBroadcasts(json.data);
+        setBroadcasts(json.data || []);
       }
     } catch (err) {
       console.error("Failed to load active promotions:", err);
     }
   };
 
-   const handleCreateBroadcast = async (e: React.FormEvent) => {
+  const handleCreateBroadcast = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!targetBusinessId || !title || !desc) {
-      alert("Please select a restaurant and populate all fields.");
+    if (!targetBusinessId || !title || !desc || !selectedFile) {
+      alert("Please populate all form inputs and select a graphics banner asset.");
       return;
     }
 
     setSubmitting(true);
     try {
-      const token = localStorage.getItem('authToken') || localStorage.getItem('vendor_token'); 
+      const token = getAuthToken(); 
+      if (!token) {
+        alert("Session expired. Please log back in.");
+        return;
+      }
 
-      // Hits your case-safeguarded admin creation routing endpoint parameters
+      const formData = new FormData();
+      formData.append('businessId', targetBusinessId);
+      formData.append('title', title);
+      formData.append('desc', desc);
+      formData.append('durationHours', durationHours);
+      formData.append('image', selectedFile);
+
       const response = await fetch(`${API_BASE_URL}/admin/broadcasts/create`, {
         method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          businessId: targetBusinessId,
-          title,
-          desc,
-          bgGradient: selectedGradient,
-          durationHours
-        })
+        headers: { 'Authorization': `Bearer ${token}` },
+        body: formData
       });
 
       const json = await response.json();
-      if (response.ok) {
-        alert("Campaign broadcasted live across customer platforms successfully!");
+      if (response.ok && json.success) {
+        alert("Campaign banner asset uploaded and broadcasted live across system carousels!");
         setTargetBusinessId('');
         setTitle('');
         setDesc('');
-        fetchActiveBroadcasts(); // Instant UI list table update refresh
+        setSelectedFile(null);
+        setPreviewUrl(null);
+        fetchActiveBroadcasts(); 
       } else {
-        alert(`Server error: ${json.message}`);
+        alert(`Server error: ${json.message || 'Authorization tracking verification issue.'}`);
       }
     } catch (err) {
-      console.error(err);
+      console.error("Submission error:", err);
     } finally {
       setSubmitting(false);
     }
   };
 
+  // Toggle IsActive status on click helper
+  const handleToggleActiveStatus = async (id: number, currentStatus: boolean) => {
+    try {
+      const token = getAuthToken();
+      if (!token) return;
+
+      const res = await fetch(`${API_BASE_URL}/admin/broadcasts/${id}/toggle`, {
+        method: 'PATCH',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ isActive: !currentStatus })
+      });
+      const json = await res.json();
+      if (json.success) {
+        // Update local state grid array instantly
+        setBroadcasts(prev => prev.map(item => item.id === id ? { ...item, isActive: !currentStatus } : item));
+      } else {
+        alert(`Failed to update status: ${json.message}`);
+      }
+    } catch (err) {
+      console.error("Failed toggling stream status visibility:", err);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex h-screen w-screen items-center justify-center bg-slate-50 gap-2">
+        <Loader2 className="w-6 h-6 animate-spin text-orange-500" />
+        <span className="text-sm font-semibold text-slate-600">Syncing Admin Engine...</span>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen bg-slate-100">
@@ -122,10 +170,10 @@ export default function AdminBroadcastPage() {
       <main className="flex-1 overflow-auto p-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-2">
-            <Megaphone className="text-orange-500" /> Dynamic Broadcast Controller
+             Advert Broadcasts
           </h1>
           <p className="text-slate-600 mt-2">
-            Generate, review, and push active campaigns across consumer application carousel frameworks.
+            Upload custom image promotional artwork to deploy across consumer system interface banners instantly.
           </p>
         </div>
 
@@ -146,7 +194,7 @@ export default function AdminBroadcastPage() {
                   required
                   value={targetBusinessId}
                   onChange={e => setTargetBusinessId(e.target.value)}
-                  className="w-full h-11 px-3 py-2 rounded-xl border border-slate-200 bg-white text-sm font-medium focus:outline-none focus:border-orange-500 transition-colors cursor-pointer text-slate-800"
+                  className="w-full h-11 px-3 py-2 rounded-xl border border-slate-200 bg-white text-sm font-medium focus:outline-none focus:border-orange-500 transition-colors text-slate-800"
                 >
                   <option value="">-- Choose an Approved Vendor --</option>
                   {approvedBusinesses.map((b: any) => (
@@ -172,24 +220,31 @@ export default function AdminBroadcastPage() {
                 <Input type="number" required placeholder="e.g. 24" value={durationHours} onChange={e => setDurationHours(e.target.value)} className="rounded-xl" />
               </div>
 
+              {/* Native Image Upload Zone UI rendering block */}
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-600 uppercase tracking-wide block">Select Layout Canvas Gradient</label>
-                <div className="grid grid-cols-2 gap-2">
-                  {GRADIENTS.map(g => (
-                    <button
-                      key={g.id}
-                      type="button"
-                      onClick={() => setSelectedGradient(g.class)}
-                      className={`h-11 rounded-xl text-[10px] font-bold text-white bg-gradient-to-r ${g.class} border-2 px-2 transition-all ${selectedGradient === g.class ? 'border-orange-500 scale-95 shadow-md' : 'border-transparent'}`}
-                    >
-                      {g.name}
-                    </button>
-                  ))}
+                <label className="text-xs font-bold text-slate-600 uppercase tracking-wide block flex items-center gap-1">
+                  <ImageIcon className="w-3.5 h-3.5 text-slate-500" /> Upload Campaign Image Graphic
+                </label>
+                
+                <div className="flex flex-col gap-3">
+                  {previewUrl && (
+                    <div className="h-28 w-full rounded-xl bg-cover bg-center border shadow-inner relative overflow-hidden" style={{ backgroundImage: `url(${previewUrl})` }}>
+                      <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                        <span className="text-white text-[10px] bg-black/50 px-2 py-1 rounded-full font-bold">Image Select Preview</span>
+                      </div>
+                    </div>
+                  )}
+                  
+                  <label className="flex items-center justify-center gap-2 border-2 border-dashed border-slate-200 hover:border-orange-500 rounded-xl py-4 px-3 cursor-pointer transition-colors text-slate-500 hover:text-orange-500">
+                    <Upload className="w-4 h-4" />
+                    <span className="text-xs font-bold">{selectedFile ? "Replace Selected Asset File" : "Choose Image Graphic File"}</span>
+                    <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+                  </label>
                 </div>
               </div>
 
-              <Button type="submit" disabled={submitting} className="w-full bg-orange-500 hover:bg-orange-600 text-white rounded-xl h-11 font-bold mt-4 shadow-sm">
-                {submitting ? <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Dispatching Node...</> : "Broadcast Live Advert"}
+              <Button type="submit" disabled={submitting} className="w-full bg-[#2e7d32] hover:bg-[#2e7d32] text-white rounded-xl h-11 font-bold mt-4 shadow-sm">
+                {submitting ? <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Dispatching Asset Cargo...</> : "Broadcast Live Advert"}
               </Button>
             </form>
           </div>
@@ -197,13 +252,11 @@ export default function AdminBroadcastPage() {
           {/* Active Broadcast Tracking Grid Table Column */}
           <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm xl:col-span-2 space-y-4">
             <div className="flex items-center gap-2 border-b pb-3 border-slate-100">
-              <Sparkles className="text-amber-500 w-5 h-5" />
+              
               <h2 className="font-extrabold text-slate-800 text-sm uppercase tracking-wider">Active Broadcast Streams</h2>
             </div>
 
-            {loading ? (
-              <div className="py-12 text-center text-sm font-medium text-slate-500 flex items-center justify-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Verifying live carousel arrays...</div>
-            ) : broadcasts.length === 0 ? (
+            {broadcasts.length === 0 ? (
               <div className="text-center py-16 text-slate-400 border border-dashed rounded-2xl text-xs">No active promotions are currently loaded in the system dashboard.</div>
             ) : (
               <div className="overflow-x-auto">
@@ -212,23 +265,55 @@ export default function AdminBroadcastPage() {
                     <tr className="border-b text-xs font-bold text-slate-400 uppercase tracking-wider bg-slate-50/50">
                       <th className="p-3">Restaurant Name</th>
                       <th className="p-3">Campaign Headline</th>
-                      <th className="p-3">Visual Style Preview</th>
+                      <th className="p-3">Uploaded Image Backdrop</th>
                       <th className="p-3">Expiration Date</th>
+                      <th className="p-3 text-center">Status Action</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y text-slate-700 font-medium">
-                    {broadcasts.map((promo, idx) => (
-                      <tr key={promo.id || idx} className="hover:bg-slate-50/50 transition-colors">
-                        <td className="p-3 font-bold text-slate-900">{promo.business?.name || `ID: ${promo.businessId}`}</td>
-                        <td className="p-3">{promo.title}</td>
-                        <td className="p-3">
-                          <div className={`px-3 py-1.5 text-center rounded-xl bg-gradient-to-r ${promo.bgGradient} text-white font-extrabold text-[10px] w-28 shadow-sm`}>
-                            {promo.desc ? promo.desc.substring(0, 15) : ""}...
-                          </div>
-                        </td>
-                        <td className="p-3 text-xs text-slate-500 flex items-center gap-1 mt-1.5"><Clock className="w-3.5 h-3.5" /> {new Date(promo.expiresAt).toLocaleString([], {hour: '2-digit', minute:'2-digit', month:'short', day:'numeric'})}</td>
-                      </tr>
-                    ))}
+                    {broadcasts.map((promo, idx) => {
+                      const isUploadedImage = promo.bgGradient?.startsWith("http://") || promo.bgGradient?.startsWith("https://");
+                      
+                      return (
+                        <tr key={promo.id || idx} className={`hover:bg-slate-50/50 transition-colors ${!promo.isActive ? 'opacity-50 bg-slate-50/40' : ''}`}>
+                          <td className="p-3 font-bold text-slate-900">{promo.business?.name || `ID: ${promo.businessId}`}</td>
+                          <td className="p-3">{promo.title}</td>
+                          <td className="p-3">
+                            <div 
+                              className={`h-12 w-32 rounded-xl bg-cover bg-center border text-white font-extrabold text-[10px] shadow-sm relative overflow-hidden flex flex-col justify-center p-1 text-center ${!isUploadedImage ? `bg-gradient-to-r ${promo.bgGradient}` : ''}`} 
+                              style={isUploadedImage ? { backgroundImage: `url(${promo.bgGradient})` } : {}}
+                            >
+                              <div className="absolute inset-0 bg-black/40 z-0" />
+                              <p className="relative z-10 tracking-tight leading-tight truncate px-1 font-black uppercase text-white">{promo.title}</p>
+                              <p className="relative z-10 text-[8px] opacity-75 truncate px-1 font-normal text-white">{promo.desc || ""}</p>
+                            </div>
+                          </td>
+                          <td className="p-3 text-xs text-slate-500">
+                            <div className="flex items-center gap-1">
+                              <Clock className="w-3.5 h-3.5" /> 
+                              {promo.expiresAt ? new Date(promo.expiresAt).toLocaleString([], {hour: '2-digit', minute:'2-digit', month:'short', day:'numeric'}) : 'N/A'}
+                            </div>
+                          </td>
+                          <td className="p-3 text-center">
+                            <button
+                              type="button"
+                              onClick={() => handleToggleActiveStatus(promo.id, promo.isActive)}
+                              className={`px-3 py-1.5 rounded-xl font-bold text-xs inline-flex items-center gap-1 transition-all ${
+                                promo.isActive 
+                                  ? 'bg-rose-50 border border-rose-100 text-rose-600 hover:bg-rose-100' 
+                                  : 'bg-emerald-50 border border-emerald-100 text-emerald-600 hover:bg-emerald-100'
+                              }`}
+                            >
+                              {promo.isActive ? (
+                                <><EyeOff className="w-3.5 h-3.5" /> Deactivate</>
+                              ) : (
+                                <><Eye className="w-3.5 h-3.5" /> Activate</>
+                              )}
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>

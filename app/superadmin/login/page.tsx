@@ -30,7 +30,7 @@ function IllustrationPanel() {
   return (
     <div
       className="hidden lg:flex flex-col justify-between p-10 relative overflow-hidden bg-cover bg-center"
-      style={{ backgroundImage: "url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&q=80')", minHeight: '100%' }}
+      style={{ backgroundImage: "url('https://unsplash.com')", minHeight: '100%' }}
     >
       <div className="absolute inset-0 bg-black/60" />
       
@@ -130,20 +130,38 @@ export default function AdminLoginPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(values),
       })
-      if (!res.ok) { setError('Invalid credentials. Please try again.'); return }
+      
+      if (!res.ok) { 
+        setError('Invalid credentials. Please try again.'); 
+        return; 
+      }
+      
       const data = await res.json()
-      if (data?.token) localStorage.setItem('admin_token', data.token)
-      if (data?.admin)  localStorage.setItem('admin_user',  JSON.stringify(data.admin))
-        console.log(data.token);
+      
+      if (data?.token) {
+        //  SUCCESS SYNC: Tokens save here now automatically match your broadcast dropdown engine code queries
+        localStorage.setItem('authToken', data.token);
+        localStorage.setItem('admin_token', data.token); 
+        
+        // Clean old lingering vendor configurations out to bypass fallback loops completely
+        localStorage.removeItem('vendor_token');
+        localStorage.removeItem('vendor_dashboard');
+      }
+      
+      if (data?.admin) {
+        localStorage.setItem('admin_user', JSON.stringify(data.admin));
+      }
+      
       router.replace('/superadmin/dashboard')
-    } catch (error) {
-        console.log("JWT ERROR:", error.message);
+    } catch (err: any) {
+        console.error("JWT LOGIN ERROR:", err.message);
+        setError('A server or database runtime connection issue was encountered.');
     } finally {
       setSubmitting(false)
     }
   }
 
-  const { register, handleSubmit, formState: { errors }, watch } = form
+  const { handleSubmit, formState: { errors }, watch } = form
   const emailVal = watch('email')
   const passVal  = watch('password')
 
@@ -213,6 +231,7 @@ export default function AdminLoginPage() {
               onChange={v => form.setValue('email', v)}
               onBlur={() => form.trigger('email')}
             />
+
             <Field
               label="Password"
               type="password"

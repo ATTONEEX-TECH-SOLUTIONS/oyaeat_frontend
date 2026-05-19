@@ -206,32 +206,73 @@ function DashboardContent() {
             </div>
           </div>
 
-          {/* Auto-Rotating Promo Banner Card */}
-          <div className="xl:w-[400px] h-[200px] xl:h-[auto] shrink-0 relative rounded-3xl overflow-hidden shadow-lg cursor-pointer group">
-            {promos.map((promo, index) => (
-              <Link 
-                href={promo.businessId ? `/customer/dashboard/restaurant/${promo.businessId}` : '#restaurants'}
-                key={promo.id || index}
-                className={`absolute inset-0 w-full h-full bg-gradient-to-r ${promo.bgGradient || 'from-orange-500 to-red-500'} p-6 flex flex-col justify-between transition-opacity duration-1000 ease-in-out transform ${index === activePromo ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}
-              >
-                <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-300"></div>
-                <div className="relative z-10 text-white">
-                  <Zap className="w-8 h-8 xl:w-10 xl:h-10 mb-3 text-yellow-300 drop-shadow-md" />
-                  <h3 className="font-extrabold text-xl xl:text-3xl leading-tight mb-2 drop-shadow-md">{promo.title}</h3>
-                  <p className="text-white/90 text-sm xl:text-base font-semibold drop-shadow-sm">{promo.desc}</p>
-                </div>
-                
-                {/* Pagination Tracking Indicators */}
-                {promos.length > 1 && (
-                  <div className="absolute bottom-5 right-6 flex gap-1.5 z-20">
-                    {promos.map((_, i) => (
-                      <div key={i} className={`h-1.5 rounded-full transition-all duration-500 ${i === activePromo ? 'w-5 bg-white border border-white/20 shadow-sm' : 'w-2 bg-white/40'}`}></div>
-                    ))}
+          {/* ACTIVE MARKETING CAMPAIGN ROTATING CAROUSEL CARD */}
+                   
+          {promos.length > 0 && (
+            <div className="w-full xl:w-[420px] h-[210px] relative overflow-hidden rounded-3xl shadow-lg group">
+              {promos.map((promo, idx) => {
+                const isUploadedImage = promo.bgGradient?.startsWith('http://') || promo.bgGradient?.startsWith('https://');
+                // Safely grab the restaurant name from the relational business object path
+                const restaurantName = promo.business?.name || "OyaEat Partner";
+
+                return (
+                  <div
+                    key={promo.id || idx}
+                    className={`absolute inset-0 w-full h-full p-6 flex flex-col justify-between transition-all duration-700 ease-in-out bg-cover bg-center ${
+                      idx === activePromo ? 'opacity-100 translate-x-0 scale-100 z-10' : 'opacity-0 translate-x-8 scale-95 z-0 pointer-events-none'
+                    } ${!isUploadedImage ? `bg-gradient-to-r ${promo.bgGradient || 'from-slate-700 to-slate-900'}` : ''}`}
+                    style={isUploadedImage ? { backgroundImage: `url(${promo.bgGradient})` } : {}}
+                  >
+                    {/* Dark gradient overlay for text readability over custom background images */}
+                    {isUploadedImage && <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20 z-0" />}
+
+                    {/* Top Content Row */}
+                    <div className="relative z-10">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="bg-white/20 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-white inline-flex items-center gap-1">
+                          <Zap className="w-3 h-3 fill-yellow-300 text-yellow-300 animate-pulse" /> Platform Promo
+                        </span>
+                        
+                        {/* 🌟 NEW UX ELEVATION: High-visibility restaurant name badge */}
+                        <span className="bg-black/40 backdrop-blur-sm border border-white/10 px-2.5 py-1 rounded-xl text-[10px] font-bold text-orange-300 inline-flex items-center gap-1 max-w-[150px] truncate">
+                          <Store className="w-3 h-3 text-orange-400 flex-shrink-0" /> {restaurantName}
+                        </span>
+                      </div>
+                      
+                      <h3 className="text-xl font-black tracking-tight text-white drop-shadow-md pr-10 line-clamp-2 leading-tight">{promo.title}</h3>
+                      <p className="text-xs font-semibold text-white/80 mt-1 line-clamp-2 drop-shadow-sm max-w-[300px]">{promo.desc}</p>
+                    </div>
+
+                    {/* Bottom Action Row */}
+                    <div className="relative z-10 flex justify-between items-end mt-4">
+                      {promo.businessId ? (
+                        <Link href={`/restaurant/${promo.businessId}`}>
+                          <Button className="rounded-xl h-8 px-4 text-[11px] font-extrabold bg-orange-500 hover:bg-orange-600 text-white shadow-md hover:-translate-y-0.5 transition-all flex items-center gap-1.5 group/btn">
+                            Order Now <ArrowRight className="w-3 h-3 group-hover/btn:translate-x-0.5 transition-transform" />
+                          </Button>
+                        </Link>
+                      ) : (
+                        <div className="h-8" /> /* Layout spacer matching baseline dimensions */
+                      )}
+                      
+                      {/* Carousel Indicator Progress Dots */}
+                      <div className="flex gap-1.5 mb-1.5">
+                        {promos.map((_, dotIdx) => (
+                          <span
+                            key={dotIdx}
+                            className={`h-1.5 rounded-full transition-all duration-300 ${
+                              dotIdx === activePromo ? 'w-4 bg-orange-400' : 'w-1.5 bg-white/40'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
                   </div>
-                )}
-              </Link>
-            ))}
-          </div>
+                );
+              })}
+            </div>
+          )}
+
         </div>
       )}
 

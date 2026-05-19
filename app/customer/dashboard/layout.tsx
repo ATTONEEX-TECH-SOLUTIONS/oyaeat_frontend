@@ -6,7 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { Home, ShoppingBag, Heart, Settings, Bell, Search, Menu, LogOut, ChevronLeft, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ThemeToggle } from '@/components/theme-toggle';
+
 
 export default function CustomerDashboardLayout({
   children,
