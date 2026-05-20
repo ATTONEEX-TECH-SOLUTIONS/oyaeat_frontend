@@ -64,7 +64,7 @@ function getCfg(status: OrderStatus) {
 function nextStatus(status: OrderStatus): OrderStatus | null {
   if (status === 'pending')          return 'preparing'
   if (status === 'preparing')        return 'ready'
-  return null // Stopped here: 'ready' stays open until a rider triggers 'accept' via their dashboard!
+  return null 
 }
 
 const ALL_STATUSES: Array<{ key: OrderStatus | 'all'; label: string }> = [
@@ -85,6 +85,7 @@ export default function RestaurantOrdersDashboard() {
   const [initialLoading, setInitialLoading] = useState(true);
   
   const baselineOrderIds = useRef<Set<number>>(new Set());
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
   // Fixed fetch wrapper to accurately read your nested { orders: Order[] } shape
   const fetchOrders = useCallback(async (silent = false) => {
@@ -117,11 +118,32 @@ export default function RestaurantOrdersDashboard() {
     }
   }, []);
 
-  // Update order status on the backend
+  // ── UPDATED: INJECTS SPATIAL MATCH DISPATCH PINGS UPON ADVANCING ──
   const handleUpdateStatus = async (orderId: number, targetStatus: OrderStatus) => {
     try {
       setIsSyncing(true);
       await vendorApi.updateOrderStatus(orderId, targetStatus);
+      
+      // If advanced to READY, trigger proximity search algorithms down Express server [INDEX]
+      if (targetStatus === 'ready') {
+        const token = localStorage.getItem("authToken") || localStorage.getItem("vendorToken");
+        
+        const dispatchResponse = await fetch(`${API_BASE_URL}/orders/${orderId}/dispatch`, {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${token || ""}`,
+            "Content-Type": "application/json"
+          }
+        });
+
+        if (dispatchResponse.ok) {
+          const dispatchData = await dispatchResponse.json();
+          toast.success(`Food Ready! Alerted ${dispatchData.notifiedRidersCount || 0} nearby online riders via sockets.`, {
+            duration: 4000
+          });
+        }
+      }
+
       await fetchOrders(true);
     } catch (err) {
       toast.error("Failed to advance order lifecycle status step.");
@@ -289,9 +311,10 @@ export default function RestaurantOrdersDashboard() {
                             Advance to {nextCfg.label} <ArrowRight className="w-3.5 h-3.5" />
                           </button>
                         ) : order.status === 'ready' ? (
+                          // ── DESIGN STATE INJECTION: ALERTS MATCHES VISUALLY ON TRUCKING LOG LAYOUTS ──
                           <div className="text-xs font-bold text-green-700 bg-green-50 border border-green-200 px-4 py-2.5 rounded-xl flex items-center gap-2">
                             <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                            Broadcasted to Marketplace. Waiting for Rider acceptance...
+                            Broadcasted to Marketplace. Scanning for nearby online Riders...
                           </div>
                         ) : null}
 

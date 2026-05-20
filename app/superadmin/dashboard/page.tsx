@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Sidebar } from '@/app/superadmin/dashboard/components/sidebar'
 import { DashboardOverview } from '@/app/superadmin/dashboard/components/dashboard-overview'
 import { PendingBusinessQueue } from '@/app/superadmin/dashboard/components/pending-business-queue'
+import AdminLiveMap from './components/AdminLiveMap' // 📡 IMPORT LIVE MAP LOGISTICS VIEW CANVAS
 
 import {
   fetchBusinessStats,
@@ -122,8 +123,15 @@ export default function DashboardPage() {
 
           {!loading && !error && (
             <div className="space-y-8">
+              {/* Top Summary Metrics Cards */}
               <DashboardOverview metrics={metrics} />
 
+              {/* 📡 LIVE MAP FLEET POSITION TRACKER OVERLAY ROW */}
+              <div className="w-full">
+                <AdminLiveMap />
+              </div>
+
+              {/* Main Structural Columns split grid layout */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2">
                   <PendingBusinessQueue

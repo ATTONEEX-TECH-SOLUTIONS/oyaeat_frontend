@@ -1,10 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import logo from "@/public/spalsh_oyaeat (3).png";
+import { APIProvider, Map, Marker } from "@vis.gl/react-google-maps";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
@@ -15,6 +14,9 @@ export default function AddBusinessPage() {
   const [userId, setUserId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // ── NEW GEOLOCATION COORDINATE STATES ──
+  const [markerPos, setMarkerPos] = useState({ lat: 6.5244, lng: 3.3792 }); // Lagos default fallback
 
   const [formData, setFormData] = useState({
     businessName: "",
@@ -30,7 +32,6 @@ export default function AddBusinessPage() {
   });
 
   useEffect(() => {
-    // Load userId from sessionStorage
     try {
       const raw = sessionStorage.getItem("partnerSignupData");
       if (raw) {
@@ -39,8 +40,6 @@ export default function AddBusinessPage() {
         if (!Number.isNaN(id) && id > 0) setUserId(id);
       }
     } catch {}
-
-    // Optional: if you store user info elsewhere, you can also fallback from localStorage here
   }, []);
 
   const handleChange = (
@@ -48,6 +47,15 @@ export default function AddBusinessPage() {
   ) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     if (error) setError("");
+  };
+
+  // ── NEW: HANDLE OWNER DRAGGING OR CLICKING MAP MARKER ──
+  const handleMapClick = (e: any) => {
+    if (!e.detail.latLng) return;
+    setMarkerPos({
+      lat: e.detail.latLng.lat,
+      lng: e.detail.latLng.lng,
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -59,7 +67,7 @@ export default function AddBusinessPage() {
       const token = localStorage.getItem("authToken");
       if (!token) {
         setError("You are not logged in. Please login again.");
-        router.push("/restaurant/login"); // change to your vendor login route if different
+        router.push("/restaurant/login");
         return;
       }
 
@@ -73,7 +81,7 @@ export default function AddBusinessPage() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // this fixes the 401
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           businessName: formData.businessName,
@@ -84,8 +92,11 @@ export default function AddBusinessPage() {
           zipCode: formData.zipCode,
           businessPhone: formData.businessPhone,
           businessEmail: formData.businessEmail,
-          websiteUrl: formData.website || null, // backend expects websiteUrl (you had website)
+          websiteUrl: formData.website || null,
           description: formData.description,
+          // ── NEW: DYNAMIC TELEMETRY KEY VALUES ATTACHED SECURELY ──
+          latitude: markerPos.lat,
+          longitude: markerPos.lng,
         }),
       });
 
@@ -95,7 +106,6 @@ export default function AddBusinessPage() {
         throw new Error(data?.message || `Failed to save business details (${res.status})`);
       }
 
-      // Your backend returns: { businessId, status, nextStep, ... }
       const businessId =
         data?.businessId || data?.id || data?.business?.id || data?.data?.businessId;
 
@@ -103,7 +113,6 @@ export default function AddBusinessPage() {
         throw new Error("Business created but businessId was not returned.");
       }
 
-      // Store for next step (verify page uses this)
       sessionStorage.setItem(
         "businessData",
         JSON.stringify({
@@ -125,7 +134,6 @@ export default function AddBusinessPage() {
       {/* Header */}
       <header className="py-6 px-8 border-b border-gray-200">
         <Link href="/" className="flex items-center gap-2">
-         
           <span className="text-xl font-bold">
             <span className="text-[#2d5f4f]">Oya</span>
             <span className="text-gray-900">Eat</span>
@@ -193,7 +201,7 @@ export default function AddBusinessPage() {
                 onChange={handleChange}
                 required
                 disabled={isLoading}
-                className="w-full text-gray-900  px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5f4f] focus:border-transparent outline-none disabled:bg-gray-100"
+                className="w-full text-gray-900 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5f4f] focus:border-transparent outline-none disabled:bg-gray-100"
               >
                 <option value="">Select business type</option>
                 <option value="restaurant">Restaurant</option>
@@ -217,11 +225,40 @@ export default function AddBusinessPage() {
                 onChange={handleChange}
                 required
                 disabled={isLoading}
-                className="w-full text-gray-900  px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5f4f] focus:border-transparent outline-none disabled:bg-gray-100"
+                className="w-full text-gray-900 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5f4f] focus:border-transparent outline-none disabled:bg-gray-100 mb-4"
                 placeholder="Enter street address"
               />
             </div>
 
+            {/* ── MAP PICKER INGESTION AREA ── */}
+            <div className="space-y-2 border border-gray-200 p-4 rounded-xl bg-gray-50">
+              <label className="block text-sm font-bold text-gray-800">
+                Pin Storefront Entry Door *
+              </label>
+              <p className="text-xs text-gray-500">
+                Click directly on the canvas grid block mapping below to pin the exact pickup location.
+              </p>
+              <div className="h-[280px] w-full rounded-lg overflow-hidden shadow-inner border border-gray-300">
+                <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ""}>
+                  <Map
+                    defaultZoom={13}
+                    center={markerPos}
+                    onClick={handleMapClick}
+                    mapId={process.env.NEXT_PUBLIC_MAP_ID || "DEMO_MAP_ID"}
+                    disableDefaultUI={true}
+                    zoomControl={true}
+                  >
+                    <Marker position={markerPos} />
+                  </Map>
+                </APIProvider>
+              </div>
+              <div className="flex gap-4 text-xs font-mono text-gray-500 bg-white p-2 border border-gray-200 rounded-lg">
+                <span>Lat: {markerPos.lat.toFixed(6)}</span>
+                <span>Lng: {markerPos.lng.toFixed(6)}</span>
+              </div>
+            </div>
+
+            {/* ── City, State, Zip Grid ── */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">City *</label>
@@ -232,7 +269,7 @@ export default function AddBusinessPage() {
                   onChange={handleChange}
                   required
                   disabled={isLoading}
-                  className="w-full text-gray-900  px-4 py-3 border border-gray-300 rounded-lg  outline-none "
+                  className="w-full text-gray-900 px-4 py-3 border border-gray-300 rounded-lg outline-none"
                   placeholder="City"
                 />
               </div>
@@ -245,7 +282,7 @@ export default function AddBusinessPage() {
                   onChange={handleChange}
                   required
                   disabled={isLoading}
-                  className="w-full text-gray-900  px-4 py-3 border border-gray-300 rounded-lg  outline-none "
+                  className="w-full text-gray-900 px-4 py-3 border border-gray-300 rounded-lg outline-none"
                   placeholder="State"
                 />
               </div>
@@ -258,25 +295,26 @@ export default function AddBusinessPage() {
                   onChange={handleChange}
                   required
                   disabled={isLoading}
-                  className="w-full text-gray-900  px-4 py-3 border border-gray-300 rounded-lg  outline-none "
+                  className="w-full text-gray-900 px-4 py-3 border border-gray-300 rounded-lg outline-none"
                   placeholder="Zip"
                 />
               </div>
             </div>
 
+            {/* ── Contact Info Grid ── */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Business Phone *
                 </label>
                 <input
-                  type="tel"
+                  type="text"
                   name="businessPhone"
                   value={formData.businessPhone}
                   onChange={handleChange}
                   required
                   disabled={isLoading}
-                  className="w-full text-gray-900  px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5f4f] focus:border-transparent outline-none "
+                  className="w-full text-gray-900 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5f4f] focus:border-transparent outline-none"
                   placeholder="+234 XXX XXX XXXX"
                 />
               </div>
@@ -291,12 +329,13 @@ export default function AddBusinessPage() {
                   onChange={handleChange}
                   required
                   disabled={isLoading}
-                  className="w-full text-gray-900  px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5f4f] focus:border-transparent outline-none "
+                  className="w-full text-gray-900 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5f4f] focus:border-transparent outline-none"
                   placeholder="business@example.com"
                 />
               </div>
             </div>
 
+            {/* ── Optional Website ── */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Website (Optional)
@@ -307,11 +346,12 @@ export default function AddBusinessPage() {
                 value={formData.website}
                 onChange={handleChange}
                 disabled={isLoading}
-                className="w-full  text-gray-900 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5f4f] focus:border-transparent outline-none "
+                className="w-full text-gray-900 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5f4f] focus:border-transparent outline-none"
                 placeholder="https://www.yourbusiness.com"
               />
             </div>
 
+            {/* ── Business Description ── */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Business Description *
@@ -323,11 +363,12 @@ export default function AddBusinessPage() {
                 required
                 rows={4}
                 disabled={isLoading}
-                className="w-full text-gray-900  px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5f4f] focus:border-transparent outline-none resize-none "
+                className="w-full text-gray-900 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5f4f] focus:border-transparent outline-none resize-none"
                 placeholder="Tell us about your business..."
               />
             </div>
 
+            {/* ── Form Navigation Buttons ── */}
             <div className="flex gap-4 pt-4">
               <button
                 type="button"
