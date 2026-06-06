@@ -22,7 +22,7 @@ const Navbar = () => {
   const navLinks = [
     { href: "/", label: "Home" },
     { href: "/about", label: "About" },
-     { href: "/restaurant/login", label: "Vendor" },
+     { href: "/partner-signup", label: "Vendor" },
     { href: "/features", label: "Features" },
     { href: "/downloads", label: "Downloads" },
     { href: "/how-it-works", label: "How it works" },

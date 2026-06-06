@@ -4,6 +4,11 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { CheckCircle2, Zap, CircleDollarSign, User, Bike } from "lucide-react";
+import Image from "next/image";
+import riderHero from "@/public/rider-hero.png";
+
+// in JSX:
+<img src={riderHero.src} alt="..." />
 
 const RiderSignup = () => {
   const router = useRouter();
@@ -122,11 +127,6 @@ const RiderSignup = () => {
   return (
     <>
       <style>{`
-        /* ── FONTS ─────────────────────────────────────────────
-           Display: Playfair Display — elegant serif, graceful contrast,
-                    warm authority without shouting
-           Body:    Lato — clean humanist sans, calm & highly readable
-        ────────────────────────────────────────────────────── */
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,600&family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&display=swap');
 
         :root {
@@ -143,196 +143,244 @@ const RiderSignup = () => {
           --text-mid: #3A5A47;
           --text-muted: #7A9A85;
           --shadow-green: rgba(26, 107, 60, 0.15);
-
           --font-display: 'Playfair Display', Georgia, serif;
           --font-body: 'Lato', sans-serif;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body {
-          font-family: var(--font-body);
-          background: var(--white);
-          color: var(--text-dark);
-          -webkit-font-smoothing: antialiased;
-        }
+        body { font-family: var(--font-body); background: var(--white); color: var(--text-dark); -webkit-font-smoothing: antialiased; }
 
         .dot-grid {
-          position: fixed;
-          inset: 0;
-          pointer-events: none;
-          z-index: 0;
-          opacity: 0.35;
+          position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.35;
           background-image: radial-gradient(circle, #B8DDC5 1px, transparent 1px);
           background-size: 28px 28px;
-        }
-
-        .orb {
-          position: absolute;
-          border-radius: 50%;
-          filter: blur(80px);
-          pointer-events: none;
         }
 
         @keyframes fadeUp {
           from { opacity: 0; transform: translateY(28px); }
           to { opacity: 1; transform: translateY(0); }
         }
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
         @keyframes pulse-ring {
           0% { transform: scale(1); opacity: 0.6; }
           100% { transform: scale(1.6); opacity: 0; }
         }
+        @keyframes slideInRight {
+          from { opacity: 0; transform: translateX(40px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-8px); }
+        }
 
         .fade-up { animation: fadeUp 0.75s cubic-bezier(0.22,1,0.36,1) both; }
+        .fade-in { animation: fadeIn 1.2s ease both; }
+        .slide-right { animation: slideInRight 0.8s cubic-bezier(0.22,1,0.36,1) both; }
         .delay-1 { animation-delay: 0.12s; }
         .delay-2 { animation-delay: 0.24s; }
         .delay-3 { animation-delay: 0.36s; }
         .delay-4 { animation-delay: 0.48s; }
+        .delay-5 { animation-delay: 0.60s; }
 
         .nav-link {
-          position: relative;
-          font-family: var(--font-body);
-          font-weight: 700;
-          font-size: 0.85rem;
-          letter-spacing: 0.04em;
-          text-transform: uppercase;
-          color: var(--text-mid);
-          text-decoration: none;
-          transition: color 0.2s;
-          padding: 4px 0;
+          position: relative; font-family: var(--font-body); font-weight: 700;
+          font-size: 0.85rem; letter-spacing: 0.04em; text-transform: uppercase;
+          color: var(--text-mid); text-decoration: none; transition: color 0.2s; padding: 4px 0;
         }
         .nav-link:hover { color: var(--green); }
         .nav-link::after {
-          content: '';
-          position: absolute;
-          bottom: 0; left: 0;
-          height: 1.5px;
-          width: 0;
-          background: var(--green);
-          transition: width 0.25s ease;
+          content: ''; position: absolute; bottom: 0; left: 0; height: 1.5px; width: 0;
+          background: var(--green); transition: width 0.25s ease;
         }
         .nav-link:hover::after { width: 100%; }
 
         .btn-primary {
-          background: var(--green);
-          color: #fff;
-          font-family: var(--font-body);
-          font-weight: 700;
-          font-size: 0.875rem;
-          letter-spacing: 0.06em;
-          text-transform: uppercase;
-          padding: 14px 32px;
-          border: none;
-          border-radius: 6px;
-          cursor: pointer;
+          background: var(--green); color: #fff; font-family: var(--font-body); font-weight: 700;
+          font-size: 0.875rem; letter-spacing: 0.06em; text-transform: uppercase;
+          padding: 14px 32px; border: none; border-radius: 6px; cursor: pointer;
           transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          box-shadow: 0 4px 20px var(--shadow-green);
-          text-decoration: none;
+          display: inline-flex; align-items: center; gap: 8px;
+          box-shadow: 0 4px 20px var(--shadow-green); text-decoration: none;
         }
         .btn-primary:hover {
-          background: var(--green-light);
-          transform: translateY(-2px);
+          background: var(--green-light); transform: translateY(-2px);
           box-shadow: 0 8px 28px var(--shadow-green);
         }
 
-        .perk-card {
-          background: var(--white);
-          border: 1px solid var(--green-border);
-          border-radius: 12px;
-          padding: 36px 32px;
-          transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+        /* ── HERO ── */
+        .hero-section {
+          padding-top: 70px;
+          min-height: 100vh;
+          position: relative;
+          overflow: hidden;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+        }
+
+        /* Left content panel */
+        .hero-left {
+          position: relative;
+          z-index: 2;
+          background: linear-gradient(135deg, #fff 0%, var(--green-pale) 70%, var(--green-pale2) 100%);
+          display: flex;
+          align-items: center;
+          padding: 80px 64px 80px 80px;
+        }
+        .hero-left::after {
+          content: '';
+          position: absolute;
+          right: -1px;
+          top: 0;
+          bottom: 0;
+          width: 120px;
+          background: linear-gradient(to left, transparent, var(--green-pale2));
+          z-index: 3;
+          pointer-events: none;
+        }
+
+        /* Right image panel */
+        .hero-right {
           position: relative;
           overflow: hidden;
         }
-        .perk-card::before {
+        .hero-right img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: center center;
+          display: block;
+          animation: fadeIn 1.4s ease both;
+        }
+        /* Gradient overlay on image */
+        .hero-right::before {
           content: '';
           position: absolute;
-          top: 0; left: 0; right: 0;
-          height: 2px;
-          background: var(--green);
-          opacity: 0;
-          transition: opacity 0.3s;
+          inset: 0;
+          background: linear-gradient(
+            to right,
+            var(--green-pale2) 0%,
+            rgba(208,235,217,0.3) 15%,
+            transparent 40%
+          );
+          z-index: 1;
+          pointer-events: none;
+        }
+        /* Bottom gradient fade */
+        .hero-right::after {
+          content: '';
+          position: absolute;
+          bottom: 0; left: 0; right: 0;
+          height: 180px;
+          background: linear-gradient(to top, rgba(255,255,255,0.4), transparent);
+          z-index: 1;
+          pointer-events: none;
+        }
+
+        /* Floating stat badges overlaid on image */
+        .hero-stat-badge {
+          position: absolute;
+          z-index: 4;
+          background: rgba(255,255,255,0.95);
+          border: 1px solid var(--green-border);
+          border-radius: 12px;
+          padding: 12px 18px;
+          box-shadow: 0 8px 32px rgba(26,107,60,0.15);
+          backdrop-filter: blur(8px);
+          animation: float 4s ease-in-out infinite;
+        }
+        .hero-stat-badge.badge-1 {
+          top: 18%;
+          right: 24px;
+          animation-delay: 0s;
+        }
+        .hero-stat-badge.badge-2 {
+          top: 42%;
+          right: 40px;
+          animation-delay: 1.2s;
+        }
+        .hero-stat-badge.badge-3 {
+          bottom: 22%;
+          right: 24px;
+          animation-delay: 0.6s;
+        }
+
+        /* ── CTA CARD ── */
+        .hero-cta-card {
+          background: #fff; border: 1px solid var(--green-border); border-radius: 16px;
+          padding: 32px; box-shadow: 0 20px 56px rgba(26,107,60,0.10);
+          text-align: center; position: relative; overflow: hidden;
+          margin-top: 40px;
+        }
+        .hero-cta-card::before {
+          content: ''; position: absolute; top: 0; left: 0; right: 0;
+          height: 2px; background: var(--green); border-radius: '16px 16px 0 0'; opacity: 0.7;
+        }
+
+        .perk-card {
+          background: var(--white); border: 1px solid var(--green-border);
+          border-radius: 12px; padding: 36px 32px;
+          transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+          position: relative; overflow: hidden;
+        }
+        .perk-card::before {
+          content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+          background: var(--green); opacity: 0; transition: opacity 0.3s;
         }
         .perk-card:hover {
-          border-color: var(--green);
-          transform: translateY(-4px);
+          border-color: var(--green); transform: translateY(-4px);
           box-shadow: 0 16px 40px var(--shadow-green);
         }
         .perk-card:hover::before { opacity: 1; }
 
-        .faq-item {
-          border-bottom: 1px solid var(--green-border);
-        }
+        .faq-item { border-bottom: 1px solid var(--green-border); }
         .faq-btn {
-          width: 100%;
-          padding: 22px 0;
-          text-align: left;
-          background: transparent;
-          border: none;
-          color: var(--text-dark);
-          font-family: var(--font-body);
-          font-weight: 700;
-          font-size: 0.95rem;
-          letter-spacing: 0.01em;
-          cursor: pointer;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          gap: 16px;
+          width: 100%; padding: 22px 0; text-align: left; background: transparent;
+          border: none; color: var(--text-dark); font-family: var(--font-body);
+          font-weight: 700; font-size: 0.95rem; letter-spacing: 0.01em; cursor: pointer;
+          display: flex; justify-content: space-between; align-items: center; gap: 16px;
           transition: color 0.2s;
         }
         .faq-btn:hover { color: var(--green); }
 
         .testi-card {
-          background: var(--white);
-          border: 1px solid var(--green-border);
-          border-radius: 12px;
-          padding: 32px;
+          background: var(--white); border: 1px solid var(--green-border);
+          border-radius: 12px; padding: 32px;
           transition: box-shadow 0.3s, transform 0.3s;
         }
-        .testi-card:hover {
-          box-shadow: 0 12px 36px var(--shadow-green);
-          transform: translateY(-2px);
-        }
+        .testi-card:hover { box-shadow: 0 12px 36px var(--shadow-green); transform: translateY(-2px); }
 
         .earnings-badge {
-          background: var(--green-pale);
-          border: 1px solid var(--green-border);
-          color: var(--green);
-          font-family: var(--font-body);
-          font-weight: 900;
-          font-size: 0.78rem;
-          letter-spacing: 0.04em;
-          padding: 4px 12px;
-          border-radius: 20px;
-          display: inline-block;
-          white-space: nowrap;
+          background: var(--green-pale); border: 1px solid var(--green-border);
+          color: var(--green); font-family: var(--font-body); font-weight: 900;
+          font-size: 0.78rem; letter-spacing: 0.04em; padding: 4px 12px;
+          border-radius: 20px; display: inline-block; white-space: nowrap;
         }
 
-        .ticker-wrap {
-          overflow: hidden;
-          background: var(--green);
-          padding: 11px 0;
-          white-space: nowrap;
-        }
-        @keyframes ticker {
-          from { transform: translateX(0); }
-          to { transform: translateX(-50%); }
-        }
-        .ticker-inner {
-          display: inline-flex;
-          animation: ticker 22s linear infinite;
-        }
+        .ticker-wrap { overflow: hidden; background: var(--green); padding: 11px 0; white-space: nowrap; }
+        @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+        .ticker-inner { display: inline-flex; animation: ticker 22s linear infinite; }
         .ticker-text {
-          font-family: var(--font-body);
-          font-weight: 700;
-          font-size: 0.78rem;
-          letter-spacing: 0.18em;
-          text-transform: uppercase;
-          color: rgba(255,255,255,0.9);
+          font-family: var(--font-body); font-weight: 700; font-size: 0.78rem;
+          letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.9);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+          .hero-section { grid-template-columns: 1fr; }
+          .hero-right { height: 55vw; min-height: 340px; max-height: 500px; }
+          .hero-left { padding: 60px 32px; }
+          .hero-left::after { display: none; }
+          .hero-right::before {
+            background: linear-gradient(to top, var(--green-pale) 0%, transparent 40%);
+          }
+        }
+        @media (max-width: 768px) {
+          .hero-stat-badge { display: none; }
+          .hero-left { padding: 40px 20px; }
         }
       `}</style>
 
@@ -348,27 +396,18 @@ const RiderSignup = () => {
           background: 'rgba(255,255,255,0.92)',
         }}>
           <div style={{ maxWidth: 1300, margin: '0 auto', padding: '0 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 70 }}>
-            {/* Logo with Text - BIGGER */}
-        <Link href="/" className="flex items-center gap-3 group">
-          <div className="relative w-26 h-26 transition-transform duration-300 group-hover:scale-110">
-            {/* <Image
-              src={logo}
-              alt="OyaEat Logo"
-              fill
-              className="object-contain"
-              priority
-            /> */}
-          </div>
-          <div className="flex flex-col">
-            <span className="text-3xl font-black leading-none tracking-tight">
-              <span className="text-[#2d5f4f]">Oya</span>
-              <span className={`transition-colors duration-300 scrolled ? "text-gray-800" : "text-gray-900"`}>Eat</span>
-            </span>
-            <span className={`text-[10px] font-medium tracking-wider uppercase transition-colors duration-300 scrolled ? "text-gray-500" : "text-gray-600"`}>
-              Fast Delivery
-            </span>
-          </div>
-        </Link>
+            <Link href="/" className="flex items-center gap-3 group">
+              <div className="flex flex-col">
+                <span className="text-3xl font-black leading-none tracking-tight">
+                  <span className="text-[#2d5f4f]">Oya</span>
+                  <span>Eat</span>
+                </span>
+                <span className="text-[10px] font-medium tracking-wider uppercase text-gray-500">
+                  Fast Delivery
+                </span>
+              </div>
+            </Link>
+
             <div style={{ display: 'flex', alignItems: 'center', gap: 36 }}>
               {navLinks.map(l => (
                 <Link key={l.href} href={l.href} className="nav-link">{l.label}</Link>
@@ -377,10 +416,9 @@ const RiderSignup = () => {
 
             <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
               <Link href="/rider/login" style={{
-                padding: '9px 20px',
-                fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '0.8rem',
-                letterSpacing: '0.05em', textTransform: 'uppercase',
-                color: 'var(--green)', border: '1px solid var(--green-border)', borderRadius: 6,
+                padding: '9px 20px', fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '0.8rem',
+                letterSpacing: '0.05em', textTransform: 'uppercase', color: 'var(--green)',
+                border: '1px solid var(--green-border)', borderRadius: 6,
                 textDecoration: 'none', transition: 'all 0.2s', background: 'transparent',
               }}
                 onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'var(--green-pale)'; }}
@@ -394,18 +432,14 @@ const RiderSignup = () => {
           </div>
         </nav>
 
-        {/* ── HERO ───────────────────────────────────────────── */}
-        <section style={{
-          paddingTop: 70, minHeight: '100vh', display: 'flex', position: 'relative', overflow: 'hidden',
-          background: 'linear-gradient(135deg, #fff 0%, var(--green-pale) 60%, var(--green-pale2) 100%)',
-        }}>
-          <div className="orb" style={{ width: 560, height: 560, background: 'rgba(26,107,60,0.07)', top: -80, right: -160 }} />
-          <div className="orb" style={{ width: 360, height: 360, background: 'rgba(34,136,63,0.05)', bottom: 0, left: -80 }} />
+        {/* ── HERO ── REFACTORED ─────────────────────────────── */}
+        <section className="hero-section">
 
-          <div style={{ maxWidth: 1300, margin: '0 auto', padding: '80px 32px', display: 'flex', gap: 72, alignItems: 'center', width: '100%' }}>
+          {/* LEFT: Copy + CTA */}
+          <div className="hero-left">
+            <div style={{ width: '100%', maxWidth: 520 }}>
 
-            {/* Left */}
-            <div style={{ flex: 1 }}>
+              {/* Pill badge */}
               <div className="fade-up" style={{
                 display: 'inline-flex', alignItems: 'center', gap: 8,
                 background: 'rgba(26,107,60,0.07)', border: '1px solid rgba(26,107,60,0.2)',
@@ -413,45 +447,35 @@ const RiderSignup = () => {
               }}>
                 <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--green)', display: 'inline-block', animation: 'pulse-ring 1.5s ease infinite' }} />
                 <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase', color: 'var(--green)' }}>
-                  Now hiring riders in Lagos, Abuja & PH
+                  Now hiring in Lagos, Abuja & PH
                 </span>
               </div>
 
-              {/* Playfair Display headline — mix upright + italic for calm elegance */}
-              <h1 style={{
-                fontFamily: 'var(--font-display)',
-                fontWeight: 800,
-                fontSize: 'clamp(52px, 7.5vw, 88px)',
-                lineHeight: 1.05,
-                letterSpacing: '-0.01em',
-                marginBottom: 28,
-                color: 'var(--text-dark)',
-              }} className="fade-up delay-1">
+              <h1 className="fade-up delay-1" style={{
+                fontFamily: 'var(--font-display)', fontWeight: 800,
+                fontSize: 'clamp(48px, 6vw, 78px)', lineHeight: 1.05,
+                letterSpacing: '-0.01em', marginBottom: 24, color: 'var(--text-dark)',
+              }}>
                 Ride.<br />
                 <em style={{ color: 'var(--green)', fontStyle: 'italic', fontWeight: 700 }}>Earn.</em><br />
                 Repeat.
               </h1>
 
               <p className="fade-up delay-2" style={{
-                fontFamily: 'var(--font-body)',
-                fontSize: '1.05rem',
-                fontWeight: 300,
-                color: 'var(--text-mid)',
-                lineHeight: 1.8,
-                maxWidth: 460,
-                marginBottom: 40,
+                fontFamily: 'var(--font-body)', fontSize: '1.05rem', fontWeight: 300,
+                color: 'var(--text-mid)', lineHeight: 1.8, maxWidth: 420, marginBottom: 36,
               }}>
                 Turn your motorcycle, bicycle, or car into a money machine. Deliver with OyaEat and earn on your own terms — no boss, no fixed hours, no cap on income.
               </p>
 
-              <div className="fade-up delay-3" style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
-                <Link href="/rider/register" className="btn-primary" style={{ fontSize: '0.875rem', padding: '15px 36px' }}>
+              <div className="fade-up delay-3" style={{ display: 'flex', gap: 14, alignItems: 'center', flexWrap: 'wrap', marginBottom: 48 }}>
+                <Link href="/rider/register" className="btn-primary" style={{ fontSize: '0.875rem', padding: '15px 32px' }}>
                   Join as a Rider
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}><path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 </Link>
                 <Link href="/rider/login" style={{
                   background: 'transparent', border: '1px solid var(--green-border)',
-                  color: 'var(--text-mid)', padding: '15px 24px', borderRadius: 6,
+                  color: 'var(--text-mid)', padding: '15px 22px', borderRadius: 6,
                   fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '0.8rem',
                   letterSpacing: '0.05em', textTransform: 'uppercase',
                   transition: 'all 0.2s', textDecoration: 'none',
@@ -463,67 +487,78 @@ const RiderSignup = () => {
                 </Link>
               </div>
 
-              {/* Mini stats */}
-              <div className="fade-up delay-4" style={{ display: 'flex', gap: 48, marginTop: 60, paddingTop: 40, borderTop: '1px solid var(--green-border)' }}>
-                {[['10,000+', 'Active Riders'], ['₦50K+', 'Top Monthly Earning'], ['24hrs', 'Avg. Approval Time']].map(([val, label]) => (
+              {/* Mini stats row */}
+              <div className="fade-up delay-4" style={{ display: 'flex', gap: 36, paddingTop: 32, borderTop: '1px solid var(--green-border)' }}>
+                {[['10,000+', 'Active Riders'], ['₦50K+', 'Top Monthly Earning'], ['24hrs', 'Avg. Approval']].map(([val, label]) => (
                   <div key={label}>
-                    <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 26, color: 'var(--green)', lineHeight: 1.1 }}>{val}</div>
-                    <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--text-muted)', marginTop: 5 }}>{label}</div>
+                    <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 24, color: 'var(--green)', lineHeight: 1.1 }}>{val}</div>
+                    <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--text-muted)', marginTop: 4 }}>{label}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Bottom trust icons */}
+              <div className="fade-up delay-5" style={{ display: 'flex', gap: 28, marginTop: 32 }}>
+                {[
+                  { icon: <CheckCircle2 size={16} />, text: 'Free signup' },
+                  { icon: <Zap size={16} />, text: '24hr approval' },
+                  { icon: <CircleDollarSign size={16} />, text: 'Daily pay' },
+                ].map((item, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--green)' }}>
+                    {item.icon}
+                    <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.04em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>{item.text}</span>
                   </div>
                 ))}
               </div>
             </div>
+          </div>
 
-            {/* Right: CTA card */}
-            <div style={{ width: 400, flexShrink: 0 }}>
-              <div style={{
-                background: '#fff',
-                border: '1px solid var(--green-border)',
-                borderRadius: 16,
-                padding: 36,
-                position: 'relative',
-                boxShadow: '0 20px 56px rgba(26,107,60,0.10)',
-                textAlign: 'center',
-              }}>
-                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'var(--green)', borderRadius: '16px 16px 0 0', opacity: 0.7 }} />
+          {/* RIGHT: Hero image */}
+          <div className="hero-right">
+            {/* Replace src with your actual imported image path */}
+           <Image
+              src={riderHero}
+              alt="OyaEat rider on a motorcycle in Lagos at sunset"
+              fill
+              priority
+              sizes="50vw"
+              style={{ objectFit: 'cover', objectPosition: 'center center' }}
+            />
 
-                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 18 }}><Bike size={56} className="text-[#1A6B3C]" /></div>
-
-                <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1.5rem', color: 'var(--text-dark)', marginBottom: 10, lineHeight: 1.25 }}>
-                  Ready to earn?
-                </h2>
-                <p style={{ fontFamily: 'var(--font-body)', fontWeight: 300, color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: 28, lineHeight: 1.75 }}>
-                  Join thousands of riders making real money on their own schedule. Free to join, approved in 24 hours.
-                </p>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                  <Link href="/rider/register" className="btn-primary" style={{ width: '100%', justifyContent: 'center', fontSize: '0.85rem', padding: '14px' }}>
-                    Apply to Ride →
-                  </Link>
-                  <Link href="/rider/login" style={{
-                    display: 'block', padding: '13px', border: '1px solid var(--green-border)', borderRadius: 6,
-                    textAlign: 'center', color: 'var(--text-mid)',
-                    fontFamily: 'var(--font-body)', fontWeight: 700,
-                    fontSize: '0.8rem', letterSpacing: '0.05em', textTransform: 'uppercase',
-                    textDecoration: 'none', transition: 'all 0.2s',
-                  }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = 'var(--green)'; (e.currentTarget as HTMLElement).style.color = 'var(--green)'; (e.currentTarget as HTMLElement).style.background = 'var(--green-pale)'; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'var(--green-border)'; (e.currentTarget as HTMLElement).style.color = 'var(--text-mid)'; (e.currentTarget as HTMLElement).style.background = 'transparent'; }}>
-                    Already a rider? Sign in
-                  </Link>
+            {/* Floating stat badges overlaid on image */}
+            <div className="hero-stat-badge badge-1 slide-right delay-2">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--green-pale)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" strokeWidth={2}><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V7m0 9v1" strokeLinecap="round" /></svg>
                 </div>
+                <div>
+                  <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 17, color: 'var(--green)', lineHeight: 1 }}>₦18,750</div>
+                  <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.65rem', fontWeight: 700, color: 'var(--text-muted)', letterSpacing: '0.05em', textTransform: 'uppercase', marginTop: 2 }}>Today's Earnings ↑</div>
+                </div>
+              </div>
+            </div>
 
-                <div style={{ display: 'flex', justifyContent: 'center', gap: 28, marginTop: 24, paddingTop: 20, borderTop: '1px solid var(--green-border)' }}>
-                  {[
-                    { icon: <CheckCircle2 size={18} className="mx-auto text-[#1A6B3C]" />, text: 'Free signup' },
-                    { icon: <Zap size={18} className="mx-auto text-[#1A6B3C]" />, text: '24hr approval' },
-                    { icon: <CircleDollarSign size={18} className="mx-auto text-[#1A6B3C]" />, text: 'Daily pay' }
-                  ].map((item, i) => (
-                    <div key={i} style={{ textAlign: 'center' }}>
-                      <div style={{ marginBottom: 5 }}>{item.icon}</div>
-                      <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>{item.text}</div>
-                    </div>
-                  ))}
+            <div className="hero-stat-badge badge-2 slide-right delay-3">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#22C55E', flexShrink: 0, boxShadow: '0 0 0 3px rgba(34,197,94,0.2)' }} />
+                <div>
+                  <div style={{ fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '0.8rem', color: 'var(--text-dark)' }}>New Request: Lagos Island → Ikoyi</div>
+                  <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.7rem', fontWeight: 400, color: 'var(--text-muted)', marginTop: 3 }}>
+                    <span style={{ background: 'var(--green)', color: '#fff', padding: '2px 8px', borderRadius: 4, fontSize: '0.65rem', fontWeight: 700, marginRight: 8 }}>Accept</span>
+                    Time: 12 min
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="hero-stat-badge badge-3 slide-right delay-4">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--green-pale)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" strokeWidth={2}><path d="M9 12l2 2 4-4M5 12a7 7 0 1114 0A7 7 0 015 12z" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                </div>
+                <div>
+                  <div style={{ fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '0.8rem', color: 'var(--text-dark)' }}>Instant Payout Confirmed!</div>
+                  <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.68rem', fontWeight: 400, color: 'var(--green)', marginTop: 2 }}>₦15,400 received ✓</div>
                 </div>
               </div>
             </div>
@@ -553,7 +588,6 @@ const RiderSignup = () => {
               Perks that actually <em style={{ color: 'var(--green)', fontStyle: 'italic', fontWeight: 700 }}>make sense</em>
             </h2>
           </div>
-
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 20 }}>
             {perks.map((p, i) => (
               <div key={i} className="perk-card">
@@ -578,7 +612,6 @@ const RiderSignup = () => {
               </div>
               <Link href="/rider/register" className="btn-primary">Apply Now →</Link>
             </div>
-
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 2 }}>
               {steps.map((s, i) => (
                 <div key={i} style={{
@@ -588,11 +621,7 @@ const RiderSignup = () => {
                 }}>
                   <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 72, lineHeight: 1, color: 'var(--green-border)', marginBottom: -12, userSelect: 'none' }}>{s.num}</div>
                   <div style={{ position: 'relative', zIndex: 1 }}>
-                    <div style={{
-                      width: 34, height: 34, borderRadius: '50%',
-                      background: 'rgba(26,107,60,0.1)', border: '1px solid rgba(26,107,60,0.25)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16,
-                    }}>
+                    <div style={{ width: 34, height: 34, borderRadius: '50%', background: 'rgba(26,107,60,0.1)', border: '1px solid rgba(26,107,60,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
                       <span style={{ fontFamily: 'var(--font-body)', fontWeight: 900, color: 'var(--green)', fontSize: '0.75rem' }}>{i + 1}</span>
                     </div>
                     <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1.1rem', marginBottom: 10, color: 'var(--text-dark)' }}>{s.title}</h3>
@@ -612,7 +641,6 @@ const RiderSignup = () => {
               Straight from <em style={{ color: 'var(--green)', fontStyle: 'italic', fontWeight: 700 }}>the road</em>
             </h2>
           </div>
-
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 20 }}>
             {testimonials.map((t, i) => (
               <div key={i} className="testi-card">
@@ -628,7 +656,6 @@ const RiderSignup = () => {
                   </div>
                   <span className="earnings-badge">{t.earnings}</span>
                 </div>
-                {/* Playfair italic is stunning for testimonial quotes */}
                 <div style={{ fontFamily: 'var(--font-display)', fontStyle: 'italic', fontWeight: 400, color: 'var(--text-mid)', lineHeight: 1.75, fontSize: '0.975rem', position: 'relative', paddingLeft: 20 }}>
                   <span style={{ position: 'absolute', left: 0, top: -8, fontSize: '2.5rem', color: 'var(--green)', lineHeight: 1, opacity: 0.2, fontFamily: 'var(--font-display)' }}>"</span>
                   {t.text}
@@ -652,7 +679,6 @@ const RiderSignup = () => {
           boxShadow: '0 20px 60px rgba(26,107,60,0.25)',
         }}>
           <div style={{ position: 'absolute', right: -40, top: -40, width: 280, height: 280, borderRadius: '50%', background: 'rgba(255,255,255,0.05)' }} />
-          <div style={{ position: 'absolute', right: 100, bottom: -80, width: 180, height: 180, borderRadius: '50%', background: 'rgba(255,255,255,0.04)' }} />
           <div style={{ position: 'relative' }}>
             <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 'clamp(30px, 3.5vw, 48px)', color: '#fff', lineHeight: 1.15, marginBottom: 10 }}>
               Ready to hit the road?
@@ -660,12 +686,10 @@ const RiderSignup = () => {
             <p style={{ fontFamily: 'var(--font-body)', fontWeight: 300, color: 'rgba(255,255,255,0.75)', fontSize: '1rem' }}>Join 10,000+ riders already earning with OyaEat today.</p>
           </div>
           <Link href="/rider/register" style={{
-            background: '#fff', color: 'var(--green)',
-            fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '0.85rem',
-            letterSpacing: '0.06em', textTransform: 'uppercase',
+            background: '#fff', color: 'var(--green)', fontFamily: 'var(--font-body)', fontWeight: 700,
+            fontSize: '0.85rem', letterSpacing: '0.06em', textTransform: 'uppercase',
             padding: '15px 36px', border: 'none', borderRadius: 6, cursor: 'pointer',
-            transition: 'all 0.2s', whiteSpace: 'nowrap',
-            boxShadow: '0 4px 16px rgba(0,0,0,0.12)',
+            transition: 'all 0.2s', whiteSpace: 'nowrap', boxShadow: '0 4px 16px rgba(0,0,0,0.12)',
             textDecoration: 'none', display: 'inline-block',
           }}>
             Start Earning Now →
@@ -680,7 +704,6 @@ const RiderSignup = () => {
               Got <em style={{ color: 'var(--green)', fontStyle: 'italic' }}>questions?</em>
             </h2>
           </div>
-
           <div>
             {faqs.map((faq, i) => (
               <div key={i} className="faq-item">
@@ -713,7 +736,6 @@ const RiderSignup = () => {
                   Nigeria's fastest growing food delivery platform. Connecting riders to opportunity.
                 </p>
               </div>
-
               {[
                 { title: 'Quick Links', items: ['Home', 'About Us', 'How it Works', 'Contact'] },
                 { title: 'For Riders', items: ['Rider Signup', 'Rider Login', 'Payout Info', 'Insurance', 'Support'] },
@@ -735,7 +757,6 @@ const RiderSignup = () => {
                 </div>
               ))}
             </div>
-
             <div style={{ borderTop: '1px solid var(--green-border)', paddingTop: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
               <p style={{ fontFamily: 'var(--font-body)', fontWeight: 300, color: 'var(--text-muted)', fontSize: '0.8rem' }}>© 2026 OyaEat. All rights reserved.</p>
               <div style={{ display: 'flex', gap: 24 }}>
@@ -750,6 +771,7 @@ const RiderSignup = () => {
             </div>
           </div>
         </footer>
+
       </div>
     </>
   );

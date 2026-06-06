@@ -129,7 +129,7 @@ const LetsDoItTogether = () => {
               <p className="text-gray-600 text-center mb-6 max-w-sm">
                 {opportunity.description}
               </p>
-              <a href={opportunity.link}>
+              <a href={opportunity.link} target="_blank" rel="noopener noreferrer">
                 <button className="bg-[#2d5f4f] hover:bg-[#234a3d] text-white font-bold px-8 py-3 rounded-full transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl">
                   {opportunity.buttonText}
                 </button>

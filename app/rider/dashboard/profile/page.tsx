@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import { User, Phone, Bike, CreditCard, ShieldCheck, Loader2, Save, Camera } from "lucide-react";
+import { User, ShieldCheck, Loader2, Camera, CheckCircle2 } from "lucide-react";
+import { RiderProfileFields } from "@/components/rider/RiderProfileFields";
 
 export default function RiderProfileSetup() {
   const [formData, setFormData] = useState({
@@ -17,6 +18,7 @@ export default function RiderProfileSetup() {
   const [isVerified, setIsVerified] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [phoneError, setPhoneError] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
@@ -40,7 +42,6 @@ export default function RiderProfileSetup() {
           });
           setIsVerified(!!data.profile?.isVerified);
 
-          // Handle existing avatar visualization preview safely
           if (data.profile?.avatarUrl) {
             setPreviewUrl(data.profile.avatarUrl.startsWith("http") ? data.profile.avatarUrl : `${API_BASE_URL}${data.profile.avatarUrl}`);
           }
@@ -59,17 +60,20 @@ export default function RiderProfileSetup() {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       setSelectedFile(file);
-      setPreviewUrl(URL.createObjectURL(file)); // Generate temporary visual cache URL
+      setPreviewUrl(URL.createObjectURL(file));
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (formData.phone.length !== 11) {
+      setPhoneError("Cannot save profile. Phone number must be exactly 11 digits.");
+      return;
+    }
+
     setSaving(true);
     try {
       const token = localStorage.getItem("riderToken");
-      
-      // ── TRANSITION TO FORMDATA FOR BINARY MULTIPART FILES ──
       const dataPayload = new FormData();
       dataPayload.append("firstName", formData.firstName);
       dataPayload.append("lastName", formData.lastName);
@@ -83,19 +87,12 @@ export default function RiderProfileSetup() {
 
       const response = await fetch(`${API_BASE_URL}/rider/profile/update`, {
         method: "PUT",
-        headers: {
-          "Authorization": `Bearer ${token}`
-          // Note: Do NOT include 'Content-Type': 'application/json' here.
-          // The browser automatically sets the correct multi-part boundary parameters!
-        },
+        headers: { "Authorization": `Bearer ${token}` },
         body: dataPayload
       });
 
-      const resData = await response.json();
       if (response.ok) {
-        alert("Profile and avatar image saved successfully!");
-      } else {
-        alert(resData.message || "Failed saving changes");
+        alert("Profile saved successfully!");
       }
     } catch (err) {
       console.error("Update request error", err);
@@ -110,157 +107,102 @@ export default function RiderProfileSetup() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <Loader2 className="w-8 h-8 animate-spin text-green-600" />
+      <div className="flex justify-center items-center h-48">
+        <Loader2 className="w-6 h-6 animate-spin text-green-600" />
       </div>
     );
   }
 
   return (
-    <div className="max-w-3xl mx-auto bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-      <div className="p-6 bg-gray-50 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-xl font-bold text-gray-900">Rider Profile Setup</h2>
-          <p className="text-xs text-gray-500 mt-0.5">Manage your profile image, vehicle configuration, and details.</p>
-        </div>
+    // 💡 THE SPACE FIX: Wrap in a container with a flexible background, removing min-h-screen/stretch from the card block
+    <div className="p-4 md:p-6 w-full flex flex-col justify-start items-start">
+      <div className="w-full  bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
         
-        <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold ${
-          isVerified ? "bg-green-100 text-green-800" : "bg-amber-100 text-amber-800"
-        }`}>
-          <ShieldCheck className="w-4 h-4" />
-          {isVerified ? "Verified Operator Account" : "Pending Document Verification"}
-        </div>
-      </div>
-
-      <form onSubmit={handleSubmit} className="p-6 space-y-6">
-        
-        {/* Profile Picture Upload Section Area */}
-        <div className="flex flex-col items-center justify-center space-y-3 pb-4 border-b border-gray-50">
-          <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block">Avatar Profile Picture</label>
-          <div 
-            onClick={() => fileInputRef.current?.click()}
-            className="group relative w-24 h-24 rounded-full bg-emerald-800 border-4 border-white shadow flex items-center justify-center cursor-pointer overflow-hidden"
-          >
-            {previewUrl ? (
-              <Image 
-                src={previewUrl} 
-                alt="Avatar Preview" 
-                fill 
-                className="object-cover group-hover:brightness-70 transition-all"
-                unoptimized
-              />
-            ) : (
-              <span className="text-white font-black text-xl tracking-wider group-hover:opacity-30 transition-opacity">
-                {getInitials()}
-              </span>
-            )}
-            <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-              <Camera className="w-5 h-5 text-white" />
-            </div>
+        {/* Header Section */}
+        <div className="px-4 py-3 bg-slate-50 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <h2 className="text-sm font-bold text-slate-900 tracking-tight">Profile Settings</h2>
+            <p className="text-[11px] text-slate-500">Update account particulars, avatar registration data and vehicle type indicators.</p>
           </div>
-          <input 
-            type="file" 
-            ref={fileInputRef} 
-            onChange={handleFileChange} 
-            accept="image/*" 
-            className="hidden" 
-          />
-          <p className="text-[10px] text-gray-400">Click circle container to update JPG / PNG image</p>
+          <div className={`flex items-center gap-1 px-2.5 py-0.5 rounded text-[10px] font-bold ${
+            isVerified ? "bg-green-50 border border-green-200 text-green-700" : "bg-amber-50 border border-amber-200 text-amber-700"
+          }`}>
+            {isVerified ? <CheckCircle2 className="w-3 h-3" /> : <ShieldCheck className="w-3 h-3" />}
+            {isVerified ? "Verified Operator" : "Awaiting Verification"}
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Content Row: Explicitly avoids forcing stretch behavior */}
+        <form onSubmit={handleSubmit} className="p-4 grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
           
-          {/* First Name */}
-          <div className="space-y-2">
-            <label className="text-xs font-bold text-gray-700 uppercase tracking-wider block">First Name</label>
-            <div className="relative">
-              <User className="absolute left-3 top-3.5 w-4 h-4 text-gray-400" />
-              <input 
-                type="text"
-                required
-                value={formData.firstName}
-                onChange={(e) => setFormData(p => ({ ...p, firstName: e.target.value }))}
-                className="w-full bg-white border border-gray-200 rounded-xl py-3 pl-10 pr-4 text-sm focus:outline-none focus:border-green-600 text-gray-900"
-              />
+          {/* Avatar Area */}
+          <div className="flex flex-col items-center justify-center p-4 bg-slate-50 rounded-lg border border-slate-200/60 text-center">
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Profile Image</span>
+            <div 
+              onClick={() => fileInputRef.current?.click()}
+              className="group relative w-16 h-16 rounded-full bg-emerald-800 border-2 border-white shadow-sm flex items-center justify-center cursor-pointer overflow-hidden"
+            >
+              {previewUrl ? (
+                <Image src={previewUrl} alt="Avatar Preview" fill className="object-cover group-hover:brightness-75 transition-all" unoptimized />
+              ) : (
+                <span className="text-white font-bold text-sm tracking-wider group-hover:opacity-20 transition-opacity">{getInitials()}</span>
+              )}
+              <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <Camera className="w-3.5 h-3.5 text-white" />
+              </div>
             </div>
+            <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" className="hidden" />
+            <p className="text-[9px] text-slate-400 mt-2 font-medium">Click image to update</p>
           </div>
 
-          {/* Last Name */}
-          <div className="space-y-2">
-            <label className="text-xs font-bold text-gray-700 uppercase tracking-wider block">Last Name</label>
-            <div className="relative">
-              <User className="absolute left-3 top-3.5 w-4 h-4 text-gray-400" />
-              <input 
-                type="text"
-                required
-                value={formData.lastName}
-                onChange={(e) => setFormData(p => ({ ...p, lastName: e.target.value }))}
-                className="w-full bg-white border border-gray-200 rounded-xl py-3 pl-10 pr-4 text-sm focus:outline-none focus:border-green-600 text-gray-900"
-              />
+          {/* Form Content Block */}
+          <div className="md:col-span-2 space-y-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              
+              {/* First Name */}
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">First Name</label>
+                <div className="relative">
+                  <User className="absolute left-2.5 top-2 w-3.5 h-3.5 text-slate-400" />
+                  <input 
+                    type="text"
+                    required
+                    value={formData.firstName}
+                    onChange={(e) => setFormData(p => ({ ...p, firstName: e.target.value }))}
+                    className="w-full bg-white border border-slate-200 rounded-lg py-1.5 pl-8 pr-2.5 text-xs text-slate-900 focus:outline-none focus:border-green-600 focus:ring-1 focus:ring-green-600"
+                  />
+                </div>
+              </div>
+
+              {/* Last Name */}
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Last Name</label>
+                <div className="relative">
+                  <User className="absolute left-2.5 top-2 w-3.5 h-3.5 text-slate-400" />
+                  <input 
+                    type="text"
+                    required
+                    value={formData.lastName}
+                    onChange={(e) => setFormData(p => ({ ...p, lastName: e.target.value }))}
+                    className="w-full bg-white border border-slate-200 rounded-lg py-1.5 pl-8 pr-2.5 text-xs text-slate-900 focus:outline-none focus:border-green-600 focus:ring-1 focus:ring-green-600"
+                  />
+                </div>
+              </div>
+
             </div>
+
+            {/* Split Input Form Block */}
+            <RiderProfileFields 
+              formData={formData} 
+              setFormData={setFormData} 
+              saving={saving} 
+              phoneError={phoneError}
+              setPhoneError={setPhoneError}
+          />
+          
           </div>
-
-          {/* Phone Number */}
-          <div className="space-y-2">
-            <label className="text-xs font-bold text-gray-700 uppercase tracking-wider block">Phone Line Contact</label>
-            <div className="relative">
-              <Phone className="absolute left-3 top-3.5 w-4 h-4 text-gray-400" />
-              <input 
-                type="text"
-                required
-                value={formData.phone}
-                onChange={(e) => setFormData(p => ({ ...p, phone: e.target.value }))}
-                className="w-full bg-white border border-gray-200 rounded-xl py-3 pl-10 pr-4 text-sm focus:outline-none focus:border-green-600 text-gray-900"
-              />
-            </div>
-          </div>
-
-          {/* Vehicle Type Selection */}
-          <div className="space-y-2">
-            <label className="text-xs font-bold text-gray-700 uppercase tracking-wider block">Vehicle Logistics Category</label>
-            <div className="relative">
-              <Bike className="absolute left-3 top-3.5 w-4 h-4 text-gray-400" />
-              <select
-                value={formData.vehicleType}
-                onChange={(e) => setFormData(p => ({ ...p, vehicleType: e.target.value }))}
-                className="w-full bg-white border border-gray-200 rounded-xl py-3 pl-10 pr-4 text-sm focus:outline-none focus:border-green-600 text-gray-900 appearance-none"
-              >
-                <option value="Motorcycle">Motorcycle (Dispatch Bike)</option>
-                <option value="Bicycle">Bicycle (E-Bike)</option>
-                <option value="Car">Delivery Vehicle Sedan</option>
-              </select>
-            </div>
-          </div>
-
-          {/* License Plate Number */}
-          <div className="space-y-2 md:col-span-2">
-            <label className="text-xs font-bold text-gray-700 uppercase tracking-wider block">Plate Registration Number</label>
-            <div className="relative">
-              <CreditCard className="absolute left-3 top-3.5 w-4 h-4 text-gray-400" />
-              <input 
-                type="text"
-                placeholder="e.g. LAGOS-AAA-01-AA"
-                value={formData.plateNumber}
-                onChange={(e) => setFormData(p => ({ ...p, plateNumber: e.target.value }))}
-                className="w-full bg-white border border-gray-200 rounded-xl py-3 pl-10 pr-4 text-sm focus:outline-none focus:border-green-600 text-gray-900"
-              />
-            </div>
-          </div>
-
-        </div>
-
-        {/* Action Submit Trigger */}
-        <div className="pt-4 border-t border-gray-100 flex justify-end">
-          <button
-            type="submit"
-            disabled={saving}
-            className="bg-green-600 hover:bg-green-700 text-white font-bold px-6 py-3 rounded-xl shadow-sm transition-colors flex items-center gap-2 text-sm disabled:opacity-50"
-          >
-            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-            Save Configuration Changes
-          </button>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   );
 }

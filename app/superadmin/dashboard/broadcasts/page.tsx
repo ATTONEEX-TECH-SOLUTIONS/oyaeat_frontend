@@ -2,9 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { Sidebar } from '@/app/superadmin/dashboard/components/sidebar';
-import { Megaphone, Clock, Loader2, Sparkles, PlusCircle, Store, Upload, Image as ImageIcon, Eye, EyeOff } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Loader2 } from 'lucide-react';
+
+import { PendingAdvertsList } from '@/app/superadmin/dashboard/components/pending-adverts-list';
+import { AdvertSanitizerPanel } from '@/app/superadmin/dashboard/components/advert-sanitizer-panel';
+import { CreateBannerForm } from '@/app/superadmin/dashboard/components/create-banner-form';
+import { ActiveBroadcastsTable } from '@/app/superadmin/dashboard/components/active-broadcasts-table';
 
 export default function AdminBroadcastPage() {
   const [loading, setLoading] = useState(true);
@@ -12,13 +15,18 @@ export default function AdminBroadcastPage() {
   const [broadcasts, setBroadcasts] = useState<any[]>([]);
   const [approvedBusinesses, setApprovedBusinesses] = useState<any[]>([]);
 
-  // Form inputs tracking states
+  // Vendor Advert States
+  const [pendingAdverts, setPendingAdverts] = useState<any[]>([]);
+  const [selectedAdvert, setSelectedAdvert] = useState<any | null>(null);
+  const [sanitizedSubject, setSanitizedSubject] = useState('');
+  const [sanitizedContent, setSanitizedContent] = useState('');
+  const [targetRole, setTargetRole] = useState('all');
+
+  // Form Inputs
   const [targetBusinessId, setTargetBusinessId] = useState('');
   const [title, setTitle] = useState('');
   const [desc, setDesc] = useState('');
   const [durationHours, setDurationHours] = useState('24');
-  
-  // File upload and local state visual references
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
@@ -29,19 +37,24 @@ export default function AdminBroadcastPage() {
       setLoading(true);
       await Promise.all([
         fetchActiveBroadcasts(),
-        fetchApprovedRestaurants()
+        fetchApprovedRestaurants(),
+        fetchPendingAdverts()
       ]);
       setLoading(false);
     }
     initPage();
   }, []);
 
-  const getAuthToken = (): string | null => {
-    if (typeof window === 'undefined') return null;
-    return localStorage.getItem('authToken') || 
-           localStorage.getItem('admin_token') || 
-           localStorage.getItem('vendor_token');
-  };
+ 
+
+const getAuthToken = (): string | null => {
+  if (typeof window === 'undefined') return null;
+  
+  return localStorage.getItem('admin_token') || 
+         localStorage.getItem('authToken') || 
+         localStorage.getItem('vendor_token');
+};
+
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -55,47 +68,97 @@ export default function AdminBroadcastPage() {
     try {
       const token = getAuthToken();
       if (!token) return;
-
       const res = await fetch(`${API_BASE_URL}/admin/broadcasts/approved-list`, {
-        method: 'GET',
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const json = await res.json();
-      if (json.success && Array.isArray(json.businesses)) {
-        setApprovedBusinesses(json.businesses);
-      }
+      if (json.success && Array.isArray(json.businesses)) setApprovedBusinesses(json.businesses);
     } catch (err) {
-      console.error("Failed to load approved restaurant choices:", err);
+      console.error(err);
     }
   };
 
-  const fetchActiveBroadcasts = async () => {
+ // Inside page.tsx
+
+const fetchActiveBroadcasts = async () => {
+  try {
+    const token = getAuthToken(); // 💡 Grab the token from LocalStorage
+    if (!token) return;
+
+    const res = await fetch(`${API_BASE_URL}/admin/broadcasts/active`, {
+      method: 'GET',
+      headers: { 
+        'Authorization': `Bearer ${token}` // 💡 Add this header configuration block
+      }
+    });
+    
+    const json = await res.json();
+    if (json.success) {
+      setBroadcasts(json.data || []);
+    }
+  } catch (err) {
+    console.error("Failed to load active promotions:", err);
+  }
+};
+
+
+  const fetchPendingAdverts = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/public/promos`);
+      const token = getAuthToken();
+      if (!token) return;
+      // Inside your frontend page.tsx -> fetchPendingAdverts function:
+const res = await fetch(`${API_BASE_URL}/admin/broadcasts/pending-adverts`, {
+  headers: { 'Authorization': `Bearer ${token}` }
+});
+
       const json = await res.json();
-      if (json.success) {
-        setBroadcasts(json.data || []);
+      if (json.success) setPendingAdverts(json.threads || []);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleSelectAdvert = (advert: any) => {
+    setSelectedAdvert(advert);
+    setSanitizedSubject(advert.subject || '');
+    setSanitizedContent(advert.content || '');
+    setTargetRole(advert.targetRole || 'all');
+  };
+
+  const handleSanitizeAndApprove = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedAdvert) return;
+    setSubmitting(true);
+    try {
+      const token = getAuthToken();
+      // Inside your frontend page.tsx -> handleSanitizeAndApprove function:
+const response = await fetch(`${API_BASE_URL}/admin/advert/${selectedAdvert.id}/approve`, {
+  method: 'PATCH',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`
+  },
+  body: JSON.stringify({ sanitizedSubject, sanitizedContent, targetRole })
+});
+
+      if (response.ok) {
+        alert("Advert approved and broadcasted!");
+        setSelectedAdvert(null);
+        fetchPendingAdverts();
       }
     } catch (err) {
-      console.error("Failed to load active promotions:", err);
+      console.error(err);
+    } finally {
+      setSubmitting(false);
     }
   };
 
   const handleCreateBroadcast = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!targetBusinessId || !title || !desc || !selectedFile) {
-      alert("Please populate all form inputs and select a graphics banner asset.");
-      return;
-    }
-
+    if (!targetBusinessId || !title || !desc || !selectedFile) return;
     setSubmitting(true);
     try {
-      const token = getAuthToken(); 
-      if (!token) {
-        alert("Session expired. Please log back in.");
-        return;
-      }
-
+      const token = getAuthToken();
       const formData = new FormData();
       formData.append('businessId', targetBusinessId);
       formData.append('title', title);
@@ -108,49 +171,35 @@ export default function AdminBroadcastPage() {
         headers: { 'Authorization': `Bearer ${token}` },
         body: formData
       });
-
-      const json = await response.json();
-      if (response.ok && json.success) {
-        alert("Campaign banner asset uploaded and broadcasted live across system carousels!");
+      if (response.ok) {
         setTargetBusinessId('');
         setTitle('');
         setDesc('');
         setSelectedFile(null);
         setPreviewUrl(null);
-        fetchActiveBroadcasts(); 
-      } else {
-        alert(`Server error: ${json.message || 'Authorization tracking verification issue.'}`);
+        fetchActiveBroadcasts();
       }
     } catch (err) {
-      console.error("Submission error:", err);
+      console.error(err);
     } finally {
       setSubmitting(false);
     }
   };
 
-  // Toggle IsActive status on click helper
   const handleToggleActiveStatus = async (id: number, currentStatus: boolean) => {
     try {
       const token = getAuthToken();
       if (!token) return;
-
       const res = await fetch(`${API_BASE_URL}/admin/broadcasts/${id}/toggle`, {
         method: 'PATCH',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify({ isActive: !currentStatus })
       });
-      const json = await res.json();
-      if (json.success) {
-        // Update local state grid array instantly
+      if (res.ok) {
         setBroadcasts(prev => prev.map(item => item.id === id ? { ...item, isActive: !currentStatus } : item));
-      } else {
-        alert(`Failed to update status: ${json.message}`);
       }
     } catch (err) {
-      console.error("Failed toggling stream status visibility:", err);
+      console.error(err);
     }
   };
 
@@ -166,159 +215,51 @@ export default function AdminBroadcastPage() {
   return (
     <div className="flex min-h-screen bg-slate-100">
       <Sidebar />
-      
-      <main className="flex-1 overflow-auto p-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-2">
-             Advert Broadcasts
-          </h1>
-          <p className="text-slate-600 mt-2">
-            Upload custom image promotional artwork to deploy across consumer system interface banners instantly.
-          </p>
+      <main className="flex-1 overflow-auto p-8 space-y-8">
+        <div>
+          <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-2">Advert Broadcasts</h1>
+          <p className="text-slate-600 mt-2">Upload custom image promotional artwork to deploy instantly.</p>
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
-          {/* Create Form Column */}
-          <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm xl:col-span-1 space-y-5">
-            <div className="flex items-center gap-2 border-b pb-3 border-slate-100">
-              <PlusCircle className="text-[#2d5f4f] w-5 h-5" />
-              <h2 className="font-extrabold text-slate-800 text-sm uppercase tracking-wider">New Advert Broadcast</h2>
-            </div>
+          <PendingAdvertsList 
+            pendingAdverts={pendingAdverts} 
+            selectedAdvert={selectedAdvert} 
+            onSelectAdvert={handleSelectAdvert} 
+          />
+          <AdvertSanitizerPanel 
+            selectedAdvert={selectedAdvert}
+            sanitizedSubject={sanitizedSubject}
+            setSanitizedSubject={setSanitizedSubject}
+            sanitizedContent={sanitizedContent}
+            setSanitizedContent={setSanitizedContent}
+            submitting={submitting}
+            onCancel={() => setSelectedAdvert(null)}
+            onSubmit={handleSanitizeAndApprove}
+          />
+        </div>
 
-            <form onSubmit={handleCreateBroadcast} className="space-y-4">
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-600 uppercase tracking-wide flex items-center gap-1">
-                  <Store className="w-3.5 h-3.5" /> Select Restaurant Target
-                </label>
-                <select
-                  required
-                  value={targetBusinessId}
-                  onChange={e => setTargetBusinessId(e.target.value)}
-                  className="w-full h-11 px-3 py-2 rounded-xl border border-slate-200 bg-white text-sm font-medium focus:outline-none focus:border-orange-500 transition-colors text-slate-800"
-                >
-                  <option value="">-- Choose an Approved Vendor --</option>
-                  {approvedBusinesses.map((b: any) => (
-                    <option key={b.id} value={b.id}>
-                      {b.name || "Unnamed Restaurant"} (ID: {b.id})
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-600 uppercase tracking-wide">Advert Campaign Title</label>
-                <Input required placeholder="e.g. 20% Off Jollof Fiesta" value={title} onChange={e => setTitle(e.target.value)} className="rounded-xl" />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-600 uppercase tracking-wide">Short Description Caption</label>
-                <Input required placeholder="e.g. Valid until 5PM today" value={desc} onChange={e => setDesc(e.target.value)} className="rounded-xl" />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-600 uppercase tracking-wide">Campaign Lifespan (Hours)</label>
-                <Input type="number" required placeholder="e.g. 24" value={durationHours} onChange={e => setDurationHours(e.target.value)} className="rounded-xl" />
-              </div>
-
-              {/* Native Image Upload Zone UI rendering block */}
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-600 uppercase tracking-wide block flex items-center gap-1">
-                  <ImageIcon className="w-3.5 h-3.5 text-slate-500" /> Upload Campaign Image Graphic
-                </label>
-                
-                <div className="flex flex-col gap-3">
-                  {previewUrl && (
-                    <div className="h-28 w-full rounded-xl bg-cover bg-center border shadow-inner relative overflow-hidden" style={{ backgroundImage: `url(${previewUrl})` }}>
-                      <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                        <span className="text-white text-[10px] bg-black/50 px-2 py-1 rounded-full font-bold">Image Select Preview</span>
-                      </div>
-                    </div>
-                  )}
-                  
-                  <label className="flex items-center justify-center gap-2 border-2 border-dashed border-slate-200 hover:border-orange-500 rounded-xl py-4 px-3 cursor-pointer transition-colors text-slate-500 hover:text-orange-500">
-                    <Upload className="w-4 h-4" />
-                    <span className="text-xs font-bold">{selectedFile ? "Replace Selected Asset File" : "Choose Image Graphic File"}</span>
-                    <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
-                  </label>
-                </div>
-              </div>
-
-              <Button type="submit" disabled={submitting} className="w-full bg-[#2e7d32] hover:bg-[#2e7d32] text-white rounded-xl h-11 font-bold mt-4 shadow-sm">
-                {submitting ? <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Dispatching Asset Cargo...</> : "Broadcast Live Advert"}
-              </Button>
-            </form>
-          </div>
-
-          {/* Active Broadcast Tracking Grid Table Column */}
-          <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm xl:col-span-2 space-y-4">
-            <div className="flex items-center gap-2 border-b pb-3 border-slate-100">
-              
-              <h2 className="font-extrabold text-slate-800 text-sm uppercase tracking-wider">Active Broadcast Streams</h2>
-            </div>
-
-            {broadcasts.length === 0 ? (
-              <div className="text-center py-16 text-slate-400 border border-dashed rounded-2xl text-xs">No active promotions are currently loaded in the system dashboard.</div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm border-collapse">
-                  <thead>
-                    <tr className="border-b text-xs font-bold text-slate-400 uppercase tracking-wider bg-slate-50/50">
-                      <th className="p-3">Restaurant Name</th>
-                      <th className="p-3">Campaign Headline</th>
-                      <th className="p-3">Uploaded Image Backdrop</th>
-                      <th className="p-3">Expiration Date</th>
-                      <th className="p-3 text-center">Status Action</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y text-slate-700 font-medium">
-                    {broadcasts.map((promo, idx) => {
-                      const isUploadedImage = promo.bgGradient?.startsWith("http://") || promo.bgGradient?.startsWith("https://");
-                      
-                      return (
-                        <tr key={promo.id || idx} className={`hover:bg-slate-50/50 transition-colors ${!promo.isActive ? 'opacity-50 bg-slate-50/40' : ''}`}>
-                          <td className="p-3 font-bold text-slate-900">{promo.business?.name || `ID: ${promo.businessId}`}</td>
-                          <td className="p-3">{promo.title}</td>
-                          <td className="p-3">
-                            <div 
-                              className={`h-12 w-32 rounded-xl bg-cover bg-center border text-white font-extrabold text-[10px] shadow-sm relative overflow-hidden flex flex-col justify-center p-1 text-center ${!isUploadedImage ? `bg-gradient-to-r ${promo.bgGradient}` : ''}`} 
-                              style={isUploadedImage ? { backgroundImage: `url(${promo.bgGradient})` } : {}}
-                            >
-                              <div className="absolute inset-0 bg-black/40 z-0" />
-                              <p className="relative z-10 tracking-tight leading-tight truncate px-1 font-black uppercase text-white">{promo.title}</p>
-                              <p className="relative z-10 text-[8px] opacity-75 truncate px-1 font-normal text-white">{promo.desc || ""}</p>
-                            </div>
-                          </td>
-                          <td className="p-3 text-xs text-slate-500">
-                            <div className="flex items-center gap-1">
-                              <Clock className="w-3.5 h-3.5" /> 
-                              {promo.expiresAt ? new Date(promo.expiresAt).toLocaleString([], {hour: '2-digit', minute:'2-digit', month:'short', day:'numeric'}) : 'N/A'}
-                            </div>
-                          </td>
-                          <td className="p-3 text-center">
-                            <button
-                              type="button"
-                              onClick={() => handleToggleActiveStatus(promo.id, promo.isActive)}
-                              className={`px-3 py-1.5 rounded-xl font-bold text-xs inline-flex items-center gap-1 transition-all ${
-                                promo.isActive 
-                                  ? 'bg-rose-50 border border-rose-100 text-rose-600 hover:bg-rose-100' 
-                                  : 'bg-emerald-50 border border-emerald-100 text-emerald-600 hover:bg-emerald-100'
-                              }`}
-                            >
-                              {promo.isActive ? (
-                                <><EyeOff className="w-3.5 h-3.5" /> Deactivate</>
-                              ) : (
-                                <><Eye className="w-3.5 h-3.5" /> Activate</>
-                              )}
-                            </button>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 pt-4">
+          <CreateBannerForm 
+            onSubmit={handleCreateBroadcast}
+            targetBusinessId={targetBusinessId}
+            setTargetBusinessId={setTargetBusinessId}
+            approvedBusinesses={approvedBusinesses}
+            title={title}
+            setTitle={setTitle}
+            desc={desc}
+            setDesc={setDesc}
+            durationHours={durationHours}
+            setDurationHours={setDurationHours}
+            previewUrl={previewUrl}
+            selectedFile={selectedFile}
+            onFileChange={handleFileChange}
+            submitting={submitting}
+          />
+          <ActiveBroadcastsTable 
+            broadcasts={broadcasts} 
+            onToggleStatus={handleToggleActiveStatus} 
+          />
         </div>
       </main>
     </div>

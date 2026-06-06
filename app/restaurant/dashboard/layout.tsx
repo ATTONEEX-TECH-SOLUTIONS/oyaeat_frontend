@@ -18,6 +18,7 @@ import {
   MessageSquare,
   Search,
   Wallet,
+  Megaphone,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -28,6 +29,7 @@ const NAV_ITEMS = [
   { icon: ShoppingCart, label: 'Orders', href: '/restaurant/dashboard/orders' },
   { icon: Search, label: 'Reviews', href: '/restaurant/dashboard/reviews' },
   { icon: Wallet, label: 'Wallet', href: '/restaurant/dashboard/wallet' },
+   { icon: Megaphone, label: 'Advertisements', href: '/restaurant/dashboard/advertisements' },
   { icon: MessageSquare, label: 'Support', href: '/restaurant/dashboard/support' },
   { icon: Settings, label: 'Settings', href: '/restaurant/dashboard/settings' },
 ];

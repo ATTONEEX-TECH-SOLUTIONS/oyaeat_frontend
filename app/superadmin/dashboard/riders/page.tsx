@@ -3,32 +3,42 @@
 import { useState, useEffect } from 'react'
 import { Sidebar } from '@/app/superadmin/dashboard/components/sidebar'
 import { RidersList } from '@/app/superadmin/dashboard/components/riders-list'
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { Search, Plus } from 'lucide-react'
+import { Search } from 'lucide-react'
 
-// Set up fallback path configuration pointing directly to your local Express server instance
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'
 
+// 🚨 LOCK-IN DEFAULT EXPORT: Explicitly declared to eliminate Next.js compilation issues
 export default function RidersPage() {
   const [riders, setRiders] = useState<any[]>([])
   const [searchTerm, setSearchTerm] = useState('')
   const [loading, setLoading] = useState(true)
 
-  // Fetch all riders from the unified Express instance
+  const getAuthHeaders = (extraHeaders = {}) => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('admin_token') : null
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': token ? `Bearer ${token}` : '',
+      ...extraHeaders
+    }
+  }
+
   useEffect(() => {
     async function fetchRiders() {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/riders/admin/all`) 
+        const response = await fetch(`${API_BASE_URL}/api/rider/admin/all`, {
+          method: 'GET',
+          headers: getAuthHeaders()
+        }) 
         if (!response.ok) {
-          throw new Error(`Server returned error status code: ${response.status}`);
+          throw new Error(`Server returned error status code: ${response.status}`)
         }
         const data = await response.json()
-        setRiders(data)
+        setRiders(Array.isArray(data) ? data : [])
       } catch (error) {
         console.error("Failed fetching riders data:", error)
+        setRiders([])
       } finally {
         setLoading(false)
       }
@@ -36,24 +46,31 @@ export default function RidersPage() {
     fetchRiders()
   }, [])
 
-  const filteredRiders = riders.filter(
+  const filteredRiders = (riders || []).filter(
     (r) =>
-      `${r.firstName} ${r.lastName}`
+      `${r?.firstName || ''} ${r?.lastName || ''}`
         .toLowerCase()
         .includes(searchTerm.toLowerCase()) ||
-      r.email.toLowerCase().includes(searchTerm.toLowerCase())
+      (r?.email && r.email.toLowerCase().includes(searchTerm.toLowerCase()))
   )
 
-  const handleVerify = async (id: string, currentStatus: string) => {
+  const handleVerify = async (id: number, currentStatus: string) => {
     try {
-      const nextStatus = currentStatus === 'pending' ? 'verified' : 'active'
+      // 🚀 REACTIVATION CORE BRANCH: Maps inactive states smoothly back up to active status
+      let nextStatus = 'active'
+      if (currentStatus === 'pending') {
+        nextStatus = 'verified'
+      } else if (currentStatus === 'verified') {
+        nextStatus = 'active'
+      } else if (currentStatus === 'inactive') {
+        nextStatus = 'active'
+      }
       
-      const response = await fetch(`${API_BASE_URL}/api/riders/admin/${id}/status`, {
+      const response = await fetch(`${API_BASE_URL}/api/rider/admin/${id}/status`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify({ status: nextStatus })
       })
-
       if (response.ok) {
         setRiders(prevRiders =>
           prevRiders.map(r => r.id === id ? { ...r, status: nextStatus } : r)
@@ -64,10 +81,11 @@ export default function RidersPage() {
     }
   }
 
-  const handleReject = async (id: string) => {
+  const handleReject = async (id: number) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/riders/admin/${id}`, { 
-        method: 'DELETE' 
+      const response = await fetch(`${API_BASE_URL}/api/rider/admin/${id}`, { 
+        method: 'DELETE',
+        headers: getAuthHeaders()
       })
       if (response.ok) {
         setRiders(prevRiders => prevRiders.filter((r) => r.id !== id))
@@ -77,11 +95,11 @@ export default function RidersPage() {
     }
   }
 
-  const handleDeactivate = async (id: string) => {
+  const handleDeactivate = async (id: number) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/riders/admin/${id}/status`, {
+      const response = await fetch(`${API_BASE_URL}/api/rider/admin/${id}/status`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify({ status: 'inactive' })
       })
       if (response.ok) {
@@ -94,7 +112,7 @@ export default function RidersPage() {
     }
   }
 
-  const getStats = (status: string) => riders.filter((r) => r.status === status).length
+  const getStats = (status: string) => (riders || []).filter((r) => r?.status === status).length
 
   if (loading) {
     return (
@@ -116,7 +134,7 @@ export default function RidersPage() {
 
           <Tabs defaultValue="all" className="w-full">
             <TabsList className="mb-6">
-              <TabsTrigger value="all">All ({riders.length})</TabsTrigger>
+              <TabsTrigger value="all">All ({(riders || []).length})</TabsTrigger>
               <TabsTrigger value="pending" className="relative">
                 Pending ({getStats('pending')})
                 {getStats('pending') > 0 && (
@@ -140,15 +158,12 @@ export default function RidersPage() {
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
-              <Button className="bg-orange-500 hover:bg-orange-600 text-white">
-                <Plus className="w-4 h-4 mr-2" /> Invite Rider
-              </Button>
             </div>
 
             {['all', 'pending', 'verified', 'active', 'inactive'].map((tab) => (
               <TabsContent key={tab} value={tab}>
                 <RidersList
-                  riders={tab === 'all' ? filteredRiders : filteredRiders.filter((r) => r.status === tab)}
+                  riders={tab === 'all' ? filteredRiders : filteredRiders.filter((r) => r?.status === tab)}
                   onVerify={handleVerify}
                   onReject={handleReject}
                   onDeactivate={handleDeactivate}

@@ -76,7 +76,7 @@ const PartnerSignup = () => {
   const navLinks = [
     { href: "/", label: "Home" },
     { href: "/about", label: "About" },
-    { href: "/restaurant/login", label: "Vendors" },
+    { href: "/restaurant/login", label: "Sign in" },
     { href: "/features", label: "Features" },
     { href: "/downloads", label: "Downloads" },
     { href: "/how-it-works", label: "How it works" },
