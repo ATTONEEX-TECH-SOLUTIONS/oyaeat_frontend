@@ -35,8 +35,11 @@ export function PendingAdvertsList({
                 : 'border-slate-100 hover:bg-slate-50'
             }`}
           >
-            <p className="text-xs font-bold text-slate-800">{adv.subject || '(No Subject)'}</p>
-            <p className="text-[11px] text-slate-500 line-clamp-2 mt-1">{adv.content}</p>
+            {/* 💡 FIXED: Changed adv.subject to adv.title to match Prisma */}
+            <p className="text-xs font-bold text-slate-800">{adv.title || '(No Title)'}</p>
+            
+            {/* 💡 FIXED: Changed adv.content to adv.desc to match Prisma */}
+            <p className="text-[11px] text-slate-500 line-clamp-2 mt-1">{adv.desc || '(No Description)'}</p>
           </button>
         ))}
         {pendingAdverts.length === 0 && (

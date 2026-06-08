@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { PlusCircle, Store, ImageIcon, Upload, Loader2 } from 'lucide-react';
+import { PlusCircle, ImageIcon, Upload, Loader2, Tag, Percent } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
@@ -20,13 +20,16 @@ interface CreateBannerFormProps {
   selectedFile: File | null;
   onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   submitting: boolean;
+
+  // 🚀 NEW PROP CONTRACT EXTENSIONS
+  code: string;
+  setCode: (val: string) => void;
+  discount: string;
+  setDiscount: (val: string) => void;
 }
 
 export function CreateBannerForm({
   onSubmit,
-  targetBusinessId,
-  setTargetBusinessId,
-  approvedBusinesses,
   title,
   setTitle,
   desc,
@@ -36,7 +39,12 @@ export function CreateBannerForm({
   previewUrl,
   selectedFile,
   onFileChange,
-  submitting
+  submitting,
+  // 🚀 Destructure extensions
+  code,
+  setCode,
+  discount,
+  setDiscount
 }: CreateBannerFormProps) {
   return (
     <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm xl:col-span-1 space-y-5">
@@ -46,25 +54,6 @@ export function CreateBannerForm({
       </div>
 
       <form onSubmit={onSubmit} className="space-y-4">
-        <div className="space-y-1.5">
-          <label className="text-xs font-bold text-slate-600 uppercase tracking-wide flex items-center gap-1">
-            <Store className="w-3.5 h-3.5" /> Select Restaurant Target
-          </label>
-          <select
-            required
-            value={targetBusinessId}
-            onChange={e => setTargetBusinessId(e.target.value)}
-            className="w-full h-11 px-3 py-2 rounded-xl border border-slate-200 bg-white text-sm font-medium focus:outline-none focus:border-orange-500 transition-colors text-slate-800"
-          >
-            <option value="">-- Choose an Approved Vendor --</option>
-            {approvedBusinesses.map((b: any) => (
-              <option key={b.id} value={b.id}>
-                {b.name || "Unnamed Restaurant"} (ID: {b.id})
-              </option>
-            ))}
-          </select>
-        </div>
-
         <div className="space-y-1">
           <label className="text-xs font-bold text-slate-600 uppercase tracking-wide">Advert Campaign Title</label>
           <Input required placeholder="e.g. 20% Off Jollof Fiesta" value={title} onChange={e => setTitle(e.target.value)} className="rounded-xl" />
@@ -73,6 +62,33 @@ export function CreateBannerForm({
         <div className="space-y-1">
           <label className="text-xs font-bold text-slate-600 uppercase tracking-wide">Short Description Caption</label>
           <Input required placeholder="e.g. Valid until 5PM today" value={desc} onChange={e => setDesc(e.target.value)} className="rounded-xl" />
+        </div>
+
+        {/* 🚀 NEW UI ELEMENT ROWS: Coupon configurations grid */}
+        <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-1">
+            <label className="text-xs font-bold text-slate-600 uppercase tracking-wide flex items-center gap-1">
+              <Tag className="w-3 h-3 text-slate-400" /> Promo Code
+            </label>
+            <Input 
+              placeholder="e.g. JOLLOF20" 
+              value={code} 
+              onChange={e => setCode(e.target.value)} 
+              className="rounded-xl uppercase font-bold" 
+            />
+          </div>
+          <div className="space-y-1">
+            <label className="text-xs font-bold text-slate-600 uppercase tracking-wide flex items-center gap-1">
+              <Percent className="w-3 h-3 text-slate-400" /> Discount Value
+            </label>
+            <Input 
+              type="number"
+              placeholder="e.g. 20" 
+              value={discount} 
+              onChange={e => setDiscount(e.target.value)} 
+              className="rounded-xl" 
+            />
+          </div>
         </div>
 
         <div className="space-y-1">
@@ -94,10 +110,10 @@ export function CreateBannerForm({
               </div>
             )}
             
-            <label className="flex items-center justify-center gap-2 border-2 border-dashed border-slate-200 hover:border-orange-500 rounded-xl py-4 px-3 cursor-pointer transition-colors text-slate-500 hover:text-orange-500">
+            <label className="flex items-center justify-center gap-2 border-2 border-dashed border-slate-200 hover:border-orange-500 rounded-xl py-4 px-3 cursor-pointer transition-colors text-slate-500 hover:text-orange-500 bg-slate-50/50">
               <Upload className="w-4 h-4" />
               <span className="text-xs font-bold">{selectedFile ? "Replace Selected Asset File" : "Choose Image Graphic File"}</span>
-              <input type="file" accept="image/*" onChange={onFileChange} className="hidden" />
+              <input type="file" accept="image/*" onChange={onFileChange} className="hidden" required={!selectedFile} />
             </label>
           </div>
         </div>

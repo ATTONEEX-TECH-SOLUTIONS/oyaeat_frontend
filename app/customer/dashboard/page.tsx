@@ -66,27 +66,30 @@ function DashboardContent() {
   }, []);
 
   const fetchLivePromos = async () => {
-    try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
-      const res = await fetch(`${API_URL}/public/promos`);
-      const json = await res.json();
-      
-      if (json.success && json.data?.length > 0) {
-        setPromos(json.data);
-      } else {
-        // High-fidelity fallback defaults if database collections are currently empty
-        setPromos([
-          { id: 'f1', title: 'Welcome to OyaEat!', desc: 'Explore delicious meals near you', bgGradient: 'from-[#2d5f4f] to-slate-800' },
-          { id: 'f2', title: 'Free Delivery Weekend', desc: 'On orders above ₦5,000 totals', bgGradient: 'from-blue-500 to-teal-500' }
-        ]);
-      }
-    } catch (err) {
-      console.error("Failed to sync promo deck metrics:", err);
+  try {
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+    
+    // 🚀 FIXED: URL adjusted to target /public/promos/public-feed match rules
+    const res = await fetch(`${API_URL}/public/promos/public-feed`);
+    const json = await res.json();
+    
+    if (json.success && Array.isArray(json.data) && json.data.length > 0) {
+      setPromos(json.data);
+    } else {
+      // High-fidelity fallback defaults if database collections are currently empty
       setPromos([
-        { id: 'f1', title: 'Fresh Food, Fast Delivery', desc: 'Browse trending restaurants below', bgGradient: 'from-orange-500 to-red-500' }
+        { id: 'f1', title: 'Welcome to OyaEat!', desc: 'Explore delicious meals near you', bgGradient: 'from-[#2d5f4f] to-slate-800' },
+        { id: 'f2', title: 'Free Delivery Weekend', desc: 'On orders above ₦5,000 totals', bgGradient: 'from-blue-500 to-teal-500' }
       ]);
     }
-  };
+  } catch (err) {
+    console.error("Failed to sync promo deck metrics:", err);
+    setPromos([
+      { id: 'f1', title: 'Fresh Food, Fast Delivery', desc: 'Browse trending restaurants below', bgGradient: 'from-orange-500 to-red-500' }
+    ]);
+  }
+};
+
 
   const toggleLike = (e: React.MouseEvent, restaurant: any) => {
     e.preventDefault();

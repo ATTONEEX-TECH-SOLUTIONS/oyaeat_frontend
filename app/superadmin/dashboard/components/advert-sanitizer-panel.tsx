@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Megaphone, Sparkles, Loader2 } from 'lucide-react';
+import { Megaphone, Sparkles, Loader2, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
@@ -14,6 +14,7 @@ interface AdvertSanitizerPanelProps {
   submitting: boolean;
   onCancel: () => void;
   onSubmit: (e: React.FormEvent) => void;
+  onReject: () => void; // 🚀 Added rejection prop contract
 }
 
 export function AdvertSanitizerPanel({
@@ -24,7 +25,8 @@ export function AdvertSanitizerPanel({
   setSanitizedContent,
   submitting,
   onCancel,
-  onSubmit
+  onSubmit,
+  onReject // 🚀 Destructured here
 }: AdvertSanitizerPanelProps) {
   return (
     <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm xl:col-span-2 flex flex-col justify-between">
@@ -37,6 +39,22 @@ export function AdvertSanitizerPanel({
                 Live Sanitizer Workspace
               </h2>
             </div>
+
+            {/* Visual preview of the original vendor asset upload file layout block */}
+            {selectedAdvert.bgGradient && (
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-600 uppercase tracking-wide">Submitted Banner Image</label>
+                <div 
+                  className="h-32 w-full rounded-xl bg-cover bg-center border shadow-sm relative overflow-hidden"
+                  style={{ backgroundImage: `url(${selectedAdvert.bgGradient})` }}
+                >
+                  <div className="absolute inset-0 bg-black/30" />
+                  <div className="absolute bottom-2 left-3 text-white">
+                    <p className="text-[10px] font-bold opacity-70">Vendor ID: {selectedAdvert.businessId}</p>
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div className="space-y-1">
               <label className="text-xs font-bold text-slate-600 uppercase tracking-wide">Edit Campaign Heading</label>
@@ -52,29 +70,41 @@ export function AdvertSanitizerPanel({
               <textarea 
                 value={sanitizedContent} 
                 onChange={(e) => setSanitizedContent(e.target.value)} 
-                rows={5}
+                rows={4}
                 className="w-full border border-slate-200 rounded-xl p-3 text-sm focus:outline-none focus:border-orange-500 transition-colors"
                 required
               />
             </div>
           </div>
 
-          <div className="flex gap-3 justify-end pt-4 border-t border-slate-100">
+          <div className="flex flex-wrap gap-3 justify-between pt-4 border-t border-slate-100 items-center">
+            {/* 🔴 Added Reject Campaign Request Button Trigger Action */}
             <Button 
               type="button" 
-              variant="outline" 
-              onClick={onCancel} 
-              className="rounded-xl h-11 text-xs font-bold px-5"
+              disabled={submitting}
+              onClick={onReject}
+              className="bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-600 rounded-xl h-11 text-xs font-bold px-4 flex items-center gap-1.5 transition-colors shadow-none"
             >
-              Cancel Review
+              <XCircle className="w-4 h-4" /> Reject Request
             </Button>
-            <Button 
-              type="submit" 
-              disabled={submitting} 
-              className="bg-orange-600 hover:bg-orange-700 text-white rounded-xl h-11 text-xs font-bold px-6 shadow-sm"
-            >
-              {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Sanitize & Broadcast Live'}
-            </Button>
+
+            <div className="flex gap-3">
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={onCancel} 
+                className="rounded-xl h-11 text-xs font-bold px-5"
+              >
+                Cancel Review
+              </Button>
+              <Button 
+                type="submit" 
+                disabled={submitting} 
+                className="bg-orange-600 hover:bg-orange-700 text-white rounded-xl h-11 text-xs font-bold px-6 shadow-sm"
+              >
+                {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Sanitize & Broadcast Live'}
+              </Button>
+            </div>
           </div>
         </form>
       ) : (

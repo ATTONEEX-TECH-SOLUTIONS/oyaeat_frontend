@@ -1,6 +1,5 @@
 const API = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000';
 
-// 🚀 FIXED: Fallback chain ensures we fetch whatever token exists for that session
 function authHeaders(key: string): HeadersInit {
   if (typeof window === 'undefined') return { 'Content-Type': 'application/json' };
 
@@ -8,7 +7,8 @@ function authHeaders(key: string): HeadersInit {
                 localStorage.getItem('authToken') || 
                 localStorage.getItem('admin_token') ||
                 localStorage.getItem('vendor_token') ||
-                localStorage.getItem('customer_token');
+                localStorage.getItem('customer_token') ||
+                localStorage.getItem('riderToken'); // Added rider fallback variation safely
 
   if (!token) {
     console.warn(`[Chat Auth] No token found in localStorage for key query: ${key}`);
@@ -21,7 +21,6 @@ function authHeaders(key: string): HeadersInit {
   };
 }
 
-// 🚀 ADDED BACK: Restored the helper selector to satisfy your fetch headers parameter lookups
 const getAuthKey = (role: 'customer' | 'admin' | 'vendor' | 'rider') => {
   if (role === 'customer') return 'customer_token';
   if (role === 'admin') return 'admin_token';
@@ -67,7 +66,6 @@ export const chatApi = {
     return res.json()
   },
 
-  // 🚀 FIXED: Payload key set to 'type' to align with your reconfigured backend Prisma thread creation logic
   createSupportThread: async (role: 'customer' | 'admin' | 'vendor' | 'rider', subject: string, threadType: string = 'support') => {
     const res = await fetch(`${API}/chat/threads`, {
       method: 'POST',
@@ -94,5 +92,23 @@ export const chatApi = {
     })
     if (!res.ok) throw new Error('Failed to send message')
     return res.json()
+  },
+
+  // 🚀 FIXED: Added the missing method inside chatApi to satisfy type-checker contracts completely
+  getRiderAlerts: async () => {
+    // Falls back to checking both standard tokens and rider-specific local storage allocations
+    const token = localStorage.getItem('rider_token') || 
+                  localStorage.getItem('riderToken') || 
+                  localStorage.getItem('authToken');
+    
+    // Note: Adjusted url pattern to target your clean "/chat" base mount architecture path strings
+    const res = await fetch(`${API}/chat/operations-alerts`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    if (!res.ok) throw new Error('Failed to fetch operations alerts');
+    return res.json();
   }
 }
