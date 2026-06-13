@@ -25,42 +25,46 @@ export default function AdminLiveMap() {
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
-  useEffect(() => {
-    const fetchLiveTelemetry = async () => {
-      try {
-        const token = localStorage.getItem("admin_token") || localStorage.getItem("authToken");
+ useEffect(() => {
+  const fetchLiveTelemetry = async () => {
+    try {
+      const token = localStorage.getItem("admin_token") || localStorage.getItem("authToken");
+      
+      // 1. Correct route URL path matching the backend mount
+      const res = await fetch(`${API_BASE_URL}/admin/dashboard/live-riders`, {
+        headers: { 
+          "Authorization": `Bearer ${token || ""}` 
+        }
+      });
+      
+      if (res.ok) {
+        const resData = await res.json();
         
-        const res = await fetch(`${API_BASE_URL}/admin/dashboard/live-riders`, {
-          headers: { 
-            "Authorization": `Bearer ${token || ""}` 
-          }
-        });
-        
-        if (res.ok) {
-          const data: TrackedRider[] = await res.json();
-          setRiders(data);
+        // 2. Extract from .data array wrapper to match backend response structure
+        if (resData && resData.success && Array.isArray(resData.data)) {
+          setRiders(resData.data);
 
-          // Auto-center map viewport smoothly over the first discovered active rider location
-          if (data.length > 0 && data[0].latitude && data[0].longitude) {
+          if (resData.data.length > 0 && resData.data[0].latitude && resData.data[0].longitude) {
             setMapCenter({
-              lat: Number(data[0].latitude),
-              lng: Number(data[0].longitude)
+              lat: Number(resData.data[0].latitude),
+              lng: Number(resData.data[0].longitude)
             });
           }
         }
-      } catch (err) {
-        console.error("Failed to sync live fleet mapping coordinates:", err);
-      } finally {
-        setLoading(false);
       }
-    };
+    } catch (err) {
+      console.error("Failed to sync live fleet mapping coordinates:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchLiveTelemetry();
-    
-    // Poll the backend database records every 10 seconds to catch moving positions
-    const interval = setInterval(fetchLiveTelemetry, 10000);
-    return () => clearInterval(interval);
-  }, [API_BASE_URL]);
+  fetchLiveTelemetry();
+  
+  const interval = setInterval(fetchLiveTelemetry, 10000);
+  return () => clearInterval(interval);
+}, [API_BASE_URL]);
+
 
   if (loading) {
     return (
