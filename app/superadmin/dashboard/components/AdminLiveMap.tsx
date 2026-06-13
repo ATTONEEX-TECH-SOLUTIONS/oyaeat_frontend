@@ -31,27 +31,29 @@ export default function AdminLiveMap() {
       const token = localStorage.getItem("admin_token") || localStorage.getItem("authToken");
       
       // 1. Correct route URL path matching the backend mount
-      const res = await fetch(`${API_BASE_URL}/admin/dashboard/live-riders`, {
+    
+        const res = await fetch(`${API_BASE_URL}/admin/dashboard/live-riders`, {
+
         headers: { 
           "Authorization": `Bearer ${token || ""}` 
         }
       });
       
-      if (res.ok) {
-        const resData = await res.json();
-        
-        // 2. Extract from .data array wrapper to match backend response structure
-        if (resData && resData.success && Array.isArray(resData.data)) {
-          setRiders(resData.data);
+if (res.ok) {
+  const data: TrackedRider[] = await res.json();
+  
+  if (Array.isArray(data)) {
+    setRiders(data);
 
-          if (resData.data.length > 0 && resData.data[0].latitude && resData.data[0].longitude) {
-            setMapCenter({
-              lat: Number(resData.data[0].latitude),
-              lng: Number(resData.data[0].longitude)
-            });
-          }
-        }
-      }
+    if (data.length > 0 && data[0].latitude && data[0].longitude) {
+      setMapCenter({
+        lat: Number(data[0].latitude),
+        lng: Number(data[0].longitude)
+      });
+    }
+  }
+}
+
     } catch (err) {
       console.error("Failed to sync live fleet mapping coordinates:", err);
     } finally {
