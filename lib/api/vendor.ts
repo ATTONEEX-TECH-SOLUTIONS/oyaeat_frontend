@@ -268,14 +268,19 @@ export const vendorApi = {
       method: 'DELETE',
     }),
 
-  // Wallet
-  getWallet: () => request<{ wallet: WalletData }>('/vendor/wallet'),
+  
+   // Inside vendorApi object block:
+  getWallet: () => 
+    request<{ wallet: WalletData; hasBankDetails: boolean; linkedBankAccount: string }>('/api/wallet/summary'),
+
+
   requestWithdrawal: (amount: number) =>
-    request<{ message: string }>('/vendor/wallet/withdraw', {
+    request<{ message: string }>('/api/wallet/request-payout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ amount }),
     }),
+
 
   // Reviews
   getReviews: (params?: { page?: number; limit?: number }) => {

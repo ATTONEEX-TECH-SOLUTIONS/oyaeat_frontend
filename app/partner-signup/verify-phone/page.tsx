@@ -76,7 +76,7 @@ const VerifyPhone = () => {
     }
   };
 
-  const handleVerify = async () => {
+    const handleVerify = async () => {
     const verificationCode = code.join("");
     if (verificationCode.length !== 6) return;
 
@@ -99,6 +99,13 @@ const VerifyPhone = () => {
 
       if (!response.ok) {
         throw new Error(data.message || "Invalid or expired OTP");
+      }
+
+      // 👇 🌟 ADD THIS CODE BLOCK HERE TO SAVE THE TOKEN
+      if (data.token) {
+        localStorage.setItem("authToken", data.token);
+      } else {
+        console.warn("No token field returned from verify-phone endpoint");
       }
 
       // Success! Navigate to welcome or dashboard page

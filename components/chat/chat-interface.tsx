@@ -115,8 +115,12 @@ export function ChatInterface({ role, currentUserId }: ChatInterfaceProps) {
     return matchSubject || matchParticipants;
   });
 
+  const activeThread = threads.find(t => t.id === activeThreadId);
+  const isThreadClosed = activeThread?.status === 'closed';
+
   return (
-    <div className="flex h-[calc(100vh-120px)] bg-card rounded-2xl shadow-sm border border-gray-100 overflow-hidden w-full">
+    // 🚀 FIXED: Replaced h-[calc(100vh-120px)] with h-full and w-full to span out across the entire screen right-side grid area canvas beautifully
+    <div className="flex h-full w-full bg-card rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
       <ChatSidebar
         role={role}
         searchQuery={searchQuery}
@@ -127,6 +131,7 @@ export function ChatInterface({ role, currentUserId }: ChatInterfaceProps) {
         isCreating={isCreating}
         setIsCreating={setIsCreating}
         setActiveThreadId={setActiveThreadId}
+        onRefresh={fetchThreads}
       />
       <ChatWindow
         role={role}
@@ -146,6 +151,7 @@ export function ChatInterface({ role, currentUserId }: ChatInterfaceProps) {
         handleCreateThread={handleCreateThread}
         handleSendMessage={handleSendMessage}
         messagesEndRef={messagesEndRef}
+        isClosed={isThreadClosed} 
       />
     </div>
   )

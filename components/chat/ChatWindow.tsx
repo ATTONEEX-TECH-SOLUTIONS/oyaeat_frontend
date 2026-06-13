@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { MessageSquare, Loader2, MessageCircle, Send } from 'lucide-react';
+import { MessageSquare, Loader2, MessageCircle, Send, Lock } from 'lucide-react';
 import { MessageItem } from './MessageItem';
 import { type Thread, type Message } from '@/lib/types/chat';
 
@@ -23,6 +23,7 @@ interface ChatWindowProps {
   handleCreateThread: (e: React.FormEvent) => void;
   handleSendMessage: (e: React.FormEvent) => void;
   messagesEndRef: React.RefObject<HTMLDivElement | null>;
+  isClosed?: boolean; // 🚀 ADDED PROP DEFINITION
 }
 
 export function ChatWindow({
@@ -42,7 +43,8 @@ export function ChatWindow({
   setActiveThreadId,
   handleCreateThread,
   handleSendMessage,
-  messagesEndRef
+  messagesEndRef,
+  isClosed = false // 🚀 DEFAULT TO FALSE
 }: ChatWindowProps) {
   return (
     <div className="flex-1 flex flex-col bg-white relative">
@@ -111,23 +113,31 @@ export function ChatWindow({
             <div ref={messagesEndRef} />
           </div>
 
+          {/* 🚀 CONDITIONAL INPUT FORM OR LOCKED BAR */}
           <div className="p-4 bg-white border-t border-gray-100">
-            <form onSubmit={handleSendMessage} className="flex items-center gap-2">
-              <input
-                type="text"
-                placeholder="Type your message..."
-                value={inputText}
-                onChange={e => setInputText(e.target.value)}
-                className="flex-1 bg-gray-50 border-transparent focus:border-[#1a5c2a]/30 focus:bg-white focus:ring-0 outline-none px-4 py-3 rounded-full text-sm font-semibold transition-all shadow-inner"
-              />
-              <button
-                type="submit"
-                disabled={!inputText.trim() || sending}
-                className="w-12 h-12 flex flex-shrink-0 items-center justify-center rounded-full bg-[#1a5c2a] text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#14491f] hover:-translate-y-0.5 hover:shadow-md transition-all"
-              >
-                {sending ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-4 h-4 translate-x-0.5" />}
-              </button>
-            </form>
+            {isClosed ? (
+              <div className="w-full flex items-center justify-center gap-2 p-3.5 bg-amber-50 border border-amber-200 text-amber-800 rounded-full font-bold text-xs select-none">
+                <Lock className="w-4 h-4 text-amber-700 shrink-0" />
+                This conversation thread is closed.
+              </div>
+            ) : (
+              <form onSubmit={handleSendMessage} className="flex items-center gap-2">
+                <input
+                  type="text"
+                  placeholder="Type your message..."
+                  value={inputText}
+                  onChange={e => setInputText(e.target.value)}
+                  className="flex-1 bg-gray-50 border-transparent focus:border-[#1a5c2a]/30 focus:bg-white focus:ring-0 outline-none px-4 py-3 rounded-full text-sm font-semibold transition-all shadow-inner"
+                />
+                <button
+                  type="submit"
+                  disabled={!inputText.trim() || sending}
+                  className="w-12 h-12 flex flex-shrink-0 items-center justify-center rounded-full bg-[#1a5c2a] text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#14491f] hover:-translate-y-0.5 hover:shadow-md transition-all"
+                >
+                  {sending ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-4 h-4 translate-x-0.5" />}
+                </button>
+              </form>
+            )}
           </div>
         </>
       )}

@@ -7,6 +7,7 @@ import { type Thread } from '@/lib/types/chat';
 
 interface ChatSidebarProps {
   role: 'customer' | 'admin' | 'vendor' | 'rider';
+  currentUserId?: string;
   searchQuery: string;
   setSearchQuery: (val: string) => void;
   loadingThreads: boolean;
@@ -15,10 +16,12 @@ interface ChatSidebarProps {
   isCreating: boolean;
   setIsCreating: (val: boolean) => void;
   setActiveThreadId: (val: string | null) => void;
+  onRefresh: () => void; // 🚀 ADDED HERE
 }
 
 export function ChatSidebar({
   role,
+  currentUserId,
   searchQuery,
   setSearchQuery,
   loadingThreads,
@@ -26,7 +29,8 @@ export function ChatSidebar({
   activeThreadId,
   isCreating,
   setIsCreating,
-  setActiveThreadId
+  setActiveThreadId,
+  onRefresh // 🚀 ADDED HERE
 }: ChatSidebarProps) {
   return (
     <div className="w-80 border-r border-gray-100 flex flex-col bg-gray-50/50 shrink-0">
@@ -71,8 +75,10 @@ export function ChatSidebar({
               key={thread.id}
               thread={thread}
               isActive={activeThreadId === thread.id && !isCreating}
-              currentRole={role} // 🚀 Passed down here
+              currentRole={role}
               onClick={() => { setIsCreating(false); setActiveThreadId(thread.id); }}
+              onRefresh={onRefresh} // 🚀 FIXED: Pointing directly to prop instead of undefined local var
+              setActiveThreadId={setActiveThreadId} 
             />
           ))
         )}

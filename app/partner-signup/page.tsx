@@ -33,15 +33,12 @@ const PartnerSignup = () => {
     setIsLoading(true);
     setError("");
 
-    try {
-      // Replace with your actual API base URL
+       try {
       const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
       
       const response = await fetch(`${API_BASE_URL}/auth/register`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           firstName: formData.firstName,
           lastName: formData.lastName,
@@ -58,19 +55,29 @@ const PartnerSignup = () => {
         throw new Error(data.message || "Registration failed");
       }
 
+      // 🟢 ADD THIS: Save the token directly so future steps can read it
+      // It handles fields named 'token', 'authToken', or nested inside a user object
+      const token = data.token || data.authToken || data.data?.token || data.user?.token;
+      if (token) {
+        localStorage.setItem("authToken", token);
+        console.log("✅ Vendor Auth Token saved securely to storage.");
+      } else {
+        console.warn("⚠️ Account created, but your backend registration endpoint did not return a token payload field.");
+      }
+
       // Store registration data including userId for next steps
       sessionStorage.setItem("partnerSignupData", JSON.stringify({
         ...formData,
-        userId: data.userId || data.id || data.user?.id, // Adjust based on your API response structure
+        userId: data.userId || data.id || data.user?.id || data.data?.userId,
       }));
       
-      // Navigate to phone verification
       router.push("/partner-signup/verify-phone");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);
     }
+
   };
 
   const navLinks = [

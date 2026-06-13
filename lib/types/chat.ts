@@ -29,8 +29,11 @@ const getAuthKey = (role: 'customer' | 'admin' | 'vendor' | 'rider') => {
   return 'authToken';
 };
 
+
+
+// 🚀 UPDATED MESSAGE INTERFACE WITHIN YOUR CHAT API LAYER FILE
 export interface Participant {
-  id: string;
+  id: string; // matches your dynamic dataset type allocations
   firstName?: string;
   lastName?: string;
   role: string;
@@ -45,8 +48,11 @@ export interface Thread {
   updatedAt: string;
   createdAt: string;
   participants: Participant[];
+  unreadCount: number;      
+  lastSenderName: string | null; 
 }
 
+// 🚀 RECONFIGURED: Expresses nested relational columns populated by your Prisma backend controller query
 export interface Message {
   id: string;
   threadId: string;
@@ -55,6 +61,17 @@ export interface Message {
   content: string;
   isRead: boolean;
   createdAt: string;
+  sender?: {
+    id: number | string;
+    firstName: string;
+    lastName: string;
+    role: string;
+  };
+  thread?: {
+    id: string;
+    subject: string;
+    participants: Participant[];
+  };
 }
 
 export const chatApi = {
@@ -94,7 +111,24 @@ export const chatApi = {
     return res.json()
   },
 
-  // 🚀 FIXED: Added the missing method inside chatApi to satisfy type-checker contracts completely
+    toggleThreadStatus: async (threadId: string, status: 'open' | 'closed') => {
+    const res = await fetch(`/api/chat/threads/${threadId}/status`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+      body: JSON.stringify({ status })
+    });
+    return res.json();
+  },
+
+  deleteThread: async (threadId: string) => {
+    const res = await fetch(`/api/chat/threads/${threadId}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+    });
+    return res.json();
+  },
+
+ 
   getRiderAlerts: async () => {
     // Falls back to checking both standard tokens and rider-specific local storage allocations
     const token = localStorage.getItem('rider_token') || 
