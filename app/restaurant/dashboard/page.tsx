@@ -1,187 +1,169 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { ShoppingCart, DollarSign, Users, Clock, Star, Zap, Package } from 'lucide-react'
+import { ShoppingCart, DollarSign, Users, Package } from 'lucide-react'
 import StatCard from './components/stat-card'
 import RecentOrders from './components/recent-orders'
 import SalesChart from './components/sales-chart'
+import DashboardReview from '@/app/restaurant/dashboard/components/dashboard/DashboardReview'
+import QuickStatsPanel from '@/app/restaurant/dashboard/components/dashboard/QuickStatsPanel'
 import Link from 'next/link'
 import { Spinner } from '@/components/ui/spinner'
-import { vendorApi, type VendorDashboard } from '@/lib/api/vendor'
+import { vendorApi } from '@/lib/api/vendor'
 
 export default function DashboardPage() {
-  const [dash, setDash] = useState<VendorDashboard | null>(null)
+  const [businessProfile, setBusinessProfile] = useState<any | null>(null)
+  const [dashData, setDashData] = useState<any | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
   useEffect(() => {
     let cancelled = false
-    ;(async () => {
+
+    const initializeDashboard = async () => {
       try {
         setLoading(true)
         setError('')
-        const res = await vendorApi.getDashboard()
+
+        // 1. Fetch verification status directly from your secure source of truth
+        const statusResponse = await vendorApi.getVendorStatus()
         if (cancelled) return
-        setDash(res.dashboard || null)
-        try { localStorage.setItem('vendor_dashboard', JSON.stringify(res.dashboard || null)) } catch {}
-      } catch (e: any) {
+
+        // Extracts the business payload securely whether it arrives at root level or nested inside a .data layer
+        const biz = statusResponse?.business || (statusResponse as any)?.data?.business || null
+        setBusinessProfile(biz)
+
+        // 2. Normalize and evaluate incoming state status string
+        const status = biz?.status?.trim()?.toLowerCase() || 'draft'
+        
+        // 🚀 EARLY TERMINATION GUARD: If pending, stop immediately and do not request dashboard stats
+        if (status === 'pending_review' || status === 'under_review' || status === 'pending') {
+          setLoading(false)
+          return
+        }
+
+        if (status === 'approved' || status === 'live') {
+          const dashboardResponse = await vendorApi.getDashboard()
+          if (cancelled) return
+          setDashData(dashboardResponse?.dashboard || dashboardResponse)
+        }
+
+      } catch (err: any) {
         if (cancelled) return
-        setError(e?.message || 'Failed to load dashboard')
-        try {
-          const cached = localStorage.getItem('vendor_dashboard')
-          if (cached) setDash(JSON.parse(cached))
-        } catch {}
+        console.error("Initialization failed:", err)
+        setError(err?.message || 'Failed to sync authorization profile routing.')
       } finally {
-        if (!cancelled) setLoading(false)
+        if (!cancelled) {
+          setLoading(false)
+        }
       }
-    })()
+    }
+
+    initializeDashboard()
     return () => { cancelled = true }
   }, [])
 
-  const business = dash?.business ?? null
-  const summary  = dash?.summary  ?? null
-  const status   = business?.status
-  const hasBusiness = !!business
+  // Universal lowercased string selector targeting the correctly stored state hook
+  const currentStatusString = useMemo(() => {
+    if (!businessProfile || !businessProfile.status) return 'draft'
+    return String(businessProfile.status).trim().toLowerCase()
+  }, [businessProfile])
 
-  const cards = useMemo(() => ({
-    totalOrders:         summary?.totalOrders         ?? 0,
-    revenueToday:        summary?.revenueToday        ?? 0,
-    activeOrders:        summary?.activeOrders        ?? 0,
-    totalCustomers:      summary?.totalCustomers      ?? 0,
-    avgOrderValue:       summary?.avgOrderValue       ?? 0,
-    avgDeliveryTimeMins: summary?.avgDeliveryTimeMins ?? 0,
-    customerRating:      summary?.customerRating      ?? 0,
-    avgPrepTimeMins:     summary?.avgPrepTimeMins     ?? 0,
-  }), [summary])
+  const cards = useMemo(() => {
+    const summary = dashData?.summary
+    return {
+      totalOrders:         summary?.totalOrders         ?? 0,
+      revenueToday:        summary?.revenueToday        ?? summary?.totalSales ?? 0,
+      activeOrders:        summary?.activeOrders        ?? 0,
+      totalCustomers:      summary?.totalCustomers      ?? 0,
+      avgOrderValue:       summary?.avgOrderValue       ?? 0,
+      avgDeliveryTimeMins: summary?.avgDeliveryTimeMins ?? 0,
+      customerRating:      summary?.customerRating      ?? 0,
+      avgPrepTimeMins:     summary?.avgPrepTimeMins     ?? 0,
+    }
+  }, [dashData])
 
   if (loading) return (
     <div className="flex items-center justify-center h-[60vh]"><Spinner /></div>
   )
 
-  if (error && !dash) return (
-    <div style={{ background: '#fff', border: '1px solid #c8e6c9', borderRadius: 16, padding: 24 }}>
-      <p style={{ color: '#e53935', fontWeight: 600, margin: 0 }}>Failed to load</p>
-      <p style={{ color: '#4a7c59', marginTop: 4, fontSize: 14 }}>{error}</p>
+  if (error && !businessProfile) return (
+    <div style={{ background: '#fff', border: '1px solid #fde8c9', borderRadius: 16, padding: 24 }}>
+      <p style={{ color: '#e53935', fontWeight: 600, margin: 0 }}>Initialization Error</p>
+      <p style={{ color: '#b45309', marginTop: 4, fontSize: 14 }}>{error}</p>
     </div>
   )
 
-  if (!hasBusiness) return (
-    <div style={{ background: '#fff', border: '1px solid #c8e6c9', borderRadius: 16, padding: 32 }}>
-      <h2 style={{ color: '#1a5c2a', fontWeight: 700, fontSize: 22, marginBottom: 8 }}>Create your restaurant</h2>
-      <p style={{ color: '#4a7c59', marginBottom: 24 }}>Start setting up your restaurant to begin receiving orders.</p>
-      <Link href="/partner-signup/add-business">
-        <button style={{ background: '#1a5c2a', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 24px', fontWeight: 600, cursor: 'pointer' }}>
-          Create Restaurant
-        </button>
-      </Link>
-    </div>
-  )
-
-  if (status === 'pending_review') return (
-    <div style={{ background: '#fff', border: '1px solid #c8e6c9', borderRadius: 16, padding: 32 }}>
-      <span style={{ background: '#e8f5e9', color: '#2e7d32', border: '1px solid #a5d6a7', borderRadius: 20, padding: '4px 12px', fontSize: 12, fontWeight: 600 }}>Under Review</span>
-      <h2 style={{ color: '#1a5c2a', fontWeight: 700, fontSize: 22, margin: '16px 0 8px' }}>Business review pending</h2>
-      <p style={{ color: '#4a7c59', marginBottom: 24 }}>Your business is under review. You'll be notified once complete.</p>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-        {[
-          { label: 'Documents', value: business?.hasDocuments ? '✓ Submitted' : '✗ Missing' },
-          { label: 'Bank Details', value: business?.hasBankDetails ? '✓ Completed' : '✗ Incomplete' },
-        ].map(({ label, value }) => (
-          <div key={label} style={{ background: '#f5faf6', border: '1px solid #c8e6c9', borderRadius: 12, padding: 16 }}>
-            <p style={{ color: '#4a7c59', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 4px' }}>{label}</p>
-            <p style={{ color: '#1a5c2a', fontWeight: 700, fontSize: 16, margin: 0 }}>{value}</p>
-          </div>
-        ))}
+  // ── GATE 1: PENDING REVIEW WORKFLOW RENDER SCREEN ──
+  if (
+    currentStatusString === 'pending_review' || 
+    currentStatusString === 'under_review' || 
+    currentStatusString === 'pending'
+  ) {
+    return (
+      <div className="p-6 max-w-4xl mx-auto">
+        <DashboardReview business={businessProfile} localSubmissionSync={false} />
       </div>
-    </div>
-  )
+    )
+  }
 
-  if (status === 'rejected') return (
-    <div style={{ background: '#fff', border: '1px solid #fecaca', borderRadius: 16, padding: 32 }}>
-      <span style={{ background: '#fef2f2', color: '#e53935', border: '1px solid #fecaca', borderRadius: 20, padding: '4px 12px', fontSize: 12, fontWeight: 600 }}>Rejected</span>
-      <h2 style={{ color: '#1a5c2a', fontWeight: 700, fontSize: 22, margin: '16px 0 8px' }}>Business rejected</h2>
-      <p style={{ color: '#4a7c59', marginBottom: 24 }}>{business?.rejectionReason || 'Please review requirements and resubmit.'}</p>
-      <Link href="/partner-signup/add-business">
-        <button style={{ background: '#1a5c2a', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 24px', fontWeight: 600, cursor: 'pointer' }}>Update Submission</button>
-      </Link>
-    </div>
-  )
+  // ── GATE 2: REJECTED STATE ONBOARDING BACKTRACK ROUTER ──
+  if (currentStatusString === 'rejected') {
+    return (
+      <div className="p-8 max-w-2xl mx-auto my-12 bg-white border border-red-200 rounded-2xl shadow-sm">
+        <span className="bg-red-50 text-red-600 border border-red-200 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider">
+          Rejected
+        </span>
+        <h2 className="text-2xl font-black text-gray-900 mt-4 mb-2 tracking-tight">Business Verification Rejected</h2>
+        <p className="text-gray-500 text-sm leading-relaxed mb-6">
+          Your restaurant account onboarding was declined for the following reason:<br />
+          <strong className="text-red-600 block mt-2 text-base font-bold bg-red-50/50 border border-red-100 p-3 rounded-xl">
+            "{businessProfile?.rejectionReason || 'Please review compliance requirements and resubmit clean credential files.'}"
+          </strong>
+        </p>
+        <Link href={`/partner-signup/verify-business?businessId=${businessProfile?.id}&businessName=${encodeURIComponent(businessProfile?.name || '')}`}>
+          <button className="bg-[#2d5f4f] text-white font-black text-sm px-6 py-3 rounded-xl hover:bg-[#234a3d] transition shadow-sm">
+            Update Submission
+          </button>
+        </Link>
+      </div>
+    )
+  }
 
-  // ── Approved / Active ────────────────────────────────────────────────────
-  const quickStats = [
-    { label: 'Avg. Order Value', value: `₦${Math.round(cards.avgOrderValue).toLocaleString()}`, icon: DollarSign },
-    { label: 'Delivery Time',    value: cards.avgDeliveryTimeMins ? `${cards.avgDeliveryTimeMins} min` : '—', icon: Zap },
-    { label: 'Customer Rating',  value: cards.customerRating ? `${cards.customerRating}/5.0` : '—', icon: Star },
-    { label: 'Prep Time',        value: cards.avgPrepTimeMins ? `${cards.avgPrepTimeMins} min` : '—', icon: Clock },
-  ]
-
+  // ── VIEW 3: APPROVED / FULL LIVE PRODUCTION ANALYTICS VIEW ──
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
-
-      {/* ── Header ── */}
+      {/* Header Row */}
       <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
         <div>
           <h1 className="truncate max-w-[80vw] lg:max-w-2xl capitalize" style={{ color: '#1a5c2a', fontWeight: 800, fontSize: 28, margin: 0 }}>
-            {business?.name ? `${business.name} Dashboard` : 'Dashboard'}
+            {businessProfile?.name ? `${businessProfile.name} Dashboard` : 'Dashboard'}
           </h1>
           <p style={{ color: '#4a7c59', fontSize: 13, margin: '4px 0 0' }}>
             Welcome back! Here's your restaurant overview.
           </p>
         </div>
-        {/* Live indicator */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 7, background: '#e8f5e9', border: '1px solid #c8e6c9', borderRadius: 20, padding: '6px 14px' }}>
           <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#2e7d32', display: 'inline-block', boxShadow: '0 0 0 3px rgba(46,125,50,0.2)' }} />
           <span style={{ fontSize: 12, fontWeight: 600, color: '#2e7d32' }}>Live</span>
         </div>
       </div>
 
-      {/* ── Stat cards ── */}
+      {/* Analytics Grid Row */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 18 }}>
         <StatCard title="Total Orders"    value={cards.totalOrders.toLocaleString()}                icon={ShoppingCart} change={0} trend="up" />
         <StatCard title="Revenue Today"   value={`₦${Math.round(cards.revenueToday).toLocaleString()}`} icon={DollarSign}   change={0} trend="up" />
-        <StatCard title="Active Orders"   value={cards.activeOrders.toLocaleString()}               icon={Package}      change={0} trend="up" />
-        <StatCard title="Total Customers" value={cards.totalCustomers.toLocaleString()}             icon={Users}        change={0} trend="up" />
+        <StatCard title="Active Orders"   value={cards.activeOrders.toLocaleString()}               icon={Package}    change={0} trend="up" />
+        <StatCard title="Total Customers" value={cards.totalCustomers.toLocaleString()}             icon={Users}      change={0} trend="up" />
       </div>
 
-      {/* ── Chart + Quick Stats ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 20 }}>
-
-        {/* Sales chart */}
-        <div style={{ background: '#fff', border: '1px solid #c8e6c9', borderRadius: 16, padding: '24px 24px 16px', boxShadow: '0 1px 4px rgba(26,92,42,0.06)' }}>
-          <SalesChart data={dash?.salesSeries || []} />
-        </div>
-
-        {/* Quick Stats */}
-        <div style={{ background: '#fff', border: '1px solid #c8e6c9', borderRadius: 16, padding: 24, boxShadow: '0 1px 4px rgba(26,92,42,0.06)' }}>
-          <h3 style={{ color: '#1a5c2a', fontWeight: 700, fontSize: 16, margin: '0 0 20px' }}>Quick Stats</h3>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-            {quickStats.map(({ label, value, icon: Icon }, i) => (
-              <div
-                key={label}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: '14px 0',
-                  borderBottom: i < quickStats.length - 1 ? '1px solid #e8f5e9' : 'none',
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <div style={{ background: '#e8f5e9', borderRadius: 8, padding: 7, display: 'flex' }}>
-                    <Icon size={14} color="#2e7d32" strokeWidth={2.5} />
-                  </div>
-                  <span style={{ fontSize: 13, color: '#4a7c59' }}>{label}</span>
-                </div>
-                <span style={{ fontWeight: 700, fontSize: 14, color: '#1a5c2a' }}>{value}</span>
-              </div>
-            ))}
-          </div>
-        </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '3fr 1fr', gap: 24 }}>
+        {/* ⚡ FIXED: Prop changed from salesSeries to data to align with SalesChartProps definition */}
+        <SalesChart data={dashData?.salesSeries || []} />
+        <QuickStatsPanel cards={cards} />
       </div>
 
-      {/* ── Recent Orders ── */}
-      <RecentOrders orders={dash?.recentOrders || []} />
+      <RecentOrders orders={dashData?.recentOrders || []} />
     </div>
   )
 }

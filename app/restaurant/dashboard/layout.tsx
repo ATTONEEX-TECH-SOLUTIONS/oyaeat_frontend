@@ -149,13 +149,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const phoneVerified = dashboard?.phoneVerified === true;
   const role = dashboard?.role;
 
-  const handleLogout = () => {
+   const handleLogout = () => {
     try {
       localStorage.removeItem('authToken');
       localStorage.removeItem('dashboard');
+      localStorage.removeItem('vendor_dashboard'); // 🧼 CRITICAL: Clears data logs on account swap
+      sessionStorage.removeItem('businessData');   // 🧼 Clear temporary session trackers
+      localStorage.removeItem('businessData');      // 🧼 Clear persistent local trackers
     } catch { }
     router.replace('/restaurant/login');
   };
+
 
   return (
     <div className="flex h-screen overflow-hidden" style={{ backgroundColor: '#f5faf6' }}>

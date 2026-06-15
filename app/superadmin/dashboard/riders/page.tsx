@@ -9,7 +9,7 @@ import { Search } from 'lucide-react'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000'
 
-// 🚨 LOCK-IN DEFAULT EXPORT: Explicitly declared to eliminate Next.js compilation issues
+// LOCK-IN DEFAULT EXPORT: Explicitly declared to eliminate Next.js compilation issues
 export default function RidersPage() {
   const [riders, setRiders] = useState<any[]>([])
   const [searchTerm, setSearchTerm] = useState('')
