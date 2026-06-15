@@ -138,7 +138,7 @@ export function Sidebar() {
           <LogOut className="w-5 h-5 mr-2 text-[#a5d6a7]" />
           Logout
         </Button>
-        <div className="mt-3 text-xs" style={{ color: '#a5d6a7' }}>
+        <div className="mt-3 text-xs" >
           <p>Admin Portal v1.0</p>
           <p className="mt-1">© 2024 OyaEat</p>
         </div>

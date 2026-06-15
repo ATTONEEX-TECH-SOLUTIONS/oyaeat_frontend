@@ -6,7 +6,6 @@ import SignupHeader from "./SignupHeader";
 import StepIndicator from "./StepIndicator";
 import UploadProgressBar from "./UploadProgressBar";
 import DocumentCard from "./DocumentCard";
-import InfoBanner from "./InfoBanner";
 
 interface DocumentUpload {
   id: string;
@@ -15,6 +14,7 @@ interface DocumentUpload {
   description: string;
   file: File | null;
   uploaded: boolean;
+  isFromDatabase?: boolean; //  Tracking flag for DB records
 }
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
@@ -30,20 +30,104 @@ export default function VerifyBusinessContent() {
   const [error, setError] = useState("");
 
   const [documents, setDocuments] = useState<DocumentUpload[]>([
-    { id: "business-license", name: "Business License", apiKey: "business_license", description: "Upload your valid business license or registration certificate", file: null, uploaded: false },
-    { id: "tax-id", name: "Tax ID / TIN", apiKey: "tax_id", description: "Upload your tax identification number certificate", file: null, uploaded: false },
-    { id: "food-certificate", name: "Food Safety Certificate", apiKey: "food_certificate", description: "Upload your food handler's permit or health inspection certificate", file: null, uploaded: false },
-    { id: "owner-id", name: "Owner ID", apiKey: "owner_id", description: "Upload a valid government-issued ID of the business owner", file: null, uploaded: false },
-    { id: "bank-document", name: "Bank Account Details", apiKey: "bank_document", description: "Upload a void check or bank statement for payment verification", file: null, uploaded: false },
+    { 
+      id: "cac-certificate", 
+      name: "CAC Certificate", 
+      apiKey: "business_license", 
+      description: "Corporate Affairs Commission registry scan", 
+      file: null, 
+      uploaded: false 
+    },
+    { 
+      id: "firs-tin", 
+      name: "FIRS Tax ID (TIN)", 
+      apiKey: "tax_id", 
+      description: "Federal Joint Tax Board verification", 
+      file: null, 
+      uploaded: false 
+    },
+    { 
+      id: "lga-food-permit", 
+      name: "LGA Food Permit", 
+      apiKey: "food_certificate", 
+      description: "Local Government Area sanitary permit", 
+      file: null, 
+      uploaded: false 
+    },
+    { 
+      id: "owner-nin-id", 
+      name: "Owner NIN Card", 
+      apiKey: "owner_id", 
+      description: "National Identification Number slip", 
+      file: null, 
+      uploaded: false 
+    },
+    { 
+      id: "corporate-bank-proof", 
+      name: "Corporate Bank Proof", 
+      apiKey: "bank_document", 
+      description: "Statement header matching CAC name", 
+      file: null, 
+      uploaded: false 
+    },
   ]);
 
-  useEffect(() => {
+   useEffect(() => {
     if (typeof window === "undefined") return;
+
+    const fetchExistingDocuments = async (bId: string) => {
+      try {
+        const token = localStorage.getItem("authToken");
+        if (!token) return;
+
+        const res = await fetch(`${API_BASE_URL}/vendor/business/${bId}`, {
+          method: "GET",
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        
+        const data = await res.json().catch(() => ({}));
+        
+        // 🌟 FIXED STRATEGY: Enforce explicit state matching for clean registrations
+        if (res.ok && data?.business?.documents && data.business.documents.length > 0) {
+          const dbDocs = data.business.documents;
+
+          setDocuments((prevDocs) =>
+            prevDocs.map((localDoc) => {
+              const matchingDbDoc = dbDocs.find((d: any) => d.type === localDoc.apiKey);
+              
+              if (matchingDbDoc) {
+                return {
+                  ...localDoc,
+                  uploaded: true,
+                  isFromDatabase: true, 
+                  file: {
+                    name: matchingDbDoc.fileName || "Uploaded_Document.png",
+                    size: 1024, 
+                  } as unknown as File
+                };
+              }
+              return { ...localDoc, uploaded: false, isFromDatabase: false, file: null };
+            })
+          );
+        } else {
+          // 🧼 RECOVERY STRATEGY: Clear out fake persistent flags if backend yields empty metrics
+          setDocuments((prevDocs) =>
+            prevDocs.map((localDoc) => ({
+              ...localDoc,
+              uploaded: false,
+              isFromDatabase: false,
+              file: null
+            }))
+          );
+        }
+      } catch (err) {
+        console.error("Failed to merge pre-existing compliance metadata arrays:", err);
+      }
+    };
 
     try {
       const token = localStorage.getItem("authToken");
       if (!token) {
-        console.warn("Auth token not found during step 2 init loop. Enforcing redirect.");
         router.replace("/restaurant/login");
         return;
       }
@@ -55,16 +139,8 @@ export default function VerifyBusinessContent() {
       let storedBusinessName = "";
 
       const sessionData = sessionStorage.getItem("businessData");
-      const localData = localStorage.getItem("businessData");
-
       if (sessionData) {
         const parsed = JSON.parse(sessionData);
-        storedBusinessId = parsed?.businessId ? String(parsed.businessId) : "";
-        storedBusinessName = parsed?.businessName || "";
-      }
-
-      if (!storedBusinessId && localData) {
-        const parsed = JSON.parse(localData);
         storedBusinessId = parsed?.businessId ? String(parsed.businessId) : "";
         storedBusinessName = parsed?.businessName || "";
       }
@@ -73,7 +149,7 @@ export default function VerifyBusinessContent() {
       const finalBusinessName = queryBusinessName || storedBusinessName || "your business";
 
       if (!finalBusinessId) {
-        setError("Missing business information. Please add your business again.");
+        setError("Missing business identity tracking keys.");
         router.replace("/partner-signup/add-business");
         return;
       }
@@ -81,130 +157,154 @@ export default function VerifyBusinessContent() {
       setBusinessId(finalBusinessId);
       setBusinessName(finalBusinessName);
 
-      const payload = { businessId: finalBusinessId, businessName: finalBusinessName };
-      sessionStorage.setItem("businessData", JSON.stringify(payload));
-      localStorage.setItem("businessData", JSON.stringify(payload));
+      fetchExistingDocuments(finalBusinessId);
     } catch (err) {
-      setError("Unable to load business information. Please try again.");
-      router.replace("/partner-signup/add-business");
-    } {
+      setError("Unable to initialize document resolution matrix.");
+    } finally {
       setPageLoading(false);
     }
   }, [router, searchParams]);
 
   const handleFileChange = (id: string, file: File | null) => {
-    setDocuments((docs) => docs.map((doc) => doc.id === id ? { ...doc, file, uploaded: !!file } : doc));
+    setDocuments((docs) =>
+      docs.map((doc) =>
+        doc.id === id 
+          ? { ...doc, file, uploaded: !!file, isFromDatabase: false } // Reset DB flag if replaced
+          : doc
+      )
+    );
     if (error) setError("");
   };
 
-  const handleSubmit = async () => {
-    const allUploaded = documents.every((doc) => doc.uploaded);
-    if (!allUploaded) {
-      setError("Please upload all required documents before continuing.");
-      return;
-    }
+const handleSubmit = async () => {
+  const allValid = documents.every((doc) => doc.uploaded);
+  if (!allValid) {
+    setError("Please ensure all compliance document items are completed before submitting.");
+    return;
+  }
 
-    if (!businessId) {
-      setError("Missing business ID. Please go back and add your business again.");
-      router.push("/partner-signup/add-business");
-      return;
-    }
+  setIsSubmitting(true);
+  setError("");
 
-    setIsSubmitting(true);
-    setError("");
+  try {
+    const formData = new FormData();
+    let nativeFilesCount = 0;
 
-    try {
-      const formData = new FormData();
-      documents.forEach((doc) => {
-        if (doc.file) formData.append(doc.apiKey, doc.file);
-      });
-
-      const token = localStorage.getItem("authToken");
-      if (!token) {
-        setError("You are not logged in. Please login again.");
-        router.push("/restaurant/login");
-        return;
+    documents.forEach((doc) => {
+      const isFreshFile = doc.file && doc.file instanceof File && (!doc.isFromDatabase || doc.file.size > 1024);
+      
+      if (isFreshFile) {
+        // The '!' character bypasses the signature mismatch overload validation error safely
+        formData.append(doc.apiKey, doc.file!);
+        nativeFilesCount++;
       }
+    });
 
-      const response = await fetch(`${API_BASE_URL}/vendor/${businessId}/upload-documents`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-        body: formData,
-      });
+    const clearCacheAndRedirect = () => {
+      if (typeof window !== "undefined") {
+        try {
+          sessionStorage.removeItem("businessData");
+          localStorage.removeItem("businessData");
+          localStorage.removeItem("vendor_dashboard");
+          localStorage.removeItem("dashboard"); 
+        } catch (cacheErr) {
+          console.error("Cache purge failed:", cacheErr);
+        }
+      }
+       window.location.href = "/partner-signup/success";
+    };
 
-      const data = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(data?.message || "Failed to upload documents");
-
-      router.push(`/partner-signup/gallery?businessId=${businessId}`);
-    } catch (err: any) {
-      setError(err?.message || "Failed to upload documents. Please try again.");
-    } finally {
-      setIsSubmitting(false);
+    if (nativeFilesCount === 0) {
+      clearCacheAndRedirect();
+      return;
     }
-  };
 
-  const allDocumentsUploaded = documents.every((doc) => doc.uploaded);
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      setError("Your session has expired. Please log in again.");
+      router.push("/restaurant/login");
+      return;
+    }
+
+    console.log(`Sending ${nativeFilesCount} fresh documents to backend database server...`);
+
+    const response = await fetch(`${API_BASE_URL}/vendor/${businessId}/upload-documents`, {
+      method: "POST",
+      headers: { 
+        Authorization: `Bearer ${token}`
+      },
+      body: formData,
+    });
+
+    const data = await response.json().catch(() => ({}));
+    
+    if (!response.ok) {
+      throw new Error(data?.message || "Failed to finalize document changes.");
+    }
+
+    clearCacheAndRedirect();
+  } catch (err: any) {
+    setError(err?.message || "Failed to sync corrections with the database. Please try again.");
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
+
   const uploadedCount = documents.filter((doc) => doc.uploaded).length;
 
   if (pageLoading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
-        <p className="text-gray-500 font-medium">Loading business details...</p>
+        <p className="text-gray-500 font-medium animate-pulse">Loading details...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen w-screen bg-[#f7f8f5] flex flex-col pb-12">
       <SignupHeader />
-
-      <div className="flex-1 px-6 py-8">
-        <div className="w-full max-w-4xl mx-auto">
-          <StepIndicator />
-
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Verify your business</h1>
-          <p className="text-gray-600 mb-8">
-            Please upload the following documents to verify {businessName}. All documents are required for approval.
+      <div className="max-w-4xl w-full mx-auto px-4 mt-8 flex-1">
+        <StepIndicator currentStep={2} totalSteps={2} />
+        
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mt-6">
+          <span className="text-xs font-bold uppercase tracking-wider text-emerald-600">
+            Step 2 of 2 - KYB Compliance
+          </span>
+          <h1 className="text-2xl font-bold text-gray-900 mt-1">Verify your business</h1>
+          <p className="text-gray-500 text-sm mt-1">
+            Upload compliance credentials for <span className="font-semibold text-gray-700">{businessName}</span>.
           </p>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mb-6">
-              {error}
+            <div className="mt-4 bg-red-50 border border-red-100 rounded-xl p-4 text-sm text-red-600 font-medium">
+               {error}
             </div>
           )}
 
-          <UploadProgressBar completedCount={uploadedCount} totalCount={documents.length} />
+         {/*  FIXED: Passing correct prop names matching UploadProgressBarProps interface */}
+<UploadProgressBar completedCount={uploadedCount} totalCount={documents.length} />
 
-          <div className="space-y-6 mb-8">
-            {documents.map((doc) => (
-              <DocumentCard
-                key={doc.id}
-                doc={doc}
-                isSubmitting={isSubmitting}
-                onFileChange={handleFileChange}
-              />
-            ))}
-          </div>
+<div className="space-y-4 mt-6">
+  {documents.map((item) => (
+    /*  FIXED: Passing 'doc' and 'isSubmitting' to match DocumentCardProps interface */
+    <DocumentCard
+      key={item.id}
+      doc={item}
+      isSubmitting={isSubmitting}
+      onFileChange={(id: string, file: File | null) => handleFileChange(id, file)}
+    />
+  ))}
+</div>
 
-          <InfoBanner />
 
-          {/* Action Footer Navigation Grid */}
-          <div className="flex gap-4">
+          <div className="mt-8 flex justify-end">
             <button
-              type="button"
-              onClick={() => router.back()}
-              disabled={isSubmitting}
-              className="flex-1 border-2 border-gray-300 text-gray-700 font-semibold py-3 rounded-lg hover:bg-gray-50 transition-all duration-300 disabled:opacity-50"
-            >
-              Back
-            </button>
-            <button
-              type="button"
               onClick={handleSubmit}
-              disabled={!allDocumentsUploaded || isSubmitting}
-              className="flex-1 bg-[#2d5f4f] hover:bg-[#234a3d] text-white font-semibold py-3 rounded-lg transition-all duration-300 disabled:bg-gray-300 disabled:cursor-not-allowed"
+              disabled={isSubmitting}
+              className="bg-emerald-600 text-white font-semibold px-8 py-3 rounded-xl hover:bg-emerald-700 transition disabled:opacity-50"
             >
-              {isSubmitting ? "Uploading..." : "Submit for Review"}
+              {isSubmitting ? "Submitting Verification..." : "Submit Verification"}
             </button>
           </div>
         </div>

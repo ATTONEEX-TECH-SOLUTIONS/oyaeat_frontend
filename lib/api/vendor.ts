@@ -185,6 +185,27 @@ function makeMenuFormData(body: MenuItemPayload) {
 }
 
 export const vendorApi = {
+
+
+  getVendorStatus: () => 
+    request<{
+      success: boolean;
+      userId: number;
+      phoneVerified: boolean;
+      business: {
+        id: number;
+        name: string;
+        status: string;
+        hasDocuments: boolean;
+        hasBankDetails: boolean;
+        rejectionReason: string | null;
+        documents: any[];
+        bankDetail: any;
+      } | null;
+      debug: boolean;
+    }>('/vendor/status'),
+
+    
   getDashboard: () => request<{ dashboard: VendorDashboard }>('/vendor/dashboard'),
 
   getMenu: () => request<{ business?: { id: number; name: string; status: string }; items: MenuItem[] }>('/vendor/menu'),
