@@ -36,8 +36,13 @@ export default function DashboardPage() {
         // 2. Normalize and evaluate incoming state status string
         const status = biz?.status?.trim()?.toLowerCase() || 'draft'
         
-        // 🚀 EARLY TERMINATION GUARD: If pending, stop immediately and do not request dashboard stats
-        if (status === 'pending_review' || status === 'under_review' || status === 'pending') {
+        // 🚀 FIXED: Added 'suspended' here so it stops loading right away and skips dashboard fetch calls
+        if (
+          status === 'pending_review' || 
+          status === 'under_review' || 
+          status === 'pending' ||
+          status === 'suspended'
+        ) {
           setLoading(false)
           return
         }
@@ -95,6 +100,7 @@ export default function DashboardPage() {
   )
 
   // ── GATE 1: PENDING REVIEW WORKFLOW RENDER SCREEN ──
+  // 🚀 FIXED: Removed 'suspended' from here so it drops down to the custom suspended layout block cleanly
   if (
     currentStatusString === 'pending_review' || 
     currentStatusString === 'under_review' || 
@@ -130,7 +136,48 @@ export default function DashboardPage() {
     )
   }
 
-  // ── VIEW 3: APPROVED / FULL LIVE PRODUCTION ANALYTICS VIEW ──
+  // ── GATE 3: 🔒 ACCOUNT SUSPENDED ROUTING GUARD ──
+  if (currentStatusString === 'suspended') {
+    return (
+      <div className="p-8 max-w-2xl mx-auto my-12 bg-white border border-amber-200 rounded-2xl shadow-sm">
+        <div className="flex items-center gap-2">
+          <span className="bg-amber-50 text-amber-700 border border-amber-200 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider">
+            Account Suspended
+          </span>
+        </div>
+        
+        <h2 className="text-2xl font-black text-gray-900 mt-4 mb-2 tracking-tight">
+          Your Vendor Access Has Been Suspended
+        </h2>
+        
+        <p className="text-gray-500 text-sm leading-relaxed mb-6">
+          Compliance operations have temporarily deactivated sales operations for **{businessProfile?.name || 'this restaurant'}**. 
+          Please review the official enforcement reason provided below:
+          
+          <strong className="text-amber-800 block mt-3 text-base font-medium bg-amber-50/60 border border-amber-100 p-4 rounded-xl whitespace-pre-wrap">
+            "⚠️ {businessProfile?.rejectionReason || 'Your account is under temporary administrative review. Please contact support operations for compliance parameters.'}"
+          </strong>
+        </p>
+
+        <div className="flex items-center gap-4 border-t border-gray-100 pt-6">
+          <a 
+            href="mailto:support@oyaeat.com" 
+            className="bg-amber-700 text-white font-bold text-sm px-6 py-3 rounded-xl hover:bg-amber-800 transition shadow-sm"
+          >
+            Contact Compliance Support
+          </a>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="border border-gray-300 text-gray-700 font-bold text-sm px-5 py-3 rounded-xl hover:bg-gray-50 transition"
+          >
+            Check Status Updates
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  // ── VIEW 4: APPROVED / FULL LIVE PRODUCTION ANALYTICS VIEW ──
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
       {/* Header Row */}
@@ -158,7 +205,6 @@ export default function DashboardPage() {
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '3fr 1fr', gap: 24 }}>
-        {/* ⚡ FIXED: Prop changed from salesSeries to data to align with SalesChartProps definition */}
         <SalesChart data={dashData?.salesSeries || []} />
         <QuickStatsPanel cards={cards} />
       </div>
