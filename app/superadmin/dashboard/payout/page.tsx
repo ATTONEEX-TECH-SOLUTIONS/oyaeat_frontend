@@ -85,15 +85,16 @@ export default function SuperAdminPayoutsDashboard() {
             <div className="lg:col-span-1">
               <AccountOnboarding onSave={handleSaveBankOnboarding} processing={savingOnboarding} />
             </div>
-            <div className="lg:col-span-2">
-              <PendingPayoutsTable requests={requests} onApprove={handleExecuteSettlement} />
-            </div>
-          </div>
-
-        
-          <div className="w-full">
+              
+          <div className="lg:col-span-2">
             <LinkedAccountsTable accounts={linkedAccounts} />
           </div>
+            
+          </div>
+
+      <div className="lg:col-span-2">
+              <PendingPayoutsTable requests={requests} onApprove={handleExecuteSettlement} />
+            </div>
 
         </div>
       </main>

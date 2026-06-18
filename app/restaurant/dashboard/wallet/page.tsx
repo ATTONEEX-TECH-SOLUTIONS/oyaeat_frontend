@@ -69,11 +69,13 @@ export default function WalletPage() {
       </div>
 
       {/* ── 🌟 NEW: INFORMATIONAL BANNER DISPLAYING BOUND BANK DETAILS FROM ADMIN EMAIL LINKING ── */}
-      <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 flex items-start gap-3 max-w-xl">
-        <Info className="w-5 h-5 text-[#2D6A4F] mt-0.5 flex-shrink-0" />
+      <div className={`rounded-xl p-4 flex items-start gap-3 max-w-xl border ${
+        hasBankDetails ? 'bg-gray-50 border-gray-200' : 'bg-red-50 border-red-200'
+      }`}>
+        <Info className={`w-5 h-5 mt-0.5 flex-shrink-0 ${hasBankDetails ? 'text-[#2D6A4F]' : 'text-red-600'}`} />
         <div>
           <h4 className="text-sm font-bold text-gray-900">Settlement Destination Profile</h4>
-          <p className="text-xs text-gray-600 mt-1">
+          <p className={`text-xs mt-1 ${hasBankDetails ? 'text-gray-600' : 'text-red-600 font-semibold'}`}>
             {hasBankDetails 
               ? `Your wallet payouts are pinned to: ${linkedBankText}.` 
               : "No verified settlement bank linked yet. Please submit your business bank details to support via email."}
