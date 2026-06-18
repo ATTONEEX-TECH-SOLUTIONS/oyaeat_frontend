@@ -1,3 +1,4 @@
+// VerifyBusinessContent.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -14,7 +15,7 @@ interface DocumentUpload {
   description: string;
   file: File | null;
   uploaded: boolean;
-  isFromDatabase?: boolean; //  Tracking flag for DB records
+  isFromDatabase?: boolean;
 }
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
@@ -30,49 +31,49 @@ export default function VerifyBusinessContent() {
   const [error, setError] = useState("");
 
   const [documents, setDocuments] = useState<DocumentUpload[]>([
-    { 
-      id: "cac-certificate", 
-      name: "CAC Certificate", 
-      apiKey: "business_license", 
-      description: "Corporate Affairs Commission registry scan", 
-      file: null, 
-      uploaded: false 
+    {
+      id: "cac-certificate",
+      name: "CAC Certificate",
+      apiKey: "business_license",
+      description: "Corporate Affairs Commission registry scan",
+      file: null,
+      uploaded: false
     },
-    { 
-      id: "firs-tin", 
-      name: "FIRS Tax ID (TIN)", 
-      apiKey: "tax_id", 
-      description: "Federal Joint Tax Board verification", 
-      file: null, 
-      uploaded: false 
+    {
+      id: "firs-tin",
+      name: "FIRS Tax ID (TIN)",
+      apiKey: "tax_id",
+      description: "Federal Joint Tax Board verification",
+      file: null,
+      uploaded: false
     },
-    { 
-      id: "lga-food-permit", 
-      name: "LGA Food Permit", 
-      apiKey: "food_certificate", 
-      description: "Local Government Area sanitary permit", 
-      file: null, 
-      uploaded: false 
+    {
+      id: "lga-food-permit",
+      name: "LGA Food Permit",
+      apiKey: "food_certificate",
+      description: "Local Government Area sanitary permit",
+      file: null,
+      uploaded: false
     },
-    { 
-      id: "owner-nin-id", 
-      name: "Owner NIN Card", 
-      apiKey: "owner_id", 
-      description: "National Identification Number slip", 
-      file: null, 
-      uploaded: false 
+    {
+      id: "owner-nin-id",
+      name: "Owner NIN Card",
+      apiKey: "owner_id",
+      description: "National Identification Number slip",
+      file: null,
+      uploaded: false
     },
-    { 
-      id: "corporate-bank-proof", 
-      name: "Corporate Bank Proof", 
-      apiKey: "bank_document", 
-      description: "Statement header matching CAC name", 
-      file: null, 
-      uploaded: false 
-    },
+    {
+      id: "corporate-bank-proof",
+      name: "Corporate Bank Proof",
+      apiKey: "bank_document",
+      description: "Statement header matching CAC name",
+      file: null,
+      uploaded: false
+    }
   ]);
 
-   useEffect(() => {
+  useEffect(() => {
     if (typeof window === "undefined") return;
 
     const fetchExistingDocuments = async (bId: string) => {
@@ -84,25 +85,24 @@ export default function VerifyBusinessContent() {
           method: "GET",
           headers: { Authorization: `Bearer ${token}` }
         });
-        
+
         const data = await res.json().catch(() => ({}));
-        
-        // 🌟 FIXED STRATEGY: Enforce explicit state matching for clean registrations
+
         if (res.ok && data?.business?.documents && data.business.documents.length > 0) {
           const dbDocs = data.business.documents;
 
           setDocuments((prevDocs) =>
             prevDocs.map((localDoc) => {
               const matchingDbDoc = dbDocs.find((d: any) => d.type === localDoc.apiKey);
-              
+
               if (matchingDbDoc) {
                 return {
                   ...localDoc,
                   uploaded: true,
-                  isFromDatabase: true, 
+                  isFromDatabase: true,
                   file: {
                     name: matchingDbDoc.fileName || "Uploaded_Document.png",
-                    size: 1024, 
+                    size: 1024
                   } as unknown as File
                 };
               }
@@ -110,7 +110,6 @@ export default function VerifyBusinessContent() {
             })
           );
         } else {
-          // 🧼 RECOVERY STRATEGY: Clear out fake persistent flags if backend yields empty metrics
           setDocuments((prevDocs) =>
             prevDocs.map((localDoc) => ({
               ...localDoc,
@@ -168,88 +167,83 @@ export default function VerifyBusinessContent() {
   const handleFileChange = (id: string, file: File | null) => {
     setDocuments((docs) =>
       docs.map((doc) =>
-        doc.id === id 
-          ? { ...doc, file, uploaded: !!file, isFromDatabase: false } // Reset DB flag if replaced
-          : doc
+        doc.id === id ? { ...doc, file, uploaded: !!file, isFromDatabase: false } : doc
       )
     );
     if (error) setError("");
   };
 
-const handleSubmit = async () => {
-  const allValid = documents.every((doc) => doc.uploaded);
-  if (!allValid) {
-    setError("Please ensure all compliance document items are completed before submitting.");
-    return;
-  }
+  const handleSubmit = async () => {
+    const allValid = documents.every((doc) => doc.uploaded);
+    if (!allValid) {
+      setError("Please ensure all compliance document items are completed before submitting.");
+      return;
+    }
 
-  setIsSubmitting(true);
-  setError("");
+    setIsSubmitting(true);
+    setError("");
 
-  try {
-    const formData = new FormData();
-    let nativeFilesCount = 0;
+    try {
+      const formData = new FormData();
+      let nativeFilesCount = 0;
 
-    documents.forEach((doc) => {
-      const isFreshFile = doc.file && doc.file instanceof File && (!doc.isFromDatabase || doc.file.size > 1024);
-      
-      if (isFreshFile) {
-        // The '!' character bypasses the signature mismatch overload validation error safely
-        formData.append(doc.apiKey, doc.file!);
-        nativeFilesCount++;
-      }
-    });
+      documents.forEach((doc) => {
+        const isFreshFile =
+          doc.file && doc.file instanceof File && (!doc.isFromDatabase || doc.file.size > 1024);
 
-    const clearCacheAndRedirect = () => {
-      if (typeof window !== "undefined") {
-        try {
-          sessionStorage.removeItem("businessData");
-          localStorage.removeItem("businessData");
-          localStorage.removeItem("vendor_dashboard");
-          localStorage.removeItem("dashboard"); 
-        } catch (cacheErr) {
-          console.error("Cache purge failed:", cacheErr);
+        if (isFreshFile) {
+          formData.append(doc.apiKey, doc.file!);
+          nativeFilesCount++;
         }
+      });
+
+      const clearCacheAndRedirect = () => {
+        if (typeof window !== "undefined") {
+          try {
+            sessionStorage.removeItem("businessData");
+            localStorage.removeItem("businessData");
+            localStorage.removeItem("vendor_dashboard");
+            localStorage.removeItem("dashboard");
+          } catch (cacheErr) {
+            console.error("Cache purge failed:", cacheErr);
+          }
+        }
+        window.location.href = "/partner-signup/success";
+      };
+
+      if (nativeFilesCount === 0) {
+        clearCacheAndRedirect();
+        return;
       }
-       window.location.href = "/partner-signup/success";
-    };
 
-    if (nativeFilesCount === 0) {
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        setError("Your session has expired. Please log in again.");
+        router.push("/restaurant/login");
+        return;
+      }
+
+      const response = await fetch(`${API_BASE_URL}/vendor/${businessId}/upload-documents`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        body: formData
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(data?.message || "Failed to finalize document changes.");
+      }
+
       clearCacheAndRedirect();
-      return;
+    } catch (err: any) {
+      setError(err?.message || "Failed to sync corrections with the database. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
-
-    const token = localStorage.getItem("authToken");
-    if (!token) {
-      setError("Your session has expired. Please log in again.");
-      router.push("/restaurant/login");
-      return;
-    }
-
-    console.log(`Sending ${nativeFilesCount} fresh documents to backend database server...`);
-
-    const response = await fetch(`${API_BASE_URL}/vendor/${businessId}/upload-documents`, {
-      method: "POST",
-      headers: { 
-        Authorization: `Bearer ${token}`
-      },
-      body: formData,
-    });
-
-    const data = await response.json().catch(() => ({}));
-    
-    if (!response.ok) {
-      throw new Error(data?.message || "Failed to finalize document changes.");
-    }
-
-    clearCacheAndRedirect();
-  } catch (err: any) {
-    setError(err?.message || "Failed to sync corrections with the database. Please try again.");
-  } finally {
-    setIsSubmitting(false);
-  }
-};
-
+  };
 
   const uploadedCount = documents.filter((doc) => doc.uploaded).length;
 
@@ -262,47 +256,49 @@ const handleSubmit = async () => {
   }
 
   return (
-    <div className="min-h-screen w-screen bg-[#f7f8f5] flex flex-col pb-12">
+    <div className="h-screen w-screen bg-[#f7f8f5] flex flex-col overflow-hidden">
       <SignupHeader />
-      <div className="max-w-4xl w-full mx-auto px-4 mt-8 flex-1">
+      <div className="max-w-5xl w-full mx-auto px-4 py-3 flex-1 overflow-hidden flex flex-col min-h-0">
         <StepIndicator currentStep={2} totalSteps={2} />
-        
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mt-6">
-          <span className="text-xs font-bold uppercase tracking-wider text-emerald-600">
-            Step 2 of 2 - KYB Compliance
-          </span>
-          <h1 className="text-2xl font-bold text-gray-900 mt-1">Verify your business</h1>
-          <p className="text-gray-500 text-sm mt-1">
-            Upload compliance credentials for <span className="font-semibold text-gray-700">{businessName}</span>.
-          </p>
+
+        <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 mt-3 flex-1 flex flex-col min-h-0 overflow-hidden">
+          <div className="flex-shrink-0">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-600">
+              Step 2 of 2 - KYB Compliance
+            </span>
+            <h1 className="text-lg font-bold text-gray-900 mt-0.5">Verify your business</h1>
+            <p className="text-gray-500 text-xs mt-0.5">
+              Upload compliance credentials for{" "}
+              <span className="font-semibold text-gray-700">{businessName}</span>.
+            </p>
+          </div>
+
+          <div className="mt-3 flex-shrink-0">
+            <UploadProgressBar completedCount={uploadedCount} totalCount={documents.length} />
+          </div>
 
           {error && (
-            <div className="mt-4 bg-red-50 border border-red-100 rounded-xl p-4 text-sm text-red-600 font-medium">
-               {error}
+            <div className="mt-2 bg-red-50 border border-red-100 rounded-xl p-2 text-xs text-red-600 font-medium flex-shrink-0">
+              {error}
             </div>
           )}
 
-         {/*  FIXED: Passing correct prop names matching UploadProgressBarProps interface */}
-<UploadProgressBar completedCount={uploadedCount} totalCount={documents.length} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3 flex-1 min-h-0 content-start overflow-hidden">
+            {documents.map((item) => (
+              <DocumentCard
+                key={item.id}
+                doc={item}
+                isSubmitting={isSubmitting}
+                onFileChange={(id: string, file: File | null) => handleFileChange(id, file)}
+              />
+            ))}
+          </div>
 
-<div className="space-y-4 mt-6">
-  {documents.map((item) => (
-    /*  FIXED: Passing 'doc' and 'isSubmitting' to match DocumentCardProps interface */
-    <DocumentCard
-      key={item.id}
-      doc={item}
-      isSubmitting={isSubmitting}
-      onFileChange={(id: string, file: File | null) => handleFileChange(id, file)}
-    />
-  ))}
-</div>
-
-
-          <div className="mt-8 flex justify-end">
+          <div className="mt-3 flex justify-end flex-shrink-0">
             <button
               onClick={handleSubmit}
               disabled={isSubmitting}
-              className="bg-emerald-600 text-white font-semibold px-8 py-3 rounded-xl hover:bg-emerald-700 transition disabled:opacity-50"
+              className="bg-emerald-600 text-white font-semibold px-8 py-2.5 rounded-xl hover:bg-emerald-700 transition disabled:opacity-50"
             >
               {isSubmitting ? "Submitting Verification..." : "Submit Verification"}
             </button>
