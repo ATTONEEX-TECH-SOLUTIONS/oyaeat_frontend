@@ -87,7 +87,7 @@ const Hero = () => {
               />
             </div>
             <Link
-              href="/partner-signup"
+              href="/customer"
               className="px-6 py-3.5 bg-[#2d5f4f] text-white font-bold text-sm hover:bg-[#234a3d] transition-colors duration-200 flex items-center justify-center gap-2 group whitespace-nowrap"
             >
               Find Food
