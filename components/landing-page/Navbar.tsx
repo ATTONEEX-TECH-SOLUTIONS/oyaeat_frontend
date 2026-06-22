@@ -139,7 +139,7 @@ const Navbar = () => {
           {/* Right Side CTA */}
           <div className="hidden lg:flex items-center gap-3">
             <Link
-              href="/login"
+              href="/customer/login"
               className={`text-sm font-semibold transition-colors duration-200 px-3 py-2 rounded-lg hover:bg-black/5 ${
                 scrolled ? "text-gray-700" : "text-gray-800"
               }`}
@@ -147,7 +147,7 @@ const Navbar = () => {
               Sign in
             </Link>
             <Link
-              href="/partner-signup"
+              href="/customer"
               className="text-sm font-bold bg-[#2d5f4f] text-white px-4 py-2 rounded-lg hover:bg-[#234a3d] transition-colors duration-200"
             >
               Order Now

@@ -23,27 +23,29 @@ export default function CustomerLandingPage() {
   const [loading, setLoading] = useState(true);
 
   // Geolocation detector
-  useEffect(() => {
-    if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          try {
-            const { latitude, longitude } = position.coords;
-            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
-            const data = await res.json();
-            const city = data.address?.city || data.address?.town || data.address?.state || 'Your Location';
-            setLocationName(city);
-            if (!searchQuery) setSearchQuery(city);
-          } catch {
-            setLocationName('Location found');
-          }
-        },
-        () => setLocationName('Location access denied')
-      );
-    } else {
-      setLocationName('Location not supported');
-    }
-  }, []);
+    useEffect(() => {
+  if ('geolocation' in navigator) {
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const { latitude, longitude } = position.coords;
+          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+          const data = await res.json();
+          const city = data.address?.city || data.address?.town || data.address?.state || 'Your Location';
+          setLocationName(city);
+          
+          // REMOVED: if (!searchQuery) setSearchQuery(city); 
+          // Do not overwrite the search text box with the city name
+        } catch {
+          setLocationName('Location found');
+        }
+      },
+      () => setLocationName('Location access denied')
+    );
+  } else {
+    setLocationName('Location not supported');
+  }
+}, []);
 
   // Debounce search
   useEffect(() => {
@@ -53,29 +55,35 @@ export default function CustomerLandingPage() {
     return () => clearTimeout(handler);
   }, [searchQuery]);
 
-  useEffect(() => {
-    const fetchRestaurants = async () => {
-      try {
-        setLoading(true);
-        const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
-        const url = new URL(`${API_URL}/public/restaurants`);
-        url.searchParams.append('limit', '12');
-        if (debouncedQuery) url.searchParams.append('q', debouncedQuery);
 
-        const res = await fetch(url.toString());
-        const data = await res.json();
-        if (data.success) {
-          setRestaurants(data.data.restaurants);
-        }
-      } catch (e) {
-        console.error("Failed to fetch restaurants", e);
-      } finally {
-        setLoading(false);
+// 2. Updated Fetch Restaurants detector
+useEffect(() => {
+  const fetchRestaurants = async () => {
+    try {
+      setLoading(true);
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+      const url = new URL(`${API_URL}/public/restaurants`);
+      url.searchParams.append('limit', '12');
+      
+      // Send the query only if the user actually typed something
+      if (debouncedQuery.trim()) {
+        url.searchParams.append('q', debouncedQuery);
       }
-    };
 
-    fetchRestaurants();
-  }, [debouncedQuery]);
+      const res = await fetch(url.toString());
+      const data = await res.json();
+      if (data.success) {
+        setRestaurants(data.data.restaurants || []); // Fallback array guard
+      }
+    } catch (e) {
+      console.error("Failed to fetch restaurants", e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchRestaurants();
+}, [debouncedQuery]);
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -230,7 +238,7 @@ export default function CustomerLandingPage() {
                   <div className="relative h-56 overflow-hidden">
                     <div className="absolute inset-0 bg-gray-100 animate-pulse"></div>
                     <img
-                      src={restaurant.thumbnailUrl || '/categories/jollof.jpg'}
+                      src={restaurant.thumbnailUrl }
                       alt={restaurant.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out relative z-0"
                       onError={(e) => {

@@ -32,11 +32,12 @@ export default function BusinessesPage() {
 
   const { toast } = useToast()
   const token = typeof window !== 'undefined' ? localStorage.getItem('admin_token') : null
-  const authHeader = token ? { Authorization: `Bearer ${token}` } : {}
- const fetchHeaders: HeadersInit = {
+  
+  const fetchHeaders: HeadersInit = {
     'Content-Type': 'application/json',
     ...(token ? { Authorization: `Bearer ${token}` } : {})
   };
+
   const normalizeBusinesses = (list: any[]): Business[] =>
     list.map((item: any) => {
       const owner = item?.owner
@@ -72,7 +73,11 @@ export default function BusinessesPage() {
 
   const approve = async (id: number) => {
     try {
-      const res = await fetch(`${API_BASE}/admin/businesses/${id}/approve`, { method: 'POST', headers: fetchHeaders})
+      const res = await fetch(`${API_BASE}/admin/businesses/${id}/approve`, { 
+        method: 'POST', 
+        headers: fetchHeaders,
+        body: JSON.stringify({ reason: null }) // 👈 Explicit safety payload for first-time verification
+      })
       const json = await res.json().catch(() => null)
       if (!res.ok || !json?.success) throw new Error(json?.message || 'Approve failed')
       toast('Verification Successful', 'Profile approved.', 'success')
@@ -118,24 +123,24 @@ export default function BusinessesPage() {
     { key: 'suspended',      label: 'Suspended', icon: PauseCircle,  accent: '#6B7C6E',  value: counts.suspended      },
   ]
   
- 
-const unsuspend = async (id: number) => {
-  try {
-    const res = await fetch(`${API_BASE}/admin/businesses/${id}/approve`, { 
-      method: 'POST', 
-      headers: fetchHeaders
+  const unsuspend = async (id: number) => {
+    try {
+      const res = await fetch(`${API_BASE}/admin/businesses/${id}/approve`, { 
+        method: 'POST', 
+        headers: fetchHeaders,
+        // ── SAFE PRODUCTION PAYLOAD OVERRIDE ──
+        // This explicitly satisfies strict production proxies that drop empty JSON requests
+        body: JSON.stringify({ reason: null }) 
+      })
+      const json = await res.json().catch(() => null)
+      if (!res.ok || !json?.success) throw new Error(json?.message || 'Reactivation execution failed')
       
-    })
-    const json = await res.json().catch(() => null)
-    if (!res.ok || !json?.success) throw new Error(json?.message || 'Reactivation execution failed')
-    
-    toast('Profile Reactivated', 'The business operations are live and approved again.', 'success')
-    fetchBusinesses()
-  } catch (e: any) { 
-    toast('Operation Failed', e?.message, 'error') 
+      toast('Profile Reactivated', 'The business operations are live and approved again.', 'success')
+      fetchBusinesses()
+    } catch (e: any) { 
+      toast('Operation Failed', e?.message || 'Network transaction drop.', 'error') 
+    }
   }
-}
-
 
   return (
     <div className="flex min-h-screen" style={{ backgroundColor: C.bg }}>
@@ -145,31 +150,33 @@ const unsuspend = async (id: number) => {
           <PageHeader />
 
           <div className="grid grid-cols-5 gap-3 mb-6">
-  {statChips.map(({ key, ...rest }) => (
-    <StatChip 
-      key={key} 
-      {...rest} 
-      active={activeStatus === key} 
-      onClick={() => setActiveStatus(key)} 
-    />
-  ))}
-</div>
-
+            {statChips.map(({ key, ...rest }) => (
+              <StatChip 
+                key={key} 
+                {...rest} 
+                active={activeStatus === key} 
+                onClick={() => setActiveStatus(key)} 
+              />
+            ))}
+          </div>
 
           <SearchToolbar search={search} setSearch={setSearch} onRefresh={fetchBusinesses} loading={loading} />
 
           <StatusTabStrip activeStatus={activeStatus} setActiveStatus={setActiveStatus} counts={counts} />
 
           {error && <div className="mb-5 flex items-center gap-2 rounded-xl border px-4 py-3 text-sm font-medium" style={{ borderColor: '#FECACA', backgroundColor: '#FEF2F2', color: C.error }}><XCircle className="h-4 w-4" />{error}</div>}
-          {!loading && <p className="text-xs font-semibold uppercase tracking-widest mb-4" style={{ color: C.textMuted }}>{filtered.length} matching lists found</p>}
           
+          {!loading && <p className="text-xs font-semibold uppercase tracking-widest mb-4" style={{ color: C.textMuted }}>{filtered.length} matching lists found</p>}
+
           {loading ? (
-            <div className="flex items-center justify-center py-20"><RefreshCw className="h-6 w-6 animate-spin" style={{ color: C.greenMid }} /></div>
+            <div className="flex items-center justify-center py-20">
+              <RefreshCw className="h-6 w-6 animate-spin" style={{ color: C.greenMid }} />
+            </div>
           ) : (
             <BusinessesList
               filtered={filtered}
               onApprove={approve}
-               onUnsuspend={unsuspend}
+              onUnsuspend={unsuspend}
               onRejectRequest={(id, name) => setModal({ isOpen: true, type: 'reject', targetId: id, name })}
               onSuspendRequest={(id, name) => setModal({ isOpen: true, type: 'suspend', targetId: id, name })}
             />
