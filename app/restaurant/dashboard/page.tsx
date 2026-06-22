@@ -161,17 +161,15 @@ export default function DashboardPage() {
 
         <div className="flex items-center gap-4 border-t border-gray-100 pt-6">
           <a 
-            href="mailto:support@oyaeat.com" 
-            className="bg-amber-700 text-white font-bold text-sm px-6 py-3 rounded-xl hover:bg-amber-800 transition shadow-sm"
-          >
-            Contact Compliance Support
-          </a>
-          <button 
-            onClick={() => window.location.reload()} 
-            className="border border-gray-300 text-gray-700 font-bold text-sm px-5 py-3 rounded-xl hover:bg-gray-50 transition"
-          >
-            Check Status Updates
-          </button>
+  href="https://google.com" 
+  target="_blank" 
+  rel="noopener noreferrer"
+  className="bg-amber-700 text-white font-bold text-sm px-6 py-3 rounded-xl hover:bg-amber-800 transition shadow-sm"
+>
+  Contact Compliance Support
+</a>
+
+          
         </div>
       </div>
     )
