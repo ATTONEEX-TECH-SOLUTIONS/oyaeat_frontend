@@ -11,7 +11,7 @@ import { SearchToolbar } from "@/app/superadmin/dashboard/components/businesses/
 import { StatusTabStrip } from '../components/businesses/status-tab-strip'
 import { StatChip } from '../components/businesses/stat-chip'
 import { BusinessesList } from '../components/businesses/businesses-list'
-import { SuspensionTypeToggle } from '../components/businesses/suspension-type-toggle' // 🚀 IMPORT LAYER LINKED HERE
+import { SuspensionTypeToggle } from '../components/businesses/suspension-type-toggle' 
 
 import { type Business, type Submitter } from '../components/businesses/business-card'
 import { type DocumentItem } from '../components/businesses/doc-row'
@@ -60,8 +60,19 @@ export default function BusinessesPage() {
         return { type: d?.type ?? d?.name ?? 'document', url }
       }) : []
 
-      return { id: item?.id ?? item?.businessId ?? 0, name: item?.name ?? item?.businessName ?? 'Unknown', status: item?.status ?? 'pending_review', submitter, documents, rejectionReason: item?.rejectionReason ?? null, createdAt: item?.createdAt }
+      return { 
+        id: item?.id ?? item?.businessId ?? 0, 
+        name: item?.name ?? item?.businessName ?? 'Unknown', 
+        status: item?.status ?? 'pending_review', 
+        submitter, 
+        documents, 
+        rejectionReason: item?.rejectionReason ?? null, 
+        createdAt: item?.createdAt,
+        // 🚀 THE CRITICAL MISSING LINK: Pass the backend property cleanly into your React state!
+        suspensionType: item?.suspensionType ?? null 
+      }
     })
+
 
   const fetchBusinesses = async () => {
     setLoading(true); setError(null)
