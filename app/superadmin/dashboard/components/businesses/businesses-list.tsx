@@ -1,5 +1,6 @@
 'use client'
 
+import React from 'react'
 import { Store } from 'lucide-react'
 import { BusinessCard, type Business } from './business-card'
 import { C } from '@/config/config'
@@ -12,7 +13,6 @@ interface BusinessesListProps {
   onSuspendRequest: (id: number, name: string) => void
 }
 
-// ── Added "onUnsuspend" to the function argument block destructors list below ──
 export function BusinessesList({ 
   filtered, 
   onApprove, 
@@ -34,15 +34,15 @@ export function BusinessesList({
   }
 
   return (
-    <div className="space-y-3">
-      {filtered.map(b => (
+    <div className="space-y-3.5">
+      {filtered.map((business) => (
         <BusinessCard
-          key={b.id}
-          b={b}
-          onApprove={() => onApprove(b.id)}
-          onUnsuspend={() => onUnsuspend(b.id)} // 👈 Now runs perfectly without referencing a missing name variable!
-          onRejectTrigger={() => onRejectRequest(b.id, b.name)}
-          onSuspendTrigger={() => onSuspendRequest(b.id, b.name)}
+          key={business.id}
+          b={business}
+          onApprove={() => onApprove(business.id)}
+          onUnsuspend={() => onUnsuspend(business.id)}
+          onRejectTrigger={() => onRejectRequest(business.id, business.name)}
+          onSuspendTrigger={() => onSuspendRequest(business.id, business.name)}
         />
       ))}
     </div>
