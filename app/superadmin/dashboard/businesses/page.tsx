@@ -11,6 +11,7 @@ import { SearchToolbar } from "@/app/superadmin/dashboard/components/businesses/
 import { StatusTabStrip } from '../components/businesses/status-tab-strip'
 import { StatChip } from '../components/businesses/stat-chip'
 import { BusinessesList } from '../components/businesses/businesses-list'
+import { SuspensionTypeToggle } from '../components/businesses/suspension-type-toggle' // 🚀 IMPORT LAYER LINKED HERE
 
 import { type Business, type Submitter } from '../components/businesses/business-card'
 import { type DocumentItem } from '../components/businesses/doc-row'
@@ -26,8 +27,15 @@ export default function BusinessesPage() {
   const [search, setSearch]         = useState('')
   const [activeStatus, setActiveStatus] = useState('all')
 
-  const [modal, setModal] = useState<{ isOpen: boolean; type: 'reject' | 'suspend' | null; targetId: number | null; name: string }>({
-    isOpen: false, type: null, targetId: null, name: ''
+  // 🚀 UPDATED STATE PROPERTIES TO SECURELY HOLD LAYER ASSIGNMENTS
+  const [modal, setModal] = useState<{ 
+    isOpen: boolean; 
+    type: 'reject' | 'suspend' | null; 
+    targetId: number | null; 
+    name: string;
+    suspensionType: 'shadow' | 'main';
+  }>({
+    isOpen: false, type: null, targetId: null, name: '', suspensionType: 'shadow'
   })
 
   const { toast } = useToast()
@@ -76,7 +84,7 @@ export default function BusinessesPage() {
       const res = await fetch(`${API_BASE}/admin/businesses/${id}/approve`, { 
         method: 'POST', 
         headers: fetchHeaders,
-        body: JSON.stringify({ reason: null }) // 👈 Explicit safety payload for first-time verification
+        body: JSON.stringify({ reason: null }) 
       })
       const json = await res.json().catch(() => null)
       if (!res.ok || !json?.success) throw new Error(json?.message || 'Approve failed')
@@ -88,13 +96,23 @@ export default function BusinessesPage() {
   const handleModalFormSubmit = async (reason: string) => {
     if (!modal.targetId || !modal.type) return
     try {
+      const payload: Record<string, any> = { reason: reason.trim() };
+      
+      // 🚀 ATTACH LEVEL IDENTIFIER ONLY ON SUSPEND REQUEST ROUTES MATCHING BACKEND
+      if (modal.type === 'suspend') {
+        payload.suspensionType = modal.suspensionType;
+      }
+
       const res = await fetch(`${API_BASE}/admin/businesses/${modal.targetId}/${modal.type}`, {
-        method: 'POST', headers: fetchHeaders, body: JSON.stringify({ reason: reason.trim() })
+        method: 'POST', 
+        headers: fetchHeaders, 
+        body: JSON.stringify(payload)
       })
       const json = await res.json().catch(() => null)
       if (!res.ok || !json?.success) throw new Error(json?.message || `${modal.type} failed`)
+      
       toast('Status Modified', `Successfully updated profile state records for ${modal.name}.`, 'success')
-      setModal({ isOpen: false, type: null, targetId: null, name: '' })
+      setModal({ isOpen: false, type: null, targetId: null, name: '', suspensionType: 'shadow' })
       fetchBusinesses()
     } catch (e: any) { toast('Processing Error', e?.message, 'error') }
   }
@@ -128,8 +146,6 @@ export default function BusinessesPage() {
       const res = await fetch(`${API_BASE}/admin/businesses/${id}/approve`, { 
         method: 'POST', 
         headers: fetchHeaders,
-        // ── SAFE PRODUCTION PAYLOAD OVERRIDE ──
-        // This explicitly satisfies strict production proxies that drop empty JSON requests
         body: JSON.stringify({ reason: null }) 
       })
       const json = await res.json().catch(() => null)
@@ -164,7 +180,12 @@ export default function BusinessesPage() {
 
           <StatusTabStrip activeStatus={activeStatus} setActiveStatus={setActiveStatus} counts={counts} />
 
-          {error && <div className="mb-5 flex items-center gap-2 rounded-xl border px-4 py-3 text-sm font-medium" style={{ borderColor: '#FECACA', backgroundColor: '#FEF2F2', color: C.error }}><XCircle className="h-4 w-4" />{error}</div>}
+          {error && (
+            <div className="mb-5 flex items-center gap-2 rounded-xl border px-4 py-3 text-sm font-medium" style={{ borderColor: '#FECACA', backgroundColor: '#FEF2F2', color: C.error }}>
+              <XCircle className="h-4 w-4" />
+              {error}
+            </div>
+          )}
           
           {!loading && <p className="text-xs font-semibold uppercase tracking-widest mb-4" style={{ color: C.textMuted }}>{filtered.length} matching lists found</p>}
 
@@ -173,26 +194,54 @@ export default function BusinessesPage() {
               <RefreshCw className="h-6 w-6 animate-spin" style={{ color: C.greenMid }} />
             </div>
           ) : (
-            <BusinessesList
-              filtered={filtered}
-              onApprove={approve}
-              onUnsuspend={unsuspend}
-              onRejectRequest={(id, name) => setModal({ isOpen: true, type: 'reject', targetId: id, name })}
-              onSuspendRequest={(id, name) => setModal({ isOpen: true, type: 'suspend', targetId: id, name })}
-            />
+// REPLACE THIS ASSIGNMENT SLOT INSIDE YOUR MAIN BUSINESSESPAGE FILE:
+<BusinessesList
+  filtered={filtered}
+  onApprove={approve}
+  onUnsuspend={unsuspend}
+  onRejectRequest={(id, name) => setModal({ isOpen: true, type: 'reject', targetId: id, name, suspensionType: 'shadow' })}
+  
+  // 🚀 FIXED: Checks if the target business profile is already shadow-suspended 
+  // and dynamically presets the modal to 'main' for an immediate hard-lockout upgrade!
+  onSuspendRequest={(id, name) => {
+    const targetBiz = filtered.find(b => b.id === id);
+    const isAlreadyShadow = targetBiz?.status === 'suspended' && targetBiz?.suspensionType !== 'main';
+    
+    setModal({ 
+      isOpen: true, 
+      type: 'suspend', 
+      targetId: id, 
+      name, 
+      suspensionType: isAlreadyShadow ? 'main' : 'shadow' // Sets default toggle position dynamically
+    });
+  }}
+/>
+
           )}
         </div>
       </main>
 
-      <ReasonModal
+         <ReasonModal
         isOpen={modal.isOpen}
-        onClose={() => setModal({ isOpen: false, type: null, targetId: null, name: '' })}
+        onClose={() => setModal({ isOpen: false, type: null, targetId: null, name: '', suspensionType: 'shadow' })}
         onSubmit={handleModalFormSubmit}
-        title={modal.type === 'reject' ? 'Reject Submission' : 'Suspend Profile'}
+        title={modal.type === 'reject' ? 'Reject Submission' : `Suspend Profile: ${modal.name}`}
         description={`State the core reason below for updating the platform parameters of ${modal.name}.`}
         confirmButtonVariant={modal.type === 'reject' ? 'danger' : 'warning'}
         confirmButtonText={modal.type === 'reject' ? 'Confirm Rejection' : 'Confirm Suspension'}
-      />
+      >
+        {/* 🚀 FIXED: Renders safely inside the modal component tags as a React child node */}
+        {modal.type === 'suspend' && (
+          <SuspensionTypeToggle 
+            activeType={modal.suspensionType} 
+            onChange={(nextType) => setModal(prev => ({ ...prev, suspensionType: nextType }))} 
+          />
+        )}
+      </ReasonModal>
+
+
+
     </div>
   )
 }
+

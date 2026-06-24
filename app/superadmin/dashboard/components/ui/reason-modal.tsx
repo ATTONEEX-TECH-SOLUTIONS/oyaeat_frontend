@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, ReactNode } from 'react'
 import { X, AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -14,6 +14,7 @@ interface ReasonModalProps {
   placeholder?: string
   confirmButtonVariant?: 'danger' | 'warning' | 'primary'
   confirmButtonText?: string
+  children?: ReactNode // 🚀 ADDED: Supports custom sub-component injections
 }
 
 export function ReasonModal({
@@ -26,6 +27,7 @@ export function ReasonModal({
   placeholder = 'Type your reason here...',
   confirmButtonVariant = 'primary',
   confirmButtonText = 'Confirm',
+  children, // 🚀 DESTRUCTURED: Extract safely into the render loop scope
 }: ReasonModalProps) {
   const [reasonText, setReasonText] = useState('')
 
@@ -81,6 +83,9 @@ export function ReasonModal({
             <p className="text-sm text-muted-foreground leading-normal">
               {description}
             </p>
+
+            {/* 🚀 DYNAMIC CHILDREN SLOT: Suspension strategy selection toggle injects right here */}
+            {children}
 
             <div className="space-y-1.5">
               <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">

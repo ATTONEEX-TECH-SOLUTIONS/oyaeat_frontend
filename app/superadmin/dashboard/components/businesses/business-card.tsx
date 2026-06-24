@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ChevronDown, ChevronUp, Mail, Phone, AlertCircle, Check, X, PauseCircle } from 'lucide-react'
+import { ChevronDown, ChevronUp, Mail, Phone, AlertCircle, Check, X, PauseCircle, ShieldAlert } from 'lucide-react'
 import { DocRow, type DocumentItem } from './doc-row'
 import { C, getStatusCfg } from '@/config/config'
 
@@ -10,6 +10,7 @@ export type Business = {
   id: number
   name: string
   status: string
+  suspensionType?: 'shadow' | 'main' | null // Virtual tracker column property definitions
   submitter: Submitter
   documents: DocumentItem[]
   rejectionReason?: string | null
@@ -31,15 +32,20 @@ export function BusinessCard({ b, onApprove, onUnsuspend, onRejectTrigger, onSus
 
   const canApprove = b.status === 'pending_review'
   const canReject  = b.status === 'pending_review'
-  const canSuspend = b.status === 'approved'
+  
+  // 🚀 THE FIX: Check !== 'main' so that plain un-prefixed reason strings (like 'n') default to letting you upgrade
+  const canSuspend = b.status === 'approved' || (b.status === 'suspended' && b.suspensionType !== 'main')
   const canUnsuspend = b.status === 'suspended'
 
   const initials = b.name.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase()
 
+  // Determine if it should render using the warning orange "Shadow" layout theme styles
+  const isShadowSuspended = b.status === 'suspended' && b.suspensionType !== 'main'
+
   return (
     <div className="overflow-hidden rounded-2xl border bg-card shadow-sm transition-shadow hover:shadow-md" style={{ borderColor: C.border }}>
       
-      {/* ── Row Header ──────────────────────────────── */}
+      {/* ── Row Header ── */}
       <div className="flex cursor-pointer items-center gap-4 px-5 py-4" onClick={() => setOpen(o => !o)}>
         <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl text-sm font-black text-white" style={{ backgroundColor: C.greenMid }}>
           {initials}
@@ -59,10 +65,12 @@ export function BusinessCard({ b, onApprove, onUnsuspend, onRejectTrigger, onSus
 
         <div className="flex flex-shrink-0 items-center gap-3">
           <div className="flex items-center gap-1.5">
-            <div className="flex h-6 w-6 items-center justify-center rounded-full" style={{ backgroundColor: cfg.bg }}>
-              <StatusIcon className="h-3.5 w-3.5" style={{ color: cfg.color }} />
+            <div className="flex h-6 w-6 items-center justify-center rounded-full" style={{ backgroundColor: isShadowSuspended ? '#FFF3E0' : cfg.bg }}>
+              <StatusIcon className="h-3.5 w-3.5" style={{ color: isShadowSuspended ? '#EF6C00' : cfg.color }} />
             </div>
-            <span className="text-sm font-bold" style={{ color: cfg.color }}>{cfg.label}</span>
+            <span className="text-sm font-bold" style={{ color: isShadowSuspended ? '#EF6C00' : cfg.color }}>
+              {isShadowSuspended ? 'Shadow Suspended' : cfg.label}
+            </span>
           </div>
           <div className="flex h-7 w-7 items-center justify-center rounded-lg" style={{ backgroundColor: C.bg }}>
             {open ? <ChevronUp className="h-4 w-4" style={{ color: C.textMuted }} /> : <ChevronDown className="h-4 w-4" style={{ color: C.textMuted }} />}
@@ -70,7 +78,7 @@ export function BusinessCard({ b, onApprove, onUnsuspend, onRejectTrigger, onSus
         </div>
       </div>
 
-      {/* ── Expanded Panel (Fixed: Inside layout shell structure) ── */}
+      {/* ── Expanded Panel ── */}
       {open && (
         <div className="border-t px-5 py-5 space-y-4" style={{ borderColor: C.border, backgroundColor: C.bg }}>
           
@@ -89,13 +97,13 @@ export function BusinessCard({ b, onApprove, onUnsuspend, onRejectTrigger, onSus
             )}
           </div>
 
-          {/* Rejection History Note */}
+          {/* Rejection/Suspension History Note */}
           {b.rejectionReason && (
-            <div className="flex gap-3 rounded-xl border px-4 py-3" style={{ borderColor: '#FECACA', backgroundColor: '#FEF2F2' }}>
-              <AlertCircle className="h-4 w-4 flex-shrink-0 mt-0.5" style={{ color: C.error }} />
+            <div className="flex gap-3 rounded-xl border px-4 py-3" style={{ borderColor: isShadowSuspended ? '#FFE0B2' : '#FECACA', backgroundColor: isShadowSuspended ? '#FFF8E1' : '#FEF2F2' }}>
+              <AlertCircle className="h-4 w-4 flex-shrink-0 mt-0.5" style={{ color: isShadowSuspended ? '#E65100' : C.error }} />
               <div>
-                <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: C.error }}>Rejection Reason</p>
-                <p className="text-sm" style={{ color: C.error }}>{b.rejectionReason}</p>
+                <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: isShadowSuspended ? '#E65100' : C.error }}>Enforcement Reason Log</p>
+                <p className="text-sm" style={{ color: isShadowSuspended ? '#E65100' : C.error }}>{b.rejectionReason}</p>
               </div>
             </div>
           )}
@@ -138,8 +146,16 @@ export function BusinessCard({ b, onApprove, onUnsuspend, onRejectTrigger, onSus
               )}
               
               {canSuspend && (
-                <button onClick={onSuspendTrigger} className="flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-bold" style={{ borderColor: C.border, color: C.textMuted, backgroundColor: C.white }}>
-                  <PauseCircle className="h-4 w-4" /> Suspend
+                <button onClick={onSuspendTrigger} className="flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-bold hover:bg-slate-50 transition-colors" style={{ borderColor: C.border, color: isShadowSuspended ? '#C2410C' : C.textMuted, backgroundColor: C.white }}>
+                  {isShadowSuspended ? (
+                    <>
+                      <ShieldAlert className="h-4 w-4 text-orange-600" /> Upgrade to Hard Lockout
+                    </>
+                  ) : (
+                    <>
+                      <PauseCircle className="h-4 w-4" /> Suspend Storefront
+                    </>
+                  )}
                 </button>
               )}
             </div>
