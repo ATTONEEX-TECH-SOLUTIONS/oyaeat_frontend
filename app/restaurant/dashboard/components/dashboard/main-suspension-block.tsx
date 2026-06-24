@@ -14,7 +14,7 @@ export function MainSuspensionBlock({ businessName, rejectionReason, businessId 
   const [isSubmittingAppeal, setIsSubmittingAppeal] = useState(false)
   const [appealSubmitted, setAppealSubmitted] = useState(false)
 
-  const handleAppealSubmit = async (e: React.FormEvent) => {
+    const handleAppealSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!appealReason.trim()) return
 
@@ -27,11 +27,14 @@ export function MainSuspensionBlock({ businessName, rejectionReason, businessId 
         formData.append('evidence', evidenceFile)
       }
 
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'
+      // 🚀 THE FIX: Use your active production API environment variable key name
+      const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000'
+      
       const response = await fetch(`${API_URL}/compliance/appeal`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('customer_token') || localStorage.getItem('vendor_token')}`
+          'Authorization': `Bearer ${localStorage.getItem('authToken') || localStorage.getItem('vendor_token') || ''}`
+          // Note: Leave out 'Content-Type'. Browser must auto-inject boundaries for FormData!
         },
         body: formData
       })
@@ -47,6 +50,7 @@ export function MainSuspensionBlock({ businessName, rejectionReason, businessId 
       setIsSubmittingAppeal(false)
     }
   }
+
 
   return (
     <div className="p-8 max-w-2xl mx-auto my-12 bg-white border border-rose-200 rounded-2xl shadow-sm">
