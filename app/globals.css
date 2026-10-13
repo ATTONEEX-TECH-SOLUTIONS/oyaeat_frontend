@@ -22,8 +22,10 @@
   --secondary-foreground: #3b0f7a;
   --muted: #f3f0fa;
   --muted-foreground: #6b6480;
-  --accent: #fdba2d;
-  --accent-foreground: #1a1033;
+  --accent: #f1ebff;
+  --accent-foreground: #3b0f7a;
+  --cta: #fdba2d;
+  --cta-foreground: #1a1033;
   --destructive: #c8372d;
   --destructive-foreground: #ffffff;
   --success: #15803d;
@@ -64,8 +66,10 @@
   --secondary-foreground: #f1ebff;
   --muted: #251a3f;
   --muted-foreground: #a99fc4;
-  --accent: #fdba2d;
-  --accent-foreground: #1a1033;
+  --accent: #2a1a4a;
+  --accent-foreground: #f1ebff;
+  --cta: #fdba2d;
+  --cta-foreground: #1a1033;
   --destructive: #ef6a5f;
   --destructive-foreground: #1a1033;
   --success: #4ade80;
@@ -93,6 +97,8 @@
 @theme inline {
   --font-sans: "Geist", "Geist Fallback";
   --font-display: var(--font-lp-display), "Geist", system-ui, sans-serif;
+  --color-cta: var(--cta);
+  --color-cta-foreground: var(--cta-foreground);
   --color-success: var(--success);
   --color-success-soft: var(--success-soft);
   --color-warning: var(--warning);
@@ -200,6 +206,8 @@
    Public landing theme (violet + mango). Scoped to .landing so the
    customer / restaurant / rider / admin dashboards keep their own tokens.
 ------------------------------------------------------------------- */
+/* Palette aliases are global so shared helpers (.lp-doodles) work in every app. */
+:root,
 .landing {
   --lp-violet-950: #1a1033;
   --lp-violet-900: #2a1156;
@@ -214,6 +222,9 @@
   --lp-ink: #1a1033;
   --lp-ink-soft: #5c5470;
   --lp-leaf: #7ed957;
+}
+
+.landing {
   background: var(--lp-cream-50);
   color: var(--lp-ink);
 }
@@ -269,4 +280,11 @@
     margin: 0;
     size: 80mm auto;
   }
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
