@@ -1,21 +1,16 @@
 import Link from "next/link";
+import { Logo } from "./Navbar";
+import NewsletterForm from "./NewsletterForm";
 
 const Footer = () => {
   return (
-    <footer className="bg-[#1a3d32] py-16 px-6 lg:px-10 text-white border-t border-white/10">
+    <footer className="bg-[var(--lp-violet-950)] py-16 px-5 lg:px-10 text-white">
       <div className="max-w-[1400px] mx-auto">
         {/* Top row: brand + newsletter */}
         <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-10 pb-12 border-b border-white/10">
           {/* Brand */}
           <div className="max-w-xs">
-            <div className="flex items-center gap-2.5 mb-4">
-              <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center flex-shrink-0">
-                <span className="text-[#2d5f4f] font-black text-sm leading-none">
-                  O
-                </span>
-              </div>
-              <span className="text-xl font-black tracking-tight">OyaEat</span>
-            </div>
+            <Logo className="mb-4" />
             <p className="text-white/60 text-sm leading-relaxed mb-5">
               Better chow, no wahala. Hot local food and essentials delivered
               sharp sharp to your door across Abuja.
@@ -77,7 +72,7 @@ const Footer = () => {
                   key={label}
                   href={href}
                   aria-label={label}
-                  className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center text-white/70 hover:bg-white/20 hover:text-white transition-all duration-200"
+                  className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white/80 hover:bg-[var(--lp-mango)] hover:text-[var(--lp-violet-950)] transition-all duration-200"
                 >
                   {icon}
                 </a>
@@ -87,36 +82,27 @@ const Footer = () => {
 
           {/* Newsletter */}
           <div className="max-w-sm w-full">
-            <p className="text-xs font-bold tracking-widest uppercase text-white/40 mb-2">
+            <p className="text-xs font-bold tracking-widest uppercase text-[var(--lp-mango)] mb-2">
               Stay in the loop
             </p>
-            <h4 className="text-lg font-black text-white mb-1 leading-tight">
+            <h4 className="lp-display text-2xl font-extrabold text-white mb-1 leading-tight">
               Get deals before everyone else.
             </h4>
-            <p className="text-white/50 text-sm mb-4">
+            <p className="text-white/70 text-sm mb-4">
               Weekly offers, new restaurants, and promos — straight to your
               inbox.
             </p>
-            <div className="flex gap-2">
-              <input
-                type="email"
-                placeholder="your@email.com"
-                className="flex-1 bg-white/10 border border-white/15 rounded-lg px-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none focus:border-white/40 transition-colors font-medium"
-              />
-              <button className="px-4 py-2.5 bg-white text-[#1a3d32] text-sm font-black rounded-lg hover:bg-white/90 transition-colors whitespace-nowrap flex-shrink-0">
-                Subscribe
-              </button>
-            </div>
+            <NewsletterForm />
           </div>
         </div>
 
         {/* Link columns */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-8 py-12 border-b border-white/10">
           <div>
-            <h4 className="text-xs font-bold tracking-widest uppercase text-white/40 mb-4">
+            <h4 className="text-xs font-bold tracking-widest uppercase text-[var(--lp-mango)] mb-4">
               Company
             </h4>
-            <ul className="space-y-3 text-sm text-white/65 font-medium">
+            <ul className="space-y-3 text-sm text-white/80 font-medium">
               <li>
                 <Link
                   href="/about"
@@ -153,10 +139,10 @@ const Footer = () => {
           </div>
 
           <div>
-            <h4 className="text-xs font-bold tracking-widest uppercase text-white/40 mb-4">
+            <h4 className="text-xs font-bold tracking-widest uppercase text-[var(--lp-mango)] mb-4">
               Earn with Us
             </h4>
-            <ul className="space-y-3 text-sm text-white/65 font-medium">
+            <ul className="space-y-3 text-sm text-white/80 font-medium">
               <li>
                 <Link
                   href="/rider"
@@ -185,10 +171,10 @@ const Footer = () => {
           </div>
 
           <div>
-            <h4 className="text-xs font-bold tracking-widest uppercase text-white/40 mb-4">
+            <h4 className="text-xs font-bold tracking-widest uppercase text-[var(--lp-mango)] mb-4">
               Support
             </h4>
-            <ul className="space-y-3 text-sm text-white/65 font-medium">
+            <ul className="space-y-3 text-sm text-white/80 font-medium">
               <li>
                 <Link
                   href="/support"
@@ -218,7 +204,7 @@ const Footer = () => {
         </div>
 
         {/* Bottom bar */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/35 font-medium">
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/60 font-medium">
           <span>© {new Date().getFullYear()} OyaEat. All rights reserved.</span>
           <div className="flex items-center gap-5">
             <Link

@@ -182,7 +182,7 @@ export default function RestaurantAdvertPage() {
       {(successMsg || errorMsg) && (
         <div className="w-full max-w-7xl space-y-2">
           {successMsg && (
-            <div className="p-3.5 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl text-xs font-bold shadow-sm">
+            <div className="p-3.5 bg-violet-50 border border-violet-200 text-violet-800 rounded-2xl text-xs font-bold shadow-sm">
               {successMsg}
             </div>
           )}

@@ -27,7 +27,7 @@ export default function PartnerSignup() {
           <Link href="/" className="flex items-center gap-3 group">
             <div className="flex flex-col">
               <span className="text-3xl font-black leading-none tracking-tight">
-                <span className="text-[#2d5f4f]">Oya</span>
+                <span className="text-[#5b21b6]">Oya</span>
                 <span className="text-gray-900">Eat</span>
               </span>
               <span className="text-[10px] font-medium tracking-wider uppercase text-gray-600">
@@ -41,10 +41,10 @@ export default function PartnerSignup() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="relative font-bold text-base text-gray-900 hover:text-[#2d5f4f] transition-all duration-300 py-2 group"
+                className="relative font-bold text-base text-gray-900 hover:text-[#5b21b6] transition-all duration-300 py-2 group"
               >
                 {link.label}
-                <span className="absolute bottom-0 left-0 h-1 bg-[#2d5f4f] rounded-full transition-all duration-300 ease-out w-0 group-hover:w-full" />
+                <span className="absolute bottom-0 left-0 h-1 bg-[#5b21b6] rounded-full transition-all duration-300 ease-out w-0 group-hover:w-full" />
               </Link>
             ))}
           </div>
@@ -91,14 +91,14 @@ export default function PartnerSignup() {
                 By continuing, you agree to our{" "}
                 <Link
                   href="#"
-                  className="text-[#2d5f4f] hover:underline font-medium"
+                  className="text-[#5b21b6] hover:underline font-medium"
                 >
                   Terms of Service
                 </Link>{" "}
                 and{" "}
                 <Link
                   href="#"
-                  className="text-[#2d5f4f] hover:underline font-medium"
+                  className="text-[#5b21b6] hover:underline font-medium"
                 >
                   Privacy Policy
                 </Link>
@@ -109,8 +109,8 @@ export default function PartnerSignup() {
 
         {/* Brand Hero Showcase Side */}
         <div className="lg:w-1/2 w-full relative min-h-[400px] lg:min-h-screen overflow-hidden bg-transparent">
-          <div className="absolute top-0 left-0 w-24 lg:w-32 h-full bg-[#FDB750] -skew-x-12 transform origin-top-left z-0" />
-          <div className="absolute bottom-0 right-0 w-24 lg:w-32 h-full bg-[#FDB750] -skew-x-12 transform origin-bottom-right z-0" />
+          <div className="absolute top-0 left-0 w-24 lg:w-32 h-full bg-[#fdba2d] -skew-x-12 transform origin-top-left z-0" />
+          <div className="absolute bottom-0 right-0 w-24 lg:w-32 h-full bg-[#fdba2d] -skew-x-12 transform origin-bottom-right z-0" />
 
           <div className="relative h-full flex items-center justify-center p-8 lg:p-16 z-10">
             <div className="relative w-full max-w-lg aspect-square">
@@ -152,7 +152,7 @@ export default function PartnerSignup() {
             {testimonials.map((testimonial, index) => (
               <div
                 key={index}
-                className="bg-[#2d5f4f] rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300"
+                className="bg-[#5b21b6] rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300"
               >
                 <div className="flex items-center mb-6">
                   <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mr-4 text-white font-bold text-lg">
@@ -169,7 +169,7 @@ export default function PartnerSignup() {
                   {[...Array(testimonial.rating)].map((_, i) => (
                     <Star
                       key={i}
-                      className="w-4 h-4 text-[#FDB750] fill-[#FDB750]"
+                      className="w-4 h-4 text-[#fdba2d] fill-[#fdba2d]"
                     />
                   ))}
                 </div>
@@ -192,7 +192,7 @@ export default function PartnerSignup() {
             <div>
               <div className="flex items-center gap-3 mb-6">
                 <span className="text-2xl font-black tracking-tight">
-                  <span className="text-[#2d5f4f]">Oya</span>Eat
+                  <span className="text-[#5b21b6]">Oya</span>Eat
                 </span>
               </div>
               <p className="text-gray-400 text-sm leading-relaxed mb-6">

@@ -21,7 +21,7 @@ export default function StatCard({
     <div
       style={{
         backgroundColor: "#fff",
-        border: "1px solid #c8e6c9",
+        border: "1px solid #ddd6fe",
         borderRadius: 16,
         padding: "20px 22px",
         boxShadow: "0 1px 4px rgba(26,92,42,0.06)",
@@ -70,7 +70,7 @@ export default function StatCard({
           style={{
             fontSize: 12,
             fontWeight: 600,
-            color: "#4a7c59",
+            color: "#7c3aed",
             letterSpacing: "0.03em",
             textTransform: "uppercase",
           }}
@@ -89,7 +89,7 @@ export default function StatCard({
             zIndex: 1,
           }}
         >
-          <Icon size={18} color="#2e7d32" strokeWidth={2} />
+          <Icon size={18} color="#6d28d9" strokeWidth={2} />
         </div>
       </div>
 
@@ -98,7 +98,7 @@ export default function StatCard({
         style={{
           fontSize: 28,
           fontWeight: 800,
-          color: "#1a5c2a",
+          color: "#5b21b6",
           margin: 0,
           lineHeight: 1,
         }}
@@ -109,7 +109,7 @@ export default function StatCard({
       {/* Trend */}
       <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
         {isUp ? (
-          <TrendingUp size={13} color="#2e7d32" strokeWidth={2.5} />
+          <TrendingUp size={13} color="#6d28d9" strokeWidth={2.5} />
         ) : (
           <TrendingDown size={13} color="#e53935" strokeWidth={2.5} />
         )}
@@ -117,12 +117,12 @@ export default function StatCard({
           style={{
             fontSize: 12,
             fontWeight: 600,
-            color: isUp ? "#2e7d32" : "#e53935",
+            color: isUp ? "#6d28d9" : "#e53935",
           }}
         >
           {change === 0 ? "0%" : `${change > 0 ? "+" : ""}${change}%`}
         </span>
-        <span style={{ fontSize: 12, color: "#4a7c59", opacity: 0.7 }}>
+        <span style={{ fontSize: 12, color: "#7c3aed", opacity: 0.7 }}>
           vs last period
         </span>
       </div>

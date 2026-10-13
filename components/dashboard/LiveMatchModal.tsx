@@ -24,11 +24,11 @@ export function LiveMatchModal({
         </button>
 
         <div className="flex flex-col items-center text-center space-y-4">
-          <div className="w-16 h-16 bg-green-50 rounded-2xl flex items-center justify-center text-green-600 border border-green-100 animate-bounce">
+          <div className="w-16 h-16 bg-violet-50 rounded-2xl flex items-center justify-center text-violet-600 border border-violet-100 animate-bounce">
             <BellRing className="w-8 h-8" />
           </div>
           <div>
-            <span className="text-[10px] bg-green-100 text-green-800 font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+            <span className="text-[10px] bg-violet-100 text-violet-800 font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
               New Order Nearby!
             </span>
             <h3 className="text-xl font-black text-gray-900 mt-2">
@@ -48,7 +48,7 @@ export function LiveMatchModal({
             <p className="text-sm font-bold text-gray-800 mt-0.5">
               {incomingRequest.restaurantName}
             </p>
-            <p className="text-xs text-green-600 font-medium flex items-center gap-1 mt-0.5">
+            <p className="text-xs text-violet-600 font-medium flex items-center gap-1 mt-0.5">
               <span>📍</span> Proximity: {incomingRequest.distance} from you
             </p>
           </div>
@@ -74,7 +74,7 @@ export function LiveMatchModal({
               onAccept(`ORD-${incomingRequest.orderId}`);
               onClose();
             }}
-            className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl transition text-sm shadow-sm flex items-center justify-center gap-1"
+            className="flex-1 bg-violet-600 hover:bg-violet-700 text-white font-bold py-3 rounded-xl transition text-sm shadow-sm flex items-center justify-center gap-1"
           >
             <Navigation className="w-4 h-4" /> Accept Job
           </button>

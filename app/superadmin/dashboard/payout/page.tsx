@@ -74,10 +74,10 @@ export default function SuperAdminPayoutsDashboard() {
   return (
     <div className="flex min-h-screen bg-card">
       <Sidebar />
-      <main className="flex-1 overflow-auto bg-[#f5faf6]">
+      <main className="flex-1 overflow-auto bg-[#fbf9ff]">
         <div className="p-8 space-y-8">
           <div>
-            <h1 className="text-3xl font-bold text-[#1a5c2a] tracking-tight">
+            <h1 className="text-3xl font-bold text-[#5b21b6] tracking-tight">
               Platform Split Management
             </h1>
             <p className="text-sm font-medium text-gray-500 mt-2">

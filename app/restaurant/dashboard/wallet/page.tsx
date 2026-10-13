@@ -60,8 +60,8 @@ export default function WalletPage() {
   if (loading) {
     return (
       <div className="flex h-[60vh] flex-col items-center justify-center gap-3">
-        <RefreshCw className="h-8 w-8 animate-spin text-[#2D6A4F]" />
-        <p className="font-medium text-[#6B7C6E]">Loading wallet...</p>
+        <RefreshCw className="h-8 w-8 animate-spin text-[#6d28d9]" />
+        <p className="font-medium text-[#6b6480]">Loading wallet...</p>
       </div>
     );
   }
@@ -69,10 +69,10 @@ export default function WalletPage() {
   return (
     <div className="w-full space-y-6 pb-10">
       <div>
-        <h1 className="text-2xl font-black tracking-tight text-[#1B4332]">
+        <h1 className="text-2xl font-black tracking-tight text-[#3b0f7a]">
           Wallet & Earnings
         </h1>
-        <p className="mt-1 text-sm font-medium text-[#6B7C6E]">
+        <p className="mt-1 text-sm font-medium text-[#6b6480]">
           Manage your restaurant earnings and request payouts.
         </p>
       </div>
@@ -86,7 +86,7 @@ export default function WalletPage() {
         }`}
       >
         <Info
-          className={`w-5 h-5 mt-0.5 flex-shrink-0 ${hasBankDetails ? "text-[#2D6A4F]" : "text-red-600"}`}
+          className={`w-5 h-5 mt-0.5 flex-shrink-0 ${hasBankDetails ? "text-[#6d28d9]" : "text-red-600"}`}
         />
         <div>
           <h4 className="text-sm font-bold text-gray-900">
@@ -103,32 +103,32 @@ export default function WalletPage() {
       </div>
 
       {error ? (
-        <div className="flex flex-col items-center justify-center rounded-2xl border p-12 text-center bg-white border-[#c8e6c9]">
-          <XCircle className="mb-3 h-12 w-12 text-[#C0392B]" />
+        <div className="flex flex-col items-center justify-center rounded-2xl border p-12 text-center bg-white border-[#ddd6fe]">
+          <XCircle className="mb-3 h-12 w-12 text-[#c8372d]" />
           <h2 className="text-xl font-bold text-gray-900">
             Failed to load wallet
           </h2>
-          <p className="mt-2 text-sm text-[#6B7C6E]">{error}</p>
+          <p className="mt-2 text-sm text-[#6b6480]">{error}</p>
           <Button
             onClick={load}
             className="mt-6"
             variant="outline"
-            style={{ borderColor: "#2D6A4F", color: "#2D6A4F" }}
+            style={{ borderColor: "#6d28d9", color: "#6d28d9" }}
           >
             Try Again
           </Button>
         </div>
       ) : !wallet ? (
-        <div className="flex flex-col items-center justify-center rounded-2xl border p-12 text-center bg-white border-[#c8e6c9]">
-          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#f0f7f1]">
-            <Wallet className="h-8 w-8 text-[#2D6A4F]" />
+        <div className="flex flex-col items-center justify-center rounded-2xl border p-12 text-center bg-white border-[#ddd6fe]">
+          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#f5f3ff]">
+            <Wallet className="h-8 w-8 text-[#6d28d9]" />
           </div>
           <h2 className="text-xl font-bold text-gray-900">No Wallet Data</h2>
-          <p className="mt-2 max-w-md text-sm text-[#6B7C6E]">
+          <p className="mt-2 max-w-md text-sm text-[#6b6480]">
             Your wallet tracking will begin automatically once your first orders
             are delivered and paid.
           </p>
-          <Button onClick={load} className="mt-6 gap-2 bg-[#1B4332] text-white">
+          <Button onClick={load} className="mt-6 gap-2 bg-[#3b0f7a] text-white">
             <RefreshCw className="h-4 w-4" /> Refresh
           </Button>
         </div>

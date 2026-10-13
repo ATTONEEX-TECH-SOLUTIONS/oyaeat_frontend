@@ -5,9 +5,9 @@ import {
   APIProvider,
   Map,
   AdvancedMarker,
-  InfoWindow,
-} from "@vis.gl/react-google-maps";
+  } from "@vis.gl/react-google-maps";
 import { Loader2, Bike } from "lucide-react";
+import { API_URL } from "@/lib/customer";
 
 interface RiderCoordinates {
   latitude: number;
@@ -19,8 +19,7 @@ export default function CustomerTrackingMap({ orderId }: { orderId: number }) {
   const [riderCoords, setRiderCoords] = useState<RiderCoordinates | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const API_BASE_URL =
-    process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+  const API_BASE_URL = API_URL;
 
   useEffect(() => {
     const checkRiderPosition = async () => {
@@ -60,31 +59,35 @@ export default function CustomerTrackingMap({ orderId }: { orderId: number }) {
 
   if (loading) {
     return (
-      <div className="h-[350px] w-full flex items-center justify-center bg-gray-50 rounded-2xl border border-gray-100">
-        <Loader2 className="w-6 h-6 animate-spin text-green-600" />
+      <div className="flex h-72 w-full items-center justify-center bg-violet-50">
+        <Loader2 className="h-6 w-6 animate-spin text-primary" />
       </div>
     );
   }
 
   if (!riderCoords) {
     return (
-      <div className="p-6 bg-blue-50 border border-blue-100 text-blue-800 text-sm rounded-xl text-center font-medium">
-        ⏳ Your meal is being carefully prepared. The live tracking map will
-        unlock as soon as a rider claims the trip!
+      <div className="flex items-center gap-4 bg-violet-50 p-5">
+        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-card text-primary">
+          <Bike className="h-5 w-5" />
+        </span>
+        <div>
+          <p className="font-bold text-violet-900">Waiting for your rider&apos;s location</p>
+          <p className="text-sm text-violet-800/80">
+            The live map appears here as soon as the rider starts moving.
+          </p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
-      <div className="bg-emerald-50 border border-emerald-100 text-emerald-800 p-4 rounded-xl text-xs flex items-center gap-2">
-        <span className="animate-pulse">🚴</span>
-        <span className="font-semibold">
-          Rider {riderCoords.riderName} is en route with your delivery order!
-        </span>
+    <div>
+      <div className="flex items-center gap-2 border-b border-border bg-mango-50 px-4 py-3 text-sm font-bold text-mango-800">
+        <Bike className="h-4 w-4" />
+        {riderCoords.riderName} is on the way with your order
       </div>
-
-      <div className="h-[350px] w-full rounded-2xl overflow-hidden border border-gray-200 shadow-inner">
+      <div className="h-72 w-full sm:h-80">
         <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ""}>
           <Map
             defaultZoom={14}
@@ -94,13 +97,10 @@ export default function CustomerTrackingMap({ orderId }: { orderId: number }) {
             zoomControl={true}
           >
             <AdvancedMarker
-              position={{
-                lat: riderCoords.latitude,
-                lng: riderCoords.longitude,
-              }}
+              position={{ lat: riderCoords.latitude, lng: riderCoords.longitude }}
             >
-              <div className="h-10 w-10 rounded-full bg-white shadow-lg border-2 border-emerald-600 flex items-center justify-center text-xl animate-bounce">
-                🍔
+              <div className="grid h-11 w-11 place-items-center rounded-full border-2 border-primary bg-cta text-cta-foreground shadow-pop">
+                <Bike className="h-5 w-5" />
               </div>
             </AdvancedMarker>
           </Map>

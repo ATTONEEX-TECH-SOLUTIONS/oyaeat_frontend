@@ -13,19 +13,19 @@ export function DocPill({ label, present, icon: Icon }: DocPillProps) {
     <div
       className={`
       flex items-center gap-2 rounded-xl border px-3 py-2.5
-      ${present ? "border-[#D8F0E4] bg-[#F0FBF5]" : "border-[#FDECEA] bg-[#FEF8F8]"}
+      ${present ? "border-[#dcfce7] bg-[#F0FBF5]" : "border-[#FDECEA] bg-[#FEF8F8]"}
     `}
     >
       <Icon
         className="h-4 w-4 flex-shrink-0"
-        style={{ color: present ? "#2D6A4F" : "#C0392B" }}
+        style={{ color: present ? "#6d28d9" : "#c8372d" }}
       />
       <span className="text-xs font-semibold text-foreground">{label}</span>
       <span className="ml-auto">
         {present ? (
-          <Check className="h-3.5 w-3.5" style={{ color: "#2D6A4F" }} />
+          <Check className="h-3.5 w-3.5" style={{ color: "#6d28d9" }} />
         ) : (
-          <X className="h-3.5 w-3.5" style={{ color: "#C0392B" }} />
+          <X className="h-3.5 w-3.5" style={{ color: "#c8372d" }} />
         )}
       </span>
     </div>

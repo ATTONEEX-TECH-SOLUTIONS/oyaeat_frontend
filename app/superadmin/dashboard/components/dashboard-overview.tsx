@@ -25,7 +25,7 @@ export function DashboardOverview({ metrics }: DashboardOverviewProps) {
       label: "Pending Approvals",
       value: metrics.pendingApprovals,
       icon: AlertCircle,
-      color: "bg-yellow-500/10 text-yellow-500",
+      color: "bg-mango-500/10 text-mango-500",
       highlight: true,
     },
     {
@@ -33,7 +33,7 @@ export function DashboardOverview({ metrics }: DashboardOverviewProps) {
       value: metrics.activeRiders,
       total: metrics.totalRiders,
       icon: Bike,
-      color: "bg-green-500/10 text-green-500",
+      color: "bg-violet-500/10 text-violet-500",
     },
     {
       label: "Today Orders",
@@ -65,7 +65,7 @@ export function DashboardOverview({ metrics }: DashboardOverviewProps) {
             key={stat.label}
             className={`p-6 rounded-lg border ${
               stat.highlight
-                ? "bg-yellow-50 border-yellow-200"
+                ? "bg-mango-50 border-mango-200"
                 : "bg-slate-50 border-slate-200"
             }`}
           >

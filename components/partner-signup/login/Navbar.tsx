@@ -60,7 +60,7 @@ const Navbar = () => {
         <Link href="/" className="flex items-center gap-3 group">
           <div className="flex flex-col">
             <span className="text-3xl font-black leading-none tracking-tight">
-              <span className="text-[#2d5f4f]">Oya</span>
+              <span className="text-[#5b21b6]">Oya</span>
               <span
                 className={`transition-colors duration-300 ${scrolled ? "text-gray-800" : "text-gray-900"}`}
               >
@@ -85,15 +85,15 @@ const Navbar = () => {
                 href={link.href}
                 className={`relative font-bold text-base transition-all duration-300 py-2 group ${
                   isActive
-                    ? "text-[#2d5f4f]"
+                    ? "text-[#5b21b6]"
                     : scrolled
-                      ? "text-gray-800 hover:text-[#2d5f4f]"
-                      : "text-gray-900 hover:text-[#2d5f4f]"
+                      ? "text-gray-800 hover:text-[#5b21b6]"
+                      : "text-gray-900 hover:text-[#5b21b6]"
                 }`}
               >
                 {link.label}
                 <span
-                  className={`absolute bottom-0 left-0 h-1 bg-[#2d5f4f] rounded-full transition-all duration-300 ease-out ${isActive ? "w-full" : "w-0 group-hover:w-full"}`}
+                  className={`absolute bottom-0 left-0 h-1 bg-[#5b21b6] rounded-full transition-all duration-300 ease-out ${isActive ? "w-full" : "w-0 group-hover:w-full"}`}
                 />
               </Link>
             );
@@ -108,15 +108,15 @@ const Navbar = () => {
             <button
               className={`flex items-center gap-1 font-bold text-base transition-all duration-300 py-2 ${
                 dropdownOpen
-                  ? "text-[#2d5f4f]"
+                  ? "text-[#5b21b6]"
                   : scrolled
-                    ? "text-gray-800 hover:text-[#2d5f4f]"
-                    : "text-gray-900 hover:text-[#2d5f4f]"
+                    ? "text-gray-800 hover:text-[#5b21b6]"
+                    : "text-gray-900 hover:text-[#5b21b6]"
               }`}
             >
               Earn with Us
               <ChevronDown
-                className={`w-4 h-4 transition-transform duration-300 ${dropdownOpen ? "rotate-180 text-[#2d5f4f]" : ""}`}
+                className={`w-4 h-4 transition-transform duration-300 ${dropdownOpen ? "rotate-180 text-[#5b21b6]" : ""}`}
               />
             </button>
 
@@ -136,11 +136,11 @@ const Navbar = () => {
                     href={item.href}
                     className="flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors group/item"
                   >
-                    <div className="p-2 bg-[#2d5f4f]/10 rounded-lg group-hover/item:bg-[#2d5f4f] transition-colors">
-                      <Icon className="w-5 h-5 text-[#2d5f4f] group-hover/item:text-white transition-colors" />
+                    <div className="p-2 bg-[#5b21b6]/10 rounded-lg group-hover/item:bg-[#5b21b6] transition-colors">
+                      <Icon className="w-5 h-5 text-[#5b21b6] group-hover/item:text-white transition-colors" />
                     </div>
                     <div>
-                      <p className="font-bold text-gray-900 text-sm group-hover/item:text-[#2d5f4f] transition-colors">
+                      <p className="font-bold text-gray-900 text-sm group-hover/item:text-[#5b21b6] transition-colors">
                         {item.label}
                       </p>
                       <p className="text-xs text-gray-500 mt-0.5">

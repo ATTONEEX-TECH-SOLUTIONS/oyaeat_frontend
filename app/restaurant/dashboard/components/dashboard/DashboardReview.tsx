@@ -40,7 +40,7 @@ export default function DashboardReview({
     <div
       style={{
         background: "#fff",
-        border: "1px solid #c8e6c9",
+        border: "1px solid #ddd6fe",
         borderRadius: 16,
         padding: 32,
       }}
@@ -55,9 +55,9 @@ export default function DashboardReview({
       >
         <span
           style={{
-            background: "#e8f5e9",
-            color: "#2e7d32",
-            border: "1px solid #a5d6a7",
+            background: "#f1ebff",
+            color: "#6d28d9",
+            border: "1px solid #c4b5fd",
             borderRadius: 20,
             padding: "4px 12px",
             fontSize: 12,
@@ -76,7 +76,7 @@ export default function DashboardReview({
 
       <h2
         style={{
-          color: "#1a5c2a",
+          color: "#5b21b6",
           fontWeight: 700,
           fontSize: 22,
           margin: "0 0 8px",
@@ -84,7 +84,7 @@ export default function DashboardReview({
       >
         Business review pending
       </h2>
-      <p style={{ color: "#4a7c59", marginBottom: 24, fontSize: 14 }}>
+      <p style={{ color: "#7c3aed", marginBottom: 24, fontSize: 14 }}>
         Your credentials and legal certificates have been successfully received
         and are currently undergoing admin check verification.
       </p>
@@ -102,8 +102,8 @@ export default function DashboardReview({
           style={{
             background: isDocumentsUploaded ? "#f4fbf7" : "#fefaf4",
             border: isDocumentsUploaded
-              ? "1px solid #c8e6c9"
-              : "1px solid #fde8c9",
+              ? "1px solid #ddd6fe"
+              : "1px solid #fff4d6",
             borderRadius: 12,
             padding: 16,
           }}
@@ -123,16 +123,16 @@ export default function DashboardReview({
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             {isDocumentsUploaded ? (
               <>
-                <CheckCircle2 size={18} className="text-green-600" />
+                <CheckCircle2 size={18} className="text-violet-600" />
                 <span
-                  style={{ color: "#1a5c2a", fontWeight: 700, fontSize: 16 }}
+                  style={{ color: "#5b21b6", fontWeight: 700, fontSize: 16 }}
                 >
                   ✓ Submitted
                 </span>
               </>
             ) : (
               <>
-                <AlertTriangle size={18} className="text-amber-600" />
+                <AlertTriangle size={18} className="text-mango-600" />
                 <span
                   style={{ color: "#b45309", fontWeight: 700, fontSize: 16 }}
                 >
@@ -148,8 +148,8 @@ export default function DashboardReview({
           style={{
             background: isBankDetailsCompleted ? "#f4fbf7" : "#fefaf4",
             border: isBankDetailsCompleted
-              ? "1px solid #c8e6c9"
-              : "1px solid #fde8c9",
+              ? "1px solid #ddd6fe"
+              : "1px solid #fff4d6",
             borderRadius: 12,
             padding: 16,
           }}
@@ -169,16 +169,16 @@ export default function DashboardReview({
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             {isBankDetailsCompleted ? (
               <>
-                <CheckCircle2 size={18} className="text-green-600" />
+                <CheckCircle2 size={18} className="text-violet-600" />
                 <span
-                  style={{ color: "#1a5c2a", fontWeight: 700, fontSize: 16 }}
+                  style={{ color: "#5b21b6", fontWeight: 700, fontSize: 16 }}
                 >
                   ✓ Completed
                 </span>
               </>
             ) : (
               <>
-                <HelpCircle size={18} className="text-amber-600" />
+                <HelpCircle size={18} className="text-mango-600" />
                 <span
                   style={{ color: "#b45309", fontWeight: 700, fontSize: 16 }}
                 >

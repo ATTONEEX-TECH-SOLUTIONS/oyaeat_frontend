@@ -111,7 +111,7 @@ export function BusinessCard({
       >
         <div
           className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl text-sm font-black text-white"
-          style={{ backgroundColor: C.greenMid }}
+          style={{ backgroundColor: C.brandMid }}
         >
           {initials}
         </div>
@@ -186,7 +186,7 @@ export function BusinessCard({
             >
               <Mail
                 className="h-4 w-4 flex-shrink-0"
-                style={{ color: C.greenMid }}
+                style={{ color: C.brandMid }}
               />
               {b.submitter?.email || "N/A"}
             </div>
@@ -197,7 +197,7 @@ export function BusinessCard({
               >
                 <Phone
                   className="h-4 w-4 flex-shrink-0"
-                  style={{ color: C.greenMid }}
+                  style={{ color: C.brandMid }}
                 />
                 {b.submitter.phone}
               </div>
@@ -260,7 +260,7 @@ export function BusinessCard({
                 <button
                   onClick={onApprove}
                   className="flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold text-white hover:opacity-90"
-                  style={{ backgroundColor: C.green }}
+                  style={{ backgroundColor: C.brand }}
                 >
                   <Check className="h-4 w-4" /> Approve
                 </button>
@@ -270,7 +270,7 @@ export function BusinessCard({
                 <button
                   onClick={onUnsuspend}
                   className="flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold text-white transition-opacity hover:opacity-90"
-                  style={{ backgroundColor: C.greenMid }}
+                  style={{ backgroundColor: C.brandMid }}
                 >
                   <Check className="h-4 w-4" /> Reactivate Profile
                 </button>

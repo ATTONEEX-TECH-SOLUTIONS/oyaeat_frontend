@@ -63,13 +63,13 @@ export function Sidebar() {
 
   return (
     <aside
-      className="w-64 h-screen flex flex-col sticky top-0 border-r border-[#14491f]"
-      style={{ backgroundColor: "#1a5c2a" }}
+      className="w-64 h-screen flex flex-col sticky top-0 border-r border-[#3b0f7a]"
+      style={{ backgroundColor: "#5b21b6" }}
     >
       {/* ── Logo area ── */}
       <div
-        className="px-5 py-5 border-b border-[#14491f] flex items-center gap-3"
-        style={{ backgroundColor: "#14491f" }}
+        className="px-5 py-5 border-b border-[#3b0f7a] flex items-center gap-3"
+        style={{ backgroundColor: "#3b0f7a" }}
       >
         {/* Icon pill — white background so PNG is always visible */}
         <div
@@ -103,7 +103,7 @@ export function Sidebar() {
               fontWeight: 600,
               fontSize: "0.5rem",
               letterSpacing: "0.18em",
-              color: "#a5d6a7",
+              color: "#c4b5fd",
               marginTop: "2px",
             }}
           >
@@ -114,13 +114,13 @@ export function Sidebar() {
 
       {/* Super Admin label */}
       <div
-        className="px-5 py-2 border-b border-[#14491f]"
-        style={{ backgroundColor: "#14491f" }}
+        className="px-5 py-2 border-b border-[#3b0f7a]"
+        style={{ backgroundColor: "#3b0f7a" }}
       >
         <p
           className="text-xs"
           style={{
-            color: "#a5d6a7",
+            color: "#c4b5fd",
             fontFamily: "'Montserrat', sans-serif",
             letterSpacing: "0.05em",
           }}
@@ -144,14 +144,14 @@ export function Sidebar() {
               className={cn(
                 "flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-150 text-sm font-medium",
                 isActive
-                  ? "bg-[#2e7d32] text-white shadow-sm"
-                  : "text-white hover:bg-[#14491f] hover:text-white",
+                  ? "bg-[#6d28d9] text-white shadow-sm"
+                  : "text-white hover:bg-[#3b0f7a] hover:text-white",
               )}
             >
               <Icon
                 className={cn(
                   "w-5 h-5 flex-shrink-0",
-                  isActive ? "text-white" : "text-[#a5d6a7]",
+                  isActive ? "text-white" : "text-[#c4b5fd]",
                 )}
               />
               <span>{item.label}</span>
@@ -161,13 +161,13 @@ export function Sidebar() {
       </nav>
 
       {/* ── Footer ── */}
-      <div className="p-4 border-t border-[#14491f] shrink-0 mt-auto">
+      <div className="p-4 border-t border-[#3b0f7a] shrink-0 mt-auto">
         <Button
           variant="ghost"
-          className="w-full justify-start text-white hover:bg-[#14491f] hover:text-white"
+          className="w-full justify-start text-white hover:bg-[#3b0f7a] hover:text-white"
           onClick={handleLogout}
         >
-          <LogOut className="w-5 h-5 mr-2 text-[#a5d6a7]" />
+          <LogOut className="w-5 h-5 mr-2 text-[#c4b5fd]" />
           Logout
         </Button>
         <div className="mt-3 text-xs">

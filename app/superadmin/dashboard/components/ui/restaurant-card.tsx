@@ -47,7 +47,7 @@ export function RestaurantCard({
         {/* Initials square */}
         <div
           className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl text-sm font-black text-white"
-          style={{ backgroundColor: "#2D6A4F" }}
+          style={{ backgroundColor: "#6d28d9" }}
         >
           {restaurant.name
             .split(" ")
@@ -91,7 +91,7 @@ export function RestaurantCard({
           </div>
           <div
             className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg"
-            style={{ backgroundColor: "#F5F1EB" }}
+            style={{ backgroundColor: "#fffbef" }}
           >
             {isExpanded ? (
               <ChevronUp className="h-4 w-4 text-muted-foreground" />
@@ -104,7 +104,7 @@ export function RestaurantCard({
 
       {/* ── Expanded panel ───────────────────────────── */}
       {isExpanded && (
-        <div className="border-t border-border bg-[#F5F1EB] px-5 py-5 space-y-4">
+        <div className="border-t border-border bg-[#fffbef] px-5 py-5 space-y-4">
           {/* Documents */}
           <div>
             <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">
@@ -131,9 +131,9 @@ export function RestaurantCard({
 
           {/* Missing docs warning */}
           {restaurant.status === "suspended" && !allDocsComplete && (
-            <div className="flex gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
-              <AlertCircle className="h-4 w-4 flex-shrink-0 mt-0.5 text-amber-600" />
-              <p className="text-sm text-amber-800">
+            <div className="flex gap-3 rounded-xl border border-mango-200 bg-mango-50 px-4 py-3">
+              <AlertCircle className="h-4 w-4 flex-shrink-0 mt-0.5 text-mango-600" />
+              <p className="text-sm text-mango-800">
                 Missing required documents. Cannot approve until all documents
                 are submitted.
               </p>
@@ -162,7 +162,7 @@ export function RestaurantCard({
                     onApprove?.(restaurant.id);
                   }}
                   className="flex-1 rounded-xl font-bold text-white shadow-sm gap-2"
-                  style={{ backgroundColor: "#1B4332" }}
+                  style={{ backgroundColor: "#3b0f7a" }}
                 >
                   <Check className="h-4 w-4" />
                   Approve Restaurant
@@ -174,7 +174,7 @@ export function RestaurantCard({
                   onRejectTrigger(restaurant.id, restaurant.name); // 👈 2. Directly passes exact string parameters
                 }}
                 variant="outline"
-                className="flex-1 rounded-xl font-bold border-border bg-card text-[#C0392B] hover:bg-red-50 hover:border-red-200 gap-2"
+                className="flex-1 rounded-xl font-bold border-border bg-card text-[#c8372d] hover:bg-red-50 hover:border-red-200 gap-2"
               >
                 <X className="h-4 w-4" />
                 Reject

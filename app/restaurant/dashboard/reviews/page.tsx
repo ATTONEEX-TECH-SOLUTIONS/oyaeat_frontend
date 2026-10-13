@@ -6,16 +6,16 @@ import { Search, Star, RefreshCw, XCircle, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const C = {
-  green: "#1B4332",
-  greenMid: "#2D6A4F",
-  greenLight: "#52B788",
-  bg: "#f0f7f1",
+  brand: "#3b0f7a",
+  brandMid: "#6d28d9",
+  brandLight: "#8b5cf6",
+  bg: "#f5f3ff",
   white: "#FFFFFF",
   textDark: "#111827",
-  textMuted: "#6B7C6E",
-  border: "#c8e6c9",
-  error: "#C0392B",
-  amber: "#D4860B",
+  textMuted: "#6b6480",
+  border: "#ddd6fe",
+  error: "#c8372d",
+  mango: "#d97f06",
 };
 
 export default function ReviewsPage() {
@@ -60,7 +60,7 @@ export default function ReviewsPage() {
         <Star
           key={i}
           className={`h-4 w-4 ${i <= rating ? "fill-current" : "opacity-20"}`}
-          style={{ color: C.amber }}
+          style={{ color: C.mango }}
         />,
       );
     }
@@ -72,7 +72,7 @@ export default function ReviewsPage() {
       <div className="flex h-[60vh] flex-col items-center justify-center gap-3">
         <RefreshCw
           className="h-8 w-8 animate-spin"
-          style={{ color: C.greenMid }}
+          style={{ color: C.brandMid }}
         />
         <p className="font-medium" style={{ color: C.textMuted }}>
           Loading reviews...
@@ -88,7 +88,7 @@ export default function ReviewsPage() {
         <div>
           <h1
             className="text-2xl font-black tracking-tight"
-            style={{ color: C.green }}
+            style={{ color: C.brand }}
           >
             Customer Reviews
           </h1>
@@ -104,7 +104,7 @@ export default function ReviewsPage() {
           variant="outline"
           size="sm"
           className="gap-2"
-          style={{ borderColor: C.border, color: C.greenMid }}
+          style={{ borderColor: C.border, color: C.brandMid }}
         >
           <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />{" "}
           Refresh
@@ -127,7 +127,7 @@ export default function ReviewsPage() {
             onClick={load}
             className="mt-6"
             variant="outline"
-            style={{ borderColor: C.greenMid, color: C.greenMid }}
+            style={{ borderColor: C.brandMid, color: C.brandMid }}
           >
             Try Again
           </Button>
@@ -141,7 +141,7 @@ export default function ReviewsPage() {
             className="mb-4 flex h-16 w-16 items-center justify-center rounded-full"
             style={{ backgroundColor: C.bg }}
           >
-            <MessageSquare className="h-8 w-8" style={{ color: C.greenMid }} />
+            <MessageSquare className="h-8 w-8" style={{ color: C.brandMid }} />
           </div>
           <h2 className="text-xl font-bold" style={{ color: C.textDark }}>
             No Reviews Yet
@@ -190,7 +190,7 @@ export default function ReviewsPage() {
                       {stars}{" "}
                       <Star
                         className="h-3 w-3 ml-0.5 fill-current"
-                        style={{ color: C.amber }}
+                        style={{ color: C.mango }}
                       />
                     </span>
                     <div
@@ -201,7 +201,7 @@ export default function ReviewsPage() {
                         className="h-full rounded-full transition-all"
                         style={{
                           width: `${percentage}%`,
-                          backgroundColor: C.greenMid,
+                          backgroundColor: C.brandMid,
                         }}
                       />
                     </div>
@@ -231,7 +231,7 @@ export default function ReviewsPage() {
               </h3>
             </div>
 
-            <div className="divide-y divide-[#e8f5e9] flex-1">
+            <div className="divide-y divide-[#f1ebff] flex-1">
               {data.reviews.map((review) => (
                 <div key={review.id} className="p-6">
                   <div className="flex justify-between items-start mb-2">
@@ -253,7 +253,7 @@ export default function ReviewsPage() {
                       </div>
                     </div>
                     {review.orderId && (
-                      <span className="text-xs font-bold uppercase tracking-widest px-2 py-1 rounded bg-[#F0F7F3] text-[#2D6A4F]">
+                      <span className="text-xs font-bold uppercase tracking-widest px-2 py-1 rounded bg-[#f5f3ff] text-[#6d28d9]">
                         Order #{review.orderId}
                       </span>
                     )}

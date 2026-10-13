@@ -23,9 +23,9 @@ interface RidersListProps {
 }
 
 const statusConfig = {
-  pending: { icon: Clock, color: "text-yellow-600", bg: "bg-yellow-50" },
+  pending: { icon: Clock, color: "text-mango-600", bg: "bg-mango-50" },
   verified: { icon: Check, color: "text-blue-600", bg: "bg-blue-50" },
-  active: { icon: Check, color: "text-green-600", bg: "bg-green-50" },
+  active: { icon: Check, color: "text-violet-600", bg: "bg-violet-50" },
   inactive: { icon: X, color: "text-slate-600", bg: "bg-slate-50" },
 };
 
@@ -152,7 +152,7 @@ export function RidersList({
                           </span>
                         </div>
                         <span
-                          className={`text-xs px-2 py-0.5 rounded font-medium ${hasIdDocument ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"}`}
+                          className={`text-xs px-2 py-0.5 rounded font-medium ${hasIdDocument ? "bg-violet-50 text-violet-700" : "bg-red-50 text-red-700"}`}
                         >
                           {hasIdDocument ? "Available" : "Missing File"}
                         </span>
@@ -197,9 +197,9 @@ export function RidersList({
                 </div>
 
                 {rider.status === "pending" && !hasIdDocument && (
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 flex gap-3">
-                    <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
-                    <p className="text-sm text-yellow-800">
+                  <div className="bg-mango-50 border border-mango-200 rounded-lg p-4 flex gap-3">
+                    <AlertCircle className="w-5 h-5 text-mango-600 flex-shrink-0 mt-0.5" />
+                    <p className="text-sm text-mango-800">
                       Cannot verify rider until the identification legal
                       document has been uploaded.
                     </p>
@@ -212,7 +212,7 @@ export function RidersList({
                     {hasIdDocument && rider.status === "pending" && (
                       <Button
                         onClick={() => onVerify?.(rider.id, "pending")}
-                        className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+                        className="flex-1 bg-violet-600 hover:bg-violet-700 text-white"
                       >
                         <Check className="w-4 h-4 mr-2" /> Verify Profiles &
                         Documents
@@ -259,7 +259,7 @@ export function RidersList({
                   <div className="flex gap-3 pt-2">
                     <Button
                       onClick={() => onVerify?.(rider.id, "inactive")}
-                      className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+                      className="flex-1 bg-violet-600 hover:bg-violet-700 text-white"
                     >
                       <Check className="w-4 h-4 mr-2" /> Reactivate Rider
                       Permissions & Access

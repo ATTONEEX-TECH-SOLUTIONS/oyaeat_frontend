@@ -3,79 +3,119 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ------------------------------------------------------------------
+   OyaEat design tokens: violet (structure, trust) + mango (appetite, action).
+   Violet carries navigation, headings, primary buttons and selected states.
+   Mango is reserved for the single most important action on a screen,
+   highlights, ratings and promos. Green is ONLY for success status.
+------------------------------------------------------------------- */
 :root {
-  --background: #f5faf6;
-  --foreground: #111c14;
+  --background: #fbf9ff;
+  --foreground: #1a1033;
   --card: #ffffff;
-  --card-foreground: #111c14;
+  --card-foreground: #1a1033;
   --popover: #ffffff;
-  --popover-foreground: #111c14;
-  --primary: #1a5c2a;
+  --popover-foreground: #1a1033;
+  --primary: #5b21b6;
   --primary-foreground: #ffffff;
-  --secondary: #e8f5e9;
-  --secondary-foreground: #111c14;
-  --muted: #d8e4dc;
-  --muted-foreground: #6b7c6e;
-  --accent: #e8f5e9;
-  --accent-foreground: #111c14;
-  --destructive: #c0392b;
+  --secondary: #f1ebff;
+  --secondary-foreground: #3b0f7a;
+  --muted: #f3f0fa;
+  --muted-foreground: #6b6480;
+  --accent: #f1ebff;
+  --accent-foreground: #3b0f7a;
+  --cta: #fdba2d;
+  --cta-foreground: #1a1033;
+  --destructive: #c8372d;
   --destructive-foreground: #ffffff;
-  --border: #d8e4dc;
-  --input: #d8e4dc;
-  --ring: #1a5c2a;
-  --chart-1: #1a5c2a;
-  --chart-2: #2e7d32;
-  --chart-3: #4a7c59;
-  --chart-4: #81c784;
-  --chart-5: #a5d6a7;
-  --radius: 0.625rem;
-  --sidebar: #1a5c2a;
-  --sidebar-foreground: #ffffff;
-  --sidebar-primary: #14491f;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #2e7d32;
+  --success: #15803d;
+  --success-soft: #dcfce7;
+  --warning: #b45309;
+  --warning-soft: #fff4d6;
+  --border: #e6e0f3;
+  --input: #d9d0ee;
+  --ring: #7c3aed;
+  --chart-1: #5b21b6;
+  --chart-2: #fdba2d;
+  --chart-3: #8b5cf6;
+  --chart-4: #f59e0b;
+  --chart-5: #c4b5fd;
+  --radius: 0.75rem;
+  --sidebar: #2a1156;
+  --sidebar-foreground: #f1ebff;
+  --sidebar-primary: #fdba2d;
+  --sidebar-primary-foreground: #1a1033;
+  --sidebar-accent: #4c1d95;
   --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: #14491f;
-  --sidebar-ring: #4a7c59;
+  --sidebar-border: #3b1a78;
+  --sidebar-ring: #fdba2d;
+  --oya-shadow-card: 0 1px 2px rgba(26, 16, 51, 0.05), 0 8px 24px rgba(26, 16, 51, 0.07);
+  --oya-shadow-pop: 0 14px 36px rgba(26, 16, 51, 0.18);
 }
 
 .dark {
-  --background: oklch(0.12 0.01 60);
-  --foreground: oklch(0.95 0.02 70);
-  --card: oklch(0.18 0.01 60);
-  --card-foreground: oklch(0.95 0.02 70);
-  --popover: oklch(0.18 0.01 60);
-  --popover-foreground: oklch(0.95 0.02 70);
-  --primary: oklch(0.6 0.19 70.5);
-  --primary-foreground: oklch(0.12 0.01 60);
-  --secondary: oklch(0.35 0.05 70);
-  --secondary-foreground: oklch(0.95 0.02 70);
-  --muted: oklch(0.3 0.02 60);
-  --muted-foreground: oklch(0.65 0.04 70);
-  --accent: oklch(0.55 0.2 70);
-  --accent-foreground: oklch(0.12 0.01 60);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.95 0.02 70);
-  --border: oklch(0.28 0.02 60);
-  --input: oklch(0.22 0.01 60);
-  --ring: oklch(0.6 0.19 70.5);
-  --chart-1: oklch(0.6 0.19 70.5);
-  --chart-2: oklch(0.55 0.2 70);
-  --chart-3: oklch(0.75 0.12 70);
-  --chart-4: oklch(0.65 0.15 70);
-  --chart-5: oklch(0.7 0.18 70);
-  --sidebar: oklch(0.15 0.01 60);
-  --sidebar-foreground: oklch(0.95 0.02 70);
-  --sidebar-primary: oklch(0.6 0.19 70.5);
-  --sidebar-primary-foreground: oklch(0.12 0.01 60);
-  --sidebar-accent: oklch(0.55 0.2 70);
-  --sidebar-accent-foreground: oklch(0.12 0.01 60);
-  --sidebar-border: oklch(0.25 0.02 60);
-  --sidebar-ring: oklch(0.6 0.19 70.5);
+  --background: #12091f;
+  --foreground: #f4efff;
+  --card: #1c1030;
+  --card-foreground: #f4efff;
+  --popover: #1c1030;
+  --popover-foreground: #f4efff;
+  --primary: #a78bfa;
+  --primary-foreground: #1a1033;
+  --secondary: #2a1a4a;
+  --secondary-foreground: #f1ebff;
+  --muted: #251a3f;
+  --muted-foreground: #a99fc4;
+  --accent: #2a1a4a;
+  --accent-foreground: #f1ebff;
+  --cta: #fdba2d;
+  --cta-foreground: #1a1033;
+  --destructive: #ef6a5f;
+  --destructive-foreground: #1a1033;
+  --success: #4ade80;
+  --success-soft: #12351f;
+  --warning: #fdba2d;
+  --warning-soft: #3a2a08;
+  --border: #33254f;
+  --input: #3d2d5e;
+  --ring: #a78bfa;
+  --chart-1: #a78bfa;
+  --chart-2: #fdba2d;
+  --chart-3: #8b5cf6;
+  --chart-4: #f59e0b;
+  --chart-5: #c4b5fd;
+  --sidebar: #0f0720;
+  --sidebar-foreground: #f1ebff;
+  --sidebar-primary: #fdba2d;
+  --sidebar-primary-foreground: #1a1033;
+  --sidebar-accent: #2a1a4a;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #2a1a4a;
+  --sidebar-ring: #fdba2d;
 }
 
 @theme inline {
   --font-sans: "Geist", "Geist Fallback";
+  --font-display: var(--font-lp-display), "Geist", system-ui, sans-serif;
+  --color-cta: var(--cta);
+  --color-cta-foreground: var(--cta-foreground);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-mango-50: #fffbef;
+  --color-mango-100: #fff4d6;
+  --color-mango-200: #ffe5a0;
+  --color-mango-300: #ffd166;
+  --color-mango-400: #fdba2d;
+  --color-mango-500: #f5a00b;
+  --color-mango-600: #d97f06;
+  --color-mango-700: #b45f06;
+  --color-mango-800: #8a4709;
+  --color-mango-900: #6b3a0b;
+  --color-cream: #fff4d6;
+  --shadow-card: var(--oya-shadow-card);
+  --shadow-pop: var(--oya-shadow-pop);
   --font-mono: "Geist Mono", "Geist Mono Fallback";
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -162,6 +202,70 @@
 .animation-delay-1000 {
   animation-delay: 1s;
 }
+/* ------------------------------------------------------------------
+   Public landing theme (violet + mango). Scoped to .landing so the
+   customer / restaurant / rider / admin dashboards keep their own tokens.
+------------------------------------------------------------------- */
+/* Palette aliases are global so shared helpers (.lp-doodles) work in every app. */
+:root,
+.landing {
+  --lp-violet-950: #1a1033;
+  --lp-violet-900: #2a1156;
+  --lp-violet-800: #4c1d95;
+  --lp-violet-700: #5b21b6;
+  --lp-violet-600: #6d28d9;
+  --lp-violet-100: #ede4ff;
+  --lp-mango: #fdba2d;
+  --lp-mango-600: #f59e0b;
+  --lp-cream: #fff4d6;
+  --lp-cream-50: #fffbef;
+  --lp-ink: #1a1033;
+  --lp-ink-soft: #5c5470;
+  --lp-leaf: #7ed957;
+}
+
+.landing {
+  background: var(--lp-cream-50);
+  color: var(--lp-ink);
+}
+
+.lp-display {
+  font-family: var(--font-lp-display), var(--font-sans), system-ui, sans-serif;
+  letter-spacing: -0.01em;
+}
+
+/* Faint food-doodle wallpaper for the violet hero / bands */
+.lp-doodles {
+  background-color: var(--lp-violet-700);
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220' viewBox='0 0 220 220' fill='none' stroke='%23ffffff' stroke-opacity='.08' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='46' cy='48' r='20'/%3E%3Ccircle cx='46' cy='48' r='10'/%3E%3Cpath d='M150 30v34M142 30v14a8 8 0 0016 0V30M150 64v26'/%3E%3Cpath d='M170 150c18-2 30-14 32-32-18 2-30 14-32 32zM170 150l16-16'/%3E%3Cpath d='M40 150h40l-4 34H44zM36 150a24 12 0 0148 0'/%3E%3Cpath d='M110 110l10 22M122 104l6 24'/%3E%3C/svg%3E"),
+    radial-gradient(120% 80% at 80% 0%, rgba(253, 186, 45, 0.18), transparent 55%);
+  background-size: 220px 220px, auto;
+}
+
+@keyframes lp-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(var(--lp-rot, 0deg));
+  }
+  50% {
+    transform: translateY(-10px) rotate(var(--lp-rot, 0deg));
+  }
+}
+.lp-float {
+  animation: lp-float 6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-float {
+    animation: none;
+  }
+  .landing * {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -176,4 +280,11 @@
     margin: 0;
     size: 80mm auto;
   }
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }

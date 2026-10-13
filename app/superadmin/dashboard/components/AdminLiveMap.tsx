@@ -76,7 +76,7 @@ export default function AdminLiveMap() {
   if (loading) {
     return (
       <div className="h-[500px] w-full flex items-center justify-center bg-gray-50 border border-gray-100 rounded-2xl">
-        <Loader2 className="w-8 h-8 animate-spin text-green-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-violet-600" />
       </div>
     );
   }
@@ -109,7 +109,7 @@ export default function AdminLiveMap() {
                 onClick={() => setSelectedRider(rider)}
               >
                 {/* Modern Custom Pin Design wrapper layout elements */}
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-md border-2 border-emerald-600 text-xl hover:scale-110 transition-transform cursor-pointer">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-md border-2 border-violet-600 text-xl hover:scale-110 transition-transform cursor-pointer">
                   🏍️
                 </div>
               </AdvancedMarker>

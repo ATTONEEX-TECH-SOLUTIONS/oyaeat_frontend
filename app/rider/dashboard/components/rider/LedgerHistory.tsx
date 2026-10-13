@@ -39,8 +39,8 @@ export default function LedgerHistory({
                 <div
                   className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
                     txn.type === "withdrawal"
-                      ? "bg-amber-50 text-amber-600"
-                      : "bg-emerald-50 text-emerald-600"
+                      ? "bg-mango-50 text-mango-600"
+                      : "bg-violet-50 text-violet-600"
                   }`}
                 >
                   {txn.type === "withdrawal" ? (
@@ -60,8 +60,8 @@ export default function LedgerHistory({
                     <span
                       className={`text-[9px] uppercase tracking-wider font-extrabold px-1.5 py-0.5 rounded-md flex items-center gap-0.5 ${
                         txn.status === "completed"
-                          ? "bg-green-50 text-green-700"
-                          : "bg-amber-50 text-amber-700"
+                          ? "bg-violet-50 text-violet-700"
+                          : "bg-mango-50 text-mango-700"
                       }`}
                     >
                       {txn.status === "completed" && (
@@ -74,7 +74,7 @@ export default function LedgerHistory({
               </div>
               <div className="text-right">
                 <p
-                  className={`font-black text-base ${txn.type === "withdrawal" ? "text-gray-900" : "text-green-600"}`}
+                  className={`font-black text-base ${txn.type === "withdrawal" ? "text-gray-900" : "text-violet-600"}`}
                 >
                   {txn.amount}
                 </p>

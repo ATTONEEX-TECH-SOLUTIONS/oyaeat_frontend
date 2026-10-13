@@ -16,7 +16,7 @@ export default function FinancialGrid({
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {/* Main Wallet Balance Box */}
-      <div className="bg-gradient-to-br from-emerald-900 to-green-800 p-6 rounded-2xl shadow-sm text-white flex flex-col justify-between h-40">
+      <div className="bg-gradient-to-br from-violet-900 to-violet-800 p-6 rounded-2xl shadow-sm text-white flex flex-col justify-between h-40">
         <div className="flex items-center justify-between">
           <p className="text-xs font-bold uppercase tracking-wider opacity-75">
             Withdrawable Balance
@@ -33,8 +33,8 @@ export default function FinancialGrid({
 
       {/* Today's Split Earnings */}
       <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-5 h-40">
-        <div className="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
-          <ArrowUpRight className="w-6 h-6 text-green-600" />
+        <div className="w-14 h-14 rounded-full bg-violet-100 flex items-center justify-center flex-shrink-0">
+          <ArrowUpRight className="w-6 h-6 text-violet-600" />
         </div>
         <div>
           <p className="text-sm font-medium text-gray-500 mb-1">
@@ -43,7 +43,7 @@ export default function FinancialGrid({
           <h3 className="text-2xl font-bold text-gray-900">
             {metrics?.todayEarnings || "₦0"}
           </h3>
-          <p className="text-xs text-green-600 font-medium mt-1 flex items-center gap-1">
+          <p className="text-xs text-violet-600 font-medium mt-1 flex items-center gap-1">
             <TrendingUp className="w-3.5 h-3.5" /> Split payout active
           </p>
         </div>

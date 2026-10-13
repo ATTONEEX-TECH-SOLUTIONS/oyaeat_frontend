@@ -44,13 +44,13 @@ const getStatusIcon = (status: RecentOrder["status"]) => {
   switch (status) {
     case "pending":
     case "preparing":
-      return <Clock className="w-5 h-5 text-amber-600" />;
+      return <Clock className="w-5 h-5 text-mango-600" />;
     case "ready":
       return <CheckCircle className="w-5 h-5 text-blue-600" />;
     case "out_for_delivery":
       return <AlertCircle className="w-5 h-5 text-orange-600" />;
     case "delivered":
-      return <CheckCircle className="w-5 h-5 text-green-600" />;
+      return <CheckCircle className="w-5 h-5 text-violet-600" />;
     case "cancelled":
       return <XCircle className="w-5 h-5 text-red-600" />;
     default:
@@ -62,13 +62,13 @@ const getStatusColor = (status: RecentOrder["status"]) => {
   switch (status) {
     case "pending":
     case "preparing":
-      return "bg-amber-50 text-amber-700";
+      return "bg-mango-50 text-mango-700";
     case "ready":
       return "bg-blue-50 text-blue-700";
     case "out_for_delivery":
       return "bg-orange-50 text-orange-700";
     case "delivered":
-      return "bg-green-50 text-green-700";
+      return "bg-violet-50 text-violet-700";
     case "cancelled":
       return "bg-red-50 text-red-700";
     default:

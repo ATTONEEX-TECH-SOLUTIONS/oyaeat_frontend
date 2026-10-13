@@ -36,7 +36,7 @@ export function DashboardHeader({
             onClick={onToggleShift}
             disabled={isActionLoading}
             className={`relative w-16 h-8 flex items-center rounded-full p-1 cursor-pointer transition-colors duration-300 ease-in-out outline-none border-none ${
-              isOnline ? "bg-green-500" : "bg-gray-300"
+              isOnline ? "bg-violet-500" : "bg-gray-300"
             } ${isActionLoading ? "opacity-50 cursor-not-allowed" : ""}`}
           >
             <div
@@ -44,7 +44,7 @@ export function DashboardHeader({
             />
           </button>
           <span
-            className={`font-bold text-sm uppercase tracking-wider ${isOnline ? "text-green-600" : "text-gray-500"}`}
+            className={`font-bold text-sm uppercase tracking-wider ${isOnline ? "text-violet-600" : "text-gray-500"}`}
           >
             {isActionLoading
               ? "Updating..."
@@ -56,7 +56,7 @@ export function DashboardHeader({
       </div>
 
       {isOnline ? (
-        <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 px-6 py-3 rounded-xl flex items-center gap-2 text-xs animate-pulse">
+        <div className="bg-violet-50 border border-violet-200 text-violet-800 px-6 py-3 rounded-xl flex items-center gap-2 text-xs animate-pulse">
           <span>📡</span>
           <span>
             Live Tracking Active: Your real-time position is streaming to

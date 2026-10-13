@@ -31,16 +31,16 @@ export default function MetricsSummary({ metrics }: { metrics: AdminMetrics }) {
       </div>
 
       {/* Admin Commission */}
-      <div className="bg-emerald-950 p-5 rounded-xl text-white flex items-center justify-between">
+      <div className="bg-violet-950 p-5 rounded-xl text-white flex items-center justify-between">
         <div>
-          <p className="text-xs font-bold text-emerald-300 uppercase tracking-wider">
+          <p className="text-xs font-bold text-violet-300 uppercase tracking-wider">
             Admin Commission
           </p>
-          <h3 className="text-xl font-black text-emerald-50 mt-1">
+          <h3 className="text-xl font-black text-violet-50 mt-1">
             {formatCurrency(metrics.totalAdminCommission)}
           </h3>
         </div>
-        <div className="w-10 h-10 bg-emerald-900 rounded-lg flex items-center justify-center text-emerald-400">
+        <div className="w-10 h-10 bg-violet-900 rounded-lg flex items-center justify-center text-violet-400">
           <Percent className="w-5 h-5" />
         </div>
       </div>

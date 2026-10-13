@@ -118,7 +118,7 @@ export default function RiderProfileSetup() {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-48">
-        <Loader2 className="w-6 h-6 animate-spin text-green-600" />
+        <Loader2 className="w-6 h-6 animate-spin text-violet-600" />
       </div>
     );
   }
@@ -141,8 +141,8 @@ export default function RiderProfileSetup() {
           <div
             className={`flex items-center gap-1 px-2.5 py-0.5 rounded text-[10px] font-bold ${
               isVerified
-                ? "bg-green-50 border border-green-200 text-green-700"
-                : "bg-amber-50 border border-amber-200 text-amber-700"
+                ? "bg-violet-50 border border-violet-200 text-violet-700"
+                : "bg-mango-50 border border-mango-200 text-mango-700"
             }`}
           >
             {isVerified ? (
@@ -166,7 +166,7 @@ export default function RiderProfileSetup() {
             </span>
             <div
               onClick={() => fileInputRef.current?.click()}
-              className="group relative w-16 h-16 rounded-full bg-emerald-800 border-2 border-white shadow-sm flex items-center justify-center cursor-pointer overflow-hidden"
+              className="group relative w-16 h-16 rounded-full bg-violet-800 border-2 border-white shadow-sm flex items-center justify-center cursor-pointer overflow-hidden"
             >
               {previewUrl ? (
                 <Image
@@ -214,7 +214,7 @@ export default function RiderProfileSetup() {
                     onChange={(e) =>
                       setFormData((p) => ({ ...p, firstName: e.target.value }))
                     }
-                    className="w-full bg-white border border-slate-200 rounded-lg py-1.5 pl-8 pr-2.5 text-xs text-slate-900 focus:outline-none focus:border-green-600 focus:ring-1 focus:ring-green-600"
+                    className="w-full bg-white border border-slate-200 rounded-lg py-1.5 pl-8 pr-2.5 text-xs text-slate-900 focus:outline-none focus:border-violet-600 focus:ring-1 focus:ring-violet-600"
                   />
                 </div>
               </div>
@@ -233,7 +233,7 @@ export default function RiderProfileSetup() {
                     onChange={(e) =>
                       setFormData((p) => ({ ...p, lastName: e.target.value }))
                     }
-                    className="w-full bg-white border border-slate-200 rounded-lg py-1.5 pl-8 pr-2.5 text-xs text-slate-900 focus:outline-none focus:border-green-600 focus:ring-1 focus:ring-green-600"
+                    className="w-full bg-white border border-slate-200 rounded-lg py-1.5 pl-8 pr-2.5 text-xs text-slate-900 focus:outline-none focus:border-violet-600 focus:ring-1 focus:ring-violet-600"
                   />
                 </div>
               </div>

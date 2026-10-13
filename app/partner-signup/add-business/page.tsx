@@ -165,16 +165,16 @@ export default function AddBusinessPage() {
       <header className="h-[60px] bg-white border-b border-gray-100 px-6 md:px-10 flex items-center justify-between flex-shrink-0">
         <Link href="/" className="flex items-center gap-1">
           <span className="text-[22px] font-black tracking-tight leading-none">
-            <span className="text-[#2d5f4f]">Oya</span>
+            <span className="text-[#5b21b6]">Oya</span>
             <span className="text-gray-900">Eat</span>
           </span>
         </Link>
         <div className="flex items-center gap-2 text-xs font-semibold">
-          <span className={subStep === 1 ? "text-[#2d5f4f]" : "text-gray-400"}>
+          <span className={subStep === 1 ? "text-[#5b21b6]" : "text-gray-400"}>
             Business Info
           </span>
           <span className="text-gray-300">›</span>
-          <span className={subStep === 2 ? "text-[#2d5f4f]" : "text-gray-400"}>
+          <span className={subStep === 2 ? "text-[#5b21b6]" : "text-gray-400"}>
             Location
           </span>
           <span className="text-gray-300">›</span>
@@ -191,7 +191,7 @@ export default function AddBusinessPage() {
 
         {/* Step label + heading */}
         <div className="mb-6 flex-shrink-0">
-          <p className="text-[10px] font-bold tracking-widest uppercase text-[#2d5f4f] mb-1">
+          <p className="text-[10px] font-bold tracking-widest uppercase text-[#5b21b6] mb-1">
             Step 1 of 2 —{" "}
             {subStep === 1 ? "Business Info" : "Location & Address"}
           </p>
@@ -251,7 +251,7 @@ export default function AddBusinessPage() {
             <button
               type="button"
               onClick={handleNextStageValidation}
-              className="flex items-center gap-2 bg-[#2d5f4f] hover:bg-[#234a3d] active:scale-[0.98] text-white text-sm font-bold px-6 py-2.5 rounded-xl transition-all"
+              className="flex items-center gap-2 bg-[#5b21b6] hover:bg-[#3b1a78] active:scale-[0.98] text-white text-sm font-bold px-6 py-2.5 rounded-xl transition-all"
             >
               Continue <ArrowRight className="w-4 h-4" />
             </button>
@@ -260,7 +260,7 @@ export default function AddBusinessPage() {
               type="button"
               onClick={handleSubmit}
               disabled={isLoading}
-              className="flex items-center gap-2 bg-[#2d5f4f] hover:bg-[#234a3d] active:scale-[0.98] disabled:opacity-40 text-white text-sm font-bold px-6 py-2.5 rounded-xl transition-all"
+              className="flex items-center gap-2 bg-[#5b21b6] hover:bg-[#3b1a78] active:scale-[0.98] disabled:opacity-40 text-white text-sm font-bold px-6 py-2.5 rounded-xl transition-all"
             >
               {isLoading ? (
                 <>

@@ -28,7 +28,7 @@ export function RiderChatSidebar({
         <button
           type="button"
           onClick={() => setIsCreating(true)}
-          className="p-1.5 rounded-lg bg-green-50 text-green-700 hover:bg-green-600 hover:text-white transition-colors border border-green-100"
+          className="p-1.5 rounded-lg bg-violet-50 text-violet-700 hover:bg-violet-600 hover:text-white transition-colors border border-violet-100"
           title="Create Complaint Ticket"
         >
           <Plus className="w-3.5 h-3.5" />
@@ -54,7 +54,7 @@ export function RiderChatSidebar({
             }}
             className={`p-4 border-b border-gray-100 cursor-pointer transition-colors text-left relative ${
               activeThreadId === t.id && !isCreating
-                ? "bg-green-50/30 border-l-4 border-l-green-600 font-bold"
+                ? "bg-violet-50/30 border-l-4 border-l-violet-600 font-bold"
                 : "hover:bg-gray-50"
             }`}
           >

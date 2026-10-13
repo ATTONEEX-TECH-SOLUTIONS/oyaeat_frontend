@@ -9,11 +9,17 @@ interface AutocompleteProps {
     coords: { lat: number; lng: number },
   ) => void;
   disabled?: boolean;
+  /** Pass null to hide the built-in label (when the parent renders its own). */
+  label?: string | null;
+  /** Called when the user edits the text after picking a suggestion. */
+  onClear?: () => void;
 }
 
 export default function AddressAutocomplete({
   onAddressSelected,
   disabled,
+  label = "Delivery Dropoff Address *",
+  onClear,
 }: AutocompleteProps) {
   const placesLibrary = useMapsLibrary("places");
   const [autocomplete, setAutocomplete] =
@@ -60,15 +66,20 @@ export default function AddressAutocomplete({
 
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-semibold text-gray-700">
-        Delivery Dropoff Address *
-      </label>
+      {label !== null && (
+        <label className="block text-sm font-semibold text-gray-700">
+          {label}
+        </label>
+      )}
       <input
         ref={inputRef}
         type="text"
         disabled={disabled}
+        onChange={() => onClear?.()}
+        autoComplete="off"
+        aria-label="Delivery address"
         placeholder="Type your street address, estate, or building name..."
-        className="w-full text-gray-900 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#2d5f4f] focus:border-transparent outline-none disabled:bg-gray-100 transition shadow-sm text-sm"
+        className="h-12 w-full rounded-xl border border-input bg-card px-4 text-base text-foreground outline-none transition placeholder:text-muted-foreground/70 focus:border-ring focus:ring-4 focus:ring-ring/15 disabled:opacity-60"
       />
     </div>
   );

@@ -144,7 +144,7 @@ export default function SupportAndNotificationsView() {
   if (loading) {
     return (
       <div className="p-8 text-center text-gray-500 font-bold h-[400px] flex items-center justify-center">
-        <Loader2 className="w-6 h-6 animate-spin mx-auto text-green-600" />
+        <Loader2 className="w-6 h-6 animate-spin mx-auto text-violet-600" />
       </div>
     );
   }
@@ -158,7 +158,7 @@ export default function SupportAndNotificationsView() {
           onClick={() => setActiveTab("support")}
           className={`flex-1 py-4 text-sm font-bold border-b-2 flex items-center justify-center gap-2 transition-all ${
             activeTab === "support"
-              ? "border-green-600 text-green-600 bg-white"
+              ? "border-violet-600 text-violet-600 bg-white"
               : "text-gray-500 hover:text-gray-700"
           }`}
         >
@@ -169,7 +169,7 @@ export default function SupportAndNotificationsView() {
           onClick={() => setActiveTab("alerts")}
           className={`flex-1 py-4 text-sm font-bold border-b-2 flex items-center justify-center gap-2 transition-all ${
             activeTab === "alerts"
-              ? "border-green-600 text-green-600 bg-white"
+              ? "border-violet-600 text-violet-600 bg-white"
               : "text-gray-500 hover:text-gray-700"
           }`}
         >

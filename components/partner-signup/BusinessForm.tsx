@@ -17,7 +17,7 @@ interface BusinessFormProps {
 }
 
 const inputClass =
-  "w-full text-gray-900 px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#2d5f4f] focus:border-transparent outline-none disabled:bg-gray-50 text-sm font-medium placeholder:text-gray-400 transition-shadow";
+  "w-full text-gray-900 px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#5b21b6] focus:border-transparent outline-none disabled:bg-gray-50 text-sm font-medium placeholder:text-gray-400 transition-shadow";
 
 const labelClass =
   "block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5";

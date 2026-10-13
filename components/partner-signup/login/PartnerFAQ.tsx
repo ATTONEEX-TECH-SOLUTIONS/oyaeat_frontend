@@ -8,7 +8,7 @@ export default function PartnerFAQ({ data }: { data: FAQItem[] }) {
   const [openFAQ, setOpenFAQ] = useState<number | null>(null);
 
   return (
-    <section className="py-20 px-6 bg-[#2d5f4f]">
+    <section className="py-20 px-6 bg-[#5b21b6]">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-black text-white mb-4">
@@ -35,7 +35,7 @@ export default function PartnerFAQ({ data }: { data: FAQItem[] }) {
                     {faq.question}
                   </span>
                   <ChevronDown
-                    className={`w-5 h-5 text-[#2d5f4f] transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
+                    className={`w-5 h-5 text-[#5b21b6] transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
                   />
                 </button>
                 <div

@@ -58,7 +58,7 @@ export default function AccountOnboarding({
             placeholder="partner@email.com"
             value={form.userEmail}
             onChange={(e) => setForm({ ...form, userEmail: e.target.value })}
-            className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-xs focus:outline-none focus:border-emerald-800 text-gray-900"
+            className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-xs focus:outline-none focus:border-violet-800 text-gray-900"
           />
         </div>
 
@@ -131,7 +131,7 @@ export default function AccountOnboarding({
         <button
           type="submit"
           disabled={processing}
-          className="w-full bg-emerald-800 hover:bg-emerald-900 text-white font-bold py-2.5 rounded-lg text-xs transition-colors flex items-center justify-center gap-1.5"
+          className="w-full bg-violet-800 hover:bg-violet-900 text-white font-bold py-2.5 rounded-lg text-xs transition-colors flex items-center justify-center gap-1.5"
         >
           {processing ? (
             <Loader2 className="w-3.5 h-3.5 animate-spin" />

@@ -71,12 +71,12 @@ export function ActiveBroadcastsTable({
                         </span>
                       )}
                       {isPending && (
-                        <span className="bg-amber-50 border border-amber-200 text-amber-600 px-2.5 py-1 rounded-full font-bold animate-pulse">
+                        <span className="bg-mango-50 border border-mango-200 text-mango-600 px-2.5 py-1 rounded-full font-bold animate-pulse">
                           Awaiting Approval Review
                         </span>
                       )}
                       {promo.isActive && (
-                        <span className="bg-emerald-50 border border-emerald-200 text-emerald-600 px-2.5 py-1 rounded-full font-bold">
+                        <span className="bg-violet-50 border border-violet-200 text-violet-600 px-2.5 py-1 rounded-full font-bold">
                           Live & Active Stream
                         </span>
                       )}

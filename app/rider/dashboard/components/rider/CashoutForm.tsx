@@ -41,7 +41,7 @@ export default function CashoutForm({
 
       {/* Read-Only Account indicator since details are managed over email */}
       <div className="bg-gray-50 border border-gray-100 rounded-xl p-3 flex items-start gap-2.5">
-        <Info className="w-4 h-4 text-emerald-700 mt-0.5 flex-shrink-0" />
+        <Info className="w-4 h-4 text-violet-700 mt-0.5 flex-shrink-0" />
         <div className="text-[11px] text-gray-600 leading-tight">
           Destined for:{" "}
           <span className="font-bold text-gray-900">{linkedAccountText}</span>.
@@ -64,7 +64,7 @@ export default function CashoutForm({
               placeholder="0.00"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 pl-8 pr-4 text-sm focus:outline-none focus:border-green-600 text-gray-900 font-bold"
+              className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 pl-8 pr-4 text-sm focus:outline-none focus:border-violet-600 text-gray-900 font-bold"
             />
           </div>
         </div>
@@ -72,7 +72,7 @@ export default function CashoutForm({
         <button
           type="submit"
           disabled={processing || !amount}
-          className="w-full bg-green-600 hover:bg-green-700 text-white font-black py-3 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 text-sm disabled:opacity-50"
+          className="w-full bg-violet-600 hover:bg-violet-700 text-white font-black py-3 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 text-sm disabled:opacity-50"
         >
           {processing ? (
             <Loader2 className="w-4 h-4 animate-spin" />

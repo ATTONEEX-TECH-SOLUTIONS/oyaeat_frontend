@@ -1,7 +1,9 @@
-export default function CustomerBaseLayout({
+import CustomerShell from "@/components/customer/CustomerShell";
+
+export default function CustomerLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <div>{children}</div>;
+  return <CustomerShell>{children}</CustomerShell>;
 }

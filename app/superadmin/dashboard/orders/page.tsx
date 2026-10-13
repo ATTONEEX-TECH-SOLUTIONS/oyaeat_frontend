@@ -96,7 +96,7 @@ export default function SuperadminOrdersPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "pending":
-        return "bg-amber-100 text-amber-700 border-amber-200";
+        return "bg-mango-100 text-mango-700 border-mango-200";
       case "preparing":
         return "bg-blue-100 text-blue-700 border-blue-200";
       case "ready":
@@ -104,7 +104,7 @@ export default function SuperadminOrdersPage() {
       case "out_for_delivery":
         return "bg-purple-100 text-purple-700 border-purple-200";
       case "delivered":
-        return "bg-emerald-100 text-emerald-700 border-emerald-200";
+        return "bg-violet-100 text-violet-700 border-violet-200";
       case "cancelled":
         return "bg-rose-100 text-rose-700 border-rose-200";
       default:
@@ -113,14 +113,14 @@ export default function SuperadminOrdersPage() {
   };
 
   return (
-    <div className="flex min-h-screen" style={{ backgroundColor: "#F5F1EB" }}>
+    <div className="flex min-h-screen" style={{ backgroundColor: "#fffbef" }}>
       <Sidebar />
 
       <main className="flex-1 min-w-0 overflow-auto">
         <div className="p-6">
           <div className="mb-6 flex items-start justify-between">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#52B788] mb-1">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#8b5cf6] mb-1">
                 Super Admin
               </p>
               <h1 className="text-2xl font-black tracking-tight text-foreground">
@@ -140,7 +140,7 @@ export default function SuperadminOrdersPage() {
               >
                 <ShoppingCart
                   className="h-5 w-5"
-                  style={{ color: "#1B4332" }}
+                  style={{ color: "#3b0f7a" }}
                 />
               </div>
               <div>
@@ -159,14 +159,14 @@ export default function SuperadminOrdersPage() {
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search by ID, restaurant, or customer name..."
-                className="pl-10 h-10 rounded-xl border-border bg-card text-foreground placeholder:text-muted-foreground hover:border-[#a5d6a7] focus-visible:ring-[#1a5c2a] focus-visible:border-[#1a5c2a] transition-colors"
+                className="pl-10 h-10 rounded-xl border-border bg-card text-foreground placeholder:text-muted-foreground hover:border-[#c4b5fd] focus-visible:ring-[#5b21b6] focus-visible:border-[#5b21b6] transition-colors"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
 
             <select
-              className="h-10 px-4 rounded-xl border border-border bg-card text-sm font-semibold text-foreground outline-none hover:border-[#a5d6a7] focus:border-[#1a5c2a] transition-colors shadow-sm"
+              className="h-10 px-4 rounded-xl border border-border bg-card text-sm font-semibold text-foreground outline-none hover:border-[#c4b5fd] focus:border-[#5b21b6] transition-colors shadow-sm"
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as any)}
             >
@@ -183,7 +183,7 @@ export default function SuperadminOrdersPage() {
               variant="outline"
               onClick={fetchOrders}
               disabled={loading}
-              className="h-10 rounded-xl border-border bg-card text-[#2D6A4F] font-semibold hover:bg-[#F0F7F3] hover:border-[#52B788] transition-all gap-2 px-4 shrink-0 shadow-sm"
+              className="h-10 rounded-xl border-border bg-card text-[#6d28d9] font-semibold hover:bg-[#f5f3ff] hover:border-[#8b5cf6] transition-all gap-2 px-4 shrink-0 shadow-sm"
             >
               <RefreshCw
                 className={`h-4 w-4 ${loading ? "animate-spin" : ""}`}
@@ -246,10 +246,10 @@ export default function SuperadminOrdersPage() {
                     filtered.map((order, i) => (
                       <tr
                         key={order.id || i}
-                        className="border-b border-border/40 last:border-0 hover:bg-[#F0F7F1] transition-colors cursor-default"
+                        className="border-b border-border/40 last:border-0 hover:bg-[#f5f3ff] transition-colors cursor-default"
                       >
                         <td className="px-6 py-4">
-                          <span className="font-black text-[#1a5c2a]">
+                          <span className="font-black text-[#5b21b6]">
                             #{order.id}
                           </span>
                         </td>
@@ -262,7 +262,7 @@ export default function SuperadminOrdersPage() {
                           </p>
                         </td>
                         <td className="px-6 py-4">
-                          <span className="text-sm font-semibold text-[#4A7C59] bg-background px-2 py-1 rounded-md border border-border/50">
+                          <span className="text-sm font-semibold text-[#7c3aed] bg-background px-2 py-1 rounded-md border border-border/50">
                             {order.customer?.firstName ||
                               order.customer?.name ||
                               order.customerName ||
@@ -289,7 +289,7 @@ export default function SuperadminOrdersPage() {
                           )}
                         </td>
                         <td className="px-6 py-4 text-right">
-                          <button className="p-2 text-[#4A7C59] hover:bg-[#D8E4DC] hover:text-[#1a5c2a] rounded-xl transition-colors">
+                          <button className="p-2 text-[#7c3aed] hover:bg-[#e6e0f3] hover:text-[#5b21b6] rounded-xl transition-colors">
                             <ArrowRight className="w-4 h-4" />
                           </button>
                         </td>
@@ -310,7 +310,7 @@ export default function SuperadminOrdersPage() {
                   variant="outline"
                   disabled={page === 1 || loading}
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  className="h-9 px-4 rounded-xl border-border text-[#2D6A4F] hover:bg-[#F0F7F3] transition-colors"
+                  className="h-9 px-4 rounded-xl border-border text-[#6d28d9] hover:bg-[#f5f3ff] transition-colors"
                 >
                   Previous
                 </Button>
@@ -318,7 +318,7 @@ export default function SuperadminOrdersPage() {
                   variant="outline"
                   disabled={!hasNextPage || loading}
                   onClick={() => setPage((p) => p + 1)}
-                  className="h-9 px-4 rounded-xl border-border text-[#2D6A4F] hover:bg-[#F0F7F3] transition-colors"
+                  className="h-9 px-4 rounded-xl border-border text-[#6d28d9] hover:bg-[#f5f3ff] transition-colors"
                 >
                   Next
                 </Button>

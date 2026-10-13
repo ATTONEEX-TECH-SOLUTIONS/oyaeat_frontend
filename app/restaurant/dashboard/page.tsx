@@ -143,7 +143,7 @@ export default function DashboardPage() {
       <div
         style={{
           background: "#fff",
-          border: "1px solid #fde8c9",
+          border: "1px solid #fff4d6",
           borderRadius: 16,
           padding: 24,
         }}
@@ -195,7 +195,7 @@ export default function DashboardPage() {
         <Link
           href={`/partner-signup/verify-business?businessId=${businessProfile?.id}&businessName=${encodeURIComponent(businessProfile?.name || "")}`}
         >
-          <button className="bg-[#2d5f4f] text-white font-black text-sm px-6 py-3 rounded-xl hover:bg-[#234a3d] transition shadow-sm">
+          <button className="bg-[#5b21b6] text-white font-black text-sm px-6 py-3 rounded-xl hover:bg-[#3b1a78] transition shadow-sm">
             Update Submission
           </button>
         </Link>
@@ -238,7 +238,7 @@ export default function DashboardPage() {
           <h1
             className="truncate max-w-[80vw] lg:max-w-2xl capitalize"
             style={{
-              color: "#1a5c2a",
+              color: "#5b21b6",
               fontWeight: 800,
               fontSize: 28,
               margin: 0,
@@ -248,7 +248,7 @@ export default function DashboardPage() {
               ? `${businessProfile.name} Dashboard`
               : "Dashboard"}
           </h1>
-          <p style={{ color: "#4a7c59", fontSize: 13, margin: "4px 0 0" }}>
+          <p style={{ color: "#7c3aed", fontSize: 13, margin: "4px 0 0" }}>
             Welcome back! Here's your restaurant overview.
           </p>
         </div>
@@ -259,11 +259,11 @@ export default function DashboardPage() {
             alignItems: "center",
             gap: 7,
             background:
-              suspensionStrategy.type === "shadow" ? "#fff3e0" : "#e8f5e9",
+              suspensionStrategy.type === "shadow" ? "#fff3e0" : "#f1ebff",
             border:
               suspensionStrategy.type === "shadow"
                 ? "1px solid #ffe0b2"
-                : "1px solid #c8e6c9",
+                : "1px solid #ddd6fe",
             borderRadius: 20,
             padding: "6px 14px",
           }}
@@ -274,7 +274,7 @@ export default function DashboardPage() {
               height: 8,
               borderRadius: "50%",
               background:
-                suspensionStrategy.type === "shadow" ? "#ef6c00" : "#2e7d32",
+                suspensionStrategy.type === "shadow" ? "#ef6c00" : "#6d28d9",
               display: "inline-block",
               boxShadow:
                 suspensionStrategy.type === "shadow"
@@ -287,7 +287,7 @@ export default function DashboardPage() {
               fontSize: 12,
               fontWeight: 600,
               color:
-                suspensionStrategy.type === "shadow" ? "#ef6c00" : "#2e7d32",
+                suspensionStrategy.type === "shadow" ? "#ef6c00" : "#6d28d9",
             }}
           >
             {suspensionStrategy.type === "shadow"

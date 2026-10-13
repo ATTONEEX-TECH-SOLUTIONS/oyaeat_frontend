@@ -54,10 +54,10 @@ export default function MenuPage() {
     <div className="space-y-6">
       {/* Page header */}
       <div>
-        <h1 className="text-3xl font-bold" style={{ color: "#1a5c2a" }}>
+        <h1 className="text-3xl font-bold" style={{ color: "#5b21b6" }}>
           Menu Management
         </h1>
-        <p className="mt-1 text-sm" style={{ color: "#4a7c59" }}>
+        <p className="mt-1 text-sm" style={{ color: "#7c3aed" }}>
           Manage your restaurant menu items and categories.
         </p>
       </div>
@@ -68,7 +68,7 @@ export default function MenuPage() {
         <div className="flex-1 relative">
           <Search
             className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4"
-            style={{ color: "#4a7c59" }}
+            style={{ color: "#7c3aed" }}
           />
           <input
             type="text"
@@ -78,11 +78,11 @@ export default function MenuPage() {
             className="w-full pl-10 pr-4 py-2.5 text-sm rounded-lg border outline-none transition"
             style={{
               backgroundColor: "#ffffff",
-              borderColor: "#c8e6c9",
-              color: "#1a5c2a",
+              borderColor: "#ddd6fe",
+              color: "#5b21b6",
             }}
-            onFocus={(e) => (e.currentTarget.style.borderColor = "#2e7d32")}
-            onBlur={(e) => (e.currentTarget.style.borderColor = "#c8e6c9")}
+            onFocus={(e) => (e.currentTarget.style.borderColor = "#6d28d9")}
+            onBlur={(e) => (e.currentTarget.style.borderColor = "#ddd6fe")}
           />
         </div>
 
@@ -93,12 +93,12 @@ export default function MenuPage() {
             setShowForm(true);
           }}
           className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold text-white transition-colors flex-shrink-0"
-          style={{ backgroundColor: "#1a5c2a" }}
+          style={{ backgroundColor: "#5b21b6" }}
           onMouseOver={(e) =>
-            (e.currentTarget.style.backgroundColor = "#14491f")
+            (e.currentTarget.style.backgroundColor = "#3b0f7a")
           }
           onMouseOut={(e) =>
-            (e.currentTarget.style.backgroundColor = "#1a5c2a")
+            (e.currentTarget.style.backgroundColor = "#5b21b6")
           }
         >
           <Plus className="w-4 h-4" />
@@ -135,16 +135,16 @@ export default function MenuPage() {
       )}
 
       {/* Table */}
-      <div className="bg-card border border-[#c8e6c9] rounded-xl overflow-hidden shadow-sm">
+      <div className="bg-card border border-[#ddd6fe] rounded-xl overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-left">
-            <thead style={{ backgroundColor: "#e8f5e9" }}>
+            <thead style={{ backgroundColor: "#f1ebff" }}>
               <tr>
                 {["Item", "Category", "Price", "Status", "Actions"].map((h) => (
                   <th
                     key={h}
                     className="px-6 py-3 text-xs font-semibold uppercase tracking-wider"
-                    style={{ color: "#1a5c2a" }}
+                    style={{ color: "#5b21b6" }}
                   >
                     {h}
                   </th>
@@ -158,7 +158,7 @@ export default function MenuPage() {
                   <td
                     colSpan={5}
                     className="px-6 py-8 text-sm"
-                    style={{ color: "#4a7c59" }}
+                    style={{ color: "#7c3aed" }}
                   >
                     Loading menu items…
                   </td>
@@ -168,7 +168,7 @@ export default function MenuPage() {
                   <td
                     colSpan={5}
                     className="px-6 py-8 text-sm"
-                    style={{ color: "#4a7c59" }}
+                    style={{ color: "#7c3aed" }}
                   >
                     No menu items found.
                   </td>
@@ -179,10 +179,10 @@ export default function MenuPage() {
                     key={item.id}
                     className="transition-colors"
                     style={{
-                      borderTop: idx > 0 ? "1px solid #e8f5e9" : undefined,
+                      borderTop: idx > 0 ? "1px solid #f1ebff" : undefined,
                     }}
                     onMouseOver={(e) =>
-                      (e.currentTarget.style.backgroundColor = "#f5faf6")
+                      (e.currentTarget.style.backgroundColor = "#fbf9ff")
                     }
                     onMouseOut={(e) =>
                       (e.currentTarget.style.backgroundColor = "transparent")
@@ -195,19 +195,19 @@ export default function MenuPage() {
                           src={item.imageUrl || "/placeholder.svg"}
                           alt={item.name}
                           className="w-10 h-10 rounded-lg object-cover border"
-                          style={{ borderColor: "#c8e6c9" }}
+                          style={{ borderColor: "#ddd6fe" }}
                         />
                         <div>
                           <p
                             className="font-semibold text-sm"
-                            style={{ color: "#1a5c2a" }}
+                            style={{ color: "#5b21b6" }}
                           >
                             {item.name}
                           </p>
                           {item.description && (
                             <p
                               className="text-xs mt-0.5 truncate max-w-[200px]"
-                              style={{ color: "#4a7c59" }}
+                              style={{ color: "#7c3aed" }}
                             >
                               {item.description}
                             </p>
@@ -221,9 +221,9 @@ export default function MenuPage() {
                       <span
                         className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium border"
                         style={{
-                          backgroundColor: "#e8f5e9",
-                          color: "#2e7d32",
-                          borderColor: "#a5d6a7",
+                          backgroundColor: "#f1ebff",
+                          color: "#6d28d9",
+                          borderColor: "#c4b5fd",
                         }}
                       >
                         {item.category}
@@ -233,7 +233,7 @@ export default function MenuPage() {
                     {/* Price */}
                     <td
                       className="px-6 py-4 text-sm font-semibold"
-                      style={{ color: "#1a5c2a" }}
+                      style={{ color: "#5b21b6" }}
                     >
                       ₦{Number(item.price || 0).toLocaleString()}
                     </td>
@@ -245,9 +245,9 @@ export default function MenuPage() {
                         style={
                           item.available
                             ? {
-                                backgroundColor: "#e8f5e9",
-                                color: "#2e7d32",
-                                borderColor: "#a5d6a7",
+                                backgroundColor: "#f1ebff",
+                                color: "#6d28d9",
+                                borderColor: "#c4b5fd",
                               }
                             : {
                                 backgroundColor: "#fef2f2",
@@ -269,9 +269,9 @@ export default function MenuPage() {
                             setShowForm(true);
                           }}
                           className="p-2 rounded-lg transition-colors"
-                          style={{ color: "#2e7d32" }}
+                          style={{ color: "#6d28d9" }}
                           onMouseOver={(e) =>
-                            (e.currentTarget.style.backgroundColor = "#e8f5e9")
+                            (e.currentTarget.style.backgroundColor = "#f1ebff")
                           }
                           onMouseOut={(e) =>
                             (e.currentTarget.style.backgroundColor =

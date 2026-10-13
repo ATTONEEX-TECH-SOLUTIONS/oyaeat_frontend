@@ -56,7 +56,7 @@ export function CreateBannerForm({
   return (
     <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm xl:col-span-1 space-y-5">
       <div className="flex items-center gap-2 border-b pb-3 border-slate-100">
-        <PlusCircle className="text-[#2d5f4f] w-5 h-5" />
+        <PlusCircle className="text-[#5b21b6] w-5 h-5" />
         <h2 className="font-extrabold text-slate-800 text-sm uppercase tracking-wider">
           New Banner Campaign
         </h2>
@@ -171,7 +171,7 @@ export function CreateBannerForm({
         <Button
           type="submit"
           disabled={submitting}
-          className="w-full bg-[#2e7d32] hover:bg-[#1b5e20] text-white rounded-xl h-11 font-bold mt-4 shadow-sm transition-colors"
+          className="w-full bg-[#6d28d9] hover:bg-[#1b5e20] text-white rounded-xl h-11 font-bold mt-4 shadow-sm transition-colors"
         >
           {submitting ? (
             <>

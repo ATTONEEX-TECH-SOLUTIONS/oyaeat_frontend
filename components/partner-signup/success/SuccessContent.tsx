@@ -47,7 +47,7 @@ export default function SuccessContent() {
           <Link href="/" className="flex items-center gap-3 w-fit">
             <div className="flex flex-col">
               <span className="text-2xl font-black leading-none tracking-tight">
-                <span className="text-[#2d5f4f]">Oya</span>
+                <span className="text-[#5b21b6]">Oya</span>
                 <span className="text-gray-900">Eat</span>
               </span>
               <span className="text-[9px] font-bold tracking-wider uppercase text-gray-500 mt-0.5">
@@ -63,9 +63,9 @@ export default function SuccessContent() {
         <div className="w-full max-w-xl text-center space-y-5 flex flex-col justify-center">
           {/* Success Badge */}
           <div className="flex justify-center flex-shrink-0">
-            <div className="w-14 h-14 bg-[#2d5f4f]/10 rounded-full flex items-center justify-center border border-[#2d5f4f]/20 shadow-sm relative">
-              <CheckCircle2 className="w-7 h-7 text-[#2d5f4f]" />
-              <span className="absolute inset-0 bg-[#2d5f4f]/5 rounded-full animate-ping scale-105" />
+            <div className="w-14 h-14 bg-[#5b21b6]/10 rounded-full flex items-center justify-center border border-[#5b21b6]/20 shadow-sm relative">
+              <CheckCircle2 className="w-7 h-7 text-[#5b21b6]" />
+              <span className="absolute inset-0 bg-[#5b21b6]/5 rounded-full animate-ping scale-105" />
             </div>
           </div>
 
@@ -80,8 +80,8 @@ export default function SuccessContent() {
           </div>
 
           {/* Reference Document Box */}
-          <div className="bg-amber-50/60 border border-dashed border-amber-200 rounded-xl p-2.5 max-w-sm mx-auto text-center space-y-0.5 flex-shrink-0 w-full">
-            <p className="text-[9px] font-bold text-amber-800 uppercase tracking-widest">
+          <div className="bg-mango-50/60 border border-dashed border-mango-200 rounded-xl p-2.5 max-w-sm mx-auto text-center space-y-0.5 flex-shrink-0 w-full">
+            <p className="text-[9px] font-bold text-mango-800 uppercase tracking-widest">
               Application Tracking ID
             </p>
             <p className="text-base font-black text-gray-900 tracking-wider font-mono">
@@ -96,7 +96,7 @@ export default function SuccessContent() {
             </h2>
             <ul className="space-y-3">
               <li className="flex gap-3 items-start">
-                <span className="w-5 h-5 bg-[#2d5f4f] text-white rounded-full flex items-center justify-center text-[10px] font-black shrink-0 mt-0.5">
+                <span className="w-5 h-5 bg-[#5b21b6] text-white rounded-full flex items-center justify-center text-[10px] font-black shrink-0 mt-0.5">
                   1
                 </span>
                 <div>
@@ -110,7 +110,7 @@ export default function SuccessContent() {
                 </div>
               </li>
               <li className="flex gap-3 items-start">
-                <span className="w-5 h-5 bg-[#2d5f4f] text-white rounded-full flex items-center justify-center text-[10px] font-black shrink-0 mt-0.5">
+                <span className="w-5 h-5 bg-[#5b21b6] text-white rounded-full flex items-center justify-center text-[10px] font-black shrink-0 mt-0.5">
                   2
                 </span>
                 <div>
@@ -124,7 +124,7 @@ export default function SuccessContent() {
                 </div>
               </li>
               <li className="flex gap-3 items-start">
-                <span className="w-5 h-5 bg-[#2d5f4f] text-white rounded-full flex items-center justify-center text-[10px] font-black shrink-0 mt-0.5">
+                <span className="w-5 h-5 bg-[#5b21b6] text-white rounded-full flex items-center justify-center text-[10px] font-black shrink-0 mt-0.5">
                   3
                 </span>
                 <div>
@@ -144,13 +144,13 @@ export default function SuccessContent() {
           <div className="flex flex-col sm:flex-row gap-3 justify-center items-center pt-1 max-w-md mx-auto flex-shrink-0 w-full">
             <button
               onClick={() => router.push("/partner-signup")}
-              className="w-full sm:flex-1 px-4 py-2.5 border-2 border-gray-200 text-gray-600 font-bold text-xs rounded-xl hover:border-[#2d5f4f] hover:text-[#2d5f4f] transition-all flex items-center justify-center gap-1.5"
+              className="w-full sm:flex-1 px-4 py-2.5 border-2 border-gray-200 text-gray-600 font-bold text-xs rounded-xl hover:border-[#5b21b6] hover:text-[#5b21b6] transition-all flex items-center justify-center gap-1.5"
             >
               <ArrowLeft className="w-3.5 h-3.5" /> Back to Signup
             </button>
             <button
               onClick={() => router.push("/restaurant/login")}
-              className="w-full sm:flex-[1.3] px-4 py-3 bg-[#2d5f4f] text-white font-black text-xs rounded-xl hover:bg-[#234a3d] transition-all shadow-sm flex items-center justify-center gap-1.5 active:scale-[0.98]"
+              className="w-full sm:flex-[1.3] px-4 py-3 bg-[#5b21b6] text-white font-black text-xs rounded-xl hover:bg-[#3b1a78] transition-all shadow-sm flex items-center justify-center gap-1.5 active:scale-[0.98]"
             >
               <LayoutDashboard className="w-3.5 h-3.5" />
               <span>Monitor Dashboard Status</span>

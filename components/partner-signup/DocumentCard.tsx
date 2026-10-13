@@ -44,17 +44,17 @@ export default function DocumentCard({
     <div
       className={`rounded-md border transition-colors duration-200 px-2.5 py-2 h-full flex flex-col justify-between ${
         doc.uploaded
-          ? "border-[#2d5f4f]/30 bg-[#2d5f4f]/[0.04]"
+          ? "border-[#5b21b6]/30 bg-[#5b21b6]/[0.04]"
           : localError
             ? "border-red-200 bg-red-50/40"
-            : "border-gray-200 bg-white hover:border-[#2d5f4f]/30"
+            : "border-gray-200 bg-white hover:border-[#5b21b6]/30"
       }`}
     >
       <div className="flex items-center gap-2.5">
         <div
           className={`flex-shrink-0 w-6 h-6 rounded-md flex items-center justify-center ${
             doc.uploaded
-              ? "bg-[#2d5f4f] text-white"
+              ? "bg-[#5b21b6] text-white"
               : "bg-gray-100 text-gray-400"
           }`}
         >
@@ -113,7 +113,7 @@ export default function DocumentCard({
                   ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                   : doc.uploaded
                     ? "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
-                    : "bg-[#2d5f4f] text-white hover:bg-[#234a3d]"
+                    : "bg-[#5b21b6] text-white hover:bg-[#3b1a78]"
               }`}
             >
               {!doc.uploaded && <Upload className="w-2.5 h-2.5" />}

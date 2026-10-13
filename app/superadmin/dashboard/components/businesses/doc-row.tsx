@@ -19,7 +19,7 @@ export function DocRow({ doc }: { doc: DocumentItem }) {
       style={{ borderColor: C.border }}
     >
       <div className="flex items-center gap-2">
-        <Icon className="h-4 w-4 flex-shrink-0" style={{ color: C.greenMid }} />
+        <Icon className="h-4 w-4 flex-shrink-0" style={{ color: C.brandMid }} />
         <span className="text-xs font-semibold capitalize text-foreground">
           {doc.type.replace(/_/g, " ")}
         </span>
@@ -30,7 +30,7 @@ export function DocRow({ doc }: { doc: DocumentItem }) {
           target="_blank"
           rel="noreferrer"
           className="text-xs font-bold hover:underline"
-          style={{ color: C.greenMid }}
+          style={{ color: C.brandMid }}
         >
           View
         </a>

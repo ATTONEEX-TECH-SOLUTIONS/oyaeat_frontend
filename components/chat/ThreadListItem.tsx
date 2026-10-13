@@ -83,7 +83,7 @@ export function ThreadListItem({
         disabled={loadingAction}
         className={`w-full text-left p-3 rounded-xl transition-all border block relative ${
           isActive
-            ? "bg-white border-[#1a5c2a]/20 shadow-sm ring-1 ring-[#1a5c2a]/20"
+            ? "bg-white border-[#5b21b6]/20 shadow-sm ring-1 ring-[#5b21b6]/20"
             : "bg-transparent border-transparent hover:bg-gray-100"
         } ${isClosed ? "opacity-65" : ""}`}
       >
@@ -105,8 +105,8 @@ export function ThreadListItem({
               <span
                 className={`text-[8px] px-1 rounded font-bold uppercase tracking-wide ${
                   isClosed
-                    ? "bg-amber-100 text-amber-700"
-                    : "bg-green-100 text-green-700"
+                    ? "bg-mango-100 text-mango-700"
+                    : "bg-violet-100 text-violet-700"
                 }`}
               >
                 {thread.status || "open"}
@@ -128,7 +128,7 @@ export function ThreadListItem({
             </span>
 
             {hasUnread && (
-              <span className="bg-[#1a5c2a] text-white text-[9px] font-black h-4 min-w-4 px-1 rounded-full flex items-center justify-center animate-pulse shadow-sm">
+              <span className="bg-[#5b21b6] text-white text-[9px] font-black h-4 min-w-4 px-1 rounded-full flex items-center justify-center animate-pulse shadow-sm">
                 {thread.unreadCount}
               </span>
             )}
@@ -143,7 +143,7 @@ export function ThreadListItem({
           {thread.lastSenderName && (
             <span
               className={`mr-1 font-bold ${
-                hasUnread && !isActive ? "text-[#1a5c2a]" : "text-gray-700"
+                hasUnread && !isActive ? "text-[#5b21b6]" : "text-gray-700"
               }`}
             >
               {thread.lastSenderName}:
@@ -179,11 +179,11 @@ export function ThreadListItem({
               >
                 {isClosed ? (
                   <>
-                    <Unlock className="w-3 h-3 text-green-600" /> Re-open Ticket
+                    <Unlock className="w-3 h-3 text-violet-600" /> Re-open Ticket
                   </>
                 ) : (
                   <>
-                    <Lock className="w-3 h-3 text-amber-600" /> Close Ticket
+                    <Lock className="w-3 h-3 text-mango-600" /> Close Ticket
                   </>
                 )}
               </button>

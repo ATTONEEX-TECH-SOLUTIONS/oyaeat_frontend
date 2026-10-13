@@ -9,15 +9,15 @@ import { AlertCircle, Mail, Lock, ArrowRight, ShieldCheck } from "lucide-react";
 
 // ── Brand tokens ──────────────────────────────────────────────────────────────
 const C = {
-  green: "#1B4332",
-  greenMid: "#2D6A4F",
-  greenLight: "#52B788",
-  bg: "#F5F1EB",
+  brand: "#3b0f7a",
+  brandMid: "#6d28d9",
+  brandLight: "#8b5cf6",
+  bg: "#fffbef",
   white: "#FFFFFF",
   textDark: "#111827",
-  textMuted: "#6B7C6E",
-  border: "#D8E4DC",
-  error: "#C0392B",
+  textMuted: "#6b6480",
+  border: "#e6e0f3",
+  error: "#c8372d",
 };
 
 const schema = z.object({
@@ -46,7 +46,7 @@ function IllustrationPanel() {
             </p>
             <p
               className="text-xs font-semibold tracking-[0.2em]"
-              style={{ color: C.greenLight }}
+              style={{ color: C.brandLight }}
             >
               SUPER ADMIN
             </p>
@@ -103,10 +103,10 @@ function Field({
       <div
         className="flex items-center gap-3 rounded-xl border transition-all duration-200 overflow-hidden cursor-text"
         style={{
-          borderColor: error ? C.error : focused ? C.greenMid : C.border,
+          borderColor: error ? C.error : focused ? C.brandMid : C.border,
           backgroundColor: C.white,
           boxShadow: focused
-            ? `0 0 0 3px ${error ? C.error : C.greenMid}18`
+            ? `0 0 0 3px ${error ? C.error : C.brandMid}18`
             : undefined,
         }}
         onClick={() => ref.current?.focus()}
@@ -115,7 +115,7 @@ function Field({
           <Icon
             className="h-4 w-4 flex-shrink-0"
             style={{
-              color: error ? C.error : focused ? C.greenMid : C.textMuted,
+              color: error ? C.error : focused ? C.brandMid : C.textMuted,
             }}
           />
         </div>
@@ -220,7 +220,7 @@ export default function AdminLoginPage() {
           <div className="flex items-center gap-3 mb-8 lg:hidden">
             <div
               className="w-9 h-9 rounded-xl flex items-center justify-center"
-              style={{ backgroundColor: C.green }}
+              style={{ backgroundColor: C.brand }}
             >
               <svg width="14" height="18" viewBox="0 0 16 20" fill="none">
                 <path d="M9 1L1 11h7l-1 8 8-10H8l1-8z" fill="white" />
@@ -247,7 +247,7 @@ export default function AdminLoginPage() {
             className="flex items-center gap-2 mb-6 rounded-xl border px-4 py-3 w-fit"
             style={{ borderColor: C.border, backgroundColor: C.white }}
           >
-            <ShieldCheck className="h-4 w-4" style={{ color: C.greenMid }} />
+            <ShieldCheck className="h-4 w-4" style={{ color: C.brandMid }} />
             <span
               className="text-xs font-bold uppercase tracking-widest"
               style={{ color: C.textMuted }}
@@ -314,7 +314,7 @@ export default function AdminLoginPage() {
               disabled={submitting}
               className="mt-2 w-full flex items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-bold text-white transition-opacity"
               style={{
-                backgroundColor: C.green,
+                backgroundColor: C.brand,
                 opacity: submitting ? 0.7 : 1,
               }}
             >

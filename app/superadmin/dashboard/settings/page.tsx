@@ -129,7 +129,7 @@ export default function SettingsPage() {
         {/* Sticky Header */}
         <div className="sticky top-0 z-20 bg-white/80 backdrop-blur-md px-8 py-6 border-b border-gray-100 flex items-center justify-between shrink-0">
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#52B788] mb-1">
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#8b5cf6] mb-1">
               Super Admin
             </p>
             <h1 className="text-2xl font-black tracking-tight text-gray-900">
@@ -143,7 +143,7 @@ export default function SettingsPage() {
           <button
             onClick={handleSave}
             disabled={saving}
-            className="flex items-center gap-2 px-6 py-3 rounded-xl bg-[#1a5c2a] hover:bg-[#13441e] text-white font-bold shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm shrink-0 cursor-pointer"
+            className="flex items-center gap-2 px-6 py-3 rounded-xl bg-[#5b21b6] hover:bg-[#13441e] text-white font-bold shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm shrink-0 cursor-pointer"
           >
             {saving ? (
               <Loader2 className="w-4 h-4 animate-spin" />

@@ -9,17 +9,18 @@ import {
 } from "lucide-react";
 
 export const C = {
-  green: "#1B4332",
-  greenMid: "#2D6A4F",
-  greenLight: "#52B788",
-  amber: "#D4860B",
-  amberLight: "#F4A620",
-  bg: "#F5F1EB",
+  brand: "#5b21b6",
+  brandMid: "#6d28d9",
+  brandLight: "#8b5cf6",
+  mango: "#d97f06",
+  mangoLight: "#fdba2d",
+  success: "#15803d",
+  bg: "#fbf9ff",
   white: "#FFFFFF",
   textDark: "inherit",
-  textMuted: "#6B7C6E",
-  border: "#D8E4DC",
-  error: "#C0392B",
+  textMuted: "#6b6480",
+  border: "#e6e0f3",
+  error: "#c8372d",
 };
 
 export const STATUS_CONFIG: Record<
@@ -28,24 +29,24 @@ export const STATUS_CONFIG: Record<
 > = {
   pending_review: {
     label: "Pending",
-    color: C.amber,
-    bg: "#FEF3CD",
+    color: C.mango,
+    bg: "#fff4d6",
     icon: Clock,
   },
   approved: {
     label: "Approved",
-    color: C.greenMid,
-    bg: "#D8F0E4",
+    color: C.success,
+    bg: "#dcfce7",
     icon: Check,
   },
   rejected: { label: "Rejected", color: C.error, bg: "#FDECEA", icon: X },
   suspended: {
     label: "Suspended",
-    color: "#6B7C6E",
-    bg: "#E8EEEB",
+    color: "#6b6480",
+    bg: "#f3f0fa",
     icon: PauseCircle,
   },
-  draft: { label: "Draft", color: "#6B7C6E", bg: "#E8EEEB", icon: FileText },
+  draft: { label: "Draft", color: "#6b6480", bg: "#f3f0fa", icon: FileText },
 };
 
 export const STATUS_TABS = [
