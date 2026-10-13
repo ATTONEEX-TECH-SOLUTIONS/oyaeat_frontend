@@ -86,10 +86,7 @@ export default function ReviewsPage() {
       {/* ── Header ── */}
       <div className="flex items-end justify-between">
         <div>
-          <h1
-            className="text-2xl font-black tracking-tight"
-            style={{ color: C.brand }}
-          >
+          <h1 className="font-display text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
             Customer Reviews
           </h1>
           <p

@@ -171,7 +171,7 @@ export default function RestaurantAdvertPage() {
   return (
     <div className="p-4 md:p-6 w-full flex flex-col justify-start items-start gap-6">
       <div className="border-b pb-4 border-slate-100 w-full max-w-7xl">
-        <h1 className="text-xl font-black text-slate-900 tracking-tight">
+        <h1 className="font-display text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
           Marketing Campaign Desks
         </h1>
         <p className="text-xs text-slate-500 mt-1">

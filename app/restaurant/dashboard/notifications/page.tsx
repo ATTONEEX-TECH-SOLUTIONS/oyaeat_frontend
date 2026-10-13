@@ -81,10 +81,7 @@ export default function NotificationsPage() {
     <div className="w-full h-full flex flex-col pb-20">
       <div className="flex items-center justify-between mb-8 shrink-0">
         <div>
-          <p className="text-xs font-bold uppercase tracking-[0.2em] mb-1 text-[#8b5cf6]">
-            Vendor Portal
-          </p>
-          <h1 className="text-2xl font-black tracking-tight text-[#1a1033]">
+          <h1 className="font-display text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
             Notifications
           </h1>
         </div>

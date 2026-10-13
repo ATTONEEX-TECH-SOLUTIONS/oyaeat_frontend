@@ -1,7 +1,6 @@
 "use client";
 
-import { DollarSign, Clock, ShieldAlert } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Clock, Landmark, Loader2 } from "lucide-react";
 
 interface BalanceCardProps {
   type: "available" | "pending";
@@ -12,68 +11,46 @@ interface BalanceCardProps {
   onLinkBank?: () => void;
 }
 
-export default function BalanceCard({
-  type,
-  amount,
-  hasBankDetails,
-  withdrawing,
-  onWithdraw,
-  onLinkBank,
-}: BalanceCardProps) {
+const naira = (n: number) => `₦${Math.round(n || 0).toLocaleString("en-NG")}`;
+
+export default function BalanceCard({ type, amount, hasBankDetails, withdrawing, onWithdraw, onLinkBank }: BalanceCardProps) {
   if (type === "available") {
     return (
-      <div className="flex flex-col justify-between rounded-2xl border p-6 shadow-sm relative overflow-hidden bg-[#3b0f7a] border-[#3b0f7a]">
-        <div className="absolute right-0 top-0 opacity-10">
-          <DollarSign className="h-48 w-48 -mr-10 -mt-10 text-white" />
+      <div className="lp-doodles relative flex flex-col justify-between overflow-hidden rounded-3xl p-5 text-white shadow-card sm:p-6">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-widest text-violet-200">Available balance</p>
+          <p className="font-display mt-1 text-4xl font-extrabold tracking-tight">{naira(amount)}</p>
         </div>
-        <div className="relative z-10 space-y-1">
-          <p className="text-sm font-bold uppercase tracking-widest text-[#c4b5fd]">
-            Available Balance
-          </p>
-          <p className="text-4xl font-black text-white">
-            ₦{Math.round(amount).toLocaleString("en-NG")}
-          </p>
-        </div>
-        <div className="relative z-10 mt-8 flex flex-col sm:flex-row gap-2">
+        <div className="mt-6">
           {hasBankDetails ? (
-            <Button
+            <button
               onClick={onWithdraw}
               disabled={amount <= 0 || withdrawing}
-              className="w-full sm:w-auto font-bold bg-white text-[#3b0f7a]"
+              className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-cta px-6 text-base font-extrabold text-cta-foreground shadow-sm transition hover:bg-mango-300 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
             >
-              {withdrawing ? "Processing..." : "Request Payout"}
-            </Button>
+              {withdrawing ? <Loader2 className="h-5 w-5 animate-spin" /> : "Request payout"}
+            </button>
           ) : (
-            <Button
+            <button
               onClick={onLinkBank}
-              className="w-full sm:w-auto font-bold flex items-center gap-1.5 bg-[#E6F4EA] text-[#137333]"
+              className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-white px-6 text-sm font-extrabold text-violet-900 transition hover:bg-violet-50 sm:w-auto"
             >
-              <ShieldAlert className="h-4 w-4" /> Link Bank Account To Cashout
-            </Button>
+              <Landmark className="h-4 w-4" /> Link a bank account to cash out
+            </button>
           )}
         </div>
       </div>
     );
   }
-
   return (
-    <div className="flex flex-col justify-between rounded-2xl border p-6 shadow-sm bg-white border-[#ddd6fe]">
-      <div className="space-y-1">
-        <div className="flex items-center gap-2">
-          <Clock className="h-4 w-4 text-mango-500" />
-          <p className="text-sm font-bold uppercase tracking-widest text-[#6b6480]">
-            Pending Payouts
-          </p>
-        </div>
-        <p className="text-3xl font-black text-gray-900">
-          ₦{Math.round(amount).toLocaleString("en-NG")}
+    <div className="flex flex-col justify-between rounded-3xl border border-border bg-card p-5 shadow-card sm:p-6">
+      <div>
+        <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">
+          <Clock className="h-4 w-4 text-mango-600" /> Pending payouts
         </p>
+        <p className="font-display mt-1 text-3xl font-extrabold tracking-tight">{naira(amount)}</p>
       </div>
-      <div className="mt-4">
-        <p className="text-xs text-[#6b6480]">
-          These funds are currently being processed by the system.
-        </p>
-      </div>
+      <p className="mt-4 text-sm text-muted-foreground">These funds are being processed and will reach your bank account shortly.</p>
     </div>
   );
 }

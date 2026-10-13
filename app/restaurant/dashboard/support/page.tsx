@@ -2,24 +2,13 @@
 
 import React from "react";
 import { ChatInterface } from "@/components/chat/chat-interface";
+import { PageHeader } from "@/components/shared/states";
 
 export default function VendorSupportPage() {
   return (
-    <div className="w-full flex flex-col h-[calc(100vh-60px)] pb-6 overflow-hidden">
-      {/* Header Info Area */}
-      <div className="mb-6 shrink-0">
-        <h1 className="text-2xl font-black tracking-tight text-[#3b0f7a]">
-          Vendor Support
-        </h1>
-        <p className="mt-1 text-sm font-medium text-[#6b6480]">
-          Contact superadmin for compliance requests or general assistance.
-        </p>
-      </div>
-
-      <div
-        className="flex-1 min-h-0 flex flex-col rounded-2xl border shadow-sm overflow-hidden bg-white"
-        style={{ borderColor: "#ddd6fe" }}
-      >
+    <div className="mx-auto flex h-[calc(100dvh-13rem)] max-w-4xl flex-col lg:h-[calc(100dvh-9.5rem)]">
+      <PageHeader title="Support" subtitle="Chat with the OyaEat team." />
+      <div className="min-h-0 flex-1">
         <ChatInterface role="vendor" />
       </div>
     </div>

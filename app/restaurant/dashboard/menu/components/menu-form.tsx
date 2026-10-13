@@ -141,11 +141,11 @@ export default function MenuForm({
 
   return (
     <div
-      className="fixed inset-0 flex items-center justify-center p-4 z-50"
+      className="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-4"
       style={{ backgroundColor: "rgba(0,0,0,0.45)" }}
     >
       <div
-        className="w-full max-w-md rounded-2xl shadow-xl overflow-hidden"
+        className="max-h-[92dvh] w-full max-w-md overflow-y-auto rounded-t-3xl shadow-xl sm:rounded-2xl"
         style={{ backgroundColor: "#ffffff", border: "1px solid #ddd6fe" }}
       >
         <div

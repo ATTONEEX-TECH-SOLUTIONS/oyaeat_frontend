@@ -334,7 +334,7 @@ export default function StaffPage() {
       {/* Page header */}
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold" style={{ color: "#5b21b6" }}>
+          <h1 className="font-display text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
             Staff Management
           </h1>
           <p className="mt-1 text-sm" style={{ color: "#7c3aed" }}>

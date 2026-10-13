@@ -45,3 +45,9 @@ use the semantic Tailwind classes below.
 - Shared pieces: `components/superadmin/ui.tsx` (AdminStat, Panel, Badge, OrderBadge) and `components/shared/states.tsx` (PageHeader, EmptyState, ErrorState, TableSkeleton).
 - Tables become stacked cards below `md`. The primary action in a view (Approve, Save) is the single mango button.
 - Admin pages read only `admin_token`; never fall back to another role's token.
+
+## Restaurant (vendor) patterns (done)
+- One shell (`components/restaurant/VendorShell.tsx`): sidebar on desktop; on mobile a top bar plus a bottom tab bar (Dashboard, Orders, Menu, Wallet, More). Owns the auth guard and the global new-order polling, sound and badge. Pages must not play their own order alerts.
+- Orders is a kitchen view: items visible without expanding, one big mango next-step button, urgency for orders waiting 3+ minutes, destructive actions behind a confirmation. Auto-advance is a visible switch the vendor controls.
+- Money and destructive actions (payout, delete dish, cancel order) always use a confirmation dialog and toast feedback, never `alert()` / `window.confirm`.
+- Menu has a one-tap Available / Sold out switch per dish.

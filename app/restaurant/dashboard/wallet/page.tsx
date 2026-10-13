@@ -1,158 +1,134 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { vendorApi, type WalletData } from "@/lib/api/vendor";
-import { Wallet, RefreshCw, XCircle, Info } from "lucide-react";
-import { Button } from "@/components/ui/button";
-
+import { useCallback, useEffect, useState } from "react";
+import { toast } from "sonner";
+import { Info, Wallet } from "lucide-react";
+import { vendorApi } from "@/lib/api/vendor";
 import BalanceCard from "../components/wallet/BalanceCard";
 import TransactionList from "../components/wallet/TransactionList";
+import { EmptyState, ErrorState, PageHeader } from "@/components/shared/states";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export default function WalletPage() {
-  const [wallet, setWallet] = useState<WalletData | null>(null);
+  const [wallet, setWallet] = useState<any>(null);
+  const [hasBankDetails, setHasBankDetails] = useState(false);
+  const [bankText, setBankText] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [withdrawing, setWithdrawing] = useState(false);
+  const [confirm, setConfirm] = useState<"payout" | "bank" | null>(null);
 
-  const [hasBankDetails, setHasBankDetails] = useState(false);
-  const [linkedBankText, setLinkedBankText] = useState("");
-
-  const load = async () => {
+  const load = useCallback(async () => {
     setLoading(true);
     setError("");
     try {
       const res = await vendorApi.getWallet();
       setWallet(res.wallet || null);
-      setHasBankDetails(res.hasBankDetails || false);
-      setLinkedBankText(res.linkedBankAccount || "");
+      setHasBankDetails(!!res.hasBankDetails);
+      setBankText(res.linkedBankAccount || "");
     } catch (e: any) {
-      if (
-        e?.message?.toLowerCase().includes("not found") ||
-        e?.message?.includes("404")
-      ) {
-        setWallet(null);
-      } else {
-        setError(e?.message || "Failed to load wallet data");
-      }
+      const m = String(e?.message || "").toLowerCase();
+      if (m.includes("not found") || m.includes("404")) setWallet(null);
+      else setError(e?.message || "We couldn't load your wallet.");
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     load();
-  }, []);
+  }, [load]);
 
-  const handleWithdraw = async () => {
+  const requestPayout = async () => {
+    setConfirm(null);
     if (!wallet || wallet.balance <= 0) return;
     setWithdrawing(true);
     try {
       await vendorApi.requestWithdrawal(wallet.balance);
-      alert("Withdrawal request submitted successfully!");
-      load();
+      toast.success("Payout requested. We'll notify you when it's sent.");
+      await load();
     } catch (e: any) {
-      alert(e?.message || "Failed to submit withdrawal request");
+      toast.error(e?.message || "Couldn't submit the payout request");
     } finally {
       setWithdrawing(false);
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex h-[60vh] flex-col items-center justify-center gap-3">
-        <RefreshCw className="h-8 w-8 animate-spin text-[#6d28d9]" />
-        <p className="font-medium text-[#6b6480]">Loading wallet...</p>
-      </div>
-    );
-  }
+  const naira = (n: number) => `₦${Math.round(n || 0).toLocaleString("en-NG")}`;
 
   return (
-    <div className="w-full space-y-6 pb-10">
-      <div>
-        <h1 className="text-2xl font-black tracking-tight text-[#3b0f7a]">
-          Wallet & Earnings
-        </h1>
-        <p className="mt-1 text-sm font-medium text-[#6b6480]">
-          Manage your restaurant earnings and request payouts.
-        </p>
-      </div>
+    <div className="space-y-5 sm:space-y-6">
+      <PageHeader title="Wallet" subtitle="Your earnings and payouts." />
 
-      {/* ── 🌟 NEW: INFORMATIONAL BANNER DISPLAYING BOUND BANK DETAILS FROM ADMIN EMAIL LINKING ── */}
-      <div
-        className={`rounded-xl p-4 flex items-start gap-3 max-w-xl border ${
-          hasBankDetails
-            ? "bg-gray-50 border-gray-200"
-            : "bg-red-50 border-red-200"
-        }`}
-      >
-        <Info
-          className={`w-5 h-5 mt-0.5 flex-shrink-0 ${hasBankDetails ? "text-[#6d28d9]" : "text-red-600"}`}
-        />
-        <div>
-          <h4 className="text-sm font-bold text-gray-900">
-            Settlement Destination Profile
-          </h4>
-          <p
-            className={`text-xs mt-1 ${hasBankDetails ? "text-gray-600" : "text-red-600 font-semibold"}`}
-          >
-            {hasBankDetails
-              ? `Your wallet payouts are pinned to: ${linkedBankText}.`
-              : "No verified settlement bank linked yet. Please submit your business bank details to support via email."}
-          </p>
-        </div>
-      </div>
-
-      {error ? (
-        <div className="flex flex-col items-center justify-center rounded-2xl border p-12 text-center bg-white border-[#ddd6fe]">
-          <XCircle className="mb-3 h-12 w-12 text-[#c8372d]" />
-          <h2 className="text-xl font-bold text-gray-900">
-            Failed to load wallet
-          </h2>
-          <p className="mt-2 text-sm text-[#6b6480]">{error}</p>
-          <Button
-            onClick={load}
-            className="mt-6"
-            variant="outline"
-            style={{ borderColor: "#6d28d9", color: "#6d28d9" }}
-          >
-            Try Again
-          </Button>
-        </div>
-      ) : !wallet ? (
-        <div className="flex flex-col items-center justify-center rounded-2xl border p-12 text-center bg-white border-[#ddd6fe]">
-          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#f5f3ff]">
-            <Wallet className="h-8 w-8 text-[#6d28d9]" />
+      {loading ? (
+        <div className="space-y-4" aria-busy="true">
+          <div className="grid gap-4 md:grid-cols-2">
+            <Skeleton className="h-40 rounded-3xl bg-muted" />
+            <Skeleton className="h-40 rounded-3xl bg-muted" />
           </div>
-          <h2 className="text-xl font-bold text-gray-900">No Wallet Data</h2>
-          <p className="mt-2 max-w-md text-sm text-[#6b6480]">
-            Your wallet tracking will begin automatically once your first orders
-            are delivered and paid.
-          </p>
-          <Button onClick={load} className="mt-6 gap-2 bg-[#3b0f7a] text-white">
-            <RefreshCw className="h-4 w-4" /> Refresh
-          </Button>
+          <Skeleton className="h-64 rounded-3xl bg-muted" />
         </div>
+      ) : error ? (
+        <ErrorState title="We couldn't load your wallet" message={error} onRetry={load} />
+      ) : !wallet ? (
+        <EmptyState icon={Wallet} title="No earnings yet" body="Your wallet starts tracking once your first orders are delivered and paid." action={{ label: "Refresh", onClick: load }} />
       ) : (
         <>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <BalanceCard
-              type="available"
-              amount={wallet.balance}
-              hasBankDetails={hasBankDetails}
-              withdrawing={withdrawing}
-              onWithdraw={handleWithdraw}
-              onLinkBank={() =>
-                alert(
-                  "Please submit your updated bank information to support via your registered email.",
-                )
-              }
-            />
+          <div className={`flex items-start gap-3 rounded-2xl border p-4 ${hasBankDetails ? "border-border bg-card" : "border-mango-300 bg-mango-50"}`}>
+            <Info className={`mt-0.5 h-5 w-5 shrink-0 ${hasBankDetails ? "text-primary" : "text-mango-700"}`} />
+            <div>
+              <p className="text-sm font-bold">Payout destination</p>
+              <p className="mt-0.5 text-sm text-muted-foreground">
+                {hasBankDetails ? `Payouts are sent to ${bankText}.` : "No bank account is linked yet. Email your business bank details to support to enable payouts."}
+              </p>
+            </div>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <BalanceCard type="available" amount={wallet.balance} hasBankDetails={hasBankDetails} withdrawing={withdrawing} onWithdraw={() => setConfirm("payout")} onLinkBank={() => setConfirm("bank")} />
             <BalanceCard type="pending" amount={wallet.pendingPayouts} />
           </div>
 
           <TransactionList transactions={wallet.transactions} />
         </>
       )}
+
+      <AlertDialog open={confirm !== null} onOpenChange={(o) => !o && setConfirm(null)}>
+        <AlertDialogContent className="rounded-3xl">
+          {confirm === "payout" ? (
+            <>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Request a payout of {naira(wallet?.balance)}?</AlertDialogTitle>
+                <AlertDialogDescription>The full available balance will be sent to {bankText || "your linked bank account"}.</AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel className="rounded-full">Not now</AlertDialogCancel>
+                <AlertDialogAction className="rounded-full bg-primary" onClick={requestPayout}>Request payout</AlertDialogAction>
+              </AlertDialogFooter>
+            </>
+          ) : (
+            <>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Link your bank account</AlertDialogTitle>
+                <AlertDialogDescription>Email your business bank details from your registered email address to support. We&apos;ll link the account and enable payouts.</AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogAction className="rounded-full bg-primary">Got it</AlertDialogAction>
+              </AlertDialogFooter>
+            </>
+          )}
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
