@@ -57,17 +57,17 @@ export default function RestaurantOrdersPage() {
   const [error, setError] = useState("");
   const [busy, setBusy] = useState<Set<number>>(new Set());
   const [cancelId, setCancelId] = useState<number | null>(null);
-  const [auto, setAuto] = useState(true);
+  const [auto, setAuto] = useState(false);
   const [, tick] = useState(0);
 
   const ordersRef = useRef<Order[]>([]);
-  const autoRef = useRef(true);
+  const autoRef = useRef(false);
   const inFlight = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem("vendor_auto_advance");
-      if (saved !== null) setAuto(saved === "1");
+      // Off unless the vendor has explicitly switched it on.
+      setAuto(localStorage.getItem("vendor_auto_advance") === "1");
     } catch {}
   }, []);
   useEffect(() => {
