@@ -3,9 +3,9 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import SignupHeader from "./SignupHeader";
-import StepIndicator from "./StepIndicator";
-import UploadProgressBar from "./UploadProgressBar";
+import FlowShell from "./FlowShell";
+import { FormError, PrimaryButton } from "./ui";
+import { Loader2 } from "lucide-react";
 import DocumentCard from "./DocumentCard";
 
 interface DocumentUpload {
@@ -230,7 +230,7 @@ export default function VerifyBusinessContent() {
             console.error("Cache purge failed:", cacheErr);
           }
         }
-        window.location.href = "/partner-signup/success";
+        window.location.href = `/partner-signup/success?businessName=${encodeURIComponent(businessName)}`;
       };
 
       if (nativeFilesCount === 0) {
@@ -276,79 +276,50 @@ export default function VerifyBusinessContent() {
   };
 
   const uploadedCount = documents.filter((doc) => doc.uploaded).length;
+  const pct = Math.round((uploadedCount / documents.length) * 100);
 
   if (pageLoading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <p className="text-gray-500 font-medium animate-pulse">
-          Loading details...
-        </p>
+      <div className="grid min-h-screen place-items-center bg-background text-sm font-semibold text-muted-foreground" aria-busy="true">
+        Loading your details…
       </div>
     );
   }
 
   return (
-    <div className="h-screen w-screen bg-[#f7f8f5] flex flex-col overflow-hidden">
-      <SignupHeader />
-      <div className="max-w-5xl w-full mx-auto px-4 py-3 flex-1 overflow-hidden flex flex-col min-h-0">
-        <StepIndicator currentStep={2} totalSteps={2} />
-
-        <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 mt-3 flex-1 flex flex-col min-h-0 overflow-hidden">
-          <div className="flex-shrink-0">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-violet-600">
-              Step 2 of 2 - KYB Compliance
-            </span>
-            <h1 className="text-lg font-bold text-gray-900 mt-0.5">
-              Verify your business
-            </h1>
-            <p className="text-gray-500 text-xs mt-0.5">
-              Upload compliance credentials for{" "}
-              <span className="font-semibold text-gray-700">
-                {businessName}
-              </span>
-              .
-            </p>
+    <FlowShell
+      step={4}
+      wide
+      eyebrow="Step 4 of 4"
+      title="Verify your business"
+      subtitle={`Upload the documents for ${businessName}. PDF, JPG or PNG, up to 5MB each.`}
+    >
+      <div className="space-y-5">
+        <div>
+          <div className="mb-1.5 flex items-center justify-between text-sm font-bold">
+            <span>{uploadedCount} of {documents.length} documents added</span>
+            <span className="text-muted-foreground">{pct}%</span>
           </div>
-
-          <div className="mt-3 flex-shrink-0">
-            <UploadProgressBar
-              completedCount={uploadedCount}
-              totalCount={documents.length}
-            />
-          </div>
-
-          {error && (
-            <div className="mt-2 bg-red-50 border border-red-100 rounded-xl p-2 text-xs text-red-600 font-medium flex-shrink-0">
-              {error}
-            </div>
-          )}
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3 flex-1 min-h-0 content-start overflow-hidden">
-            {documents.map((item) => (
-              <DocumentCard
-                key={item.id}
-                doc={item}
-                isSubmitting={isSubmitting}
-                onFileChange={(id: string, file: File | null) =>
-                  handleFileChange(id, file)
-                }
-              />
-            ))}
-          </div>
-
-          <div className="mt-3 flex justify-end flex-shrink-0">
-            <button
-              onClick={handleSubmit}
-              disabled={isSubmitting}
-              className="bg-violet-600 text-white font-semibold px-8 py-2.5 rounded-xl hover:bg-violet-700 transition disabled:opacity-50"
-            >
-              {isSubmitting
-                ? "Submitting Verification..."
-                : "Submit Verification"}
-            </button>
+          <div className="h-2 overflow-hidden rounded-full bg-violet-100" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}>
+            <div className="h-full rounded-full bg-primary transition-all duration-500" style={{ width: `${pct}%` }} />
           </div>
         </div>
+
+        <FormError>{error}</FormError>
+
+        <div className="grid gap-3 sm:grid-cols-2">
+          {documents.map((item) => (
+            <DocumentCard key={item.id} doc={item} isSubmitting={isSubmitting} onFileChange={(id: string, file: File | null) => handleFileChange(id, file)} />
+          ))}
+        </div>
+
+        <div className="flex flex-col-reverse gap-3 border-t border-border pt-5 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-xs text-muted-foreground">We review documents within 2 business days. You can come back to this page if you need to change a file.</p>
+          <PrimaryButton onClick={handleSubmit} disabled={isSubmitting || uploadedCount < documents.length} className="w-full sm:w-auto">
+            {isSubmitting ? <><Loader2 className="h-5 w-5 animate-spin" /> Submitting…</> : "Submit for verification"}
+          </PrimaryButton>
+        </div>
       </div>
-    </div>
+    </FlowShell>
   );
 }

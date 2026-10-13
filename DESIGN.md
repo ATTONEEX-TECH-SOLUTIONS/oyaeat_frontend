@@ -51,3 +51,8 @@ use the semantic Tailwind classes below.
 - Orders is a kitchen view: items visible without expanding, one big mango next-step button, urgency for orders waiting 3+ minutes, destructive actions behind a confirmation. Auto-advance is a visible switch the vendor controls.
 - Money and destructive actions (payout, delete dish, cancel order) always use a confirmation dialog and toast feedback, never `alert()` / `window.confirm`.
 - Menu has a one-tap Available / Sold out switch per dish.
+
+## Partner signup (done)
+- Landing (`/partner-signup`) reuses the public `Navbar`/`Footer` inside `.landing`. Every later step uses `components/partner-signup/FlowShell.tsx` (header, 4-step stepper, one focused card) with `components/partner-signup/ui.tsx` (Field, FormError, PrimaryButton).
+- Forms use real labels, inline validation and `autoComplete`; the password is never written to storage.
+- Do not publish unverified social proof (named testimonials, "thousands of partners", invented tracking IDs).
