@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="20 20 216 216" role="img" aria-label="OyaEat">
+  <g stroke-linecap="round" stroke-linejoin="round" fill="none" stroke="#5b21b6" stroke-width="13">
+    <g transform="translate(128 0) skewX(-9) translate(-128 0)">
+      <path d="M94 104C82 90 106 80 94 62"/>
+      <path d="M128 100C114 82 142 70 128 46"/>
+      <path d="M162 104C150 90 174 80 162 62"/>
+    </g>
+  </g>
+  <path fill="#fdba2d" d="M50 128h156a78 78 0 0 1-156 0z"/>
+  <rect x="40" y="118" width="176" height="20" rx="10" fill="#5b21b6"/>
+</svg>

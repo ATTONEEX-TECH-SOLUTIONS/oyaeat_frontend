@@ -62,3 +62,10 @@ use the semantic Tailwind classes below.
 - `RiderShell`: the online/offline switch is in the top bar on every screen; mobile gets a bottom tab bar (Home, Trips, Earnings, Profile, More). New order offers (`IncomingRequestSheet`) appear on any screen with a vibrate + chime.
 - Money and irreversible actions (confirm delivery, payout) use a confirmation dialog. No `alert()`.
 - Marketing copy must come from what the product does. No invented earnings figures, ratings or insurance promises.
+
+## Logo
+Files live in `public/brand/` (SVG is the source of truth; PNGs are exports).
+- **Mark**: a steaming bowl. Mango bowl, steam and rim in violet on light backgrounds (`oyaeat-mark.svg`), white steam on dark.
+- **App icon**: the mark on a violet-to-deep-violet rounded square (`oyaeat-icon.svg`, `oyaeat-icon-192/512.png`, `apple-touch-icon.png`). `app/icon.svg` and `app/apple-icon.png` are copies Next.js serves as the favicon.
+- **Lockup**: mark + "oyaeat" wordmark set in Baloo 2 ExtraBold, converted to outlines so it renders without the font (`oyaeat-logo.svg` for light backgrounds, `oyaeat-logo-white.svg` for dark).
+- Keep clear space of at least the bowl-rim height on all sides; don't recolour the bowl (always mango), don't stretch, and don't place the violet lockup on violet.
