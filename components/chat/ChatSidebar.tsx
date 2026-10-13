@@ -39,7 +39,7 @@ export function ChatSidebar({
   onRefresh, // 🚀 ADDED HERE
 }: ChatSidebarProps) {
   return (
-    <div className="w-80 border-r border-gray-100 flex flex-col bg-gray-50/50 shrink-0">
+    <div className="flex min-h-0 w-full flex-1 flex-col border-r border-gray-100 bg-gray-50/50 lg:w-80 lg:shrink-0">
       <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-card shrink-0">
         <h2 className="font-extrabold text-lg text-gray-900 tracking-tight flex items-center gap-2">
           <MessageSquare className="w-5 h-5 text-[#5b21b6]" /> Messages

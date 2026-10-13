@@ -133,10 +133,7 @@ export default function AnalyticsPage() {
   return (
     <div className="space-y-8 pb-10">
       <div>
-        <p className="text-xs font-bold uppercase tracking-[0.2em] mb-1 text-[#8b5cf6]">
-          Vendor Portal
-        </p>
-        <h1 className="text-3xl font-black tracking-tight text-[#1a1033] mb-2">
+        <h1 className="font-display text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
           Analytics & Reports
         </h1>
         <p className="text-[#6b6480]">

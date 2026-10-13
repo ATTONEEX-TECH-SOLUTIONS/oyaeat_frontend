@@ -25,16 +25,14 @@ export default function GalleryFormContent() {
   const [previews, setPreviews] = useState<string[]>([]);
 
   const API_BASE_URL =
-    process.env.NEXT_PUBLIC_API_BASE_URL || "https://onrender.com";
+    process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const filesArray = Array.from(e.target.files);
 
       if (selectedFiles.length + filesArray.length > 5) {
-        alert(
-          "Layout Constraint: You can upload a maximum of 5 display gallery photos.",
-        );
+        setError("You can upload a maximum of 5 gallery photos.");
         return;
       }
 

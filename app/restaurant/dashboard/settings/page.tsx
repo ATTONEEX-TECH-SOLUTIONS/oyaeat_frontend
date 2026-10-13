@@ -410,7 +410,7 @@ export default function SettingsPage() {
   const picSrc = picPreview || settings.profilePicUrl;
 
   return (
-    <div className="w-full min-h-screen" style={{ backgroundColor: "#f5f3ff" }}>
+    <div className="w-full">
       {/* Toast notifications */}
       {toast && (
         <div
@@ -430,7 +430,7 @@ export default function SettingsPage() {
         </div>
       )}
 
-      <div className="w-full px-6 py-8 space-y-5">
+      <div className="w-full space-y-5">
         {/* ══ Hero card ══ */}
         <div
           className="w-full rounded-2xl overflow-hidden"
@@ -491,8 +491,8 @@ export default function SettingsPage() {
           </div>
 
           {/* Profile strip branding row */}
-          <div className="px-8 pb-6" style={{ marginTop: "-44px" }}>
-            <div className="flex items-end gap-5">
+          <div className="px-4 pb-5 sm:px-8 sm:pb-6" style={{ marginTop: "-44px" }}>
+            <div className="flex flex-wrap items-end gap-x-4 gap-y-3 sm:flex-nowrap sm:gap-5">
               {/* Avatar logo layout circle container */}
               <div
                 className="relative flex-shrink-0 cursor-pointer group"
@@ -553,7 +553,7 @@ export default function SettingsPage() {
               </div>
 
               {/* Text metadata identities descriptors block */}
-              <div className="flex-1 min-w-0 pb-1">
+              <div className="min-w-0 flex-1 basis-40 pb-1">
                 <p
                   className="text-lg font-bold truncate"
                   style={{
@@ -578,11 +578,8 @@ export default function SettingsPage() {
                 <button
                   onClick={handleSave}
                   disabled={saving}
-                  className="flex-shrink-0 flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-all disabled:opacity-60"
-                  style={{
-                    backgroundColor: "#5b21b6",
-                    boxShadow: "0 2px 8px rgba(26,92,42,0.25)",
-                  }}
+                  className="flex-shrink-0 flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-extrabold transition-all disabled:opacity-60"
+                  style={{ backgroundColor: "#fdba2d", color: "#1a1033" }}
                 >
                   {saving ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -598,14 +595,14 @@ export default function SettingsPage() {
 
         {/* ══ Tab Navigation items matrix selection rows ══ */}
         <div
-          className="w-full flex gap-1 p-1 rounded-2xl"
+          className="no-scrollbar flex w-full gap-1 overflow-x-auto rounded-2xl p-1"
           style={{ backgroundColor: "#ede9fe" }}
         >
           {TABS.map((t) => (
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
-              className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold transition-all duration-150"
+              className="flex min-w-fit flex-1 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-xl px-4 py-2.5 text-xs font-bold transition-all duration-150"
               style={
                 tab === t.id
                   ? {
@@ -1154,7 +1151,7 @@ export default function SettingsPage() {
 
         {/* ══ Bottom save bar ══ */}
         <div
-          className="w-full flex items-center justify-between px-6 py-4 rounded-2xl mb-8"
+          className="flex w-full flex-col gap-3 rounded-2xl px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6"
           style={{
             backgroundColor: "#ffffff",
             border: "1px solid #ede9fe",
@@ -1180,11 +1177,8 @@ export default function SettingsPage() {
               disabled={
                 saving || (tab === "gallery" && selectedFiles.length === 0)
               }
-              className="flex items-center gap-2 px-6 py-2 rounded-xl text-sm font-bold text-white transition-all disabled:opacity-60"
-              style={{
-                backgroundColor: "#5b21b6",
-                boxShadow: "0 2px 8px rgba(26,92,42,0.25)",
-              }}
+              className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-extrabold transition-all disabled:opacity-60"
+              style={{ backgroundColor: "#fdba2d", color: "#1a1033" }}
             >
               {saving ? (
                 <Loader2 className="w-4 h-4 animate-spin" />

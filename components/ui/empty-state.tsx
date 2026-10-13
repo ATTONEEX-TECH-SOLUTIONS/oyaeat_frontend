@@ -25,7 +25,7 @@ export function EmptyState({
       )}
       {...props}
     >
-      {icon && <div className="mb-4 text-[var(--oya-green-500)]">{icon}</div>}
+      {icon && <div className="mb-4 text-primary">{icon}</div>}
       <h2 className="text-h2">{title}</h2>
       <p className="text-body mt-2 max-w-sm text-[var(--oya-ink-600)]">
         {description}
@@ -33,7 +33,7 @@ export function EmptyState({
       {action && (
         <Button
           className="mt-6"
-          loading={action.loading}
+          disabled={action.loading}
           onClick={action.onClick}
         >
           {action.label}

@@ -18,6 +18,7 @@ import { EmptyState, ErrorState, QtyStepper, RowSkeleton } from "./ui";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api, naira, resolveImg } from "@/lib/customer";
 import { useCart } from "@/hooks/useCart";
+import RestaurantReviews from "./RestaurantReviews";
 import { useLikedRestaurants } from "@/hooks/useLikedRestaurants";
 import {
   AlertDialog,
@@ -258,6 +259,8 @@ export default function RestaurantView() {
           </ul>
         )}
       </section>
+
+      <RestaurantReviews businessId={restaurant.id} />
 
       {/* Sticky cart bar, above the mobile tab bar */}
       {inThisCart && cart.count > 0 && (

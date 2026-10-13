@@ -7,7 +7,8 @@ import {
   AdvancedMarker,
   InfoWindow,
 } from "@vis.gl/react-google-maps";
-import { Loader2 } from "lucide-react";
+import { Bike, Loader2, MapPinOff } from "lucide-react";
+import { Panel } from "@/components/superadmin/ui";
 
 interface TrackedRider {
   riderId: number;
@@ -35,8 +36,7 @@ export default function AdminLiveMap() {
     const fetchLiveTelemetry = async () => {
       try {
         const token =
-          localStorage.getItem("admin_token") ||
-          localStorage.getItem("authToken");
+          localStorage.getItem("admin_token");
 
         // 1. Correct route URL path matching the backend mount
 
@@ -73,76 +73,58 @@ export default function AdminLiveMap() {
     return () => clearInterval(interval);
   }, [API_BASE_URL]);
 
-  if (loading) {
-    return (
-      <div className="h-[500px] w-full flex items-center justify-center bg-gray-50 border border-gray-100 rounded-2xl">
-        <Loader2 className="w-8 h-8 animate-spin text-violet-600" />
-      </div>
-    );
-  }
+  const hasKey = !!process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
   return (
-    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
-      <div>
-        <h3 className="text-lg font-bold text-gray-900">
-          Active Fleet Operations
-        </h3>
-        <p className="text-sm text-gray-500">
-          Live city tracking layout overlay pinning all online active riders.
-        </p>
+    <Panel
+      title="Live fleet"
+      subtitle={loading ? "Syncing riders…" : `${riders.length} rider${riders.length === 1 ? "" : "s"} online`}
+    >
+      <div className="h-72 w-full overflow-hidden rounded-xl border border-border bg-violet-50 sm:h-96">
+        {loading ? (
+          <div className="grid h-full place-items-center">
+            <Loader2 className="h-7 w-7 animate-spin text-primary" />
+          </div>
+        ) : !hasKey ? (
+          <div className="grid h-full place-items-center p-6 text-center">
+            <div>
+              <MapPinOff className="mx-auto h-8 w-8 text-violet-400" />
+              <p className="mt-2 font-bold">Map unavailable</p>
+              <p className="text-sm text-muted-foreground">Set NEXT_PUBLIC_GOOGLE_MAPS_API_KEY to show live rider positions.</p>
+            </div>
+          </div>
+        ) : (
+          <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ""}>
+            <Map defaultZoom={12} center={mapCenter} mapId={process.env.NEXT_PUBLIC_MAP_ID || "DEMO_MAP_ID"}>
+              {riders.map((rider) => (
+                <AdvancedMarker
+                  key={rider.riderId}
+                  position={{ lat: Number(rider.latitude), lng: Number(rider.longitude) }}
+                  onClick={() => setSelectedRider(rider)}
+                >
+                  <div className="grid h-10 w-10 cursor-pointer place-items-center rounded-full border-2 border-primary bg-cta text-cta-foreground shadow-pop transition-transform hover:scale-110">
+                    <Bike className="h-5 w-5" />
+                  </div>
+                </AdvancedMarker>
+              ))}
+              {selectedRider && (
+                <InfoWindow
+                  position={{ lat: Number(selectedRider.latitude), lng: Number(selectedRider.longitude) }}
+                  onCloseClick={() => setSelectedRider(null)}
+                >
+                  <div className="min-w-[160px] p-1 text-gray-900">
+                    <h4 className="text-sm font-bold">{selectedRider.firstName} {selectedRider.lastName}</h4>
+                    <p className="mt-1 text-xs text-gray-500">Mobile: {selectedRider.phone}</p>
+                    <p className="mt-2 border-t border-gray-100 pt-1 text-[10px] text-gray-400">
+                      Last seen: {new Date(selectedRider.lastSeen).toLocaleTimeString()}
+                    </p>
+                  </div>
+                </InfoWindow>
+              )}
+            </Map>
+          </APIProvider>
+        )}
       </div>
-
-      <div className="h-[500px] w-full rounded-xl overflow-hidden shadow-inner border border-gray-200">
-        <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ""}>
-          <Map
-            defaultZoom={12}
-            center={mapCenter}
-            mapId={process.env.NEXT_PUBLIC_MAP_ID || "DEMO_MAP_ID"}
-          >
-            {riders.map((rider) => (
-              <AdvancedMarker
-                key={rider.riderId}
-                position={{
-                  lat: Number(rider.latitude),
-                  lng: Number(rider.longitude),
-                }}
-                onClick={() => setSelectedRider(rider)}
-              >
-                {/* Modern Custom Pin Design wrapper layout elements */}
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-md border-2 border-violet-600 text-xl hover:scale-110 transition-transform cursor-pointer">
-                  🏍️
-                </div>
-              </AdvancedMarker>
-            ))}
-
-            {selectedRider && (
-              <InfoWindow
-                position={{
-                  lat: Number(selectedRider.latitude),
-                  lng: Number(selectedRider.longitude),
-                }}
-                onCloseClick={() => setSelectedRider(null)}
-              >
-                <div className="p-1 text-gray-900 min-w-[160px]">
-                  <h4 className="font-bold text-sm">
-                    {selectedRider.firstName} {selectedRider.lastName}
-                  </h4>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Rider ID: #{selectedRider.riderId}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    Mobile: {selectedRider.phone}
-                  </p>
-                  <p className="text-[10px] text-gray-400 mt-2 border-t border-gray-100 pt-1">
-                    Last Seen:{" "}
-                    {new Date(selectedRider.lastSeen).toLocaleTimeString()}
-                  </p>
-                </div>
-              </InfoWindow>
-            )}
-          </Map>
-        </APIProvider>
-      </div>
-    </div>
+    </Panel>
   );
 }

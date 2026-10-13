@@ -1,213 +1,75 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { MessageSquare, Bell, Loader2 } from "lucide-react";
-import { chatApi, type Thread, type Message } from "@/lib/api/chat";
-import { RiderChatSidebar } from "../components/support/RiderChatSidebar";
-import { RiderChatWindow } from "../components/support/RiderChatWindow";
-import { RiderAlertsView } from "../components/support/RiderAlertsView";
+import { useCallback, useEffect, useState } from "react";
+import { formatDistanceToNow } from "date-fns";
+import { Bell, CheckCircle2, MessageSquare, ShieldAlert } from "lucide-react";
+import { ChatInterface } from "@/components/chat/chat-interface";
+import { EmptyState, ErrorState, PageHeader } from "@/components/shared/states";
+import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 
-export default function SupportAndNotificationsView() {
-  const [activeTab, setActiveTab] = useState<"support" | "alerts">("support");
-  const [threads, setThreads] = useState<Thread[]>([]);
-  const [activeThreadId, setActiveThreadId] = useState<string | null>(null);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [replyText, setReplyText] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [loadingMessages, setLoadingMessages] = useState(false);
-  const [sending, setSending] = useState(false);
+const API = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
-  // 🚀 LIVE STATE: Stores raw alert objects fetched from your database
-  const [alerts, setAlerts] = useState<any[]>([]);
-  const API_BASE_URL =
-    process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+type Alert = { id: number; title: string; desc: string; type: string; createdAt: string };
 
-  const [isCreating, setIsCreating] = useState(false);
-  const [newSubject, setNewSubject] = useState("");
+function Alerts() {
+  const [alerts, setAlerts] = useState<Alert[] | null>(null);
+  const [error, setError] = useState("");
 
-  const chatEndRef = useRef<HTMLDivElement>(null);
-
-  const fetchRiderData = async (silent = false) => {
-    if (!silent) setLoading(true);
+  const load = useCallback(async () => {
+    setError("");
     try {
-      const token =
-        localStorage.getItem("rider_token") ||
-        localStorage.getItem("riderToken") ||
-        localStorage.getItem("authToken");
-
-      // 🚀 FIXED: Fallback native fetch completely bypasses the chatApi object property blockage
-      const [threadsRes, alertsRes] = await Promise.all([
-        chatApi.getThreads("rider"),
-        fetch(`${API_BASE_URL}/chat/operations-alerts`, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }).then((res) => res.json()),
-      ]);
-
-      const threadData = threadsRes.data || [];
-      setThreads(threadData);
-
-      if (alertsRes && alertsRes.success) {
-        setAlerts(alertsRes.data || []);
-      }
-
-      if (!activeThreadId && threadData.length > 0) {
-        setActiveThreadId(threadData[0].id);
-      }
-    } catch (err) {
-      console.error("Rider workspace data sync error:", err);
-    } finally {
-      if (!silent) setLoading(false);
+      const res = await fetch(`${API}/chat/operations-alerts`, { headers: { Authorization: `Bearer ${localStorage.getItem("riderToken")}` } });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok || json.success === false) throw new Error(json.message || "We couldn't load your alerts.");
+      setAlerts(json.data || []);
+    } catch (e: any) {
+      setError(e?.message || "We couldn't load your alerts.");
     }
-  };
-
-  const fetchRiderMessages = async (threadId: string) => {
-    setLoadingMessages(true);
-    try {
-      const res = await chatApi.getMessages("rider", threadId);
-      setMessages(res.data || []);
-    } catch (err) {
-      console.error("Support messages fetch error:", err);
-    } finally {
-      setLoadingMessages(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchRiderData();
-    // ⏳ BACKGROUND POLLING LOOP: Refreshes chats and alerts silently every 15 seconds
-    const backgroundPoll = setInterval(() => fetchRiderData(true), 15000);
-    return () => clearInterval(backgroundPoll);
   }, []);
-
   useEffect(() => {
-    if (activeThreadId) {
-      fetchRiderMessages(activeThreadId);
-      const messagePoll = setInterval(() => {
-        chatApi
-          .getMessages("rider", activeThreadId)
-          .then((res) => {
-            setMessages(res.data || []);
-          })
-          .catch(() => {});
-      }, 5000);
-      return () => clearInterval(messagePoll);
-    } else {
-      setMessages([]);
-    }
-  }, [activeThreadId]);
+    load();
+  }, [load]);
 
-  const handleCreateTicket = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newSubject.trim()) return;
-    setSending(true);
-    try {
-      const res = await chatApi.createSupportThread(
-        "rider",
-        newSubject.trim(),
-        "support",
-      );
-      setIsCreating(false);
-      setNewSubject("");
-      await fetchRiderData(true);
-      if (res.data?.id) setActiveThreadId(res.data.id);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setSending(false);
-    }
-  };
-
-  const handleSendMessage = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!replyText.trim() || !activeThreadId) return;
-    setSending(true);
-    try {
-      await chatApi.sendMessage("rider", activeThreadId, replyText);
-      setReplyText("");
-      const freshRes = await chatApi.getMessages("rider", activeThreadId);
-      setMessages(freshRes.data || []);
-      fetchRiderData(true);
-    } catch (err) {
-      console.error("Message send failure:", err);
-    } finally {
-      setSending(false);
-    }
-  };
-
-  const activeThread = threads.find((t) => t.id === activeThreadId);
-  // Compute unread alert count checks dynamically
-  const unreadAlertsCount = alerts.length;
-
-  if (loading) {
-    return (
-      <div className="p-8 text-center text-gray-500 font-bold h-[400px] flex items-center justify-center">
-        <Loader2 className="w-6 h-6 animate-spin mx-auto text-violet-600" />
-      </div>
-    );
-  }
+  if (error) return <ErrorState title="We couldn't load alerts" message={error} onRetry={load} />;
+  if (!alerts) return <div className="space-y-3" aria-busy="true">{[0, 1].map((i) => <Skeleton key={i} className="h-20 rounded-2xl bg-muted" />)}</div>;
+  if (alerts.length === 0) return <EmptyState icon={Bell} title="No alerts" body="Messages from the OyaEat operations team will appear here." />;
 
   return (
-    <div className="max-w-6xl mx-auto bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col h-[650px] w-full">
-      {/* Navigation Tab Selection Headers */}
-      <div className="flex border-b border-gray-100 bg-gray-50/50 flex-shrink-0">
-        <button
-          type="button"
-          onClick={() => setActiveTab("support")}
-          className={`flex-1 py-4 text-sm font-bold border-b-2 flex items-center justify-center gap-2 transition-all ${
-            activeTab === "support"
-              ? "border-violet-600 text-violet-600 bg-white"
-              : "text-gray-500 hover:text-gray-700"
-          }`}
-        >
-          <MessageSquare className="w-4 h-4" /> Live Support Chat
-        </button>
-        <button
-          type="button"
-          onClick={() => setActiveTab("alerts")}
-          className={`flex-1 py-4 text-sm font-bold border-b-2 flex items-center justify-center gap-2 transition-all ${
-            activeTab === "alerts"
-              ? "border-violet-600 text-violet-600 bg-white"
-              : "text-gray-500 hover:text-gray-700"
-          }`}
-        >
-          <Bell className="w-4 h-4" /> Operations Alerts ({unreadAlertsCount})
-        </button>
-      </div>
+    <ul className="space-y-3">
+      {alerts.map((a) => {
+        const warn = a.type === "warning";
+        return (
+          <li key={a.id} className={cn("flex items-start gap-3 rounded-2xl border bg-card p-4 shadow-card", warn ? "border-destructive/30" : "border-border")}>
+            <span className={cn("grid h-10 w-10 shrink-0 place-items-center rounded-xl", warn ? "bg-destructive/10 text-destructive" : "bg-violet-100 text-violet-700")}>
+              {warn ? <ShieldAlert className="h-5 w-5" /> : <CheckCircle2 className="h-5 w-5" />}
+            </span>
+            <div className="min-w-0">
+              <p className="font-bold">{a.title}</p>
+              <p className="text-sm text-muted-foreground">{a.desc}</p>
+              <p className="mt-1 text-xs font-semibold text-muted-foreground">{a.createdAt ? formatDistanceToNow(new Date(a.createdAt), { addSuffix: true }) : "Just now"}</p>
+            </div>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
 
-      <div className="flex-1 flex min-h-0 overflow-hidden w-full">
-        {activeTab === "support" ? (
-          <>
-            <RiderChatSidebar
-              threads={threads}
-              activeThreadId={activeThreadId}
-              isCreating={isCreating}
-              setIsCreating={setIsCreating}
-              setActiveThreadId={setActiveThreadId}
-            />
-            <RiderChatWindow
-              isCreating={isCreating}
-              activeThreadId={activeThreadId}
-              activeThread={activeThread}
-              loadingMessages={loadingMessages}
-              messages={messages}
-              replyText={replyText}
-              setReplyText={setReplyText}
-              sending={sending}
-              newSubject={newSubject}
-              setNewSubject={setNewSubject}
-              setIsCreating={setIsCreating}
-              handleCreateTicket={handleCreateTicket}
-              handleSendMessage={handleSendMessage}
-              chatEndRef={chatEndRef}
-            />
-          </>
-        ) : (
-          <RiderAlertsView alerts={alerts} />
-        )}
+export default function RiderSupportPage() {
+  const [tab, setTab] = useState<"support" | "alerts">("support");
+  return (
+    <div className="mx-auto flex h-[calc(100dvh-13rem)] max-w-4xl flex-col lg:h-[calc(100dvh-9.5rem)]">
+      <PageHeader title="Support" subtitle="Chat with the team or read operations alerts." />
+      <div role="tablist" className="mb-4 inline-flex w-fit rounded-full bg-violet-50 p-1">
+        {([["support", "Chat", MessageSquare], ["alerts", "Alerts", Bell]] as const).map(([key, label, Icon]) => (
+          <button key={key} role="tab" aria-selected={tab === key} onClick={() => setTab(key)}
+            className={cn("flex h-10 items-center gap-2 rounded-full px-5 text-sm font-bold transition", tab === key ? "bg-card text-primary shadow-sm" : "text-muted-foreground")}>
+            <Icon className="h-4 w-4" /> {label}
+          </button>
+        ))}
       </div>
+      <div className="min-h-0 flex-1 overflow-y-auto">{tab === "support" ? <ChatInterface role="rider" /> : <Alerts />}</div>
     </div>
   );
 }

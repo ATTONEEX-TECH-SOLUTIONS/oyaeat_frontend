@@ -1,309 +1,215 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { Plus, Edit2, Trash2, Search } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
+import { Pencil, Plus, Search, Trash2, UtensilsCrossed } from "lucide-react";
 import MenuForm from "./components/menu-form";
 import { vendorApi, type MenuItem } from "@/lib/api/vendor";
+import { EmptyState, ErrorState, PageHeader, TableSkeleton } from "@/components/shared/states";
+import { Switch } from "@/components/ui/switch";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { adminField } from "@/components/superadmin/ui";
+import { cn } from "@/lib/utils";
+
+const API = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+const img = (u?: string | null) => (!u ? "" : u.startsWith("http") ? u : `${API}${u}`);
+const naira = (n: number) => `₦${Math.round(n || 0).toLocaleString()}`;
 
 export default function MenuPage() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [showForm, setShowForm] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
   const [items, setItems] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("All");
+  const [showForm, setShowForm] = useState(false);
+  const [selected, setSelected] = useState<MenuItem | null>(null);
+  const [deleting, setDeleting] = useState<MenuItem | null>(null);
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setError("");
     setLoading(true);
     try {
       const data = await vendorApi.getMenu();
       setItems(Array.isArray(data.items) ? data.items : []);
     } catch (e: any) {
-      setError(e?.message || "Failed to load menu");
+      setError(e?.message || "We couldn't load your menu.");
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     load();
-  }, []);
+  }, [load]);
 
-  const filteredItems = useMemo(() => {
-    const term = searchTerm.trim().toLowerCase();
-    if (!term) return items;
+  const categories = useMemo(() => ["All", ...Array.from(new Set(items.map((i) => i.category).filter(Boolean)))], [items]);
+  const visible = useMemo(() => {
+    const t = search.trim().toLowerCase();
     return items.filter(
-      (item) =>
-        item.name.toLowerCase().includes(term) ||
-        item.category.toLowerCase().includes(term),
+      (i) => (category === "All" || i.category === category) && (!t || i.name.toLowerCase().includes(t) || i.category.toLowerCase().includes(t)),
     );
-  }, [items, searchTerm]);
+  }, [items, search, category]);
 
-  const onDelete = async (id: number) => {
-    if (!window.confirm("Delete this menu item?")) return;
+  const toggle = async (item: MenuItem, available: boolean) => {
+    setItems((prev) => prev.map((x) => (x.id === item.id ? { ...x, available } : x))); // optimistic
     try {
-      await vendorApi.deleteMenuItem(id);
-      setItems((prev) => prev.filter((x) => x.id !== id));
+      await vendorApi.updateMenuItem(item.id, {
+        name: item.name,
+        category: item.category,
+        price: item.price,
+        description: item.description,
+        available,
+      });
+      toast.success(`${item.name} is now ${available ? "available" : "sold out"}`);
     } catch (e: any) {
-      alert(e?.message || "Failed to delete");
+      setItems((prev) => prev.map((x) => (x.id === item.id ? { ...x, available: item.available } : x)));
+      toast.error(e?.message || "Couldn't update availability");
     }
   };
 
+  const remove = async () => {
+    if (!deleting) return;
+    const item = deleting;
+    setDeleting(null);
+    try {
+      await vendorApi.deleteMenuItem(item.id);
+      setItems((prev) => prev.filter((x) => x.id !== item.id));
+      toast.success(`${item.name} deleted`);
+    } catch (e: any) {
+      toast.error(e?.message || "Couldn't delete this item");
+    }
+  };
+
+  const openForm = (item: MenuItem | null) => {
+    setSelected(item);
+    setShowForm(true);
+  };
+
   return (
-    <div className="space-y-6">
-      {/* Page header */}
-      <div>
-        <h1 className="text-3xl font-bold" style={{ color: "#5b21b6" }}>
-          Menu Management
-        </h1>
-        <p className="mt-1 text-sm" style={{ color: "#7c3aed" }}>
-          Manage your restaurant menu items and categories.
-        </p>
-      </div>
+    <div>
+      <PageHeader
+        title="Menu"
+        subtitle={items.length ? `${items.length} dish${items.length === 1 ? "" : "es"} · ${items.filter((i) => !i.available).length} sold out` : "Add the dishes customers can order."}
+        action={
+          <button
+            onClick={() => openForm(null)}
+            className="flex h-11 items-center gap-2 rounded-full bg-cta px-5 text-sm font-extrabold text-cta-foreground shadow-sm transition hover:bg-mango-300"
+          >
+            <Plus className="h-4 w-4" /> Add dish
+          </button>
+        }
+      />
 
-      {/* Controls */}
-      <div className="flex gap-3 flex-col sm:flex-row sm:items-center sm:justify-between">
-        {/* Search */}
-        <div className="flex-1 relative">
-          <Search
-            className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4"
-            style={{ color: "#7c3aed" }}
-          />
-          <input
-            type="text"
-            placeholder="Search items or categories..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 text-sm rounded-lg border outline-none transition"
-            style={{
-              backgroundColor: "#ffffff",
-              borderColor: "#ddd6fe",
-              color: "#5b21b6",
-            }}
-            onFocus={(e) => (e.currentTarget.style.borderColor = "#6d28d9")}
-            onBlur={(e) => (e.currentTarget.style.borderColor = "#ddd6fe")}
-          />
-        </div>
-
-        {/* Add item button */}
-        <button
-          onClick={() => {
-            setSelectedItem(null);
-            setShowForm(true);
-          }}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold text-white transition-colors flex-shrink-0"
-          style={{ backgroundColor: "#5b21b6" }}
-          onMouseOver={(e) =>
-            (e.currentTarget.style.backgroundColor = "#3b0f7a")
-          }
-          onMouseOut={(e) =>
-            (e.currentTarget.style.backgroundColor = "#5b21b6")
-          }
-        >
-          <Plus className="w-4 h-4" />
-          Add Item
-        </button>
-      </div>
-
-      {/* Error */}
-      {error && (
-        <div className="text-sm font-medium text-rose-600 bg-rose-50 border border-rose-200 rounded-lg px-4 py-2">
-          {error}
-        </div>
-      )}
-
-      {/* Menu Form Modal */}
       {showForm && (
         <MenuForm
-          item={selectedItem}
+          item={selected}
           onClose={() => {
             setShowForm(false);
-            setSelectedItem(null);
+            setSelected(null);
           }}
-          onCreated={(newItem) => {
-            setItems((p) => [newItem, ...p]);
+          onCreated={(created) => {
+            setItems((prev) => [created, ...prev]);
             setShowForm(false);
-            setSelectedItem(null);
+            setSelected(null);
           }}
           onUpdated={(updated) => {
-            setItems((p) => p.map((x) => (x.id === updated.id ? updated : x)));
+            setItems((prev) => prev.map((x) => (x.id === updated.id ? updated : x)));
             setShowForm(false);
-            setSelectedItem(null);
+            setSelected(null);
           }}
         />
       )}
 
-      {/* Table */}
-      <div className="bg-card border border-[#ddd6fe] rounded-xl overflow-hidden shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead style={{ backgroundColor: "#f1ebff" }}>
-              <tr>
-                {["Item", "Category", "Price", "Status", "Actions"].map((h) => (
-                  <th
-                    key={h}
-                    className="px-6 py-3 text-xs font-semibold uppercase tracking-wider"
-                    style={{ color: "#5b21b6" }}
-                  >
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-
-            <tbody>
-              {loading ? (
-                <tr>
-                  <td
-                    colSpan={5}
-                    className="px-6 py-8 text-sm"
-                    style={{ color: "#7c3aed" }}
-                  >
-                    Loading menu items…
-                  </td>
-                </tr>
-              ) : filteredItems.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={5}
-                    className="px-6 py-8 text-sm"
-                    style={{ color: "#7c3aed" }}
-                  >
-                    No menu items found.
-                  </td>
-                </tr>
-              ) : (
-                filteredItems.map((item, idx) => (
-                  <tr
-                    key={item.id}
-                    className="transition-colors"
-                    style={{
-                      borderTop: idx > 0 ? "1px solid #f1ebff" : undefined,
-                    }}
-                    onMouseOver={(e) =>
-                      (e.currentTarget.style.backgroundColor = "#fbf9ff")
-                    }
-                    onMouseOut={(e) =>
-                      (e.currentTarget.style.backgroundColor = "transparent")
-                    }
-                  >
-                    {/* Item */}
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <img
-                          src={item.imageUrl || "/placeholder.svg"}
-                          alt={item.name}
-                          className="w-10 h-10 rounded-lg object-cover border"
-                          style={{ borderColor: "#ddd6fe" }}
-                        />
-                        <div>
-                          <p
-                            className="font-semibold text-sm"
-                            style={{ color: "#5b21b6" }}
-                          >
-                            {item.name}
-                          </p>
-                          {item.description && (
-                            <p
-                              className="text-xs mt-0.5 truncate max-w-[200px]"
-                              style={{ color: "#7c3aed" }}
-                            >
-                              {item.description}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </td>
-
-                    {/* Category */}
-                    <td className="px-6 py-4">
-                      <span
-                        className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium border"
-                        style={{
-                          backgroundColor: "#f1ebff",
-                          color: "#6d28d9",
-                          borderColor: "#c4b5fd",
-                        }}
-                      >
-                        {item.category}
-                      </span>
-                    </td>
-
-                    {/* Price */}
-                    <td
-                      className="px-6 py-4 text-sm font-semibold"
-                      style={{ color: "#5b21b6" }}
-                    >
-                      ₦{Number(item.price || 0).toLocaleString()}
-                    </td>
-
-                    {/* Status */}
-                    <td className="px-6 py-4">
-                      <span
-                        className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold border"
-                        style={
-                          item.available
-                            ? {
-                                backgroundColor: "#f1ebff",
-                                color: "#6d28d9",
-                                borderColor: "#c4b5fd",
-                              }
-                            : {
-                                backgroundColor: "#fef2f2",
-                                color: "#dc2626",
-                                borderColor: "#fecaca",
-                              }
-                        }
-                      >
-                        {item.available ? "✓ Available" : "✗ Out of Stock"}
-                      </span>
-                    </td>
-
-                    {/* Actions */}
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-1">
-                        <button
-                          onClick={() => {
-                            setSelectedItem(item);
-                            setShowForm(true);
-                          }}
-                          className="p-2 rounded-lg transition-colors"
-                          style={{ color: "#6d28d9" }}
-                          onMouseOver={(e) =>
-                            (e.currentTarget.style.backgroundColor = "#f1ebff")
-                          }
-                          onMouseOut={(e) =>
-                            (e.currentTarget.style.backgroundColor =
-                              "transparent")
-                          }
-                          title="Edit"
-                        >
-                          <Edit2 className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => onDelete(item.id)}
-                          className="p-2 rounded-lg transition-colors text-rose-500"
-                          onMouseOver={(e) =>
-                            (e.currentTarget.style.backgroundColor = "#fef2f2")
-                          }
-                          onMouseOut={(e) =>
-                            (e.currentTarget.style.backgroundColor =
-                              "transparent")
-                          }
-                          title="Delete"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+      {items.length > 0 && (
+        <div className="mb-5 space-y-3">
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <input aria-label="Search menu" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search dishes or categories" className={`${adminField} pl-11`} />
+          </div>
+          {categories.length > 2 && (
+            <div className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+              {categories.map((c) => (
+                <button
+                  key={c}
+                  onClick={() => setCategory(c)}
+                  aria-pressed={category === c}
+                  className={cn("h-9 shrink-0 rounded-full px-4 text-sm font-bold transition", category === c ? "bg-primary text-primary-foreground" : "bg-violet-50 text-violet-900 hover:bg-violet-100")}
+                >
+                  {c}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
-      </div>
+      )}
+
+      {loading ? (
+        <TableSkeleton rows={5} />
+      ) : error ? (
+        <ErrorState title="We couldn't load your menu" message={error} onRetry={load} />
+      ) : items.length === 0 ? (
+        <EmptyState icon={UtensilsCrossed} title="Your menu is empty" body="Add your first dish and it will appear to customers straight away." action={{ label: "Add your first dish", onClick: () => openForm(null) }} />
+      ) : visible.length === 0 ? (
+        <EmptyState icon={Search} title="No dishes match" body="Try a different search or category." />
+      ) : (
+        <ul className="grid gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {visible.map((item) => (
+            <li key={item.id} className={cn("flex gap-4 rounded-3xl border border-border bg-card p-3 shadow-card transition sm:p-4", !item.available && "bg-muted/40")}>
+              <div className="h-24 w-24 shrink-0 overflow-hidden rounded-2xl bg-violet-50 sm:h-28 sm:w-28">
+                {item.imageUrl ? (
+                  <img src={img(item.imageUrl)} alt="" loading="lazy" className={cn("h-full w-full object-cover", !item.available && "grayscale")} />
+                ) : (
+                  <div className="grid h-full w-full place-items-center bg-gradient-to-br from-violet-100 to-mango-100 text-violet-400">
+                    <UtensilsCrossed className="h-8 w-8" />
+                  </div>
+                )}
+              </div>
+              <div className="flex min-w-0 flex-1 flex-col">
+                <p className="font-display line-clamp-1 text-base font-bold">{item.name}</p>
+                <p className="text-xs font-semibold text-violet-700">{item.category}</p>
+                <p className="mt-0.5 line-clamp-1 text-sm text-muted-foreground">{item.description || "No description"}</p>
+                <p className="mt-auto pt-2 text-lg font-extrabold text-primary">{naira(item.price)}</p>
+                <div className="flex items-center justify-between gap-2 pt-1">
+                  <label className="flex items-center gap-2 text-sm font-semibold">
+                    <Switch checked={item.available} onCheckedChange={(v) => toggle(item, v)} aria-label={`${item.name} available`} />
+                    <span className={item.available ? "text-success" : "text-muted-foreground"}>{item.available ? "Available" : "Sold out"}</span>
+                  </label>
+                  <span className="flex gap-1">
+                    <button onClick={() => openForm(item)} aria-label={`Edit ${item.name}`} className="grid h-10 w-10 place-items-center rounded-full text-violet-800 transition hover:bg-violet-100">
+                      <Pencil className="h-4 w-4" />
+                    </button>
+                    <button onClick={() => setDeleting(item)} aria-label={`Delete ${item.name}`} className="grid h-10 w-10 place-items-center rounded-full text-destructive transition hover:bg-destructive/10">
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </span>
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <AlertDialog open={!!deleting} onOpenChange={(o) => !o && setDeleting(null)}>
+        <AlertDialogContent className="rounded-3xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete {deleting?.name}?</AlertDialogTitle>
+            <AlertDialogDescription>It will be removed from your menu. Mark it sold out instead if it will come back.</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="rounded-full">Keep it</AlertDialogCancel>
+            <AlertDialogAction className="rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={remove}>Delete</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

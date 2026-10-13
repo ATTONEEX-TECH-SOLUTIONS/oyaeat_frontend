@@ -1,311 +1,174 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import Image from "next/image";
-import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import logo from "@/public/spalsh_oyaeat (3).png";
-import phoneVerificationImage from "@/public/verify.png";
+import { Loader2, ShieldCheck } from "lucide-react";
+import FlowShell from "@/components/partner-signup/FlowShell";
+import { FormError, PrimaryButton } from "@/components/partner-signup/ui";
+import { cn } from "@/lib/utils";
 
-const VerifyPhone = () => {
+const API = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+const LEN = 6;
+const COOLDOWN = 30;
+
+export default function VerifyPhonePage() {
   const router = useRouter();
   const [phone, setPhone] = useState("");
   const [userId, setUserId] = useState("");
-  const [code, setCode] = useState(["", "", "", "", "", ""]);
-  const [isCodeSent, setIsCodeSent] = useState(false);
-  const [isResending, setIsResending] = useState(false);
-  const [isVerifying, setIsVerifying] = useState(false);
-  const [countdown, setCountdown] = useState(0);
+  const [code, setCode] = useState<string[]>(Array(LEN).fill(""));
+  const [verifying, setVerifying] = useState(false);
   const [error, setError] = useState("");
-  const inputRefs = useRef<HTMLInputElement[]>([]);
-
-  const API_BASE_URL =
-    process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+  const [ready, setReady] = useState(false);
+  const [wait, setWait] = useState(COOLDOWN);
+  const [resending, setResending] = useState(false);
+  const [notice, setNotice] = useState("");
+  const refs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
-    // Get phone and userId from sessionStorage
-    const data = sessionStorage.getItem("partnerSignupData");
-    if (data) {
-      const parsedData = JSON.parse(data);
-      setPhone(parsedData.phone || "");
-      setUserId(parsedData.userId || "");
-    }
+    try {
+      const raw = sessionStorage.getItem("partnerSignupData");
+      if (raw) {
+        const d = JSON.parse(raw);
+        setPhone(d.phone || "");
+        setUserId(d.userId || "");
+      }
+    } catch {}
+    setReady(true);
+    refs.current[0]?.focus();
   }, []);
 
+  // The code was just sent at sign-up, so the first resend unlocks after a short wait.
   useEffect(() => {
-    if (countdown > 0) {
-      const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [countdown]);
+    if (wait <= 0) return;
+    const t = setTimeout(() => setWait((w) => w - 1), 1000);
+    return () => clearTimeout(t);
+  }, [wait]);
 
-  const handleSendCode = async () => {
-    setIsResending(true);
+  const resend = async () => {
+    if (wait > 0 || resending || !userId) return;
+    setResending(true);
     setError("");
-
+    setNotice("");
     try {
-      // In a real implementation, you would call an API to send OTP
-      // For now, we'll just simulate it and set isCodeSent to true
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setIsCodeSent(true);
-      setCountdown(60);
-      // Focus first input
-      inputRefs.current[0]?.focus();
-    } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Failed to send code. Please try again.",
-      );
-    } finally {
-      setIsResending(false);
-    }
-  };
-
-  const handleCodeChange = (index: number, value: string) => {
-    if (value.length > 1) return;
-
-    const newCode = [...code];
-    newCode[index] = value;
-    setCode(newCode);
-
-    // Auto-focus next input
-    if (value && index < 5) {
-      inputRefs.current[index + 1]?.focus();
-    }
-  };
-
-  const handleKeyDown = (
-    index: number,
-    e: React.KeyboardEvent<HTMLInputElement>,
-  ) => {
-    if (e.key === "Backspace" && !code[index] && index > 0) {
-      inputRefs.current[index - 1]?.focus();
-    }
-  };
-
-  const handleVerify = async () => {
-    const verificationCode = code.join("");
-    if (verificationCode.length !== 6) return;
-
-    setIsVerifying(true);
-    setError("");
-
-    try {
-      const response = await fetch(`${API_BASE_URL}/auth/verify-phone`, {
+      const res = await fetch(`${API}/auth/resend-otp`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: userId,
-          otp: verificationCode,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId }),
       });
+      const data = await res.json().catch(() => ({}));
+      if (res.status === 429) setWait(Number(data.retryAfter) || COOLDOWN);
+      if (!res.ok) throw new Error(data.message || "Couldn't send a new code.");
+      setNotice(`A new code was sent to ${phone || "your phone"}.`);
+      setCode(Array(LEN).fill(""));
+      refs.current[0]?.focus();
+      setWait(COOLDOWN);
+    } catch (err) {
+      setError(err instanceof TypeError ? "We couldn't reach OyaEat. Check your connection and try again." : err instanceof Error ? err.message : "Couldn't send a new code.");
+    } finally {
+      setResending(false);
+    }
+  };
 
-      const data = await response.json();
+  const setDigit = (i: number, v: string) => {
+    const digit = v.replace(/\D/g, "").slice(-1);
+    setCode((c) => c.map((x, idx) => (idx === i ? digit : x)));
+    if (error) setError("");
+    if (digit && i < LEN - 1) refs.current[i + 1]?.focus();
+  };
 
-      if (!response.ok) {
-        throw new Error(data.message || "Invalid or expired OTP");
-      }
+  const onKey = (i: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Backspace" && !code[i] && i > 0) refs.current[i - 1]?.focus();
+    if (e.key === "ArrowLeft" && i > 0) refs.current[i - 1]?.focus();
+    if (e.key === "ArrowRight" && i < LEN - 1) refs.current[i + 1]?.focus();
+  };
 
-      // 👇 🌟 ADD THIS CODE BLOCK HERE TO SAVE THE TOKEN
-      if (data.token) {
-        localStorage.setItem("authToken", data.token);
-      } else {
-        console.warn("No token field returned from verify-phone endpoint");
-      }
+  // Pasting a full code fills every box.
+  const onPaste = (e: React.ClipboardEvent) => {
+    const digits = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, LEN);
+    if (!digits) return;
+    e.preventDefault();
+    setCode(Array.from({ length: LEN }, (_, i) => digits[i] || ""));
+    refs.current[Math.min(digits.length, LEN - 1)]?.focus();
+  };
 
-      // Success! Navigate to welcome or dashboard page
+  const complete = code.every(Boolean);
+
+  const verify = async () => {
+    if (!complete || verifying) return;
+    setVerifying(true);
+    setError("");
+    try {
+      const res = await fetch(`${API}/auth/verify-phone`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, otp: code.join("") }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.message || "That code is invalid or has expired.");
+      if (data.token) localStorage.setItem("authToken", data.token);
       router.push("/partner-signup/welcome");
     } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Verification failed. Please try again.",
-      );
-      // Clear the code inputs on error
-      setCode(["", "", "", "", "", ""]);
-      inputRefs.current[0]?.focus();
-    } finally {
-      setIsVerifying(false);
+      setError(err instanceof TypeError ? "We couldn't reach OyaEat. Check your connection and try again." : err instanceof Error ? err.message : "Verification failed.");
+      setCode(Array(LEN).fill(""));
+      refs.current[0]?.focus();
+      setVerifying(false);
     }
   };
 
-  const isCodeComplete = code.every((digit) => digit !== "");
+  // No session data means they skipped the signup step.
+  if (ready && !userId) {
+    return (
+      <FlowShell step={2} title="Let's start with your account" subtitle="We couldn't find your sign-up details, so we can't verify a phone number yet.">
+        <PrimaryButton onClick={() => router.push("/partner-signup")} className="w-full sm:w-auto">Go to sign up</PrimaryButton>
+      </FlowShell>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
-      {/* Simple Header */}
-      <header className="py-6 px-8">
-        <Link href="/" className="flex items-center gap-2">
-          <span className="text-xl font-bold">
-            <span className="text-[#5b21b6]">Oya</span>
-            <span className="text-gray-900">Eat</span>
-          </span>
-        </Link>
-      </header>
+    <FlowShell
+      step={2}
+      eyebrow="Step 2 of 4"
+      title="Verify your phone number"
+      subtitle={phone ? `Enter the 6-digit code we sent to ${phone}.` : "Enter the 6-digit code we sent to your phone."}
+    >
+      <div className="space-y-5">
+        <FormError>{error}</FormError>
+        {notice && <p role="status" className="rounded-2xl bg-success-soft px-4 py-3 text-sm font-semibold text-success">{notice}</p>}
 
-      {/* Main Content */}
-      <div className="flex-1 flex items-center justify-center px-6 py-8">
-        <div className="w-full max-w-6xl">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-20">
-            {/* Left Side - Form */}
-            <div className="flex-1 w-full max-w-md">
-              <h1 className="text-4xl font-bold text-gray-900 mb-4">
-                Verify your phone number
-              </h1>
-              <p className="text-gray-600 text-base mb-10 leading-relaxed">
-                Verifying your phone number helps simplify the registration
-                process and facilitates easier communication.
-              </p>
-
-              {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mb-6">
-                  {error}
-                </div>
+        <div className="flex justify-between gap-2 sm:justify-start sm:gap-3" onPaste={onPaste} role="group" aria-label="Verification code">
+          {code.map((d, i) => (
+            <input
+              key={i}
+              ref={(el) => {
+                refs.current[i] = el;
+              }}
+              value={d}
+              onChange={(e) => setDigit(i, e.target.value)}
+              onKeyDown={(e) => onKey(i, e)}
+              inputMode="numeric"
+              autoComplete={i === 0 ? "one-time-code" : "off"}
+              maxLength={1}
+              aria-label={`Digit ${i + 1}`}
+              disabled={verifying}
+              className={cn(
+                "h-14 w-full max-w-14 rounded-xl border-2 bg-card text-center text-2xl font-extrabold outline-none transition focus:border-ring focus:ring-4 focus:ring-ring/15 disabled:opacity-60 sm:h-16",
+                d ? "border-primary" : "border-input",
               )}
+            />
+          ))}
+        </div>
 
-              {!isCodeSent ? (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Mobile Phone Number
-                  </label>
-                  <input
-                    type="tel"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    className="w-full px-4 py-3.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5b21b6] focus:border-transparent outline-none text-gray-900 mb-6 text-base"
-                    placeholder="+234 9068603516"
-                    disabled={isResending}
-                  />
+        <PrimaryButton onClick={verify} disabled={!complete || verifying} className="w-full sm:w-auto">
+          {verifying ? <><Loader2 className="h-5 w-5 animate-spin" /> Verifying…</> : "Verify and continue"}
+        </PrimaryButton>
 
-                  <button
-                    onClick={handleSendCode}
-                    disabled={isResending || !phone}
-                    className="w-full bg-[#5b21b6] hover:bg-[#3b1a78] text-white font-semibold py-3.5 rounded-lg transition-all duration-300 disabled:bg-gray-300 disabled:cursor-not-allowed"
-                  >
-                    {isResending ? (
-                      <span className="flex items-center justify-center">
-                        <svg
-                          className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                        >
-                          <circle
-                            className="opacity-25"
-                            cx="12"
-                            cy="12"
-                            r="10"
-                            stroke="currentColor"
-                            strokeWidth="4"
-                          ></circle>
-                          <path
-                            className="opacity-75"
-                            fill="currentColor"
-                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                          ></path>
-                        </svg>
-                        Sending...
-                      </span>
-                    ) : (
-                      "Receive Verification Code"
-                    )}
-                  </button>
-                </div>
-              ) : (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-4">
-                    Enter verification code sent to {phone}
-                  </label>
-
-                  {/* 6-Digit Code Input */}
-                  <div className="flex gap-3 mb-6">
-                    {code.map((digit, index) => (
-                      <input
-                        key={index}
-                        ref={(el) => {
-                          if (el) inputRefs.current[index] = el;
-                        }}
-                        type="text"
-                        inputMode="numeric"
-                        maxLength={1}
-                        value={digit}
-                        onChange={(e) =>
-                          handleCodeChange(index, e.target.value)
-                        }
-                        onKeyDown={(e) => handleKeyDown(index, e)}
-                        disabled={isVerifying}
-                        className="w-14 h-16 text-center text-2xl text-gray-900 font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5b21b6] focus:border-[#5b21b6] outline-none disabled:bg-gray-100"
-                      />
-                    ))}
-                  </div>
-
-                  <button
-                    onClick={handleVerify}
-                    disabled={!isCodeComplete || isVerifying}
-                    className="w-full bg-[#5b21b6] hover:bg-[#3b1a78] text-white font-semibold py-3.5 rounded-lg transition-all duration-300 mb-4 disabled:bg-gray-300 disabled:cursor-not-allowed"
-                  >
-                    {isVerifying ? (
-                      <span className="flex items-center justify-center">
-                        <svg
-                          className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                        >
-                          <circle
-                            className="opacity-25"
-                            cx="12"
-                            cy="12"
-                            r="10"
-                            stroke="currentColor"
-                            strokeWidth="4"
-                          ></circle>
-                          <path
-                            className="opacity-75"
-                            fill="currentColor"
-                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                          ></path>
-                        </svg>
-                        Verifying...
-                      </span>
-                    ) : (
-                      "Verify Code"
-                    )}
-                  </button>
-
-                  <button
-                    onClick={handleSendCode}
-                    disabled={countdown > 0 || isResending}
-                    className="w-full text-[#5b21b6] font-medium hover:underline disabled:text-gray-400 disabled:no-underline"
-                  >
-                    {countdown > 0
-                      ? `Resend code in ${countdown}s`
-                      : "Resend Code"}
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {/* Right Side - Illustration */}
-            <div className="flex-1 w-full flex justify-center items-center">
-              <div className="relative w-full max-w-md">
-                <Image
-                  src={phoneVerificationImage}
-                  alt="Phone verification"
-                  width={450}
-                  height={450}
-                  className="object-contain w-full h-auto"
-                />
-              </div>
-            </div>
-          </div>
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
+          <span className="inline-flex items-center gap-2"><ShieldCheck className="h-4 w-4 shrink-0 text-primary" /> Didn&apos;t get a code?</span>
+          <button type="button" onClick={resend} disabled={wait > 0 || resending} className="font-bold text-primary hover:underline disabled:cursor-not-allowed disabled:text-muted-foreground disabled:no-underline">
+            {resending ? "Sending…" : wait > 0 ? `Resend in ${wait}s` : "Resend code"}
+          </button>
         </div>
       </div>
-    </div>
+    </FlowShell>
   );
-};
-
-export default VerifyPhone;
+}

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Sidebar } from "@/app/superadmin/dashboard/components/sidebar";
 import { useToast } from "@/components/ui/toast-provider";
 import { ReasonModal } from "../components/ui/reason-modal";
 
@@ -292,13 +291,11 @@ export default function BusinessesPage() {
   };
 
   return (
-    <div className="flex min-h-screen" style={{ backgroundColor: C.bg }}>
-      <Sidebar />
-      <main className="flex-1 min-w-0 overflow-auto">
-        <div className="p-6">
+    <div className="space-y-6">
+<div className="space-y-6">
           <PageHeader />
 
-          <div className="grid grid-cols-5 gap-3 mb-6">
+          <div className="mb-6 hidden gap-3 sm:grid sm:grid-cols-5">
             {statChips.map(({ key, ...rest }) => (
               <StatChip
                 key={key}
@@ -387,8 +384,7 @@ export default function BusinessesPage() {
             />
           )}
         </div>
-      </main>
-
+      
       <ReasonModal
         isOpen={modal.isOpen}
         onClose={() =>

@@ -2,11 +2,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import ProgressBar from "@/components/partner-signup/ProgressBar";
+import FlowShell from "@/components/partner-signup/FlowShell";
+import { FormError, PrimaryButton, SecondaryButton } from "@/components/partner-signup/ui";
 import BusinessForm from "@/components/partner-signup/BusinessForm";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
@@ -18,6 +18,8 @@ export default function AddBusinessPage() {
   const [error, setError] = useState("");
   const [markerPos, setMarkerPos] = useState({ lat: 6.5244, lng: 3.3792 });
   const [subStep, setSubStep] = useState<1 | 2>(1);
+  const [pinMoved, setPinMoved] = useState(false);
+  const [locating, setLocating] = useState(false);
 
   const [formData, setFormData] = useState({
     businessName: "",
@@ -45,7 +47,6 @@ export default function AddBusinessPage() {
           ...prev,
           businessPhone: parsed?.phone || "",
           businessEmail: parsed?.email || "",
-          businessType: parsed?.businessType || "",
         }));
       }
     } catch (err) {
@@ -65,7 +66,25 @@ export default function AddBusinessPage() {
   const handleMapClick = (e: any) => {
     if (e?.detail?.latLng) {
       setMarkerPos({ lat: e.detail.latLng.lat, lng: e.detail.latLng.lng });
+      setPinMoved(true);
     }
+  };
+
+  const handleLocate = () => {
+    if (!("geolocation" in navigator)) return setError("Your browser can't share your location. Tap the map to place the pin instead.");
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => {
+        setMarkerPos({ lat: coords.latitude, lng: coords.longitude });
+        setPinMoved(true);
+        setLocating(false);
+      },
+      () => {
+        setLocating(false);
+        setError("We couldn't get your location. Tap the map to place the pin instead.");
+      },
+      { timeout: 10000 },
+    );
   };
 
   const handleNextStageValidation = () => {
@@ -87,6 +106,10 @@ export default function AddBusinessPage() {
   const handleSubmit = async () => {
     if (!formData.streetAddress || !formData.city || !formData.state) {
       setError("Street address, city, and state are required.");
+      return;
+    }
+    if (!pinMoved) {
+      setError("Place the pin on your storefront. Tap the map or use your current location.");
       return;
     }
 
@@ -160,140 +183,48 @@ export default function AddBusinessPage() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-[#f7f8f5] flex flex-col overflow-hidden">
-      {/* Header */}
-      <header className="h-[60px] bg-white border-b border-gray-100 px-6 md:px-10 flex items-center justify-between flex-shrink-0">
-        <Link href="/" className="flex items-center gap-1">
-          <span className="text-[22px] font-black tracking-tight leading-none">
-            <span className="text-[#5b21b6]">Oya</span>
-            <span className="text-gray-900">Eat</span>
-          </span>
-        </Link>
-        <div className="flex items-center gap-2 text-xs font-semibold">
-          <span className={subStep === 1 ? "text-[#5b21b6]" : "text-gray-400"}>
-            Business Info
-          </span>
-          <span className="text-gray-300">›</span>
-          <span className={subStep === 2 ? "text-[#5b21b6]" : "text-gray-400"}>
-            Location
-          </span>
-          <span className="text-gray-300">›</span>
-          <span className="text-gray-300">Verify</span>
-        </div>
-      </header>
+    <FlowShell
+      step={3}
+      eyebrow={`Step 3 of 4 · ${subStep === 1 ? "Business info" : "Location"}`}
+      title={subStep === 1 ? "Tell us about your business" : "Where are you located?"}
+      subtitle={subStep === 1 ? "This is what customers see on your profile." : "Customers and riders use this to find you."}
+    >
+      <div className="space-y-5">
+        <FormError>{error}</FormError>
 
-      {/* Page body — no scroll, full height fill */}
-      <div className="flex-1 flex flex-col px-6 md:px-10 py-8 max-w-2xl w-full mx-auto">
-        {/* Progress */}
-        <div className="mb-6 flex-shrink-0">
-          <ProgressBar currentStep={1} />
-        </div>
+        <BusinessForm
+          subStep={subStep}
+          formData={formData}
+          markerPos={markerPos}
+          pinMoved={pinMoved}
+          locating={locating}
+          isLoading={isLoading}
+          handleChange={handleChange}
+          handleMapClick={handleMapClick}
+          onLocate={handleLocate}
+        />
 
-        {/* Step label + heading */}
-        <div className="mb-6 flex-shrink-0">
-          <p className="text-[10px] font-bold tracking-widest uppercase text-[#5b21b6] mb-1">
-            Step 1 of 2 —{" "}
-            {subStep === 1 ? "Business Info" : "Location & Address"}
-          </p>
-          <h1 className="text-2xl font-extrabold text-gray-900 tracking-tight leading-snug">
-            {subStep === 1
-              ? "Tell us about your business"
-              : "Where are you located?"}
-          </h1>
-          <p className="text-sm text-gray-500 mt-1">
-            {subStep === 1
-              ? "Basic info customers will see on your profile."
-              : "Customers use this to find and contact you."}
-          </p>
-        </div>
-
-        {/* Error */}
-        {error && (
-          <div className="mb-4 flex-shrink-0 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-xs font-semibold flex items-start gap-2">
-            <span className="mt-0.5 shrink-0">⚠</span>
-            <span>{error}</span>
-          </div>
-        )}
-
-        {/* Form — no scroll, expands naturally */}
-        <div className="flex-1">
-          <BusinessForm
-            subStep={subStep}
-            formData={formData}
-            markerPos={markerPos}
-            isLoading={isLoading}
-            handleChange={handleChange}
-            handleMapClick={handleMapClick}
-          />
-        </div>
-
-        {/* Footer actions */}
-        <div className="flex items-center justify-between pt-6 mt-2 border-t border-gray-200 flex-shrink-0">
+        <div className="flex items-center justify-between gap-3 border-t border-border pt-5">
           {subStep === 1 ? (
-            <button
-              type="button"
-              onClick={() => router.back()}
-              className="flex items-center gap-1.5 text-sm font-semibold text-gray-500 hover:text-gray-800 transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4" /> Back
-            </button>
+            <SecondaryButton type="button" onClick={() => router.back()}>
+              <ArrowLeft className="h-4 w-4" /> Back
+            </SecondaryButton>
           ) : (
-            <button
-              type="button"
-              onClick={() => setSubStep(1)}
-              className="flex items-center gap-1.5 text-sm font-semibold text-gray-500 hover:text-gray-800 transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4" /> Business Info
-            </button>
+            <SecondaryButton type="button" onClick={() => setSubStep(1)}>
+              <ArrowLeft className="h-4 w-4" /> Back
+            </SecondaryButton>
           )}
-
           {subStep === 1 ? (
-            <button
-              type="button"
-              onClick={handleNextStageValidation}
-              className="flex items-center gap-2 bg-[#5b21b6] hover:bg-[#3b1a78] active:scale-[0.98] text-white text-sm font-bold px-6 py-2.5 rounded-xl transition-all"
-            >
-              Continue <ArrowRight className="w-4 h-4" />
-            </button>
+            <PrimaryButton type="button" onClick={handleNextStageValidation}>
+              Continue <ArrowRight className="h-5 w-5" />
+            </PrimaryButton>
           ) : (
-            <button
-              type="button"
-              onClick={handleSubmit}
-              disabled={isLoading}
-              className="flex items-center gap-2 bg-[#5b21b6] hover:bg-[#3b1a78] active:scale-[0.98] disabled:opacity-40 text-white text-sm font-bold px-6 py-2.5 rounded-xl transition-all"
-            >
-              {isLoading ? (
-                <>
-                  <svg
-                    className="animate-spin w-4 h-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8v8z"
-                    />
-                  </svg>
-                  Saving…
-                </>
-              ) : (
-                <>
-                  Save & Continue <ArrowRight className="w-4 h-4" />
-                </>
-              )}
-            </button>
+            <PrimaryButton type="button" onClick={handleSubmit} disabled={isLoading}>
+              {isLoading ? <><Loader2 className="h-5 w-5 animate-spin" /> Saving…</> : <>Save & continue <ArrowRight className="h-5 w-5" /></>}
+            </PrimaryButton>
           )}
         </div>
       </div>
-    </div>
+    </FlowShell>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { PromoCarousel } from "@/components/campaigns/PromoCarousel";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -55,6 +56,7 @@ export default function HomeView() {
   const [error, setError] = useState("");
   const [orders, setOrders] = useState<any[]>([]);
   const [promos, setPromos] = useState<any[]>([]);
+  const [promosLoading, setPromosLoading] = useState(true);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -79,7 +81,8 @@ export default function HomeView() {
     setUser(getUser());
     api("/public/promos/public-feed")
       .then((j) => Array.isArray(j.data) && setPromos(j.data))
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setPromosLoading(false));
     if (getToken()) {
       api("/orders/my", { auth: true })
         .then((j) => setOrders(j.data?.orders || []))
@@ -139,7 +142,7 @@ export default function HomeView() {
       {activeOrder && !q && <ActiveOrderCard order={activeOrder} />}
 
       {/* 3. Promotions */}
-      {!q && <Promos promos={promos} />}
+      {!q && <PromoCarousel promos={promos} loading={promosLoading} />}
 
       {/* 4. Cuisine filter */}
       <section aria-label="Cuisines" className="-mx-4 lg:mx-0">
@@ -341,80 +344,5 @@ function ActiveOrderCard({ order }: { order: any }) {
       </span>
       <ArrowRight className="h-5 w-5 text-primary sm:hidden" />
     </Link>
-  );
-}
-
-function Promos({ promos }: { promos: any[] }) {
-  const ref = useRef<HTMLDivElement>(null);
-  if (!promos.length) {
-    return (
-      <section className="lp-doodles relative overflow-hidden rounded-3xl p-6 text-white shadow-card sm:p-10">
-        <div className="relative max-w-md">
-          <span className="inline-flex rounded-full bg-white/15 px-3 py-1 text-xs font-bold uppercase tracking-wider">
-            Fresh &amp; local
-          </span>
-          <h2 className="font-display mt-3 text-3xl font-extrabold leading-tight sm:text-4xl">
-            Craving jollof? <span className="text-cta">We deliver it hot.</span>
-          </h2>
-          <p className="mt-2 text-violet-100">
-            Pick a kitchen near you and your meal is on its way.
-          </p>
-        </div>
-      </section>
-    );
-  }
-  return (
-    <section aria-label="Promotions" className="-mx-4 lg:mx-0">
-      <div
-        ref={ref}
-        className="no-scrollbar flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 lg:px-0"
-      >
-        {promos.map((p, i) => {
-          const isImg = /^https?:\/\//.test(p.bgGradient || "");
-          return (
-            <div
-              key={p.id || i}
-              className={cn(
-                "lp-doodles relative flex min-h-44 shrink-0 snap-start flex-col justify-between overflow-hidden rounded-3xl p-5 text-white shadow-card sm:p-6",
-                promos.length === 1 ? "w-full" : "w-[86%] sm:w-[26rem]",
-              )}
-              style={
-                isImg
-                  ? {
-                      backgroundImage: `linear-gradient(to top, rgba(26,16,51,.85), rgba(26,16,51,.25)), url(${p.bgGradient})`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                    }
-                  : undefined
-              }
-            >
-              <div>
-                {p.business?.name && (
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-xs font-bold backdrop-blur">
-                    <Store className="h-3.5 w-3.5" /> {p.business.name}
-                  </span>
-                )}
-                <h3 className="font-display mt-2 line-clamp-2 text-2xl font-extrabold leading-tight">
-                  {p.title}
-                </h3>
-                {p.desc && (
-                  <p className="mt-1 line-clamp-2 text-sm text-violet-100">
-                    {p.desc}
-                  </p>
-                )}
-              </div>
-              {p.businessId && (
-                <Link
-                  href={`/customer/restaurant/${p.businessId}`}
-                  className="mt-4 inline-flex h-10 w-fit items-center gap-2 rounded-full bg-cta px-5 text-sm font-bold text-cta-foreground transition hover:bg-mango-300"
-                >
-                  Order now <ArrowRight className="h-4 w-4" />
-                </Link>
-              )}
-            </div>
-          );
-        })}
-      </div>
-    </section>
   );
 }

@@ -39,3 +39,26 @@ use the semantic Tailwind classes below.
 - Every data screen has skeleton, empty (`EmptyState`) and error-with-retry (`ErrorState`) states: `components/customer/ui.tsx`.
 - Home hierarchy: greeting, live order, promos, cuisine filter, order again, restaurants.
 - Never show data the API did not send (no invented ratings, fees or rider details).
+
+## Superadmin patterns (done)
+- One shell in `app/superadmin/dashboard/layout.tsx` (`components/superadmin/AdminShell.tsx`): grouped deep-violet sidebar with a mango active marker and a live pending-approvals badge; on mobile a top bar with a slide-over drawer. It also owns the auth guard. Pages must NOT render their own sidebar or page padding.
+- Shared pieces: `components/superadmin/ui.tsx` (AdminStat, Panel, Badge, OrderBadge) and `components/shared/states.tsx` (PageHeader, EmptyState, ErrorState, TableSkeleton).
+- Tables become stacked cards below `md`. The primary action in a view (Approve, Save) is the single mango button.
+- Admin pages read only `admin_token`; never fall back to another role's token.
+
+## Restaurant (vendor) patterns (done)
+- One shell (`components/restaurant/VendorShell.tsx`): sidebar on desktop; on mobile a top bar plus a bottom tab bar (Dashboard, Orders, Menu, Wallet, More). Owns the auth guard and the global new-order polling, sound and badge. Pages must not play their own order alerts.
+- Orders is a kitchen view: items visible without expanding, one big mango next-step button, urgency for orders waiting 3+ minutes, destructive actions behind a confirmation. Auto-advance is a visible switch the vendor controls.
+- Money and destructive actions (payout, delete dish, cancel order) always use a confirmation dialog and toast feedback, never `alert()` / `window.confirm`.
+- Menu has a one-tap Available / Sold out switch per dish.
+
+## Partner signup (done)
+- Landing (`/partner-signup`) reuses the public `Navbar`/`Footer` inside `.landing`. Every later step uses `components/partner-signup/FlowShell.tsx` (header, 4-step stepper, one focused card) with `components/partner-signup/ui.tsx` (Field, FormError, PrimaryButton).
+- Forms use real labels, inline validation and `autoComplete`; the password is never written to storage.
+- Do not publish unverified social proof (named testimonials, "thousands of partners", invented tracking IDs).
+
+## Rider portal patterns (done)
+- `components/rider/RiderProvider.tsx` owns everything that must survive navigation: dashboard polling, GPS streaming, the order-request socket, and the shift/accept/complete actions (with toast errors). Pages read it with `useRider()`; they must not start their own watchers or sockets.
+- `RiderShell`: the online/offline switch is in the top bar on every screen; mobile gets a bottom tab bar (Home, Trips, Earnings, Profile, More). New order offers (`IncomingRequestSheet`) appear on any screen with a vibrate + chime.
+- Money and irreversible actions (confirm delivery, payout) use a confirmation dialog. No `alert()`.
+- Marketing copy must come from what the product does. No invented earnings figures, ratings or insurance promises.
