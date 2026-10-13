@@ -56,3 +56,9 @@ use the semantic Tailwind classes below.
 - Landing (`/partner-signup`) reuses the public `Navbar`/`Footer` inside `.landing`. Every later step uses `components/partner-signup/FlowShell.tsx` (header, 4-step stepper, one focused card) with `components/partner-signup/ui.tsx` (Field, FormError, PrimaryButton).
 - Forms use real labels, inline validation and `autoComplete`; the password is never written to storage.
 - Do not publish unverified social proof (named testimonials, "thousands of partners", invented tracking IDs).
+
+## Rider portal patterns (done)
+- `components/rider/RiderProvider.tsx` owns everything that must survive navigation: dashboard polling, GPS streaming, the order-request socket, and the shift/accept/complete actions (with toast errors). Pages read it with `useRider()`; they must not start their own watchers or sockets.
+- `RiderShell`: the online/offline switch is in the top bar on every screen; mobile gets a bottom tab bar (Home, Trips, Earnings, Profile, More). New order offers (`IncomingRequestSheet`) appear on any screen with a vibrate + chime.
+- Money and irreversible actions (confirm delivery, payout) use a confirmation dialog. No `alert()`.
+- Marketing copy must come from what the product does. No invented earnings figures, ratings or insurance promises.
