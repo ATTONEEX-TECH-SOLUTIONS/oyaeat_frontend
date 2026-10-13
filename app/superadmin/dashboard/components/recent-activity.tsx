@@ -1,22 +1,22 @@
-import type { Order } from '@/lib/types'
-import { formatDistanceToNow } from 'date-fns'
+import type { Order } from "@/lib/types";
+import { formatDistanceToNow } from "date-fns";
 
 interface RecentActivityProps {
-  orders: Order[]
+  orders: Order[];
 }
 
 const statusColors: Record<string, string> = {
-  pending: 'bg-yellow-100 text-yellow-800',
-  confirmed: 'bg-blue-100 text-blue-800',
-  preparing: 'bg-purple-100 text-purple-800',
-  ready: 'bg-indigo-100 text-indigo-800',
-  out_for_delivery: 'bg-orange-100 text-orange-800',
-  delivered: 'bg-green-100 text-green-800',
-  cancelled: 'bg-red-100 text-red-800',
-}
+  pending: "bg-yellow-100 text-yellow-800",
+  confirmed: "bg-blue-100 text-blue-800",
+  preparing: "bg-purple-100 text-purple-800",
+  ready: "bg-indigo-100 text-indigo-800",
+  out_for_delivery: "bg-orange-100 text-orange-800",
+  delivered: "bg-green-100 text-green-800",
+  cancelled: "bg-red-100 text-red-800",
+};
 
 export function RecentActivity({ orders }: RecentActivityProps) {
-  const recentOrders = orders.slice(0, 5)
+  const recentOrders = orders.slice(0, 5);
 
   return (
     <div className="bg-card rounded-lg border border-slate-200 p-6">
@@ -43,15 +43,15 @@ export function RecentActivity({ orders }: RecentActivityProps) {
               </p>
               <span
                 className={`text-xs px-2 py-1 rounded-full ${
-                  statusColors[order.status] || 'bg-slate-100 text-slate-800'
+                  statusColors[order.status] || "bg-slate-100 text-slate-800"
                 }`}
               >
-                {order.status.replace(/_/g, ' ')}
+                {order.status.replace(/_/g, " ")}
               </span>
             </div>
           </div>
         ))}
       </div>
     </div>
-  )
+  );
 }

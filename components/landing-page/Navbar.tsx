@@ -26,9 +26,24 @@ const Navbar = () => {
   ];
 
   const joinLinks = [
-    { href: "/rider", label: "Become a Rider", icon: Bike, desc: "Earn on your schedule" },
-    { href: "/partner-signup", label: "Become a Partner", icon: Store, desc: "Grow your restaurant" },
-    { href: "/careers", label: "Careers", icon: Briefcase, desc: "Join our core team" },
+    {
+      href: "/rider/login",
+      label: "Become a Rider",
+      icon: Bike,
+      desc: "Earn on your schedule",
+    },
+    {
+      href: "/partner-signup",
+      label: "Become a Partner",
+      icon: Store,
+      desc: "Grow your restaurant",
+    },
+    {
+      href: "/careers",
+      label: "Careers",
+      icon: Briefcase,
+      desc: "Join our core team",
+    },
   ];
 
   return (
@@ -41,18 +56,25 @@ const Navbar = () => {
         }`}
       >
         <div className="max-w-[1400px] mx-auto px-6 lg:px-10 flex items-center justify-between h-[72px]">
-
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5 flex-shrink-0">
             <div className="w-8 h-8 bg-[#2d5f4f] rounded-lg flex items-center justify-center">
-              <span className="text-white font-black text-sm leading-none">O</span>
+              <span className="text-white font-black text-sm leading-none">
+                O
+              </span>
             </div>
             <div className="flex flex-col leading-none">
               <span className="text-xl font-black tracking-tight">
                 <span className="text-[#2d5f4f]">Oya</span>
-                <span className={`transition-colors duration-300 ${scrolled ? "text-gray-900" : "text-gray-900"}`}>Eat</span>
+                <span
+                  className={`transition-colors duration-300 ${scrolled ? "text-gray-900" : "text-gray-900"}`}
+                >
+                  Eat
+                </span>
               </span>
-              <span className={`text-[9px] font-bold tracking-widest uppercase mt-0.5 transition-colors duration-300 ${scrolled ? "text-gray-400" : "text-gray-500"}`}>
+              <span
+                className={`text-[9px] font-bold tracking-widest uppercase mt-0.5 transition-colors duration-300 ${scrolled ? "text-gray-400" : "text-gray-500"}`}
+              >
                 Fast Delivery
               </span>
             </div>
@@ -70,8 +92,8 @@ const Navbar = () => {
                     isActive
                       ? "text-[#2d5f4f]"
                       : scrolled
-                      ? "text-gray-700 hover:text-[#2d5f4f]"
-                      : "text-gray-800 hover:text-[#2d5f4f]"
+                        ? "text-gray-700 hover:text-[#2d5f4f]"
+                        : "text-gray-800 hover:text-[#2d5f4f]"
                   }`}
                 >
                   {link.label}
@@ -95,8 +117,8 @@ const Navbar = () => {
                   dropdownOpen
                     ? "text-[#2d5f4f]"
                     : scrolled
-                    ? "text-gray-700 hover:text-[#2d5f4f]"
-                    : "text-gray-800 hover:text-[#2d5f4f]"
+                      ? "text-gray-700 hover:text-[#2d5f4f]"
+                      : "text-gray-800 hover:text-[#2d5f4f]"
                 }`}
               >
                 Earn with Us
@@ -125,8 +147,12 @@ const Navbar = () => {
                           <Icon className="w-4 h-4 text-[#2d5f4f] group-hover/item:text-white transition-colors" />
                         </div>
                         <div>
-                          <p className="font-semibold text-gray-900 text-sm leading-tight">{item.label}</p>
-                          <p className="text-xs text-gray-400 mt-0.5">{item.desc}</p>
+                          <p className="font-semibold text-gray-900 text-sm leading-tight">
+                            {item.label}
+                          </p>
+                          <p className="text-xs text-gray-400 mt-0.5">
+                            {item.desc}
+                          </p>
                         </div>
                       </Link>
                     );
@@ -161,9 +187,13 @@ const Navbar = () => {
             aria-label="Toggle menu"
           >
             {mobileOpen ? (
-              <X className={`w-5 h-5 ${scrolled ? "text-gray-800" : "text-gray-900"}`} />
+              <X
+                className={`w-5 h-5 ${scrolled ? "text-gray-800" : "text-gray-900"}`}
+              />
             ) : (
-              <Menu className={`w-5 h-5 ${scrolled ? "text-gray-800" : "text-gray-900"}`} />
+              <Menu
+                className={`w-5 h-5 ${scrolled ? "text-gray-800" : "text-gray-900"}`}
+              />
             )}
           </button>
         </div>
@@ -193,7 +223,9 @@ const Navbar = () => {
                   href={link.href}
                   onClick={() => setMobileOpen(false)}
                   className={`px-3 py-3 rounded-lg font-semibold text-sm transition-colors ${
-                    isActive ? "bg-[#2d5f4f]/10 text-[#2d5f4f]" : "text-gray-700 hover:bg-gray-50"
+                    isActive
+                      ? "bg-[#2d5f4f]/10 text-[#2d5f4f]"
+                      : "text-gray-700 hover:bg-gray-50"
                   }`}
                 >
                   {link.label}
@@ -201,7 +233,9 @@ const Navbar = () => {
               );
             })}
             <div className="my-2 border-t border-gray-100" />
-            <p className="text-[10px] font-bold tracking-widest uppercase text-gray-400 px-3 mb-1">Earn with Us</p>
+            <p className="text-[10px] font-bold tracking-widest uppercase text-gray-400 px-3 mb-1">
+              Earn with Us
+            </p>
             {joinLinks.map((item) => {
               const Icon = item.icon;
               return (
@@ -212,7 +246,9 @@ const Navbar = () => {
                   className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 transition-colors"
                 >
                   <Icon className="w-4 h-4 text-[#2d5f4f]" />
-                  <span className="font-semibold text-sm text-gray-700">{item.label}</span>
+                  <span className="font-semibold text-sm text-gray-700">
+                    {item.label}
+                  </span>
                 </Link>
               );
             })}

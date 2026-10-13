@@ -1,12 +1,12 @@
-'use client'
-
-
+"use client";
 
 interface ShadowSuspensionBannerProps {
-  rejectionReason?: string
+  rejectionReason?: string;
 }
 
-export function ShadowSuspensionBanner({ rejectionReason }: ShadowSuspensionBannerProps) {
+export function ShadowSuspensionBanner({
+  rejectionReason,
+}: ShadowSuspensionBannerProps) {
   return (
     <div className="bg-gradient-to-r from-amber-500 to-orange-600 text-white p-4 px-6 rounded-2xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 animate-in slide-in-from-top duration-300">
       <div className="space-y-0.5">
@@ -14,8 +14,10 @@ export function ShadowSuspensionBanner({ rejectionReason }: ShadowSuspensionBann
           ⚠️ Store Storefront Hidden (Shadow Suspended)
         </h4>
         <p className="text-xs text-amber-50 leading-relaxed max-w-xl">
-          Customers cannot locate your restaurant menu or place incoming platform orders right now. 
-          <strong> Reason for Flagging:</strong> "{rejectionReason || 'Operational verification review.'}"
+          Customers cannot locate your restaurant menu or place incoming
+          platform orders right now.
+          <strong> Reason for Flagging:</strong> "
+          {rejectionReason || "Operational verification review."}"
         </p>
       </div>
       <a
@@ -27,5 +29,5 @@ export function ShadowSuspensionBanner({ rejectionReason }: ShadowSuspensionBann
         Contact Operations Support
       </a>
     </div>
-  )
+  );
 }

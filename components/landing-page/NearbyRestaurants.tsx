@@ -1,5 +1,5 @@
-import Image from 'next/image';
-import { Star, Clock, Heart, ArrowRight, Flame } from 'lucide-react';
+import Image from "next/image";
+import { Star, Clock, Heart, ArrowRight, Flame } from "lucide-react";
 
 interface Restaurant {
   id: number;
@@ -16,7 +16,6 @@ interface Restaurant {
 export default function NearbyRestaurants({ data }: { data: Restaurant[] }) {
   return (
     <section className="py-20 px-6 lg:px-10 max-w-[1400px] mx-auto">
-
       {/* Section Header */}
       <div className="flex justify-between items-end mb-10">
         <div>
@@ -90,7 +89,9 @@ export default function NearbyRestaurants({ data }: { data: Restaurant[] }) {
                 <h3 className="font-bold text-gray-900 text-base leading-tight group-hover:text-[#2d5f4f] transition-colors duration-200 line-clamp-1">
                   {restaurant.name}
                 </h3>
-                <p className="text-xs text-gray-400 mt-1 font-medium">{restaurant.cuisine}</p>
+                <p className="text-xs text-gray-400 mt-1 font-medium">
+                  {restaurant.cuisine}
+                </p>
               </div>
 
               {/* Footer row */}
@@ -98,7 +99,9 @@ export default function NearbyRestaurants({ data }: { data: Restaurant[] }) {
                 {/* Rating */}
                 <div className="flex items-center gap-1">
                   <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                  <span className="text-sm font-bold text-gray-900">{restaurant.rating.toFixed(1)}</span>
+                  <span className="text-sm font-bold text-gray-900">
+                    {restaurant.rating.toFixed(1)}
+                  </span>
                 </div>
 
                 {/* Price range */}
@@ -118,7 +121,6 @@ export default function NearbyRestaurants({ data }: { data: Restaurant[] }) {
           <ArrowRight className="w-3.5 h-3.5" />
         </button>
       </div>
-
     </section>
   );
 }

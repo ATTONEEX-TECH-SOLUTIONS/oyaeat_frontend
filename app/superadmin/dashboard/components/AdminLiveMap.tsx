@@ -1,7 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { APIProvider, Map, AdvancedMarker, InfoWindow } from "@vis.gl/react-google-maps";
+import {
+  APIProvider,
+  Map,
+  AdvancedMarker,
+  InfoWindow,
+} from "@vis.gl/react-google-maps";
 import { Loader2 } from "lucide-react";
 
 interface TrackedRider {
@@ -23,50 +28,50 @@ export default function AdminLiveMap() {
   // Set default initial center coordinates to Lagos, Nigeria
   const [mapCenter, setMapCenter] = useState({ lat: 6.5244, lng: 3.3792 });
 
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+  const API_BASE_URL =
+    process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
- useEffect(() => {
-  const fetchLiveTelemetry = async () => {
-    try {
-      const token = localStorage.getItem("admin_token") || localStorage.getItem("authToken");
-      
-      // 1. Correct route URL path matching the backend mount
-    
+  useEffect(() => {
+    const fetchLiveTelemetry = async () => {
+      try {
+        const token =
+          localStorage.getItem("admin_token") ||
+          localStorage.getItem("authToken");
+
+        // 1. Correct route URL path matching the backend mount
+
         const res = await fetch(`${API_BASE_URL}/admin/dashboard/live-riders`, {
+          headers: {
+            Authorization: `Bearer ${token || ""}`,
+          },
+        });
 
-        headers: { 
-          "Authorization": `Bearer ${token || ""}` 
+        if (res.ok) {
+          const data: TrackedRider[] = await res.json();
+
+          if (Array.isArray(data)) {
+            setRiders(data);
+
+            if (data.length > 0 && data[0].latitude && data[0].longitude) {
+              setMapCenter({
+                lat: Number(data[0].latitude),
+                lng: Number(data[0].longitude),
+              });
+            }
+          }
         }
-      });
-      
-if (res.ok) {
-  const data: TrackedRider[] = await res.json();
-  
-  if (Array.isArray(data)) {
-    setRiders(data);
+      } catch (err) {
+        console.error("Failed to sync live fleet mapping coordinates:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    if (data.length > 0 && data[0].latitude && data[0].longitude) {
-      setMapCenter({
-        lat: Number(data[0].latitude),
-        lng: Number(data[0].longitude)
-      });
-    }
-  }
-}
+    fetchLiveTelemetry();
 
-    } catch (err) {
-      console.error("Failed to sync live fleet mapping coordinates:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  fetchLiveTelemetry();
-  
-  const interval = setInterval(fetchLiveTelemetry, 10000);
-  return () => clearInterval(interval);
-}, [API_BASE_URL]);
-
+    const interval = setInterval(fetchLiveTelemetry, 10000);
+    return () => clearInterval(interval);
+  }, [API_BASE_URL]);
 
   if (loading) {
     return (
@@ -79,8 +84,12 @@ if (res.ok) {
   return (
     <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
       <div>
-        <h3 className="text-lg font-bold text-gray-900">Active Fleet Operations</h3>
-        <p className="text-sm text-gray-500">Live city tracking layout overlay pinning all online active riders.</p>
+        <h3 className="text-lg font-bold text-gray-900">
+          Active Fleet Operations
+        </h3>
+        <p className="text-sm text-gray-500">
+          Live city tracking layout overlay pinning all online active riders.
+        </p>
       </div>
 
       <div className="h-[500px] w-full rounded-xl overflow-hidden shadow-inner border border-gray-200">
@@ -93,7 +102,10 @@ if (res.ok) {
             {riders.map((rider) => (
               <AdvancedMarker
                 key={rider.riderId}
-                position={{ lat: Number(rider.latitude), lng: Number(rider.longitude) }}
+                position={{
+                  lat: Number(rider.latitude),
+                  lng: Number(rider.longitude),
+                }}
                 onClick={() => setSelectedRider(rider)}
               >
                 {/* Modern Custom Pin Design wrapper layout elements */}
@@ -105,15 +117,25 @@ if (res.ok) {
 
             {selectedRider && (
               <InfoWindow
-                position={{ lat: Number(selectedRider.latitude), lng: Number(selectedRider.longitude) }}
+                position={{
+                  lat: Number(selectedRider.latitude),
+                  lng: Number(selectedRider.longitude),
+                }}
                 onCloseClick={() => setSelectedRider(null)}
               >
                 <div className="p-1 text-gray-900 min-w-[160px]">
-                  <h4 className="font-bold text-sm">{selectedRider.firstName} {selectedRider.lastName}</h4>
-                  <p className="text-xs text-gray-500 mt-1">Rider ID: #{selectedRider.riderId}</p>
-                  <p className="text-xs text-gray-500">Mobile: {selectedRider.phone}</p>
+                  <h4 className="font-bold text-sm">
+                    {selectedRider.firstName} {selectedRider.lastName}
+                  </h4>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Rider ID: #{selectedRider.riderId}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    Mobile: {selectedRider.phone}
+                  </p>
                   <p className="text-[10px] text-gray-400 mt-2 border-t border-gray-100 pt-1">
-                    Last Seen: {new Date(selectedRider.lastSeen).toLocaleTimeString()}
+                    Last Seen:{" "}
+                    {new Date(selectedRider.lastSeen).toLocaleTimeString()}
                   </p>
                 </div>
               </InfoWindow>

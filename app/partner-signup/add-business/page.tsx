@@ -8,7 +8,8 @@ import ProgressBar from "@/components/partner-signup/ProgressBar";
 import BusinessForm from "@/components/partner-signup/BusinessForm";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
 export default function AddBusinessPage() {
   const router = useRouter();
@@ -31,7 +32,6 @@ export default function AddBusinessPage() {
     description: "",
   });
 
- 
   useEffect(() => {
     try {
       const raw = sessionStorage.getItem("partnerSignupData");
@@ -53,9 +53,10 @@ export default function AddBusinessPage() {
     }
   }, []);
 
-
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
   ) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     if (error) setError("");
@@ -68,8 +69,15 @@ export default function AddBusinessPage() {
   };
 
   const handleNextStageValidation = () => {
-    if (!formData.businessName || !formData.businessType || !formData.businessPhone || !formData.businessEmail) {
-      setError("Fill in your business name, type, phone, and email to continue.");
+    if (
+      !formData.businessName ||
+      !formData.businessType ||
+      !formData.businessPhone ||
+      !formData.businessEmail
+    ) {
+      setError(
+        "Fill in your business name, type, phone, and email to continue.",
+      );
       return;
     }
     setError("");
@@ -98,33 +106,44 @@ export default function AddBusinessPage() {
         return;
       }
 
-      const res = await fetch(`${API_BASE_URL}/vendor/${userId}/business-details`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+      const res = await fetch(
+        `${API_BASE_URL}/vendor/${userId}/business-details`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            businessName: formData.businessName,
+            businessType: formData.businessType,
+            streetAddress: formData.streetAddress,
+            city: formData.city,
+            state: formData.state,
+            zipCode: formData.zipCode || "100001",
+            businessPhone: formData.businessPhone,
+            businessEmail: formData.businessEmail,
+            websiteUrl: formData.website || null,
+            description: formData.description,
+            latitude: markerPos.lat,
+            longitude: markerPos.lng,
+          }),
         },
-        body: JSON.stringify({
-          businessName: formData.businessName,
-          businessType: formData.businessType,
-          streetAddress: formData.streetAddress,
-          city: formData.city,
-          state: formData.state,
-          zipCode: formData.zipCode || "100001",
-          businessPhone: formData.businessPhone,
-          businessEmail: formData.businessEmail,
-          websiteUrl: formData.website || null,
-          description: formData.description,
-          latitude: markerPos.lat,
-          longitude: markerPos.lng,
-        }),
-      });
+      );
 
       const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data?.message || `Failed to save details (${res.status})`);
+      if (!res.ok)
+        throw new Error(
+          data?.message || `Failed to save details (${res.status})`,
+        );
 
-      const businessId = data?.businessId || data?.id || data?.business?.id || data?.data?.businessId;
-      if (!businessId) throw new Error("Business created but ID was not returned.");
+      const businessId =
+        data?.businessId ||
+        data?.id ||
+        data?.business?.id ||
+        data?.data?.businessId;
+      if (!businessId)
+        throw new Error("Business created but ID was not returned.");
 
       const payload = { businessName: formData.businessName, businessId };
       sessionStorage.setItem("businessData", JSON.stringify(payload));
@@ -151,9 +170,13 @@ export default function AddBusinessPage() {
           </span>
         </Link>
         <div className="flex items-center gap-2 text-xs font-semibold">
-          <span className={subStep === 1 ? "text-[#2d5f4f]" : "text-gray-400"}>Business Info</span>
+          <span className={subStep === 1 ? "text-[#2d5f4f]" : "text-gray-400"}>
+            Business Info
+          </span>
           <span className="text-gray-300">›</span>
-          <span className={subStep === 2 ? "text-[#2d5f4f]" : "text-gray-400"}>Location</span>
+          <span className={subStep === 2 ? "text-[#2d5f4f]" : "text-gray-400"}>
+            Location
+          </span>
           <span className="text-gray-300">›</span>
           <span className="text-gray-300">Verify</span>
         </div>
@@ -161,7 +184,6 @@ export default function AddBusinessPage() {
 
       {/* Page body — no scroll, full height fill */}
       <div className="flex-1 flex flex-col px-6 md:px-10 py-8 max-w-2xl w-full mx-auto">
-
         {/* Progress */}
         <div className="mb-6 flex-shrink-0">
           <ProgressBar currentStep={1} />
@@ -170,10 +192,13 @@ export default function AddBusinessPage() {
         {/* Step label + heading */}
         <div className="mb-6 flex-shrink-0">
           <p className="text-[10px] font-bold tracking-widest uppercase text-[#2d5f4f] mb-1">
-            Step 1 of 2 — {subStep === 1 ? "Business Info" : "Location & Address"}
+            Step 1 of 2 —{" "}
+            {subStep === 1 ? "Business Info" : "Location & Address"}
           </p>
           <h1 className="text-2xl font-extrabold text-gray-900 tracking-tight leading-snug">
-            {subStep === 1 ? "Tell us about your business" : "Where are you located?"}
+            {subStep === 1
+              ? "Tell us about your business"
+              : "Where are you located?"}
           </h1>
           <p className="text-sm text-gray-500 mt-1">
             {subStep === 1
@@ -239,14 +264,31 @@ export default function AddBusinessPage() {
             >
               {isLoading ? (
                 <>
-                  <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                  <svg
+                    className="animate-spin w-4 h-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v8z"
+                    />
                   </svg>
                   Saving…
                 </>
               ) : (
-                <>Save & Continue <ArrowRight className="w-4 h-4" /></>
+                <>
+                  Save & Continue <ArrowRight className="w-4 h-4" />
+                </>
               )}
             </button>
           )}

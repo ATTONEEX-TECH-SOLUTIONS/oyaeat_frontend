@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { X, BellRing, Navigation } from "lucide-react";
 
@@ -8,11 +8,15 @@ interface LiveMatchModalProps {
   onAccept: (id: string) => void;
 }
 
-export function LiveMatchModal({ incomingRequest, onClose, onAccept }: LiveMatchModalProps) {
+export function LiveMatchModal({
+  incomingRequest,
+  onClose,
+  onAccept,
+}: LiveMatchModalProps) {
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
       <div className="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-gray-100 relative scale-in">
-        <button 
+        <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 outline-none p-1 bg-gray-50 rounded-full border border-gray-100"
         >
@@ -27,33 +31,45 @@ export function LiveMatchModal({ incomingRequest, onClose, onAccept }: LiveMatch
             <span className="text-[10px] bg-green-100 text-green-800 font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
               New Order Nearby!
             </span>
-            <h3 className="text-xl font-black text-gray-900 mt-2">₦{incomingRequest.payout?.toLocaleString()}</h3>
-            <p className="text-xs text-gray-400 font-medium">Estimated Trip Earnings</p>
+            <h3 className="text-xl font-black text-gray-900 mt-2">
+              ₦{incomingRequest.payout?.toLocaleString()}
+            </h3>
+            <p className="text-xs text-gray-400 font-medium">
+              Estimated Trip Earnings
+            </p>
           </div>
         </div>
 
         <div className="my-6 bg-gray-50 border border-gray-100 rounded-2xl p-4 space-y-3 text-left">
           <div>
-            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Pickup Origin</p>
-            <p className="text-sm font-bold text-gray-800 mt-0.5">{incomingRequest.restaurantName}</p>
+            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+              Pickup Origin
+            </p>
+            <p className="text-sm font-bold text-gray-800 mt-0.5">
+              {incomingRequest.restaurantName}
+            </p>
             <p className="text-xs text-green-600 font-medium flex items-center gap-1 mt-0.5">
               <span>📍</span> Proximity: {incomingRequest.distance} from you
             </p>
           </div>
           <div className="border-t border-gray-200/60 pt-3">
-            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Dropoff Destination</p>
-            <p className="text-xs font-semibold text-gray-600 mt-0.5">{incomingRequest.dropoffAddress}</p>
+            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+              Dropoff Destination
+            </p>
+            <p className="text-xs font-semibold text-gray-600 mt-0.5">
+              {incomingRequest.dropoffAddress}
+            </p>
           </div>
         </div>
 
         <div className="flex gap-3">
-          <button 
+          <button
             onClick={onClose}
             className="flex-1 bg-white border border-gray-200 hover:bg-gray-50 text-gray-500 font-bold py-3 rounded-xl transition text-sm"
           >
             Decline
           </button>
-          <button 
+          <button
             onClick={() => {
               onAccept(`ORD-${incomingRequest.orderId}`);
               onClose();

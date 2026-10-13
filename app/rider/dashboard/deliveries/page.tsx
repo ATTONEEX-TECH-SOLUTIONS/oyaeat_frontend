@@ -1,9 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { 
-  Package, MapPin, Calendar, Clock, 
-  CheckCircle2, ArrowRight, Eye, AlertCircle 
+import {
+  Package,
+  MapPin,
+  Calendar,
+  Clock,
+  CheckCircle2,
+  ArrowRight,
+  Eye,
+  AlertCircle,
 } from "lucide-react";
 
 export default function RiderDeliveriesList() {
@@ -11,23 +17,24 @@ export default function RiderDeliveriesList() {
   const [activeTab, setActiveTab] = useState<"active" | "completed">("active");
   const [loading, setLoading] = useState(true);
 
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+  const API_BASE_URL =
+    process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
   useEffect(() => {
     const fetchDeliveriesHistory = async () => {
       try {
         const token = localStorage.getItem("riderToken");
         const response = await fetch(`${API_BASE_URL}/rider/dashboard`, {
-          headers: { "Authorization": `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${token}` },
         });
 
         if (response.ok) {
           const data = await response.json();
-          
+
           // Reconstruct raw payloads into filter groups
           const allRecent = data.recentDeliveries || [];
           const activeTrip = data.activeDelivery;
-          
+
           // Combine or store them safely
           const formattedList = [...allRecent];
           if (activeTrip) {
@@ -38,7 +45,7 @@ export default function RiderDeliveriesList() {
               status: activeTrip.status,
               time: "Ongoing",
               address: activeTrip.dropoff,
-              customer: activeTrip.customer
+              customer: activeTrip.customer,
             });
           }
           setDeliveries(formattedList);
@@ -58,37 +65,54 @@ export default function RiderDeliveriesList() {
   };
 
   // Separate list items based on active click configuration tab state selection
-  const filteredItems = deliveries.filter(item => {
-    const isItemActive = item.status === "out_for_delivery" || item.time === "Ongoing";
+  const filteredItems = deliveries.filter((item) => {
+    const isItemActive =
+      item.status === "out_for_delivery" || item.time === "Ongoing";
     return activeTab === "active" ? isItemActive : !isItemActive;
   });
 
-  if (loading) return <div className="p-8 text-center text-gray-500 font-bold">Loading records...</div>;
+  if (loading)
+    return (
+      <div className="p-8 text-center text-gray-500 font-bold">
+        Loading records...
+      </div>
+    );
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-      
       {/* Structural Toggle Switches */}
       <div className="flex border-b border-gray-100 bg-gray-50/50">
         <button
           onClick={() => setActiveTab("active")}
           className={`flex-1 py-4 text-sm font-bold border-b-2 transition-all ${
-            activeTab === "active" 
-              ? "border-green-600 text-green-600 bg-white" 
+            activeTab === "active"
+              ? "border-green-600 text-green-600 bg-white"
               : "border-transparent text-gray-500 hover:text-gray-700"
           }`}
         >
-          Active Assignments ({deliveries.filter(i => i.status === "out_for_delivery" || i.time === "Ongoing").length})
+          Active Assignments (
+          {
+            deliveries.filter(
+              (i) => i.status === "out_for_delivery" || i.time === "Ongoing",
+            ).length
+          }
+          )
         </button>
         <button
           onClick={() => setActiveTab("completed")}
           className={`flex-1 py-4 text-sm font-bold border-b-2 transition-all ${
-            activeTab === "completed" 
-              ? "border-green-600 text-green-600 bg-white" 
+            activeTab === "completed"
+              ? "border-green-600 text-green-600 bg-white"
               : "border-transparent text-gray-500 hover:text-gray-700"
           }`}
         >
-          Completed Logs ({deliveries.filter(i => i.status === "delivered" || i.time !== "Ongoing").length})
+          Completed Logs (
+          {
+            deliveries.filter(
+              (i) => i.status === "delivered" || i.time !== "Ongoing",
+            ).length
+          }
+          )
         </button>
       </div>
 
@@ -97,10 +121,12 @@ export default function RiderDeliveriesList() {
         {filteredItems.length > 0 ? (
           <div className="space-y-4">
             {filteredItems.map((item, index) => (
-              <div 
+              <div
                 key={index}
                 className={`p-4 rounded-xl border transition-all flex flex-col md:flex-row md:items-center justify-between gap-4 ${
-                  activeTab === "active" ? "border-green-200 bg-green-50/20" : "border-gray-100 bg-white"
+                  activeTab === "active"
+                    ? "border-green-200 bg-green-50/20"
+                    : "border-gray-100 bg-white"
                 }`}
               >
                 <div className="space-y-2">
@@ -108,9 +134,11 @@ export default function RiderDeliveriesList() {
                     <span className="text-xs font-black text-white bg-gray-900 px-2 py-0.5 rounded">
                       {item.id}
                     </span>
-                    <h4 className="font-bold text-gray-900 text-sm">{item.restaurant}</h4>
+                    <h4 className="font-bold text-gray-900 text-sm">
+                      {item.restaurant}
+                    </h4>
                   </div>
-                  
+
                   <div className="text-xs text-gray-500 space-y-1">
                     <p className="flex items-center gap-1.5">
                       <MapPin className="w-3.5 h-3.5 text-gray-400" />
@@ -118,17 +146,25 @@ export default function RiderDeliveriesList() {
                     </p>
                     <p className="flex items-center gap-1.5">
                       <Clock className="w-3.5 h-3.5 text-gray-400" />
-                      {item.time === "Ongoing" ? "Picked up · En Route" : `Completed at: ${item.time}`}
+                      {item.time === "Ongoing"
+                        ? "Picked up · En Route"
+                        : `Completed at: ${item.time}`}
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-center justify-between md:justify-end gap-6 border-t md:border-none pt-3 md:pt-0">
                   <div className="text-left md:text-right">
-                    <p className="text-sm font-black text-gray-900">{item.payout}</p>
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider mt-1 inline-block ${
-                      activeTab === "active" ? "bg-amber-100 text-amber-800" : "bg-green-100 text-green-800"
-                    }`}>
+                    <p className="text-sm font-black text-gray-900">
+                      {item.payout}
+                    </p>
+                    <span
+                      className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider mt-1 inline-block ${
+                        activeTab === "active"
+                          ? "bg-amber-100 text-amber-800"
+                          : "bg-green-100 text-green-800"
+                      }`}
+                    >
                       {activeTab === "active" ? "In Progress" : "Collected"}
                     </span>
                   </div>
@@ -146,7 +182,6 @@ export default function RiderDeliveriesList() {
           </div>
         )}
       </div>
-
     </div>
   );
 }

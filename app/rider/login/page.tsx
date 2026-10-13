@@ -5,7 +5,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
-  Bike,
   CircleAlert,
   Eye,
   EyeOff,
@@ -16,8 +15,9 @@ import {
   Zap,
   TrendingUp,
   ShieldCheck,
+  Check,
 } from "lucide-react";
-import riderHero from "@/public/rider-hero.png";
+import riderHero from "@/public/rider-anime.png";
 
 type FormData = {
   email: string;
@@ -36,7 +36,6 @@ const RiderLogin = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [focusedField, setFocusedField] = useState<string | null>(null);
 
   const stats = useMemo(
     () => [
@@ -44,7 +43,7 @@ const RiderLogin = () => {
       { icon: Zap, label: "Orders Available Now", value: "240+" },
       { icon: Star, label: "Rider Rating Average", value: "4.8 / 5" },
     ],
-    []
+    [],
   );
 
   const updateFormData = (field: keyof FormData, value: string | boolean) => {
@@ -64,7 +63,10 @@ const RiderLogin = () => {
       const response = await fetch(`${API_BASE_URL}/auth/rider/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: formData.email, password: formData.password }),
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }),
       });
 
       const data = await response.json();
@@ -75,7 +77,9 @@ const RiderLogin = () => {
       router.push("/rider/dashboard");
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Something went wrong. Please try again."
+        err instanceof Error
+          ? err.message
+          : "Something went wrong. Please try again.",
       );
     } finally {
       setIsLoading(false);
@@ -83,692 +87,87 @@ const RiderLogin = () => {
   };
 
   return (
-    <>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=Lato:wght@300;400;700;900&display=swap');
+    <div className="relative min-h-screen bg-background">
+      {/* dot grid background */}
+      <div
+        className="pointer-events-none fixed inset-0 z-0 opacity-25"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle, var(--border) 1px, transparent 1px)",
+          backgroundSize: "28px 28px",
+        }}
+      />
 
-        :root {
-          --green: #1A6B3C;
-          --green-light: #22883F;
-          --green-pale: #E8F5EE;
-          --green-pale2: #D0EBD9;
-          --green-border: #B8DDC5;
-          --green-dark: #0F4526;
-          --white: #FFFFFF;
-          --text-dark: #0D2218;
-          --text-mid: #3A5A47;
-          --text-muted: #7A9A85;
-          --shadow-green: rgba(26, 107, 60, 0.18);
-          --font-display: 'Playfair Display', Georgia, serif;
-          --font-body: 'Lato', sans-serif;
-        }
-
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-        html, body {
-          font-family: var(--font-body);
-          background: var(--white);
-          color: var(--text-dark);
-          -webkit-font-smoothing: antialiased;
-        }
-
-        /* ── PAGE LAYOUT ── */
-        .login-page {
-          min-height: 100vh;
-          display: grid;
-          grid-template-columns: 1fr 520px;
-          position: relative;
-        }
-
-        /* ── DOT GRID ── */
-        .dot-grid {
-          position: fixed;
-          inset: 0;
-          pointer-events: none;
-          z-index: 0;
-          opacity: 0.28;
-          background-image: radial-gradient(circle, #B8DDC5 1px, transparent 1px);
-          background-size: 28px 28px;
-        }
-
-        /* ── LEFT PANEL ── */
-        .left-panel {
-          position: relative;
-          overflow: hidden;
-          display: flex;
-          flex-direction: column;
-        }
-
-        /* Full-bleed image */
-        .left-image-wrap {
-          position: absolute;
-          inset: 0;
-          z-index: 0;
-        }
-
-        /* Dark-to-transparent gradient over the image */
-        .left-overlay {
-          position: absolute;
-          inset: 0;
-          z-index: 1;
-          background: linear-gradient(
-            135deg,
-            rgba(10, 35, 20, 0.88) 0%,
-            rgba(15, 69, 38, 0.75) 45%,
-            rgba(26, 107, 60, 0.55) 75%,
-            rgba(26, 107, 60, 0.35) 100%
-          );
-        }
-
-        /* Diagonal accent stripe */
-        .left-overlay::after {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background: repeating-linear-gradient(
-            -55deg,
-            transparent,
-            transparent 60px,
-            rgba(255,255,255,0.015) 60px,
-            rgba(255,255,255,0.015) 61px
-          );
-        }
-
-        .left-content {
-          position: relative;
-          z-index: 2;
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          height: 100%;
-          padding: 48px 56px;
-        }
-
-        /* Logo */
-        .logo {
-          text-decoration: none;
-          display: inline-flex;
-          flex-direction: column;
-          gap: 3px;
-        }
-        .logo-name {
-          font-family: var(--font-display);
-          font-weight: 800;
-          font-size: 32px;
-          line-height: 1;
-          color: #fff;
-          letter-spacing: -0.01em;
-        }
-        .logo-name em {
-          font-style: normal;
-          color: rgba(255,255,255,0.45);
-        }
-        .logo-tag {
-          font-family: var(--font-body);
-          font-size: 9px;
-          font-weight: 700;
-          letter-spacing: 0.22em;
-          text-transform: uppercase;
-          color: rgba(255,255,255,0.45);
-        }
-
-        /* Hero copy */
-        .hero-copy { max-width: 420px; }
-        .hero-eyebrow {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          padding: 5px 14px;
-          border-radius: 20px;
-          border: 1px solid rgba(255,255,255,0.2);
-          background: rgba(255,255,255,0.08);
-          margin-bottom: 28px;
-        }
-        .hero-eyebrow-dot {
-          width: 6px;
-          height: 6px;
-          border-radius: 50%;
-          background: #4ade80;
-          box-shadow: 0 0 0 3px rgba(74,222,128,0.25);
-          flex-shrink: 0;
-        }
-        .hero-eyebrow span {
-          font-family: var(--font-body);
-          font-size: 0.72rem;
-          font-weight: 700;
-          letter-spacing: 0.1em;
-          text-transform: uppercase;
-          color: rgba(255,255,255,0.8);
-        }
-
-        .hero-title {
-          font-family: var(--font-display);
-          font-weight: 800;
-          font-size: clamp(44px, 5.5vw, 68px);
-          line-height: 1.0;
-          letter-spacing: -0.01em;
-          color: #fff;
-          margin-bottom: 20px;
-        }
-        .hero-title em {
-          font-style: italic;
-          color: rgba(255,255,255,0.45);
-        }
-
-        .hero-body {
-          font-family: var(--font-body);
-          font-weight: 300;
-          font-size: 1rem;
-          line-height: 1.75;
-          color: rgba(255,255,255,0.68);
-          max-width: 360px;
-        }
-
-        /* Stats grid */
-        .stats-grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 12px;
-          margin-top: 44px;
-        }
-
-        .stat-card {
-          padding: 16px;
-          border-radius: 12px;
-          border: 1px solid rgba(255,255,255,0.15);
-          background: rgba(255,255,255,0.08);
-          backdrop-filter: blur(10px);
-          transition: background 0.2s, border-color 0.2s;
-        }
-        .stat-card:hover {
-          background: rgba(255,255,255,0.13);
-          border-color: rgba(255,255,255,0.25);
-        }
-        .stat-card-icon {
-          color: rgba(255,255,255,0.65);
-          margin-bottom: 10px;
-        }
-        .stat-card-value {
-          font-family: var(--font-display);
-          font-weight: 800;
-          font-size: 1.15rem;
-          color: #fff;
-          line-height: 1;
-          margin-bottom: 5px;
-        }
-        .stat-card-label {
-          font-family: var(--font-body);
-          font-size: 0.68rem;
-          font-weight: 700;
-          letter-spacing: 0.06em;
-          text-transform: uppercase;
-          color: rgba(255,255,255,0.5);
-        }
-
-        /* Bottom leaderboard strip */
-        .leaderboard-strip {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          padding: 14px 18px;
-          border-radius: 12px;
-          border: 1px solid rgba(255,255,255,0.15);
-          background: rgba(255,255,255,0.07);
-          backdrop-filter: blur(8px);
-        }
-        .lb-icon {
-          width: 36px;
-          height: 36px;
-          border-radius: 50%;
-          background: rgba(255,255,255,0.12);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-shrink: 0;
-          color: #fff;
-        }
-        .lb-label {
-          font-family: var(--font-body);
-          font-size: 0.68rem;
-          font-weight: 700;
-          letter-spacing: 0.08em;
-          text-transform: uppercase;
-          color: rgba(255,255,255,0.45);
-          margin-bottom: 3px;
-        }
-        .lb-value {
-          font-family: var(--font-body);
-          font-weight: 700;
-          font-size: 0.875rem;
-          color: #fff;
-        }
-        .lb-value span { color: rgba(255,255,255,0.6); }
-        .lb-badge {
-          margin-left: auto;
-          padding: 3px 10px;
-          border-radius: 20px;
-          background: rgba(74,222,128,0.18);
-          border: 1px solid rgba(74,222,128,0.3);
-          font-family: var(--font-body);
-          font-size: 0.68rem;
-          font-weight: 700;
-          color: #4ade80;
-          letter-spacing: 0.05em;
-          white-space: nowrap;
-        }
-
-        /* ── RIGHT PANEL ── */
-        .right-panel {
-          position: relative;
-          z-index: 1;
-          background: var(--white);
-          border-left: 1px solid var(--green-border);
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          padding: 56px 52px;
-          overflow-y: auto;
-        }
-
-        /* Section header */
-        .form-header { margin-bottom: 36px; }
-
-        .status-pill {
-          display: inline-flex;
-          align-items: center;
-          gap: 7px;
-          padding: 5px 14px;
-          border-radius: 20px;
-          background: var(--green-pale);
-          border: 1px solid var(--green-border);
-          margin-bottom: 20px;
-        }
-        .status-dot {
-          width: 6px;
-          height: 6px;
-          border-radius: 50%;
-          background: var(--green);
-          box-shadow: 0 0 0 3px rgba(26,107,60,0.15);
-        }
-        .status-label {
-          font-family: var(--font-body);
-          font-size: 0.72rem;
-          font-weight: 700;
-          letter-spacing: 0.08em;
-          text-transform: uppercase;
-          color: var(--green);
-        }
-
-        .form-title {
-          font-family: var(--font-display);
-          font-weight: 800;
-          font-size: clamp(26px, 3vw, 34px);
-          color: var(--text-dark);
-          line-height: 1.1;
-          margin-bottom: 10px;
-        }
-        .form-title em {
-          font-style: italic;
-          color: var(--green);
-        }
-
-        .form-subtitle {
-          font-family: var(--font-body);
-          font-weight: 400;
-          font-size: 0.9rem;
-          color: var(--text-muted);
-          line-height: 1.6;
-        }
-        .form-subtitle a {
-          color: var(--green);
-          font-weight: 700;
-          text-decoration: none;
-          border-bottom: 1.5px solid var(--green-border);
-          transition: border-color 0.2s;
-        }
-        .form-subtitle a:hover { border-color: var(--green); }
-
-        /* Error */
-        .error-box {
-          display: flex;
-          align-items: flex-start;
-          gap: 10px;
-          margin-bottom: 24px;
-          padding: 14px 16px;
-          border-radius: 10px;
-          background: rgba(239,68,68,0.06);
-          border: 1px solid rgba(239,68,68,0.25);
-          color: #dc2626;
-          font-family: var(--font-body);
-          font-size: 0.875rem;
-          line-height: 1.5;
-        }
-        .error-box svg { flex-shrink: 0; margin-top: 1px; }
-
-        /* Form fields */
-        .form { display: flex; flex-direction: column; gap: 20px; }
-
-        .field { display: flex; flex-direction: column; gap: 0; }
-
-        .field-label {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 8px;
-        }
-        .field-label label {
-          font-family: var(--font-body);
-          font-size: 0.75rem;
-          font-weight: 700;
-          letter-spacing: 0.08em;
-          text-transform: uppercase;
-          color: var(--text-mid);
-        }
-        .field-label a {
-          font-family: var(--font-body);
-          font-size: 0.75rem;
-          font-weight: 700;
-          color: var(--green);
-          text-decoration: none;
-          opacity: 0.8;
-          transition: opacity 0.2s;
-        }
-        .field-label a:hover { opacity: 1; }
-
-        .input-wrap { position: relative; }
-
-        .input {
-          width: 100%;
-          padding: 13px 16px;
-          font-size: 0.95rem;
-          font-family: var(--font-body);
-          font-weight: 400;
-          color: var(--text-dark);
-          border: 1.5px solid var(--green-border);
-          border-radius: 10px;
-          background: var(--white);
-          outline: none;
-          transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
-          -webkit-appearance: none;
-        }
-        .input::placeholder { color: var(--text-muted); font-weight: 300; }
-        .input:focus {
-          border-color: var(--green);
-          box-shadow: 0 0 0 3.5px rgba(26,107,60,0.09);
-          background: #fafcfb;
-        }
-        .input.has-suffix { padding-right: 48px; }
-        .input.error-state {
-          border-color: rgba(239,68,68,0.5);
-          box-shadow: 0 0 0 3px rgba(239,68,68,0.07);
-        }
-
-        .input-suffix-btn {
-          position: absolute;
-          top: 50%;
-          right: 14px;
-          transform: translateY(-50%);
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          padding: 4px;
-          border: none;
-          background: transparent;
-          color: var(--text-muted);
-          cursor: pointer;
-          border-radius: 6px;
-          transition: color 0.2s, background 0.2s;
-        }
-        .input-suffix-btn:hover {
-          color: var(--green);
-          background: var(--green-pale);
-        }
-
-        /* Remember row */
-        .remember-row {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          cursor: pointer;
-          user-select: none;
-        }
-        .custom-checkbox {
-          width: 18px;
-          height: 18px;
-          border-radius: 5px;
-          border: 1.5px solid var(--green-border);
-          background: var(--white);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-shrink: 0;
-          transition: all 0.15s;
-          cursor: pointer;
-        }
-        .custom-checkbox.checked {
-          background: var(--green);
-          border-color: var(--green);
-        }
-        .custom-checkbox svg { display: none; }
-        .custom-checkbox.checked svg { display: block; }
-        .remember-row span {
-          font-family: var(--font-body);
-          font-size: 0.875rem;
-          color: var(--text-muted);
-          font-weight: 400;
-        }
-
-        /* Submit button */
-        .submit-btn {
-          width: 100%;
-          padding: 15px 28px;
-          border: none;
-          border-radius: 10px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-          font-family: var(--font-body);
-          font-size: 0.95rem;
-          font-weight: 700;
-          letter-spacing: 0.04em;
-          background: var(--green);
-          color: #fff;
-          cursor: pointer;
-          box-shadow: 0 4px 20px var(--shadow-green);
-          transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
-          position: relative;
-          overflow: hidden;
-        }
-        .submit-btn::before {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 60%);
-          pointer-events: none;
-        }
-        .submit-btn:hover:not(:disabled) {
-          background: var(--green-light);
-          transform: translateY(-2px);
-          box-shadow: 0 8px 28px var(--shadow-green);
-        }
-        .submit-btn:active:not(:disabled) { transform: translateY(0); }
-        .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-
-        /* Divider */
-        .divider {
-          display: flex;
-          align-items: center;
-          gap: 14px;
-          margin: 4px 0;
-        }
-        .divider-line {
-          flex: 1;
-          height: 1px;
-          background: var(--green-border);
-        }
-        .divider-label {
-          font-family: var(--font-body);
-          font-size: 0.72rem;
-          font-weight: 700;
-          letter-spacing: 0.08em;
-          text-transform: uppercase;
-          color: var(--text-muted);
-          white-space: nowrap;
-        }
-
-        /* Action links */
-        .action-row {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 10px;
-        }
-        .action-link {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 12px;
-          border-radius: 10px;
-          border: 1.5px solid var(--green-border);
-          font-family: var(--font-body);
-          font-size: 0.82rem;
-          font-weight: 700;
-          text-decoration: none;
-          transition: all 0.2s;
-          text-align: center;
-        }
-        .action-link.primary-ghost {
-          color: var(--green);
-          background: var(--green-pale);
-          border-color: transparent;
-        }
-        .action-link.primary-ghost:hover { background: var(--green-pale2); }
-        .action-link.secondary-ghost {
-          color: var(--text-muted);
-          background: transparent;
-        }
-        .action-link.secondary-ghost:hover {
-          color: var(--green);
-          background: var(--green-pale);
-          border-color: var(--green-border);
-        }
-
-        /* Trust badges */
-        .trust-row {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 20px;
-          padding-top: 20px;
-          border-top: 1px solid var(--green-border);
-        }
-        .trust-item {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          font-family: var(--font-body);
-          font-size: 0.7rem;
-          font-weight: 700;
-          letter-spacing: 0.04em;
-          color: var(--text-muted);
-        }
-        .trust-item svg { color: var(--green); opacity: 0.7; }
-
-        /* Footer */
-        .form-footer {
-          text-align: center;
-          font-family: var(--font-body);
-          font-size: 0.75rem;
-          color: var(--text-muted);
-        }
-        .form-footer a { color: var(--green); text-decoration: none; font-weight: 600; }
-
-        /* Animations */
-        @keyframes fadeUp {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        .anim-up { animation: fadeUp 0.65s cubic-bezier(0.22,1,0.36,1) both; }
-        .anim-fade { animation: fadeIn 0.5s ease both; }
-        .d1 { animation-delay: 0.05s; }
-        .d2 { animation-delay: 0.12s; }
-        .d3 { animation-delay: 0.20s; }
-        .d4 { animation-delay: 0.28s; }
-        .d5 { animation-delay: 0.36s; }
-
-        /* Responsive */
-        @media (max-width: 1024px) {
-          .login-page { grid-template-columns: 1fr; }
-          .left-panel { min-height: 340px; }
-          .left-content { padding: 36px 28px; }
-          .stats-grid { grid-template-columns: repeat(3, 1fr); }
-          .right-panel { padding: 40px 28px 48px; border-left: none; border-top: 1px solid var(--green-border); }
-        }
-        @media (max-width: 560px) {
-          .stats-grid { grid-template-columns: 1fr; gap: 8px; }
-          .action-row { grid-template-columns: 1fr; }
-        }
-      `}</style>
-
-      <div className="dot-grid" />
-
-      <div className="login-page">
-
+      <div className="relative z-[1] grid min-h-screen grid-cols-1 lg:grid-cols-[1fr_520px]">
         {/* ── LEFT PANEL ── */}
-        <aside className="left-panel">
-          <div className="left-image-wrap">
+        <aside className="relative flex min-h-[340px] flex-col overflow-hidden">
+          <div className="absolute inset-0 z-0">
             <Image
               src={riderHero}
               alt="OyaEat rider in Lagos"
               fill
               priority
               sizes="55vw"
-              style={{ objectFit: 'cover', objectPosition: 'center 30%' }}
+              style={{ objectFit: "cover", objectPosition: "center 30%" }}
             />
           </div>
-          <div className="left-overlay" />
+          <div className="absolute inset-0 z-[1] bg-gradient-to-br from-primary/90 via-primary/70 to-primary/40" />
 
-          <div className="left-content">
+          <div className="relative z-[2] flex h-full flex-col justify-between gap-10 p-7 lg:p-14">
             {/* Logo */}
-            <Link href="/" className="logo">
-              <div className="logo-name">
-                Oya<em>Eat</em>
-              </div>
-              <div className="logo-tag">Rider Portal</div>
+            <Link href="/" className="inline-flex flex-col gap-1">
+              <span className="text-3xl font-bold tracking-tight text-primary-foreground">
+                Oya<span className="text-primary-foreground/50">Eat</span>
+              </span>
+              <span className="text-[9px] font-bold uppercase tracking-[0.22em] text-primary-foreground/50">
+                Rider Portal
+              </span>
             </Link>
 
             {/* Hero copy */}
-            <div className="hero-copy">
-              <div className="hero-eyebrow">
-                <span className="hero-eyebrow-dot" />
-                <span>Orders live in Lagos, Abuja & PH</span>
+            <div className="max-w-md">
+              <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-primary-foreground/20 bg-primary-foreground/10 px-3.5 py-1.5">
+                <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-chart-4 shadow-[0_0_0_3px_rgba(74,222,128,0.25)]" />
+                <span className="text-xs font-bold uppercase tracking-wider text-primary-foreground/80">
+                  Orders live in Lagos, Abuja & PH
+                </span>
               </div>
 
-              <h1 className="hero-title">
-                Welcome<br />
-                Back,<br />
-                <em>Rider.</em>
+              <h1 className="mb-5 text-[44px] font-bold leading-[1.0] tracking-tight text-primary-foreground sm:text-6xl">
+                Welcome
+                <br />
+                Back,
+                <br />
+                <span className="italic text-primary-foreground/50">
+                  Rider.
+                </span>
               </h1>
 
-              <p className="hero-body">
-                Log in to your dashboard, check your earnings, and get back on the road.
+              <p className="max-w-sm text-base font-light leading-relaxed text-primary-foreground/70">
+                Log in to your dashboard, check your earnings, and get back on
+                the road.
               </p>
 
               {/* Stats cards */}
-              <div className="stats-grid">
+              <div className="mt-11 grid grid-cols-3 gap-3">
                 {stats.map((stat) => {
                   const Icon = stat.icon;
                   return (
-                    <div key={stat.label} className="stat-card">
-                      <div className="stat-card-icon">
-                        <Icon size={18} strokeWidth={2} />
+                    <div
+                      key={stat.label}
+                      className="rounded-xl border border-primary-foreground/15 bg-primary-foreground/10 p-4 backdrop-blur-md transition-colors hover:bg-primary-foreground/15 hover:border-primary-foreground/25"
+                    >
+                      <Icon
+                        size={18}
+                        strokeWidth={2}
+                        className="mb-2.5 text-primary-foreground/65"
+                      />
+                      <div className="mb-1 text-lg font-bold leading-none text-primary-foreground">
+                        {stat.value}
                       </div>
-                      <div className="stat-card-value">{stat.value}</div>
-                      <div className="stat-card-label">{stat.label}</div>
+                      <div className="text-[11px] font-bold uppercase tracking-wide text-primary-foreground/50">
+                        {stat.label}
+                      </div>
                     </div>
                   );
                 })}
@@ -776,179 +175,230 @@ const RiderLogin = () => {
             </div>
 
             {/* Leaderboard strip */}
-            <div className="leaderboard-strip">
-              <div className="lb-icon">
+            <div className="flex items-center gap-3 rounded-xl border border-primary-foreground/15 bg-primary-foreground/10 px-4.5 py-3.5 backdrop-blur-sm">
+              <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-primary-foreground/15 text-primary-foreground">
                 <TrendingUp size={16} strokeWidth={2.5} />
               </div>
               <div>
-                <div className="lb-label">Today's top earner</div>
-                <div className="lb-value">
-                  Emeka, Lagos Island — <span>₦14,200 earned</span>
+                <div className="mb-0.5 text-[11px] font-bold uppercase tracking-wide text-primary-foreground/45">
+                  Today&apos;s top earner
+                </div>
+                <div className="text-sm font-bold text-primary-foreground">
+                  Emeka, Lagos Island —{" "}
+                  <span className="text-primary-foreground/60">
+                    ₦14,200 earned
+                  </span>
                 </div>
               </div>
-              <div className="lb-badge">🏆 #1 Today</div>
+              <div className="ml-auto whitespace-nowrap rounded-full border border-chart-4/30 bg-chart-4/20 px-2.5 py-1 text-xs font-bold text-chart-4">
+                🏆 #1 Today
+              </div>
             </div>
           </div>
         </aside>
 
         {/* ── RIGHT PANEL ── */}
-        <section className="right-panel">
-
+        <section className="flex flex-col justify-center overflow-y-auto border-t border-border bg-card px-6 py-10 lg:border-l lg:border-t-0 lg:px-13 lg:py-14">
           {/* Header */}
-          <div className="form-header anim-up d1">
-            <div className="status-pill">
-              <span className="status-dot" />
-              <span className="status-label">Rider Portal Active</span>
+          <div className="mb-9">
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-3.5 py-1.5">
+              <span className="h-1.5 w-1.5 rounded-full bg-primary shadow-[0_0_0_3px_rgba(26,107,60,0.15)]" />
+              <span className="text-xs font-bold uppercase tracking-wider text-primary">
+                Rider Portal Active
+              </span>
             </div>
 
-            <h2 className="form-title">
-              Sign in &amp; <em>start earning</em>
+            <h2 className="mb-2.5 text-3xl font-bold leading-tight text-foreground sm:text-4xl">
+              Sign in &amp;{" "}
+              <span className="italic text-primary">start earning</span>
             </h2>
 
-            <p className="form-subtitle">
+            <p className="text-sm leading-relaxed text-muted-foreground">
               Don&apos;t have an account?{" "}
-              <Link href="/rider/register">Apply to ride →</Link>
+              <Link
+                href="/rider/register"
+                className="border-b-[1.5px] border-border font-bold text-primary transition-colors hover:border-primary"
+              >
+                Apply to ride →
+              </Link>
             </p>
           </div>
 
           {/* Error */}
           {error && (
-            <div className="error-box anim-fade">
-              <CircleAlert size={16} />
+            <div className="mb-6 flex items-start gap-2.5 rounded-lg border border-destructive/25 bg-destructive/5 px-4 py-3.5 text-sm leading-relaxed text-destructive">
+              <CircleAlert size={16} className="mt-0.5 flex-shrink-0" />
               <span>{error}</span>
             </div>
           )}
 
           {/* Form */}
-          <form className="form" onSubmit={handleSubmit}>
-
-            <div className="field anim-up d2">
-              <div className="field-label">
-                <label htmlFor="email">Email Address</label>
-              </div>
-              <div className="input-wrap">
-                <input
-                  id="email"
-                  className={`input${error ? ' error-state' : ''}`}
-                  type="email"
-                  placeholder="you@example.com"
-                  value={formData.email}
-                  onChange={(e) => updateFormData("email", e.target.value)}
-                  onFocus={() => setFocusedField("email")}
-                  onBlur={() => setFocusedField(null)}
-                  required
-                  disabled={isLoading}
-                  autoComplete="email"
-                />
-              </div>
+          <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
+            <div>
+              <label
+                htmlFor="email"
+                className="mb-2 block text-xs font-bold uppercase tracking-wider text-muted-foreground"
+              >
+                Email Address
+              </label>
+              <input
+                id="email"
+                type="email"
+                placeholder="you@example.com"
+                value={formData.email}
+                onChange={(e) => updateFormData("email", e.target.value)}
+                required
+                disabled={isLoading}
+                autoComplete="email"
+                className={`w-full rounded-lg border-[1.5px] bg-background px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:font-light placeholder:text-muted-foreground focus:border-primary focus:bg-background focus:ring-[3.5px] focus:ring-primary/10 ${
+                  error
+                    ? "border-destructive/50 ring-2 ring-destructive/10"
+                    : "border-border"
+                }`}
+              />
             </div>
 
-            <div className="field anim-up d3">
-              <div className="field-label">
-                <label htmlFor="password">Password</label>
-                <Link href="/rider/forgot-password">Forgot password?</Link>
+            <div>
+              <div className="mb-2 flex items-center justify-between">
+                <label
+                  htmlFor="password"
+                  className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+                >
+                  Password
+                </label>
+                <Link
+                  href="/rider/forgot-password"
+                  className="text-xs font-bold text-primary opacity-80 transition-opacity hover:opacity-100"
+                >
+                  Forgot password?
+                </Link>
               </div>
-              <div className="input-wrap">
+              <div className="relative">
                 <input
                   id="password"
-                  className={`input has-suffix${error ? ' error-state' : ''}`}
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter your password"
                   value={formData.password}
                   onChange={(e) => updateFormData("password", e.target.value)}
-                  onFocus={() => setFocusedField("password")}
-                  onBlur={() => setFocusedField(null)}
                   required
                   disabled={isLoading}
                   autoComplete="current-password"
+                  className={`w-full rounded-lg border-[1.5px] bg-background px-4 py-3 pr-12 text-sm text-foreground outline-none transition-colors placeholder:font-light placeholder:text-muted-foreground focus:border-primary focus:ring-[3.5px] focus:ring-primary/10 ${
+                    error
+                      ? "border-destructive/50 ring-2 ring-destructive/10"
+                      : "border-border"
+                  }`}
                 />
                 <button
                   type="button"
-                  className="input-suffix-btn"
                   onClick={() => setShowPassword((p) => !p)}
                   aria-label={showPassword ? "Hide password" : "Show password"}
                   tabIndex={-1}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 rounded-md p-1 text-muted-foreground transition-colors hover:bg-secondary hover:text-primary"
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
             </div>
 
-            <div className="anim-up d4">
-              <label
-                className="remember-row"
-                onClick={() => updateFormData("remember", !formData.remember)}
+            <label
+              className="flex cursor-pointer select-none items-center gap-2.5"
+              onClick={() => updateFormData("remember", !formData.remember)}
+            >
+              <span
+                className={`flex h-[18px] w-[18px] flex-shrink-0 items-center justify-center rounded-[5px] border-[1.5px] transition-colors ${
+                  formData.remember
+                    ? "border-primary bg-primary"
+                    : "border-border bg-background"
+                }`}
               >
-                <div className={`custom-checkbox${formData.remember ? ' checked' : ''}`}>
-                  <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
-                    <path d="M2 6l3 3 5-5" stroke="#fff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </div>
-                <span>Keep me signed in for 30 days</span>
-              </label>
-            </div>
-
-            <div className="anim-up d5">
-              <button type="submit" className="submit-btn" disabled={isLoading}>
-                {isLoading ? (
-                  <>
-                    <Loader2 size={18} className="animate-spin" />
-                    Signing in…
-                  </>
-                ) : (
-                  <>
-                    Sign In to Dashboard
-                    <ArrowRight size={18} />
-                  </>
+                {formData.remember && (
+                  <Check
+                    size={11}
+                    strokeWidth={3}
+                    className="text-primary-foreground"
+                  />
                 )}
-              </button>
-            </div>
+              </span>
+              <span className="text-sm text-muted-foreground">
+                Keep me signed in for 30 days
+              </span>
+            </label>
 
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="mt-1 flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-7 py-3.5 text-sm font-bold tracking-wide text-primary-foreground shadow-[0_4px_20px_rgba(26,107,60,0.18)] transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_28px_rgba(26,107,60,0.18)] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 size={18} className="animate-spin" />
+                  Signing in…
+                </>
+              ) : (
+                <>
+                  Sign In to Dashboard
+                  <ArrowRight size={18} />
+                </>
+              )}
+            </button>
           </form>
 
           {/* Divider */}
-          <div className="divider" style={{ marginTop: 28 }}>
-            <div className="divider-line" />
-            <span className="divider-label">or</span>
-            <div className="divider-line" />
+          <div className="mt-7 flex items-center gap-3.5">
+            <div className="h-px flex-1 bg-border" />
+            <span className="whitespace-nowrap text-xs font-bold uppercase tracking-wider text-muted-foreground">
+              or
+            </span>
+            <div className="h-px flex-1 bg-border" />
           </div>
 
           {/* Action links */}
-          <div className="action-row" style={{ marginTop: 16 }}>
-            <Link href="/rider/register" className="action-link primary-ghost">
+          <div className="mt-4 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+            <Link
+              href="/rider/register"
+              className="flex items-center justify-center rounded-lg border-[1.5px] border-transparent bg-secondary px-3 py-3 text-center text-sm font-bold text-primary transition-colors hover:bg-secondary/70"
+            >
               New rider? Apply now
             </Link>
-            <Link href="/" className="action-link secondary-ghost">
+            <Link
+              href="/"
+              className="flex items-center justify-center rounded-lg border-[1.5px] border-border bg-transparent px-3 py-3 text-center text-sm font-bold text-muted-foreground transition-colors hover:border-border hover:bg-secondary hover:text-primary"
+            >
               ← Back to Home
             </Link>
           </div>
 
           {/* Trust badges */}
-          <div className="trust-row" style={{ marginTop: 28 }}>
-            <div className="trust-item">
-              <ShieldCheck size={13} />
+          <div className="mt-7 flex items-center justify-center gap-5 border-t border-border pt-5">
+            <div className="flex items-center gap-1.5 text-[11px] font-bold tracking-wide text-muted-foreground">
+              <ShieldCheck size={13} className="text-primary/70" />
               Secure login
             </div>
-            <div className="trust-item">
-              <Zap size={13} />
+            <div className="flex items-center gap-1.5 text-[11px] font-bold tracking-wide text-muted-foreground">
+              <Zap size={13} className="text-primary/70" />
               Instant access
             </div>
-            <div className="trust-item">
-              <Star size={13} />
+            <div className="flex items-center gap-1.5 text-[11px] font-bold tracking-wide text-muted-foreground">
+              <Star size={13} className="text-primary/70" />
               4.8★ rated platform
             </div>
           </div>
 
           {/* Footer */}
-          <p className="form-footer" style={{ marginTop: 20 }}>
+          <p className="mt-5 text-center text-xs text-muted-foreground">
             By signing in you agree to our{" "}
-            <a href="#">Terms of Service</a> &amp;{" "}
-            <a href="#">Privacy Policy</a>
+            <a href="#" className="font-semibold text-primary">
+              Terms of Service
+            </a>{" "}
+            &amp;{" "}
+            <a href="#" className="font-semibold text-primary">
+              Privacy Policy
+            </a>
           </p>
-
         </section>
       </div>
-    </>
+    </div>
   );
 };
 

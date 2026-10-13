@@ -19,11 +19,12 @@ const VerifyPhone = () => {
   const [error, setError] = useState("");
   const inputRefs = useRef<HTMLInputElement[]>([]);
 
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+  const API_BASE_URL =
+    process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
   useEffect(() => {
     // Get phone and userId from sessionStorage
-    const data = sessionStorage.getItem('partnerSignupData');
+    const data = sessionStorage.getItem("partnerSignupData");
     if (data) {
       const parsedData = JSON.parse(data);
       setPhone(parsedData.phone || "");
@@ -41,17 +42,21 @@ const VerifyPhone = () => {
   const handleSendCode = async () => {
     setIsResending(true);
     setError("");
-    
+
     try {
       // In a real implementation, you would call an API to send OTP
       // For now, we'll just simulate it and set isCodeSent to true
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       setIsCodeSent(true);
       setCountdown(60);
       // Focus first input
       inputRefs.current[0]?.focus();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to send code. Please try again.");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to send code. Please try again.",
+      );
     } finally {
       setIsResending(false);
     }
@@ -59,7 +64,7 @@ const VerifyPhone = () => {
 
   const handleCodeChange = (index: number, value: string) => {
     if (value.length > 1) return;
-    
+
     const newCode = [...code];
     newCode[index] = value;
     setCode(newCode);
@@ -70,13 +75,16 @@ const VerifyPhone = () => {
     }
   };
 
-  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (
+    index: number,
+    e: React.KeyboardEvent<HTMLInputElement>,
+  ) => {
     if (e.key === "Backspace" && !code[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
   };
 
-    const handleVerify = async () => {
+  const handleVerify = async () => {
     const verificationCode = code.join("");
     if (verificationCode.length !== 6) return;
 
@@ -109,9 +117,13 @@ const VerifyPhone = () => {
       }
 
       // Success! Navigate to welcome or dashboard page
-      router.push('/partner-signup/welcome');
+      router.push("/partner-signup/welcome");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Verification failed. Please try again.");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Verification failed. Please try again.",
+      );
       // Clear the code inputs on error
       setCode(["", "", "", "", "", ""]);
       inputRefs.current[0]?.focus();
@@ -120,15 +132,13 @@ const VerifyPhone = () => {
     }
   };
 
-  const isCodeComplete = code.every(digit => digit !== "");
+  const isCodeComplete = code.every((digit) => digit !== "");
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
       {/* Simple Header */}
       <header className="py-6 px-8">
         <Link href="/" className="flex items-center gap-2">
-          
-          
           <span className="text-xl font-bold">
             <span className="text-[#2d5f4f]">Oya</span>
             <span className="text-gray-900">Eat</span>
@@ -146,7 +156,8 @@ const VerifyPhone = () => {
                 Verify your phone number
               </h1>
               <p className="text-gray-600 text-base mb-10 leading-relaxed">
-                Verifying your phone number helps simplify the registration process and facilitates easier communication.
+                Verifying your phone number helps simplify the registration
+                process and facilitates easier communication.
               </p>
 
               {error && (
@@ -176,9 +187,25 @@ const VerifyPhone = () => {
                   >
                     {isResending ? (
                       <span className="flex items-center justify-center">
-                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        <svg
+                          className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
                         </svg>
                         Sending...
                       </span>
@@ -192,7 +219,7 @@ const VerifyPhone = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-4">
                     Enter verification code sent to {phone}
                   </label>
-                  
+
                   {/* 6-Digit Code Input */}
                   <div className="flex gap-3 mb-6">
                     {code.map((digit, index) => (
@@ -205,7 +232,9 @@ const VerifyPhone = () => {
                         inputMode="numeric"
                         maxLength={1}
                         value={digit}
-                        onChange={(e) => handleCodeChange(index, e.target.value)}
+                        onChange={(e) =>
+                          handleCodeChange(index, e.target.value)
+                        }
                         onKeyDown={(e) => handleKeyDown(index, e)}
                         disabled={isVerifying}
                         className="w-14 h-16 text-center text-2xl text-gray-900 font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5f4f] focus:border-[#2d5f4f] outline-none disabled:bg-gray-100"
@@ -220,9 +249,25 @@ const VerifyPhone = () => {
                   >
                     {isVerifying ? (
                       <span className="flex items-center justify-center">
-                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        <svg
+                          className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
                         </svg>
                         Verifying...
                       </span>
@@ -236,7 +281,9 @@ const VerifyPhone = () => {
                     disabled={countdown > 0 || isResending}
                     className="w-full text-[#2d5f4f] font-medium hover:underline disabled:text-gray-400 disabled:no-underline"
                   >
-                    {countdown > 0 ? `Resend code in ${countdown}s` : "Resend Code"}
+                    {countdown > 0
+                      ? `Resend code in ${countdown}s`
+                      : "Resend Code"}
                   </button>
                 </div>
               )}

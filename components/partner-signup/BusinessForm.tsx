@@ -8,14 +8,19 @@ interface BusinessFormProps {
   formData: any;
   markerPos: { lat: number; lng: number };
   isLoading: boolean;
-  handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
+  handleChange: (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
+  ) => void;
   handleMapClick: (e: any) => void;
 }
 
 const inputClass =
   "w-full text-gray-900 px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#2d5f4f] focus:border-transparent outline-none disabled:bg-gray-50 text-sm font-medium placeholder:text-gray-400 transition-shadow";
 
-const labelClass = "block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5";
+const labelClass =
+  "block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5";
 
 export default function BusinessForm({
   subStep,
@@ -44,7 +49,7 @@ export default function BusinessForm({
             />
           </div>
 
-                   {/* Type */}
+          {/* Type */}
           <div>
             <label className={labelClass}>Business Type *</label>
             <select
@@ -58,14 +63,21 @@ export default function BusinessForm({
               <option value="">Select type</option>
               <option value="buka_mamaput">Local Buka / Mama Put</option>
               <option value="fastfood_qsr">Fast Food / QSR Chain</option>
-              <option value="casual_dining">Casual / Continental Restaurant</option>
-              <option value="ghost_kitchen">Cloud / Delivery-Only Kitchen</option>
-              <option value="pastries_bakery">Pastries, Shawarma & Confectionery</option>
-              <option value="supermarket_grocery">Groceries & Supermarket</option>
+              <option value="casual_dining">
+                Casual / Continental Restaurant
+              </option>
+              <option value="ghost_kitchen">
+                Cloud / Delivery-Only Kitchen
+              </option>
+              <option value="pastries_bakery">
+                Pastries, Shawarma & Confectionery
+              </option>
+              <option value="supermarket_grocery">
+                Groceries & Supermarket
+              </option>
               <option value="drinks_liquor">Drinks & Wholesale Beverage</option>
             </select>
           </div>
-
 
           {/* Phone */}
           <div>
@@ -99,7 +111,12 @@ export default function BusinessForm({
 
           {/* Website */}
           <div>
-            <label className={labelClass}>Website <span className="normal-case font-medium text-gray-400">(optional)</span></label>
+            <label className={labelClass}>
+              Website{" "}
+              <span className="normal-case font-medium text-gray-400">
+                (optional)
+              </span>
+            </label>
             <input
               type="url"
               name="website"
@@ -190,11 +207,17 @@ export default function BusinessForm({
           {/* Map pin */}
           <div className="sm:col-span-3">
             <div className="flex items-center justify-between mb-1.5">
-              <label className={labelClass + " mb-0"}>Pin your storefront *</label>
-              <span className="text-[10px] text-gray-400 font-medium">Tap the map to move the pin</span>
+              <label className={labelClass + " mb-0"}>
+                Pin your storefront *
+              </label>
+              <span className="text-[10px] text-gray-400 font-medium">
+                Tap the map to move the pin
+              </span>
             </div>
             <div className="h-40 w-full rounded-xl overflow-hidden border border-gray-200">
-              <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ""}>
+              <APIProvider
+                apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ""}
+              >
                 <Map
                   defaultZoom={13}
                   center={markerPos}

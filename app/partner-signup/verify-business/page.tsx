@@ -5,7 +5,7 @@ import VerifyBusinessContent from "@/components/partner-signup/VerifyBusinessCon
 
 export default function VerifyBusinessPage() {
   return (
-    <Suspense 
+    <Suspense
       fallback={
         <div className="min-h-screen bg-white flex items-center justify-center">
           <p className="text-gray-500 font-medium animate-pulse">

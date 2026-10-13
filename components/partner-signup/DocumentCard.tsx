@@ -20,7 +20,11 @@ interface DocumentCardProps {
   onFileChange: (id: string, file: File | null) => void;
 }
 
-export default function DocumentCard({ doc, isSubmitting, onFileChange }: DocumentCardProps) {
+export default function DocumentCard({
+  doc,
+  isSubmitting,
+  onFileChange,
+}: DocumentCardProps) {
   const [localError, setLocalError] = useState("");
 
   const handleValidation = (file: File | null) => {
@@ -42,14 +46,16 @@ export default function DocumentCard({ doc, isSubmitting, onFileChange }: Docume
         doc.uploaded
           ? "border-[#2d5f4f]/30 bg-[#2d5f4f]/[0.04]"
           : localError
-          ? "border-red-200 bg-red-50/40"
-          : "border-gray-200 bg-white hover:border-[#2d5f4f]/30"
+            ? "border-red-200 bg-red-50/40"
+            : "border-gray-200 bg-white hover:border-[#2d5f4f]/30"
       }`}
     >
       <div className="flex items-center gap-2.5">
         <div
           className={`flex-shrink-0 w-6 h-6 rounded-md flex items-center justify-center ${
-            doc.uploaded ? "bg-[#2d5f4f] text-white" : "bg-gray-100 text-gray-400"
+            doc.uploaded
+              ? "bg-[#2d5f4f] text-white"
+              : "bg-gray-100 text-gray-400"
           }`}
         >
           {doc.uploaded ? (
@@ -60,7 +66,9 @@ export default function DocumentCard({ doc, isSubmitting, onFileChange }: Docume
         </div>
 
         <div className="min-w-0 flex-1">
-          <p className="text-xs font-bold text-gray-900 truncate leading-tight">{doc.name}</p>
+          <p className="text-xs font-bold text-gray-900 truncate leading-tight">
+            {doc.name}
+          </p>
 
           {localError ? (
             <p className="text-[11px] text-red-600 font-semibold truncate leading-tight flex items-center gap-1">
@@ -72,7 +80,9 @@ export default function DocumentCard({ doc, isSubmitting, onFileChange }: Docume
               {doc.file.name} · {(doc.file.size / 1024 / 1024).toFixed(1)}MB
             </p>
           ) : (
-            <p className="text-[11px] text-gray-400 truncate leading-tight">{doc.description}</p>
+            <p className="text-[11px] text-gray-400 truncate leading-tight">
+              {doc.description}
+            </p>
           )}
         </div>
 
@@ -102,8 +112,8 @@ export default function DocumentCard({ doc, isSubmitting, onFileChange }: Docume
                 isSubmitting
                   ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                   : doc.uploaded
-                  ? "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
-                  : "bg-[#2d5f4f] text-white hover:bg-[#234a3d]"
+                    ? "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
+                    : "bg-[#2d5f4f] text-white hover:bg-[#234a3d]"
               }`}
             >
               {!doc.uploaded && <Upload className="w-2.5 h-2.5" />}

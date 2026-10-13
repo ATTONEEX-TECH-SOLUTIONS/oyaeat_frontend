@@ -28,7 +28,8 @@ export default function PartnerForm() {
     setError("");
 
     try {
-      const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+      const API_BASE_URL =
+        process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
       const response = await fetch(`${API_BASE_URL}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -41,19 +42,27 @@ export default function PartnerForm() {
         throw new Error(data.message || "Registration failed");
       }
 
-      const token = data.token || data.authToken || data.data?.token || data.user?.token;
+      const token =
+        data.token || data.authToken || data.data?.token || data.user?.token;
       if (token) {
         localStorage.setItem("authToken", token);
       }
 
-      sessionStorage.setItem("partnerSignupData", JSON.stringify({
-        ...formData,
-        userId: data.userId || data.id || data.user?.id || data.data?.userId,
-      }));
-      
+      sessionStorage.setItem(
+        "partnerSignupData",
+        JSON.stringify({
+          ...formData,
+          userId: data.userId || data.id || data.user?.id || data.data?.userId,
+        }),
+      );
+
       router.push("/partner-signup/verify-phone");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Something went wrong. Please try again.",
+      );
     } finally {
       setIsLoading(false);
     }
@@ -88,21 +97,24 @@ export default function PartnerForm() {
       />
 
       <select
-  value={formData.businessType}
-  onChange={(e) => updateFormData("businessType", e.target.value)}
-  className="w-full px-4 py-3 bg-white border border-white/40 rounded-lg outline-none text-gray-700 shadow-sm"
-  required
-  disabled={isLoading}
->
-  <option value="">Business type *</option>
-  <option value="dine_in_delivery">Dine-in Restaurant (with Delivery)</option>
-  <option value="cloud_kitchen">Cloud Kitchen / Ghost Kitchen (Delivery Only)</option>
-  <option value="fast_food_takeaway">Fast Food & Takeaway</option>
-  <option value="home_chef">Home Chef / Home-based Kitchen</option>
-  <option value="catering">Catering Service (Bulk Delivery)</option>
-  <option value="food_truck">Food Truck</option>
-</select>
-
+        value={formData.businessType}
+        onChange={(e) => updateFormData("businessType", e.target.value)}
+        className="w-full px-4 py-3 bg-white border border-white/40 rounded-lg outline-none text-gray-700 shadow-sm"
+        required
+        disabled={isLoading}
+      >
+        <option value="">Business type *</option>
+        <option value="dine_in_delivery">
+          Dine-in Restaurant (with Delivery)
+        </option>
+        <option value="cloud_kitchen">
+          Cloud Kitchen / Ghost Kitchen (Delivery Only)
+        </option>
+        <option value="fast_food_takeaway">Fast Food & Takeaway</option>
+        <option value="home_chef">Home Chef / Home-based Kitchen</option>
+        <option value="catering">Catering Service (Bulk Delivery)</option>
+        <option value="food_truck">Food Truck</option>
+      </select>
 
       <input
         type="email"
@@ -142,9 +154,24 @@ export default function PartnerForm() {
       >
         {isLoading ? (
           <span className="flex items-center justify-center">
-            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+            <svg
+              className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              />
             </svg>
             Creating your account...
           </span>

@@ -1,17 +1,21 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { AlertTriangle } from 'lucide-react';
+import React from "react";
+import { AlertTriangle } from "lucide-react";
 
 interface ActiveBroadcastsTableProps {
   broadcasts: any[];
 }
 
-export function ActiveBroadcastsTable({ broadcasts }: ActiveBroadcastsTableProps) {
+export function ActiveBroadcastsTable({
+  broadcasts,
+}: ActiveBroadcastsTableProps) {
   return (
     <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm xl:col-span-2 space-y-4">
       <div className="flex items-center gap-2 border-b pb-3 border-slate-100">
-        <h2 className="font-extrabold text-slate-800 text-sm uppercase tracking-wider">Campaign Tracking Monitor</h2>
+        <h2 className="font-extrabold text-slate-800 text-sm uppercase tracking-wider">
+          Campaign Tracking Monitor
+        </h2>
       </div>
 
       {broadcasts.length === 0 ? (
@@ -31,23 +35,39 @@ export function ActiveBroadcastsTable({ broadcasts }: ActiveBroadcastsTableProps
             <tbody className="divide-y text-slate-700 font-medium">
               {broadcasts.map((promo, idx) => {
                 const isUploadedImage = promo.bgGradient?.startsWith("http");
-                const isRejected = !promo.isActive && promo.expiresAt && new Date(promo.expiresAt).getFullYear() < 2020;
+                const isRejected =
+                  !promo.isActive &&
+                  promo.expiresAt &&
+                  new Date(promo.expiresAt).getFullYear() < 2020;
                 const isPending = !promo.isActive && !isRejected;
 
                 return (
-                  <tr key={promo.id || idx} className={`hover:bg-slate-50/50 transition-colors ${isRejected ? 'bg-rose-50/20' : ''}`}>
-                    <td className="p-3 font-bold text-slate-900">{promo.title}</td>
+                  <tr
+                    key={promo.id || idx}
+                    className={`hover:bg-slate-50/50 transition-colors ${isRejected ? "bg-rose-50/20" : ""}`}
+                  >
+                    <td className="p-3 font-bold text-slate-900">
+                      {promo.title}
+                    </td>
                     <td className="p-3">
                       {isUploadedImage ? (
-                        <div className="h-10 w-24 rounded-lg bg-cover bg-center border" style={{ backgroundImage: `url(${promo.bgGradient})` }} />
+                        <div
+                          className="h-10 w-24 rounded-lg bg-cover bg-center border"
+                          style={{
+                            backgroundImage: `url(${promo.bgGradient})`,
+                          }}
+                        />
                       ) : (
-                        <span className="text-xs text-slate-400">No image uploaded</span>
+                        <span className="text-xs text-slate-400">
+                          No image uploaded
+                        </span>
                       )}
                     </td>
                     <td className="p-3 text-xs">
                       {isRejected && (
                         <span className="bg-rose-50 border border-rose-200 text-rose-600 px-2.5 py-1 rounded-full font-bold inline-flex items-center gap-1">
-                          <AlertTriangle className="w-3 h-3" /> Rejected by Admin
+                          <AlertTriangle className="w-3 h-3" /> Rejected by
+                          Admin
                         </span>
                       )}
                       {isPending && (
