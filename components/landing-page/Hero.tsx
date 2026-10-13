@@ -1,292 +1,181 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
-import {
-  MapPin,
-  ArrowRight,
-  UtensilsCrossed,
-  Wine,
-  ShoppingBag,
-  Clock,
-  Zap,
-} from "lucide-react";
-import riderImage from "@/public/oyaeat-rider.png";
+import { useRouter } from "next/navigation";
+import { FormEvent } from "react";
+import { MapPin, ArrowRight, Clock, Zap, Star, BadgeCheck } from "lucide-react";
+
+const dishes = [
+  {
+    src: "/landing/opt/pounded-yam-egusi.webp",
+    alt: "Pounded yam with egusi soup",
+    pos: "left-[28%] top-0",
+    size: "w-[46%]",
+    delay: "0s",
+  },
+  {
+    src: "/landing/opt/ofada.webp",
+    alt: "Ofada rice with assorted meat",
+    pos: "left-0 top-[30%]",
+    size: "w-[43%]",
+    delay: "1.2s",
+  },
+  {
+    src: "/landing/opt/suya.webp",
+    alt: "Suya and grilled skewers",
+    pos: "right-0 top-[27%]",
+    size: "w-[43%]",
+    delay: "0.6s",
+  },
+  {
+    src: "/landing/opt/9.webp",
+    alt: "Rice and plantain plate",
+    pos: "left-[27%] top-[54%]",
+    size: "w-[46%]",
+    delay: "1.8s",
+  },
+];
+
+function Leaf({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 64 64"
+      aria-hidden="true"
+      className={`absolute pointer-events-none ${className}`}
+    >
+      <path d="M6 58C6 28 24 6 58 6c0 34-22 52-52 52z" fill="var(--lp-leaf)" />
+      <path
+        d="M10 54C24 38 38 24 54 10"
+        stroke="#3f9d2b"
+        strokeWidth="3"
+        strokeLinecap="round"
+        fill="none"
+      />
+    </svg>
+  );
+}
 
 const Hero = () => {
+  const router = useRouter();
+
+  const onSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    router.push("/customer");
+  };
+
   return (
-    <section className="relative min-h-screen overflow-hidden bg-[#f7faf9] pt-[72px]">
-      {/* Subtle background accents */}
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        <div className="absolute -top-32 -left-32 w-[500px] h-[500px] bg-[#2d5f4f]/[0.06] rounded-full blur-3xl" />
+    <section className="lp-doodles relative overflow-hidden pt-[72px]">
+      <div className="max-w-[1400px] mx-auto px-5 lg:px-10 grid lg:grid-cols-[1.05fr_1fr] items-center gap-6 lg:gap-4 pt-10 pb-16 lg:pt-14 lg:pb-24 min-h-[calc(100svh-0px)] lg:min-h-[720px]">
+        {/* Copy */}
+        <div className="relative z-10">
+          <span className="inline-flex items-center gap-2 rounded-full bg-white/15 border border-white/25 text-white text-xs font-extrabold tracking-wide uppercase px-3.5 py-1.5 mb-6">
+            <span className="w-2 h-2 rounded-full bg-[var(--lp-leaf)] animate-pulse" />
+            Now delivering across Abuja
+          </span>
 
-        <div className="absolute bottom-0 right-1/4 w-[420px] h-[420px] bg-[#2d5f4f]/[0.05] rounded-full blur-3xl" />
-      </div>
+          <h1 className="lp-display font-extrabold leading-[0.98] text-[clamp(2.75rem,8vw,5.75rem)] text-[var(--lp-cream)]">
+            Better chow,
+            <br />
+            <span className="text-[var(--lp-mango)]">no wahala.</span>
+          </h1>
 
-      {/* 
-        Rider
-        Positioned absolutely behind the content.
-        
-        Increased size with scale-[1.1]
-        Pushed slightly to the right with translate-x-[24px]
-        
-        The z-0 keeps it underneath the text overlay.
-      */}
-      <div
-        className="hidden lg:block absolute left-0 z-0"
-        style={{
-          top: "72px",
-          bottom: 0,
-          width: "44%",
-          minWidth: "460px",
-          maxWidth: "620px",
-        }}
-      >
-        <Image
-          src={riderImage}
-          alt="OyaEat delivery rider"
-          fill
-          priority
-          sizes="44vw"
-          className="
-            object-contain
-            object-left-bottom
-            scale-[1.1]
-            translate-x-[24px]
-            origin-bottom-left
-          "
-        />
-      </div>
+          <p className="mt-5 text-lg text-white/85 font-medium max-w-md leading-relaxed">
+            From hot swallows to suya and shawarma, your next meal is just a tap
+            away. Hundreds of local restaurants, delivered in 30 minutes or
+            less.
+          </p>
 
-      {/* 
-        Full-width content container.
-        KEEPING THIS FIXED — no max-width restriction.
-        This allows the headline to continue stretching to the right.
-      */}
-      <div className="w-full px-6 lg:px-10 relative z-40">
-        <div className="flex flex-col lg:block">
-          {/* Main content */}
-          <div
-            className="
-              relative
-              z-10
-              w-full
-              space-y-6
-              py-12
-              lg:py-16
-              lg:pl-[27%]
-              xl:pl-[26%]
-            "
+          <form
+            onSubmit={onSubmit}
+            className="mt-8 flex flex-col sm:flex-row gap-3 max-w-xl"
           >
-            {/* =========================
-                HEADLINE
-            ========================== */}
-            <div className="w-full">
-              <h1
-                className="
-                  whitespace-nowrap
-                  text-5xl
-                  sm:text-6xl
-                  lg:text-7xl
-                  xl:text-8xl
-                  font-black
-                  text-gray-900
-                  leading-[1.08]
-                  tracking-tight
-                "
-              >
-                Better chow, no
-              </h1>
-
-              <h1
-                className="
-                  whitespace-nowrap
-                  text-5xl
-                  sm:text-6xl
-                  lg:text-7xl
-                  xl:text-8xl
-                  font-black
-                  text-[#2d5f4f]
-                  leading-[1.08]
-                  tracking-tight
-                "
-              >
-                wahala.
-              </h1>
-            </div>
-
-            {/* =========================
-                CATEGORY PILLS
-            ========================== */}
-            <div className="flex flex-wrap gap-2">
-              {[
-                {
-                  icon: UtensilsCrossed,
-                  label: "Hot Food",
-                  bg: "bg-orange-50",
-                  text: "text-orange-700",
-                  border: "border-orange-200",
-                },
-                {
-                  icon: Wine,
-                  label: "Cold Drinks",
-                  bg: "bg-blue-50",
-                  text: "text-blue-700",
-                  border: "border-blue-200",
-                },
-                {
-                  icon: ShoppingBag,
-                  label: "Groceries",
-                  bg: "bg-emerald-50",
-                  text: "text-emerald-700",
-                  border: "border-emerald-200",
-                },
-              ].map(({ icon: Icon, label, bg, text, border }) => (
-                <span
-                  key={label}
-                  className={`
-                      inline-flex
-                      items-center
-                      gap-1.5
-                      ${bg}
-                      ${text}
-                      px-3
-                      py-1.5
-                      rounded-full
-                      text-xs
-                      font-bold
-                      border
-                      ${border}
-                      tracking-wide
-                    `}
-                >
-                  <Icon className="w-3.5 h-3.5" />
-                  {label}
-                </span>
-              ))}
-            </div>
-
-            {/* =========================
-                SUB HEADLINE
-            ========================== */}
-            <p className="text-base font-medium text-gray-600 leading-relaxed max-w-md">
-              Order from hundreds of local restaurants and shops.{" "}
-              <span className="text-[#2d5f4f] font-bold">
-                Delivered in 30 mins or less.
-              </span>
-            </p>
-
-            {/* =========================
-                ADDRESS INPUT
-            ========================== */}
-            <div
-              className="
-                flex
-                flex-col
-                sm:flex-row
-                gap-0
-                bg-white
-                rounded-xl
-                border-2
-                border-gray-200
-                shadow-lg
-                max-w-xl
-                focus-within:border-[#2d5f4f]
-                transition-colors
-                duration-200
-                overflow-hidden
-              "
+            <label className="flex-1 min-w-0 flex items-center gap-3 bg-[var(--lp-cream-50)] rounded-full px-5 border-2 border-transparent focus-within:border-[var(--lp-mango)] shadow-[0_6px_0_rgba(26,16,51,0.25)] transition-colors">
+              <MapPin
+                className="w-5 h-5 text-[var(--lp-violet-700)] flex-shrink-0"
+                aria-hidden="true"
+              />
+              <span className="sr-only">Delivery address</span>
+              <input
+                type="text"
+                name="address"
+                autoComplete="street-address"
+                placeholder="Enter your delivery address"
+                className="w-full min-w-0 py-4 bg-transparent text-[var(--lp-ink)] placeholder:text-[var(--lp-ink-soft)]/70 font-semibold text-[15px] focus:outline-none"
+              />
+            </label>
+            <button
+              type="submit"
+              className="group inline-flex items-center justify-center gap-2 bg-[var(--lp-mango)] text-[var(--lp-violet-950)] font-extrabold text-base rounded-full px-7 py-4 shadow-[0_6px_0_#c98a06] hover:-translate-y-0.5 active:translate-y-1 active:shadow-[0_2px_0_#c98a06] transition-all whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             >
-              <div className="flex-1 min-w-0 flex items-center px-4">
-                <MapPin className="text-[#2d5f4f] w-4 h-4 flex-shrink-0" />
+              Find food
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
+            </button>
+          </form>
 
-                <input
-                  type="text"
-                  placeholder="Enter your delivery address"
-                  className="
-                    w-full
-                    min-w-0
-                    pl-3
-                    pr-2
-                    py-3.5
-                    text-sm
-                    text-gray-800
-                    placeholder-gray-400
-                    focus:outline-none
-                    bg-transparent
-                    font-medium
-                  "
+          <ul className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-white/85 font-semibold">
+            <li className="flex items-center gap-2">
+              <Clock className="w-4 h-4 text-[var(--lp-mango)]" />
+              Avg. delivery <strong className="text-white">28 min</strong>
+            </li>
+            <li className="flex items-center gap-2">
+              <Zap className="w-4 h-4 text-[var(--lp-mango)]" />
+              Express <strong className="text-white">15 min</strong>
+            </li>
+            <li className="flex items-center gap-2">
+              <Star className="w-4 h-4 text-[var(--lp-mango)] fill-[var(--lp-mango)]" />
+              Top-rated vendors
+            </li>
+          </ul>
+        </div>
+
+        {/* Photo cluster */}
+        <div className="relative z-10 mx-auto w-full max-w-[560px] aspect-square mt-6 lg:mt-0">
+          {dishes.map((d, i) => (
+            <div
+              key={d.src}
+              className={`absolute ${d.pos} ${d.size} aspect-square lp-float`}
+              style={{ animationDelay: d.delay, zIndex: i === 3 ? 3 : 2 }}
+            >
+              <div className="relative w-full h-full rounded-full overflow-hidden border-[6px] sm:border-[8px] border-[var(--lp-cream)] bg-[var(--lp-cream)] shadow-[0_14px_30px_rgba(26,16,51,0.35)]">
+                <Image
+                  src={d.src}
+                  alt={d.alt}
+                  fill
+                  priority={i < 2}
+                  sizes="(max-width: 1024px) 45vw, 260px"
+                  className="object-cover"
                 />
               </div>
-
-              <Link
-                href="/customer"
-                className="
-                  shrink-0
-                  px-6
-                  py-3.5
-                  bg-[#2d5f4f]
-                  text-white
-                  font-bold
-                  text-sm
-                  hover:bg-[#234a3d]
-                  transition-colors
-                  duration-200
-                  flex
-                  items-center
-                  justify-center
-                  gap-2
-                  group
-                  whitespace-nowrap
-                "
-              >
-                Find Food
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform duration-200" />
-              </Link>
             </div>
+          ))}
 
-            {/* =========================
-                ETA INFO
-            ========================== */}
-            <div className="flex items-center gap-4 text-xs">
-              <div className="flex items-center gap-1.5 text-gray-600 font-medium">
-                <Clock className="w-3.5 h-3.5 text-[#2d5f4f]" />
-
-                <span>
-                  Avg. delivery:
-                  <strong className="text-gray-900 ml-1">28 min</strong>
-                </span>
-              </div>
-
-              <div className="w-px h-3.5 bg-gray-300" />
-
-              <div className="flex items-center gap-1.5 text-gray-600 font-medium">
-                <Zap className="w-3.5 h-3.5 text-amber-500" />
-
-                <span>
-                  Express:
-                  <strong className="text-gray-900 ml-1">15 min</strong>
-                </span>
-              </div>
-            </div>
+          {/* Pills */}
+          <div className="absolute right-[2%] top-[14%] z-10 rounded-xl bg-[var(--lp-cream)] text-[var(--lp-ink)] font-extrabold text-sm sm:text-base px-4 py-2 shadow-[0_5px_0_rgba(26,16,51,0.3)] rotate-[3deg]">
+            Order now
           </div>
+          <div className="absolute left-[-2%] bottom-[22%] z-10 flex items-center gap-1.5 rounded-xl bg-[var(--lp-cream)] text-[var(--lp-ink)] font-extrabold text-xs sm:text-sm px-3.5 py-2 shadow-[0_5px_0_rgba(26,16,51,0.3)] -rotate-[3deg]">
+            <BadgeCheck className="w-4 h-4 text-[var(--lp-violet-700)]" />
+            Fast delivery
+          </div>
+
+          <Leaf className="w-10 h-10 -left-3 top-[6%] rotate-[-30deg] opacity-90" />
+          <Leaf className="w-12 h-12 -right-2 bottom-[8%] rotate-[100deg] opacity-90" />
+          <Leaf className="w-8 h-8 right-[18%] -top-2 rotate-[40deg] opacity-80" />
         </div>
       </div>
 
-      {/* =========================
-          MOBILE RIDER
-      ========================== */}
-      <div className="lg:hidden relative z-10 -mt-4 pb-8 flex justify-center px-4">
-        <div className="relative w-full max-w-[420px] aspect-[848/1256]">
-          <Image
-            src={riderImage}
-            alt="OyaEat delivery rider"
-            fill
-            sizes="90vw"
-            className="object-contain object-bottom"
-          />
-        </div>
-      </div>
+      {/* Scalloped hand-off into the cream page */}
+      <svg
+        viewBox="0 0 1440 48"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+        className="absolute bottom-[-1px] left-0 w-full h-8 sm:h-12 text-[var(--lp-cream-50)]"
+      >
+        <path
+          fill="currentColor"
+          d="M0 48V24c120 20 240 24 360 12S600 4 720 8s240 28 360 30 240-10 360-22v32z"
+        />
+      </svg>
     </section>
   );
 };

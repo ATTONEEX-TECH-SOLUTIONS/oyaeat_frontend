@@ -162,6 +162,65 @@
 .animation-delay-1000 {
   animation-delay: 1s;
 }
+/* ------------------------------------------------------------------
+   Public landing theme (violet + mango). Scoped to .landing so the
+   customer / restaurant / rider / admin dashboards keep their own tokens.
+------------------------------------------------------------------- */
+.landing {
+  --lp-violet-950: #1a1033;
+  --lp-violet-900: #2a1156;
+  --lp-violet-800: #4c1d95;
+  --lp-violet-700: #5b21b6;
+  --lp-violet-600: #6d28d9;
+  --lp-violet-100: #ede4ff;
+  --lp-mango: #fdba2d;
+  --lp-mango-600: #f59e0b;
+  --lp-cream: #fff4d6;
+  --lp-cream-50: #fffbef;
+  --lp-ink: #1a1033;
+  --lp-ink-soft: #5c5470;
+  --lp-leaf: #7ed957;
+  background: var(--lp-cream-50);
+  color: var(--lp-ink);
+}
+
+.lp-display {
+  font-family: var(--font-lp-display), var(--font-sans), system-ui, sans-serif;
+  letter-spacing: -0.01em;
+}
+
+/* Faint food-doodle wallpaper for the violet hero / bands */
+.lp-doodles {
+  background-color: var(--lp-violet-700);
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220' viewBox='0 0 220 220' fill='none' stroke='%23ffffff' stroke-opacity='.08' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='46' cy='48' r='20'/%3E%3Ccircle cx='46' cy='48' r='10'/%3E%3Cpath d='M150 30v34M142 30v14a8 8 0 0016 0V30M150 64v26'/%3E%3Cpath d='M170 150c18-2 30-14 32-32-18 2-30 14-32 32zM170 150l16-16'/%3E%3Cpath d='M40 150h40l-4 34H44zM36 150a24 12 0 0148 0'/%3E%3Cpath d='M110 110l10 22M122 104l6 24'/%3E%3C/svg%3E"),
+    radial-gradient(120% 80% at 80% 0%, rgba(253, 186, 45, 0.18), transparent 55%);
+  background-size: 220px 220px, auto;
+}
+
+@keyframes lp-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(var(--lp-rot, 0deg));
+  }
+  50% {
+    transform: translateY(-10px) rotate(var(--lp-rot, 0deg));
+  }
+}
+.lp-float {
+  animation: lp-float 6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-float {
+    animation: none;
+  }
+  .landing * {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
