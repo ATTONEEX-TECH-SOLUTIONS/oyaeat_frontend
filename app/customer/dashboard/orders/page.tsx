@@ -79,7 +79,7 @@ export default function CustomerOrdersPage() {
             onClick={() => setFilter("all")}
             className={
               filter === "all"
-                ? "bg-[#2d5f4f] text-white hover:bg-[#1e4035]"
+                ? "bg-[#5b21b6] text-white hover:bg-[#2a1156]"
                 : "text-gray-600 hover:text-gray-900 hover:bg-gray-100 border-gray-200"
             }
           >
@@ -101,8 +101,8 @@ export default function CustomerOrdersPage() {
             onClick={() => setFilter("delivered")}
             className={
               filter === "delivered"
-                ? "bg-green-600 text-white hover:bg-green-700 border-none shadow-sm"
-                : "text-green-600 hover:text-green-700 hover:bg-green-50 border-green-200"
+                ? "bg-violet-600 text-white hover:bg-violet-700 border-none shadow-sm"
+                : "text-violet-600 hover:text-violet-700 hover:bg-violet-50 border-violet-200"
             }
           >
             Delivered
@@ -137,11 +137,11 @@ export default function CustomerOrdersPage() {
                 className="block p-5 sm:p-6 hover:bg-gray-50/50 transition-colors group cursor-pointer flex flex-col sm:flex-row justify-between sm:items-center gap-4"
               >
                 <div className="flex items-center gap-5">
-                  <div className="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center text-gray-400 shrink-0 shadow-inner group-hover:bg-[#2d5f4f]/5 group-hover:text-[#2d5f4f] transition-colors">
+                  <div className="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center text-gray-400 shrink-0 shadow-inner group-hover:bg-[#5b21b6]/5 group-hover:text-[#5b21b6] transition-colors">
                     <ShoppingBag className="w-7 h-7" />
                   </div>
                   <div>
-                    <h4 className="font-extrabold text-xl text-gray-900 group-hover:text-[#2d5f4f] transition-colors">
+                    <h4 className="font-extrabold text-xl text-gray-900 group-hover:text-[#5b21b6] transition-colors">
                       {order.business?.name || "Restaurant"}
                     </h4>
                     <div className="flex items-center gap-3 mt-1.5 text-sm font-semibold text-gray-500 divide-x divide-gray-200">
@@ -167,7 +167,7 @@ export default function CustomerOrdersPage() {
                         ["pending", "preparing", "ready"].includes(order.status)
                           ? "bg-orange-50 text-orange-600 border border-orange-100"
                           : order.status === "delivered"
-                            ? "bg-green-50 text-green-700 border border-green-100"
+                            ? "bg-violet-50 text-violet-700 border border-violet-100"
                             : order.status === "out_for_delivery"
                               ? "bg-blue-50 text-blue-700 border border-blue-100"
                               : "bg-gray-50 text-gray-600 border border-gray-200"
@@ -181,7 +181,7 @@ export default function CustomerOrdersPage() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="text-gray-400 group-hover:text-[#2d5f4f] group-hover:bg-[#2d5f4f]/10 group-hover:translate-x-1 transition-all rounded-full w-12 h-12 shrink-0"
+                    className="text-gray-400 group-hover:text-[#5b21b6] group-hover:bg-[#5b21b6]/10 group-hover:translate-x-1 transition-all rounded-full w-12 h-12 shrink-0"
                   >
                     <ChevronRight className="w-6 h-6" />
                   </Button>

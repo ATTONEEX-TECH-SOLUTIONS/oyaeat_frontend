@@ -42,12 +42,12 @@ export function ChatSidebar({
     <div className="w-80 border-r border-gray-100 flex flex-col bg-gray-50/50 shrink-0">
       <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-card shrink-0">
         <h2 className="font-extrabold text-lg text-gray-900 tracking-tight flex items-center gap-2">
-          <MessageSquare className="w-5 h-5 text-[#1a5c2a]" /> Messages
+          <MessageSquare className="w-5 h-5 text-[#5b21b6]" /> Messages
         </h2>
         {role !== "admin" && (
           <button
             onClick={() => setIsCreating(true)}
-            className="p-2 rounded-xl bg-[#e8f5e9] text-[#1a5c2a] hover:bg-[#1a5c2a] hover:text-white transition-colors"
+            className="p-2 rounded-xl bg-[#f1ebff] text-[#5b21b6] hover:bg-[#5b21b6] hover:text-white transition-colors"
           >
             <Plus className="w-4 h-4" />
           </button>
@@ -62,7 +62,7 @@ export function ChatSidebar({
             placeholder="Search by name, role or topic..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 bg-gray-50 rounded-xl border border-transparent focus:border-[#1a5c2a]/30 focus:bg-white focus:ring-0 outline-none text-xs font-semibold text-gray-800 shadow-inner placeholder-gray-400 transition-all"
+            className="w-full pl-9 pr-4 py-2 bg-gray-50 rounded-xl border border-transparent focus:border-[#5b21b6]/30 focus:bg-white focus:ring-0 outline-none text-xs font-semibold text-gray-800 shadow-inner placeholder-gray-400 transition-all"
           />
         </div>
       </div>
@@ -70,7 +70,7 @@ export function ChatSidebar({
       <div className="flex-1 overflow-y-auto p-3 space-y-2">
         {loadingThreads ? (
           <div className="flex justify-center p-5">
-            <Loader2 className="w-5 h-5 animate-spin text-[#1a5c2a]" />
+            <Loader2 className="w-5 h-5 animate-spin text-[#5b21b6]" />
           </div>
         ) : filteredThreads.length === 0 ? (
           <div className="text-center py-12 text-gray-400 font-bold text-xs">

@@ -42,8 +42,8 @@ export function RiderChatWindow({
     <div className="flex-1 flex flex-col bg-white h-full">
       {isCreating ? (
         <div className="flex-1 flex flex-col items-center justify-center p-8 text-center bg-white">
-          <div className="w-12 h-12 bg-green-50 rounded-full flex items-center justify-center mb-3 border border-green-100">
-            <MessageSquare className="w-6 h-6 text-green-700" />
+          <div className="w-12 h-12 bg-violet-50 rounded-full flex items-center justify-center mb-3 border border-violet-100">
+            <MessageSquare className="w-6 h-6 text-violet-700" />
           </div>
           <h3 className="text-base font-extrabold text-gray-900 mb-1">
             Create Complaint Ticket
@@ -61,14 +61,14 @@ export function RiderChatWindow({
               placeholder="Describe your inquiry topic heading..."
               value={newSubject}
               onChange={(e) => setNewSubject(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-green-600 outline-none font-bold text-gray-900 text-xs shadow-sm transition-all"
+              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-violet-600 outline-none font-bold text-gray-900 text-xs shadow-sm transition-all"
               maxLength={60}
               required
             />
             <button
               type="submit"
               disabled={sending || !newSubject.trim()}
-              className="w-full h-11 rounded-xl bg-green-600 hover:bg-green-700 text-white font-extrabold text-xs shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-1.5"
+              className="w-full h-11 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-extrabold text-xs shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-1.5"
             >
               {sending ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -89,7 +89,7 @@ export function RiderChatWindow({
       ) : activeThreadId ? (
         <>
           <div className="p-4 border-b border-gray-100 bg-white flex items-center gap-2 flex-shrink-0 text-left">
-            <HelpCircle className="w-4 h-4 text-green-600" />
+            <HelpCircle className="w-4 h-4 text-violet-600" />
             <span className="text-xs font-black text-gray-900">
               {activeThread?.subject}
             </span>
@@ -98,7 +98,7 @@ export function RiderChatWindow({
           <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50/30">
             {loadingMessages ? (
               <div className="h-full flex items-center justify-center">
-                <Loader2 className="w-4 h-4 animate-spin text-green-600" />
+                <Loader2 className="w-4 h-4 animate-spin text-violet-600" />
               </div>
             ) : (
               messages.map((msg: any, i) => {
@@ -126,7 +126,7 @@ export function RiderChatWindow({
                     <div
                       className={`max-w-[75%] p-3 rounded-2xl text-xs leading-relaxed shadow-sm ${
                         isMe
-                          ? "bg-green-700 text-white rounded-tr-none"
+                          ? "bg-violet-700 text-white rounded-tr-none"
                           : "bg-white border border-gray-100 text-gray-900 rounded-tl-none"
                       }`}
                     >
@@ -157,12 +157,12 @@ export function RiderChatWindow({
               placeholder="Type your reply message..."
               value={replyText}
               onChange={(e) => setReplyText(e.target.value)}
-              className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-4 text-xs focus:outline-none focus:border-green-600 text-gray-900 font-semibold"
+              className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-4 text-xs focus:outline-none focus:border-violet-600 text-gray-900 font-semibold"
             />
             <button
               type="submit"
               disabled={sending || !replyText.trim()}
-              className="bg-green-600 hover:bg-green-700 text-white p-3 rounded-xl transition-all disabled:opacity-40 flex items-center justify-center shrink-0 w-11 h-11"
+              className="bg-violet-600 hover:bg-violet-700 text-white p-3 rounded-xl transition-all disabled:opacity-40 flex items-center justify-center shrink-0 w-11 h-11"
             >
               {sending ? (
                 <Loader2 className="w-4 h-4 animate-spin" />

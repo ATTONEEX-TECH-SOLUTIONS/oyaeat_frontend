@@ -51,17 +51,17 @@ const playNotificationSound = () => {
 };
 
 const C = {
-  green: "#1B4332",
-  greenMid: "#2D6A4F",
-  greenLight: "#52B788",
-  amber: "#D4860B",
-  amberLight: "#F4A620",
-  bg: "#F5F1EB",
+  brand: "#3b0f7a",
+  brandMid: "#6d28d9",
+  brandLight: "#8b5cf6",
+  mango: "#d97f06",
+  mangoLight: "#fdba2d",
+  bg: "#fffbef",
   white: "#FFFFFF",
   textDark: "inherit",
-  textMuted: "#6B7C6E",
-  border: "#D8E4DC",
-  error: "#C0392B",
+  textMuted: "#6b6480",
+  border: "#e6e0f3",
+  error: "#c8372d",
 };
 
 const STATUS_CFG: Record<
@@ -73,7 +73,7 @@ const STATUS_CFG: Record<
     icon: React.ElementType;
   }
 > = {
-  pending: { label: "Pending", color: C.amber, bg: "#FEF3CD", icon: Clock },
+  pending: { label: "Pending", color: C.mango, bg: "#fff4d6", icon: Clock },
   preparing: {
     label: "Preparing",
     color: "#1A5276",
@@ -82,8 +82,8 @@ const STATUS_CFG: Record<
   },
   ready: {
     label: "Ready for Pickup",
-    color: C.greenMid,
-    bg: "#D8F0E4",
+    color: C.brandMid,
+    bg: "#dcfce7",
     icon: CheckCircle,
   },
   out_for_delivery: {
@@ -94,13 +94,13 @@ const STATUS_CFG: Record<
   },
   delivered: {
     label: "Delivered",
-    color: C.green,
-    bg: "#D8F0E4",
+    color: C.brand,
+    bg: "#dcfce7",
     icon: CheckCircle,
   },
   cancelled: {
     label: "Cancelled",
-    color: "#C0392B",
+    color: "#c8372d",
     bg: "#FADBD8",
     icon: XCircle,
   },
@@ -256,8 +256,8 @@ export default function RestaurantOrdersDashboard() {
 
   if (initialLoading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-[#F5F1EB]">
-        <Loader2 className="w-8 h-8 animate-spin text-emerald-800" />
+      <div className="flex h-screen items-center justify-center bg-[#fffbef]">
+        <Loader2 className="w-8 h-8 animate-spin text-violet-800" />
       </div>
     );
   }
@@ -274,8 +274,8 @@ export default function RestaurantOrdersDashboard() {
             <h1 className="text-2xl font-black text-gray-900">
               Kitchen Display Engine
             </h1>
-            <p className="text-xs font-bold text-green-700 mt-1 uppercase tracking-wider flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-green-500 animate-ping" />
+            <p className="text-xs font-bold text-violet-700 mt-1 uppercase tracking-wider flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-violet-500 animate-ping" />
               Automated State Machine & Rider Pipeline Active
             </p>
           </div>
@@ -287,7 +287,7 @@ export default function RestaurantOrdersDashboard() {
           >
             <RefreshCw
               className={`w-4 h-4 ${isSyncing ? "animate-spin" : ""}`}
-              style={{ color: C.greenMid }}
+              style={{ color: C.brandMid }}
             />
             Sync Now
           </button>
@@ -306,7 +306,7 @@ export default function RestaurantOrdersDashboard() {
               }`}
               style={
                 filterStatus === status.key
-                  ? { backgroundColor: C.green }
+                  ? { backgroundColor: C.brand }
                   : { borderColor: C.border }
               }
             >
@@ -341,7 +341,7 @@ export default function RestaurantOrdersDashboard() {
                   >
                     <div
                       className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl text-xs font-black text-white"
-                      style={{ backgroundColor: C.greenMid }}
+                      style={{ backgroundColor: C.brandMid }}
                     >
                       #{order.id}
                     </div>
@@ -429,8 +429,8 @@ export default function RestaurantOrdersDashboard() {
                       </div>
 
                       {order.notes && (
-                        <div className="text-xs bg-amber-50 border border-amber-200 text-amber-800 p-3 rounded-xl">
-                          <span className="font-bold text-amber-900">
+                        <div className="text-xs bg-mango-50 border border-mango-200 text-mango-800 p-3 rounded-xl">
+                          <span className="font-bold text-mango-900">
                             Kitchen Notes:
                           </span>{" "}
                           {order.notes}
@@ -452,8 +452,8 @@ export default function RestaurantOrdersDashboard() {
                           </button>
                         ) : order.status === "ready" ? (
                           // ── DESIGN STATE INJECTION: ALERTS MATCHES VISUALLY ON TRUCKING LOG LAYOUTS ──
-                          <div className="text-xs font-bold text-green-700 bg-green-50 border border-green-200 px-4 py-2.5 rounded-xl flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                          <div className="text-xs font-bold text-violet-700 bg-violet-50 border border-violet-200 px-4 py-2.5 rounded-xl flex items-center gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-violet-500 animate-pulse" />
                             Broadcasted to Marketplace. Scanning for nearby
                             online Riders...
                           </div>

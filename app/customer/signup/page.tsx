@@ -148,14 +148,14 @@ export default function CustomerSignupPage() {
                   First Name
                 </label>
                 <div className="relative group">
-                  <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-[#2d5f4f] transition-colors" />
+                  <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-[#5b21b6] transition-colors" />
                   <Input
                     type="text"
                     name="firstName"
                     value={formData.firstName}
                     onChange={handleChange}
                     placeholder="John"
-                    className="pl-12 h-14 rounded-2xl bg-gray-50 focus-visible:ring-2 focus-visible:ring-[#2d5f4f]/30 focus-visible:bg-card shadow-inner border-gray-100 text-base transition-all"
+                    className="pl-12 h-14 rounded-2xl bg-gray-50 focus-visible:ring-2 focus-visible:ring-[#5b21b6]/30 focus-visible:bg-card shadow-inner border-gray-100 text-base transition-all"
                   />
                 </div>
               </div>
@@ -164,14 +164,14 @@ export default function CustomerSignupPage() {
                   Last Name
                 </label>
                 <div className="relative group">
-                  <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-[#2d5f4f] transition-colors" />
+                  <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-[#5b21b6] transition-colors" />
                   <Input
                     type="text"
                     name="lastName"
                     value={formData.lastName}
                     onChange={handleChange}
                     placeholder="Doe"
-                    className="pl-12 h-14 rounded-2xl bg-gray-50 focus-visible:ring-2 focus-visible:ring-[#2d5f4f]/30 focus-visible:bg-card shadow-inner border-gray-100 text-base transition-all"
+                    className="pl-12 h-14 rounded-2xl bg-gray-50 focus-visible:ring-2 focus-visible:ring-[#5b21b6]/30 focus-visible:bg-card shadow-inner border-gray-100 text-base transition-all"
                   />
                 </div>
               </div>
@@ -182,14 +182,14 @@ export default function CustomerSignupPage() {
                 Email Address
               </label>
               <div className="relative group">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-[#2d5f4f] transition-colors" />
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-[#5b21b6] transition-colors" />
                 <Input
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="Enter your email"
-                  className="pl-12 h-14 rounded-2xl bg-gray-50 focus-visible:ring-2 focus-visible:ring-[#2d5f4f]/30 focus-visible:bg-card shadow-inner border-gray-100 text-base transition-all"
+                  className="pl-12 h-14 rounded-2xl bg-gray-50 focus-visible:ring-2 focus-visible:ring-[#5b21b6]/30 focus-visible:bg-card shadow-inner border-gray-100 text-base transition-all"
                 />
               </div>
             </div>
@@ -199,14 +199,14 @@ export default function CustomerSignupPage() {
                 Phone Number
               </label>
               <div className="relative group">
-                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-[#2d5f4f] transition-colors" />
+                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-[#5b21b6] transition-colors" />
                 <Input
                   type="tel"
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
                   placeholder="080 1234 5678"
-                  className="pl-12 h-14 rounded-2xl bg-gray-50 focus-visible:ring-2 focus-visible:ring-[#2d5f4f]/30 focus-visible:bg-card shadow-inner border-gray-100 text-base transition-all"
+                  className="pl-12 h-14 rounded-2xl bg-gray-50 focus-visible:ring-2 focus-visible:ring-[#5b21b6]/30 focus-visible:bg-card shadow-inner border-gray-100 text-base transition-all"
                 />
               </div>
             </div>
@@ -216,14 +216,14 @@ export default function CustomerSignupPage() {
                 Password
               </label>
               <div className="relative group">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-[#2d5f4f] transition-colors" />
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-[#5b21b6] transition-colors" />
                 <Input
                   type={showPassword ? "text" : "password"}
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="Create a strong password"
-                  className="pl-12 pr-12 h-14 rounded-2xl bg-gray-50 focus-visible:ring-2 focus-visible:ring-[#2d5f4f]/30 focus-visible:bg-card shadow-inner border-gray-100 text-base transition-all"
+                  className="pl-12 pr-12 h-14 rounded-2xl bg-gray-50 focus-visible:ring-2 focus-visible:ring-[#5b21b6]/30 focus-visible:bg-card shadow-inner border-gray-100 text-base transition-all"
                 />
                 <button
                   type="button"
@@ -243,7 +243,7 @@ export default function CustomerSignupPage() {
               <Button
                 disabled={loading}
                 type="submit"
-                className="w-full h-14 text-lg font-extrabold rounded-2xl bg-[#2d5f4f] hover:bg-[#1a382e] text-white shadow-[0_8px_30px_rgb(45,95,79,0.3)] transition-all hover:-translate-y-1 hover:shadow-[0_12px_40px_rgb(45,95,79,0.4)] disabled:opacity-70 disabled:hover:translate-y-0 disabled:hover:shadow-[0_8px_30px_rgb(45,95,79,0.3)]"
+                className="w-full h-14 text-lg font-extrabold rounded-2xl bg-[#5b21b6] hover:bg-[#2a1156] text-white shadow-[0_8px_30px_rgb(45,95,79,0.3)] transition-all hover:-translate-y-1 hover:shadow-[0_12px_40px_rgb(45,95,79,0.4)] disabled:opacity-70 disabled:hover:translate-y-0 disabled:hover:shadow-[0_8px_30px_rgb(45,95,79,0.3)]"
               >
                 {loading ? (
                   <Loader2 className="h-5 w-5 animate-spin" />
@@ -277,7 +277,7 @@ export default function CustomerSignupPage() {
               Already have an account?{" "}
               <Link
                 href="/customer/login"
-                className="text-[#2d5f4f] font-extrabold hover:underline"
+                className="text-[#5b21b6] font-extrabold hover:underline"
               >
                 Log in
               </Link>

@@ -10,7 +10,7 @@ const iconMap: Record<string, any> = {
 
 export default function PartnerSolutions({ data }: { data: SolutionItem[] }) {
   return (
-    <section className="py-20 px-6 bg-[#2d5f4f]">
+    <section className="py-20 px-6 bg-[#5b21b6]">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-black text-white mb-4">
@@ -28,7 +28,7 @@ export default function PartnerSolutions({ data }: { data: SolutionItem[] }) {
               key={index}
               className="bg-white rounded-2xl p-8 hover:shadow-xl transition-all duration-300 hover:scale-105"
             >
-              <div className="text-[#2d5f4f] mb-6">
+              <div className="text-[#5b21b6] mb-6">
                 {iconMap[solution.icon]}
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-4">
@@ -39,7 +39,7 @@ export default function PartnerSolutions({ data }: { data: SolutionItem[] }) {
                 {solution.features.map((feature, idx) => (
                   <li key={idx} className="flex items-start">
                     <svg
-                      className="w-5 h-5 text-[#2d5f4f] mr-2 mt-0.5 flex-shrink-0"
+                      className="w-5 h-5 text-[#5b21b6] mr-2 mt-0.5 flex-shrink-0"
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >

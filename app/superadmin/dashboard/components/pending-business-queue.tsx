@@ -116,7 +116,7 @@ export function PendingBusinessQueue({
                     </p>
                   </div>
 
-                  <span className="shrink-0 rounded-full bg-amber-50 text-amber-700 border border-amber-200 px-3 py-1 text-xs font-semibold">
+                  <span className="shrink-0 rounded-full bg-mango-50 text-mango-700 border border-mango-200 px-3 py-1 text-xs font-semibold">
                     Pending review
                   </span>
                 </div>
@@ -125,7 +125,7 @@ export function PendingBusinessQueue({
                   <button
                     onClick={() => handleApprove(b.id)}
                     disabled={isBusy}
-                    className="px-3 py-2 text-sm rounded-md bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-60"
+                    className="px-3 py-2 text-sm rounded-md bg-violet-600 text-white hover:bg-violet-700 disabled:opacity-60"
                   >
                     {isBusy ? "Processing…" : "Approve"}
                   </button>

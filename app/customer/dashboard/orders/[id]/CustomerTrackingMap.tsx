@@ -61,7 +61,7 @@ export default function CustomerTrackingMap({ orderId }: { orderId: number }) {
   if (loading) {
     return (
       <div className="h-[350px] w-full flex items-center justify-center bg-gray-50 rounded-2xl border border-gray-100">
-        <Loader2 className="w-6 h-6 animate-spin text-green-600" />
+        <Loader2 className="w-6 h-6 animate-spin text-violet-600" />
       </div>
     );
   }
@@ -77,7 +77,7 @@ export default function CustomerTrackingMap({ orderId }: { orderId: number }) {
 
   return (
     <div className="space-y-4">
-      <div className="bg-emerald-50 border border-emerald-100 text-emerald-800 p-4 rounded-xl text-xs flex items-center gap-2">
+      <div className="bg-violet-50 border border-violet-100 text-violet-800 p-4 rounded-xl text-xs flex items-center gap-2">
         <span className="animate-pulse">🚴</span>
         <span className="font-semibold">
           Rider {riderCoords.riderName} is en route with your delivery order!
@@ -99,7 +99,7 @@ export default function CustomerTrackingMap({ orderId }: { orderId: number }) {
                 lng: riderCoords.longitude,
               }}
             >
-              <div className="h-10 w-10 rounded-full bg-white shadow-lg border-2 border-emerald-600 flex items-center justify-center text-xl animate-bounce">
+              <div className="h-10 w-10 rounded-full bg-white shadow-lg border-2 border-violet-600 flex items-center justify-center text-xl animate-bounce">
                 🍔
               </div>
             </AdvancedMarker>

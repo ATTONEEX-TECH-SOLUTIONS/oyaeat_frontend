@@ -72,7 +72,7 @@ export default function CartPage() {
           </h1>
         </div>
         <div className="text-sm font-bold text-gray-500 bg-card shadow-sm px-4 py-2 rounded-full border border-gray-100">
-          <span className="text-[#2d5f4f] text-base mr-1">{items.length}</span>{" "}
+          <span className="text-[#5b21b6] text-base mr-1">{items.length}</span>{" "}
           items
         </div>
       </header>
@@ -85,7 +85,7 @@ export default function CartPage() {
               <div className="bg-card rounded-[2.5rem] p-6 sm:p-8 border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-shadow">
                 <div className="flex items-center justify-between mb-8 pb-6 border-b border-gray-100">
                   <h2 className="text-2xl font-extrabold text-gray-900 flex items-center gap-3">
-                    <ShoppingBag className="w-7 h-7 text-[#2d5f4f]" /> Cart
+                    <ShoppingBag className="w-7 h-7 text-[#5b21b6]" /> Cart
                     Items
                   </h2>
                   <button
@@ -116,7 +116,7 @@ export default function CartPage() {
                       </div>
 
                       <div className="flex-1 w-full relative sm:pr-12 py-2">
-                        <h3 className="font-extrabold text-xl text-gray-900 leading-tight mb-2 pr-8 sm:pr-0 group-hover:text-[#2d5f4f] transition-colors">
+                        <h3 className="font-extrabold text-xl text-gray-900 leading-tight mb-2 pr-8 sm:pr-0 group-hover:text-[#5b21b6] transition-colors">
                           {item.name}
                         </h3>
                         <p className="text-sm font-bold text-gray-500 mb-5">
@@ -142,7 +142,7 @@ export default function CartPage() {
                             </span>
                             <button
                               onClick={() => updateQuantity(item.menuItemId, 1)}
-                              className="w-10 h-10 flex items-center justify-center bg-[#2d5f4f] rounded-xl shadow-sm font-bold text-white hover:bg-[#1a382e] transition-all hover:scale-105"
+                              className="w-10 h-10 flex items-center justify-center bg-[#5b21b6] rounded-xl shadow-sm font-bold text-white hover:bg-[#2a1156] transition-all hover:scale-105"
                             >
                               <Plus className="w-4 h-4" />
                             </button>
@@ -166,7 +166,7 @@ export default function CartPage() {
             <div className="lg:col-span-1">
               <div className="bg-card rounded-[2.5rem] p-6 sm:p-8 border border-gray-100 shadow-xl sticky top-28 before:content-[''] before:absolute before:inset-0 before:bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] before:opacity-[0.03] before:rounded-[2.5rem]">
                 <h2 className="text-2xl font-extrabold text-gray-900 mb-8 flex items-center gap-3 relative z-10">
-                  <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center text-[#2d5f4f]">
+                  <div className="w-10 h-10 bg-violet-50 rounded-xl flex items-center justify-center text-[#5b21b6]">
                     <Receipt className="w-5 h-5" />
                   </div>
                   Order Summary
@@ -193,17 +193,17 @@ export default function CartPage() {
                   </div>
                 </div>
 
-                <div className="flex flex-col mb-8 bg-[#2d5f4f]/5 p-6 rounded-3xl border border-[#2d5f4f]/10 relative z-10">
+                <div className="flex flex-col mb-8 bg-[#5b21b6]/5 p-6 rounded-3xl border border-[#5b21b6]/10 relative z-10">
                   <span className="font-bold text-gray-500 uppercase tracking-wider text-xs mb-1">
                     Total Payment
                   </span>
-                  <span className="text-4xl font-extrabold text-[#2d5f4f]">
+                  <span className="text-4xl font-extrabold text-[#5b21b6]">
                     ₦{total.toLocaleString()}
                   </span>
                 </div>
 
                 <Link href="/customer/checkout" className="block relative z-10">
-                  <Button className="w-full h-16 rounded-2xl text-xl font-extrabold bg-[#2d5f4f] hover:bg-[#1a382e] text-white shadow-[0_8px_30px_rgb(45,95,79,0.3)] transition-all hover:-translate-y-1 hover:shadow-[0_12px_40px_rgb(45,95,79,0.4)] group flex items-center justify-center gap-2">
+                  <Button className="w-full h-16 rounded-2xl text-xl font-extrabold bg-[#5b21b6] hover:bg-[#2a1156] text-white shadow-[0_8px_30px_rgb(45,95,79,0.3)] transition-all hover:-translate-y-1 hover:shadow-[0_12px_40px_rgb(45,95,79,0.4)] group flex items-center justify-center gap-2">
                     Proceed to Checkout{" "}
                     <ArrowRight className="w-6 h-6 group-hover:translate-x-1.5 transition-transform" />
                   </Button>
@@ -217,7 +217,7 @@ export default function CartPage() {
           </div>
         ) : (
           <div className="text-center py-24 sm:py-32 bg-card rounded-[3rem] border border-gray-100 shadow-sm max-w-3xl mx-auto flex flex-col items-center justify-center relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-green-50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+            <div className="absolute top-0 right-0 w-64 h-64 bg-violet-50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-orange-50 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
 
             <div className="relative z-10">
@@ -232,7 +232,7 @@ export default function CartPage() {
                 our top restaurants and satisfy your cravings!
               </p>
               <Link href="/customer">
-                <Button className="h-16 px-12 rounded-[2rem] text-xl font-extrabold bg-[#2d5f4f] hover:bg-[#1a382e] text-white shadow-[0_8px_30px_rgb(45,95,79,0.3)] transition-all hover:-translate-y-1 hover:shadow-[0_12px_40px_rgb(45,95,79,0.4)]">
+                <Button className="h-16 px-12 rounded-[2rem] text-xl font-extrabold bg-[#5b21b6] hover:bg-[#2a1156] text-white shadow-[0_8px_30px_rgb(45,95,79,0.3)] transition-all hover:-translate-y-1 hover:shadow-[0_12px_40px_rgb(45,95,79,0.4)]">
                   Start Ordering Now
                 </Button>
               </Link>

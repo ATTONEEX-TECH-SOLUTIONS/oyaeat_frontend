@@ -155,7 +155,7 @@ export default function CheckoutPage() {
               {/* Delivery Details Card */}
               <section className="bg-white rounded-[2rem] p-6 sm:p-8 md:p-10 border border-gray-100 shadow-sm relative overflow-hidden">
                 <h2 className="text-xl sm:text-2xl font-black text-gray-900 mb-6 flex items-center gap-2">
-                  <MapPin className="w-5 h-5 text-emerald-700" /> Delivery
+                  <MapPin className="w-5 h-5 text-violet-700" /> Delivery
                   Details
                 </h2>
 
@@ -179,7 +179,7 @@ export default function CheckoutPage() {
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                         placeholder="09068603511"
-                        className="h-12 rounded-xl border-gray-200 bg-gray-50/50 font-bold text-gray-800 text-sm focus-visible:ring-1 focus-visible:ring-[#2d5f4f]"
+                        className="h-12 rounded-xl border-gray-200 bg-gray-50/50 font-bold text-gray-800 text-sm focus-visible:ring-1 focus-visible:ring-[#5b21b6]"
                       />
                     </div>
                     <div className="space-y-1">
@@ -190,7 +190,7 @@ export default function CheckoutPage() {
                         value={notes}
                         onChange={(e) => setNotes(e.target.value)}
                         placeholder="e.g. Call upon arrival"
-                        className="h-12 rounded-xl border-gray-200 bg-gray-50/50 text-gray-800 text-sm focus-visible:ring-1 focus-visible:ring-[#2d5f4f]"
+                        className="h-12 rounded-xl border-gray-200 bg-gray-50/50 text-gray-800 text-sm focus-visible:ring-1 focus-visible:ring-[#5b21b6]"
                       />
                     </div>
                   </div>
@@ -200,20 +200,20 @@ export default function CheckoutPage() {
               {/* Payment Methods Section */}
               <section className="bg-white rounded-[2rem] p-6 sm:p-8 md:p-10 border border-gray-100 shadow-sm relative overflow-hidden">
                 <h2 className="text-xl sm:text-2xl font-black text-gray-900 mb-6 flex items-center gap-2">
-                  <CreditCard className="w-5 h-5 text-emerald-700" /> Payment
+                  <CreditCard className="w-5 h-5 text-violet-700" /> Payment
                 </h2>
 
                 <div className="space-y-4">
                   <label
                     onClick={() => !loading && setPaymentMethod("card")}
-                    className={`block relative border-2 rounded-2xl p-5 cursor-pointer transition-all duration-300 ${paymentMethod === "card" ? "border-[#2d5f4f] bg-[#2d5f4f]/5 ring-2 ring-[#2d5f4f]/10 shadow-sm" : "border-gray-100 hover:border-gray-200 bg-card hover:bg-gray-50/50"} ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
+                    className={`block relative border-2 rounded-2xl p-5 cursor-pointer transition-all duration-300 ${paymentMethod === "card" ? "border-[#5b21b6] bg-[#5b21b6]/5 ring-2 ring-[#5b21b6]/10 shadow-sm" : "border-gray-100 hover:border-gray-200 bg-card hover:bg-gray-50/50"} ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
                   >
                     <div className="flex items-center gap-4">
                       <div
-                        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${paymentMethod === "card" ? "border-[#2d5f4f]" : "border-gray-300"}`}
+                        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${paymentMethod === "card" ? "border-[#5b21b6]" : "border-gray-300"}`}
                       >
                         {paymentMethod === "card" && (
-                          <div className="w-2.5 h-2.5 rounded-full bg-[#2d5f4f]"></div>
+                          <div className="w-2.5 h-2.5 rounded-full bg-[#5b21b6]"></div>
                         )}
                       </div>
                       <div className="flex-1 flex justify-between items-center">
@@ -232,14 +232,14 @@ export default function CheckoutPage() {
 
                   <label
                     onClick={() => !loading && setPaymentMethod("transfer")}
-                    className={`block relative border-2 rounded-2xl p-5 cursor-pointer transition-all duration-300 ${paymentMethod === "transfer" ? "border-[#2d5f4f] bg-[#2d5f4f]/5 ring-2 ring-[#2d5f4f]/10 shadow-sm" : "border-gray-100 hover:border-gray-300 bg-card hover:bg-gray-50/50"} ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
+                    className={`block relative border-2 rounded-2xl p-5 cursor-pointer transition-all duration-300 ${paymentMethod === "transfer" ? "border-[#5b21b6] bg-[#5b21b6]/5 ring-2 ring-[#5b21b6]/10 shadow-sm" : "border-gray-100 hover:border-gray-300 bg-card hover:bg-gray-50/50"} ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
                   >
                     <div className="flex items-center gap-4">
                       <div
-                        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${paymentMethod === "transfer" ? "border-[#2d5f4f]" : "border-gray-300"}`}
+                        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${paymentMethod === "transfer" ? "border-[#5b21b6]" : "border-gray-300"}`}
                       >
                         {paymentMethod === "transfer" && (
-                          <div className="w-2.5 h-2.5 rounded-full bg-[#2d5f4f]"></div>
+                          <div className="w-2.5 h-2.5 rounded-full bg-[#5b21b6]"></div>
                         )}
                       </div>
                       <div className="flex-1 flex justify-between items-center">
@@ -267,14 +267,14 @@ export default function CheckoutPage() {
 
                   <label
                     onClick={() => !loading && setPaymentMethod("cash")}
-                    className={`block relative border-2 rounded-2xl p-5 cursor-pointer transition-all duration-300 ${paymentMethod === "cash" ? "border-[#2d5f4f] bg-[#2d5f4f]/5 ring-2 ring-[#2d5f4f]/10 shadow-sm" : "border-gray-100 hover:border-gray-300 bg-card hover:bg-gray-50/50"} ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
+                    className={`block relative border-2 rounded-2xl p-5 cursor-pointer transition-all duration-300 ${paymentMethod === "cash" ? "border-[#5b21b6] bg-[#5b21b6]/5 ring-2 ring-[#5b21b6]/10 shadow-sm" : "border-gray-100 hover:border-gray-300 bg-card hover:bg-gray-50/50"} ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
                   >
                     <div className="flex items-center gap-4">
                       <div
-                        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${paymentMethod === "cash" ? "border-[#2d5f4f]" : "border-gray-300"}`}
+                        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${paymentMethod === "cash" ? "border-[#5b21b6]" : "border-gray-300"}`}
                       >
                         {paymentMethod === "cash" && (
-                          <div className="w-2.5 h-2.5 rounded-full bg-[#2d5f4f]"></div>
+                          <div className="w-2.5 h-2.5 rounded-full bg-[#5b21b6]"></div>
                         )}
                       </div>
                       <div className="flex-1 flex justify-between items-center">
@@ -296,13 +296,13 @@ export default function CheckoutPage() {
 
             {/* Right Column Summary Card */}
             <div className="md:col-span-1">
-              <div className="bg-[#2d5f4f] rounded-[2rem] p-6 md:p-8 shadow-xl text-white overflow-hidden relative group border border-[#1e4035]">
+              <div className="bg-[#5b21b6] rounded-[2rem] p-6 md:p-8 shadow-xl text-white overflow-hidden relative group border border-[#2a1156]">
                 <h2 className="text-xl font-black text-white mb-6 border-b border-white/10 pb-4">
                   Summary
                 </h2>
 
                 <div className="flex flex-col mb-8">
-                  <span className="font-bold text-green-100 text-[10px] uppercase tracking-wider mb-1">
+                  <span className="font-bold text-violet-100 text-[10px] uppercase tracking-wider mb-1">
                     Total Amount
                   </span>
                   <span className="text-4xl font-black text-white">
@@ -314,16 +314,16 @@ export default function CheckoutPage() {
                   <Button
                     onClick={handlePlaceOrder}
                     disabled={loading || cart.length === 0}
-                    className="w-full h-14 rounded-xl text-md font-extrabold bg-white text-[#2d5f4f] hover:bg-gray-100 shadow-md border-none transition-transform hover:-translate-y-0.5 duration-200 cursor-pointer"
+                    className="w-full h-14 rounded-xl text-md font-extrabold bg-white text-[#5b21b6] hover:bg-gray-100 shadow-md border-none transition-transform hover:-translate-y-0.5 duration-200 cursor-pointer"
                   >
                     {loading ? (
-                      <Loader2 className="w-5 h-5 animate-spin text-[#2d5f4f]" />
+                      <Loader2 className="w-5 h-5 animate-spin text-[#5b21b6]" />
                     ) : (
                       "Confirm Order"
                     )}
                   </Button>
 
-                  <div className="flex items-center justify-center gap-2 text-green-100/80 text-xs font-semibold">
+                  <div className="flex items-center justify-center gap-2 text-violet-100/80 text-xs font-semibold">
                     <ShieldCheck className="w-4 h-4" />
                     <span>100% encrypted checkout</span>
                   </div>

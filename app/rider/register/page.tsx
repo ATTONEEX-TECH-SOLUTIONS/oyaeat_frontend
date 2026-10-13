@@ -130,7 +130,7 @@ const RiderRegister = () => {
           --green-light: #22883F;
           --green-pale: #E8F5EE;
           --green-muted: #4A8C63;
-          --green-border: #B8DDC5;
+          --green-border: #d9ccf5;
           --green-dark: #0F4526;
           --white: #FFFFFF;
           --text-dark: #0D2218;
@@ -150,7 +150,7 @@ const RiderRegister = () => {
         
         .dot-grid {
           position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.3;
-          background-image: radial-gradient(circle, #B8DDC5 1px, transparent 1px);
+          background-image: radial-gradient(circle, #d9ccf5 1px, transparent 1px);
           background-size: 28px 28px;
         }
 

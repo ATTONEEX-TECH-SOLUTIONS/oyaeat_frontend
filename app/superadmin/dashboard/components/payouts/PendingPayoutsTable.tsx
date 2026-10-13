@@ -106,7 +106,7 @@ export default function PendingPayoutsTable({
                   </td>
 
                   {/* Admin percentage cut */}
-                  <td className="p-4 font-bold text-emerald-800">
+                  <td className="p-4 font-bold text-violet-800">
                     <p>
                       {formatCurrency(
                         r.originalOrderTotal * (r.adminSplitPercentage / 100),
@@ -122,7 +122,7 @@ export default function PendingPayoutsTable({
                     <p className="text-sm font-black text-gray-900">
                       {formatCurrency(r.requestedAmount)}
                     </p>
-                    <span className="text-[9px] bg-amber-50 text-amber-800 border border-amber-100 px-1 rounded font-bold uppercase tracking-wider">
+                    <span className="text-[9px] bg-mango-50 text-mango-800 border border-mango-100 px-1 rounded font-bold uppercase tracking-wider">
                       Awaiting Dispatch
                     </span>
                   </td>
@@ -131,7 +131,7 @@ export default function PendingPayoutsTable({
                   <td className="p-4 text-right">
                     <button
                       onClick={() => onApprove(r.id)}
-                      className="inline-flex items-center gap-1 bg-emerald-800 hover:bg-emerald-900 text-white font-bold px-3 py-1.5 rounded-lg transition-colors text-[11px]"
+                      className="inline-flex items-center gap-1 bg-violet-800 hover:bg-violet-900 text-white font-bold px-3 py-1.5 rounded-lg transition-colors text-[11px]"
                     >
                       <CheckCircle2 className="w-3 h-3" /> Confirm Transfer
                     </button>

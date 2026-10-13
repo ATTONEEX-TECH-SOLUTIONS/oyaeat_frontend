@@ -50,9 +50,9 @@ export function ReasonModal({
       case "danger":
         return "bg-red-600 hover:bg-red-700 focus-visible:ring-red-600";
       case "warning":
-        return "bg-amber-600 hover:bg-amber-700 focus-visible:ring-amber-600";
+        return "bg-mango-600 hover:bg-mango-700 focus-visible:ring-mango-600";
       default:
-        return "bg-[#2D6A4F] hover:bg-[#1B4332] focus-visible:ring-[#1B4332]";
+        return "bg-[#6d28d9] hover:bg-[#3b0f7a] focus-visible:ring-[#3b0f7a]";
     }
   };
 
@@ -63,7 +63,7 @@ export function ReasonModal({
         <div className="p-5 border-b border-border flex items-center justify-between">
           <div className="flex items-center gap-2">
             <AlertTriangle
-              className={`h-5 w-5 ${confirmButtonVariant === "danger" ? "text-red-500" : "text-amber-500"}`}
+              className={`h-5 w-5 ${confirmButtonVariant === "danger" ? "text-red-500" : "text-mango-500"}`}
             />
             <h2 className="text-lg font-bold tracking-tight text-foreground">
               {title}
@@ -97,7 +97,7 @@ export function ReasonModal({
                 autoFocus
                 rows={4}
                 placeholder={placeholder}
-                className="w-full p-3 rounded-xl border border-border bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-[#1B4332] focus:border-[#1B4332] text-sm resize-none"
+                className="w-full p-3 rounded-xl border border-border bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-[#3b0f7a] focus:border-[#3b0f7a] text-sm resize-none"
                 value={reasonText}
                 onChange={(e) => setReasonText(e.target.value)}
               />

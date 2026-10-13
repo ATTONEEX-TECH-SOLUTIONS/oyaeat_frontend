@@ -7,7 +7,7 @@ export function PageHeader() {
     <div className="mb-6">
       <p
         className="text-xs font-bold uppercase tracking-[0.2em] mb-1"
-        style={{ color: C.greenLight }}
+        style={{ color: C.brandLight }}
       >
         Super Admin
       </p>

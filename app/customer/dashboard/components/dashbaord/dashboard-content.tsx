@@ -100,13 +100,13 @@ export function DashboardContent() {
             id: "f1",
             title: "Welcome to OyaEat!",
             desc: "Explore delicious meals near you",
-            bgGradient: "from-[#2d5f4f] to-slate-800",
+            bgGradient: "from-[#5b21b6] to-slate-800",
           },
           {
             id: "f2",
             title: "Free Delivery Weekend",
             desc: "On orders above ₦5,000 totals",
-            bgGradient: "from-blue-500 to-teal-500",
+            bgGradient: "from-blue-500 to-violet-500",
           },
         ]);
       }
@@ -229,22 +229,22 @@ export function DashboardContent() {
       {!rawQuery && (
         <div className="flex flex-col xl:flex-row gap-6">
           {/* Welcome Tile */}
-          <div className="bg-[#2d5f4f] rounded-3xl p-6 sm:p-8 text-white shadow-[0_8px_30px_rgba(45,95,79,0.2)] relative overflow-hidden flex-1 group">
+          <div className="bg-[#5b21b6] rounded-3xl p-6 sm:p-8 text-white shadow-[0_8px_30px_rgba(45,95,79,0.2)] relative overflow-hidden flex-1 group">
             <div className="absolute top-0 right-0 w-64 h-64 bg-card/10 rounded-full blur-[60px] -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-1000 pointer-events-none"></div>
             <div className="relative z-10 flex flex-col justify-between h-full">
               <div>
                 <h2 className="text-2xl sm:text-3xl font-extrabold mb-2 tracking-tight drop-shadow-md flex items-center gap-3">
                   Welcome back, {user.firstName}!{" "}
-                  <Sparkles className="w-6 h-6 text-yellow-300" />
+                  <Sparkles className="w-6 h-6 text-mango-300" />
                 </h2>
-                <p className="text-green-100 text-sm font-medium leading-relaxed drop-shadow-sm max-w-sm">
+                <p className="text-violet-100 text-sm font-medium leading-relaxed drop-shadow-sm max-w-sm">
                   Hungry? Discover new restaurants or reorder your favorite
                   meals with just a tap.
                 </p>
               </div>
               <div className="mt-8">
                 <Link href="#restaurants">
-                  <Button className="rounded-xl px-5 py-5 text-sm font-extrabold bg-white text-[#2d5f4f] hover:bg-gray-100 shadow-xl hover:-translate-y-0.5 transition-all group/btn flex items-center gap-2">
+                  <Button className="rounded-xl px-5 py-5 text-sm font-extrabold bg-white text-[#5b21b6] hover:bg-gray-100 shadow-xl hover:-translate-y-0.5 transition-all group/btn flex items-center gap-2">
                     Explore Menu{" "}
                     <TrendingUp className="h-4 w-4 text-orange-500 group-hover/btn:rotate-12 transition-transform" />
                   </Button>
@@ -287,7 +287,7 @@ export function DashboardContent() {
                     <div className="relative z-10">
                       <div className="flex items-center justify-between mb-2">
                         <span className="bg-white/20 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-white inline-flex items-center gap-1">
-                          <Zap className="w-3 h-3 fill-yellow-300 text-yellow-300 animate-pulse" />{" "}
+                          <Zap className="w-3 h-3 fill-mango-300 text-mango-300 animate-pulse" />{" "}
                           Platform Promo
                         </span>
 
@@ -359,7 +359,7 @@ export function DashboardContent() {
                 </h4>
                 <p className="text-sm font-bold text-gray-500">
                   Order #{activeOrder.id} •{" "}
-                  <span className="text-[#2d5f4f]">
+                  <span className="text-[#5b21b6]">
                     {format(new Date(activeOrder.createdAt), "p")}
                   </span>
                 </p>
@@ -367,7 +367,7 @@ export function DashboardContent() {
             </div>
             <div className="flex-1 w-full md:max-w-xs relative h-3 bg-gray-100 rounded-full overflow-hidden border border-gray-200 shadow-inner">
               <div
-                className="absolute top-0 left-0 h-full bg-gradient-to-r from-orange-400 to-[#2d5f4f] rounded-full transition-all duration-1000 ease-out"
+                className="absolute top-0 left-0 h-full bg-gradient-to-r from-orange-400 to-[#5b21b6] rounded-full transition-all duration-1000 ease-out"
                 style={{
                   width:
                     activeOrder.status === "pending"
@@ -436,7 +436,7 @@ export function DashboardContent() {
                   </div>
                   <div className="p-4 flex flex-col justify-between flex-1 bg-white relative -mt-1 rounded-t-2xl">
                     <div>
-                      <h4 className="font-extrabold text-gray-900 text-base line-clamp-1 group-hover:text-[#2d5f4f] transition-colors mb-1">
+                      <h4 className="font-extrabold text-gray-900 text-base line-clamp-1 group-hover:text-[#5b21b6] transition-colors mb-1">
                         {item.name}
                       </h4>
                       <p className="text-xs font-semibold text-gray-500 mb-2">
@@ -447,7 +447,7 @@ export function DashboardContent() {
                       <span className="font-extrabold text-gray-900 text-lg">
                         ₦{item.price ? item.price.toLocaleString() : "0"}
                       </span>
-                      <div className="w-8 h-8 rounded-full bg-gray-50 group-hover:bg-[#2d5f4f]/10 text-gray-400 group-hover:text-[#2d5f4f] flex items-center justify-center transition-colors">
+                      <div className="w-8 h-8 rounded-full bg-gray-50 group-hover:bg-[#5b21b6]/10 text-gray-400 group-hover:text-[#5b21b6] flex items-center justify-center transition-colors">
                         <ArrowRight className="w-4 h-4" />
                       </div>
                     </div>
@@ -467,8 +467,8 @@ export function DashboardContent() {
             onClick={() => setActiveCategory(cat.id)}
             className={`shrink-0 flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm transition-all shadow-sm border ${
               activeCategory === cat.id
-                ? "bg-[#2d5f4f] border-[#2d5f4f] text-white"
-                : "bg-white border-gray-200 text-gray-600 hover:border-[#2d5f4f]/30 hover:shadow-md"
+                ? "bg-[#5b21b6] border-[#5b21b6] text-white"
+                : "bg-white border-gray-200 text-gray-600 hover:border-[#5b21b6]/30 hover:shadow-md"
             }`}
           >
             <cat.icon className="w-4 h-4" />
@@ -481,7 +481,7 @@ export function DashboardContent() {
       <div id="restaurants" className="pt-2 min-h-[400px]">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-2xl font-extrabold text-gray-900 flex items-center gap-3 tracking-tight">
-            <Store className="h-6 w-6 text-[#2d5f4f]" />
+            <Store className="h-6 w-6 text-[#5b21b6]" />
             {activeCategory !== "all"
               ? `${activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1)} Restaurants`
               : rawQuery
@@ -492,7 +492,7 @@ export function DashboardContent() {
 
         {loadingRestaurants ? (
           <div className="flex flex-col items-center justify-center py-24 bg-white rounded-3xl border border-gray-100 shadow-sm">
-            <RefreshCcw className="h-8 w-8 text-[#2d5f4f] animate-spin mb-4" />
+            <RefreshCcw className="h-8 w-8 text-[#5b21b6] animate-spin mb-4" />
             <p className="font-bold text-gray-500">Discovering places...</p>
           </div>
         ) : restaurants.length === 0 ? (
@@ -562,7 +562,7 @@ export function DashboardContent() {
                           </div>
                         )}
                         <div className="absolute top-2 left-2 px-2.5 py-1.5 bg-white/95 backdrop-blur-md rounded-xl shadow-md text-[10px] sm:text-xs font-extrabold text-gray-900 flex items-center gap-1.5 z-10">
-                          <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>{" "}
+                          <span className="w-1.5 h-1.5 rounded-full bg-violet-500 animate-pulse"></span>{" "}
                           Open
                         </div>
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -613,10 +613,10 @@ export function DashboardContent() {
                   <div className="p-5 flex flex-col justify-between flex-1 relative bg-white">
                     <div>
                       <div className="flex justify-between items-start mb-1.5">
-                        <h4 className="font-extrabold text-gray-900 text-lg line-clamp-1 pr-2 group-hover:text-[#2d5f4f] transition-colors">
+                        <h4 className="font-extrabold text-gray-900 text-lg line-clamp-1 pr-2 group-hover:text-[#5b21b6] transition-colors">
                           {rest.name}
                         </h4>
-                        <div className="flex items-center gap-1 bg-yellow-50 px-1.5 py-0.5 rounded-lg text-yellow-700 text-xs font-extrabold border border-yellow-100 tracking-tight">
+                        <div className="flex items-center gap-1 bg-mango-50 px-1.5 py-0.5 rounded-lg text-mango-700 text-xs font-extrabold border border-mango-100 tracking-tight">
                           <span>4.8</span>
                           <Star className="w-3 h-3 fill-current" />
                         </div>
@@ -629,7 +629,7 @@ export function DashboardContent() {
                       <span className="text-gray-600 font-bold bg-gray-50 px-2 py-1 rounded border border-gray-100">
                         Min. ₦{(rest.minimumOrder || 0).toLocaleString()}
                       </span>
-                      <span className="text-[#2d5f4f] font-extrabold group-hover:translate-x-1 transition-transform inline-flex items-center uppercase tracking-wider text-[10px]">
+                      <span className="text-[#5b21b6] font-extrabold group-hover:translate-x-1 transition-transform inline-flex items-center uppercase tracking-wider text-[10px]">
                         View Menu{" "}
                         <ChevronRight className="w-3.5 h-3.5 ml-0.5" />
                       </span>

@@ -161,7 +161,7 @@ export default function RidersPage() {
               <TabsTrigger value="pending" className="relative">
                 Pending ({getStats("pending")})
                 {getStats("pending") > 0 && (
-                  <span className="ml-2 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-yellow-500 rounded-full">
+                  <span className="ml-2 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-mango-500 rounded-full">
                     {getStats("pending")}
                   </span>
                 )}

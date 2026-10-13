@@ -108,7 +108,7 @@ export default function RiderDashboardLayout({
   return (
     <div
       className="flex h-screen overflow-hidden"
-      style={{ backgroundColor: "#F5FAF6" }}
+      style={{ backgroundColor: "#fbf9ff" }}
     >
       {/* Mobile Backdrop */}
       {mobileMenuOpen && (
@@ -124,8 +124,8 @@ export default function RiderDashboardLayout({
           mobileMenuOpen
             ? "translate-x-0"
             : "-translate-x-full lg:translate-x-0 lg:static lg:h-screen"
-        } border-r border-[#1B4332] shadow-2xl lg:shadow-none`}
-        style={{ backgroundColor: "#1B4332" }}
+        } border-r border-[#3b0f7a] shadow-2xl lg:shadow-none`}
+        style={{ backgroundColor: "#3b0f7a" }}
       >
         {/* Logo */}
         <div className="px-5 py-6 flex items-center gap-3">
@@ -139,7 +139,7 @@ export default function RiderDashboardLayout({
               }}
             >
               <span className="text-3xl font-black leading-none tracking-tight">
-                <span className="text-[#2d5f4f]">Oya</span>
+                <span className="text-[#5b21b6]">Oya</span>
                 <span
                   className={`transition-colors duration-300 scrolled ? "text-gray-800" : "text-gray-900"`}
                 >
@@ -153,7 +153,7 @@ export default function RiderDashboardLayout({
                 fontWeight: 600,
                 fontSize: "0.6rem",
                 letterSpacing: "0.15em",
-                color: "#a5d6a7",
+                color: "#c4b5fd",
                 marginTop: "4px",
                 textTransform: "uppercase",
               }}
@@ -165,8 +165,8 @@ export default function RiderDashboardLayout({
 
         {/* Rider Identity Card */}
         <div className="p-4 mb-2">
-          <div className="flex items-center gap-3 p-3 rounded-xl bg-black/20 border border-[#a5d6a7]/20 shadow-inner">
-            <div className="w-12 h-12 rounded-full bg-[#2D6A4F] flex-shrink-0 flex items-center justify-center overflow-hidden border-2 border-[#4ade80] relative">
+          <div className="flex items-center gap-3 p-3 rounded-xl bg-black/20 border border-[#c4b5fd]/20 shadow-inner">
+            <div className="w-12 h-12 rounded-full bg-[#6d28d9] flex-shrink-0 flex items-center justify-center overflow-hidden border-2 border-[#4ade80] relative">
               {avatarUrl ? (
                 <Image
                   src={avatarUrl}
@@ -190,10 +190,10 @@ export default function RiderDashboardLayout({
                 <span
                   className={cn(
                     "w-2 h-2 rounded-full transition-colors duration-300",
-                    isOnline ? "bg-green-400" : "bg-gray-400",
+                    isOnline ? "bg-violet-400" : "bg-gray-400",
                   )}
                 />
-                <span className="text-[11px] text-[#a5d6a7] font-medium truncate">
+                <span className="text-[11px] text-[#c4b5fd] font-medium truncate">
                   {isOnline ? "Online Now" : "Offline"}
                 </span>
               </div>
@@ -213,7 +213,7 @@ export default function RiderDashboardLayout({
                 className={cn(
                   "flex items-center justify-between px-4 py-3.5 rounded-xl transition-all duration-200 text-sm font-semibold group",
                   isActive
-                    ? "bg-[#2D6A4F] text-white shadow-md border border-[#4a7c59]/50"
+                    ? "bg-[#6d28d9] text-white shadow-md border border-[#7c3aed]/50"
                     : "text-white/80 hover:bg-white/10 hover:text-white border border-transparent",
                 )}
               >
@@ -223,7 +223,7 @@ export default function RiderDashboardLayout({
                       "w-5 h-5 flex-shrink-0 transition-colors",
                       isActive
                         ? "text-[#4ade80]"
-                        : "text-[#a5d6a7] group-hover:text-white",
+                        : "text-[#c4b5fd] group-hover:text-white",
                     )}
                   />
                   <span>{item.label}</span>
@@ -241,12 +241,12 @@ export default function RiderDashboardLayout({
             className={cn(
               "flex items-center justify-between px-4 py-3.5 rounded-xl transition-all duration-200 text-sm font-semibold group",
               pathname === "/rider/dashboard/notifications"
-                ? "bg-[#2D6A4F] text-white shadow-md border border-[#4a7c59]/50"
+                ? "bg-[#6d28d9] text-white shadow-md border border-[#7c3aed]/50"
                 : "text-white/80 hover:bg-white/10 hover:text-white border border-transparent",
             )}
           >
             <div className="flex items-center gap-3">
-              <Bell className="w-5 h-5 text-[#a5d6a7] group-hover:text-white transition-colors" />
+              <Bell className="w-5 h-5 text-[#c4b5fd] group-hover:text-white transition-colors" />
               <span>Notifications</span>
             </div>
             {unreadNotifications > 0 && (
@@ -263,7 +263,7 @@ export default function RiderDashboardLayout({
             <LogOut className="w-5 h-5 text-red-300" /> Logout
           </button>
 
-          <div className="pt-6 pb-2 text-xs text-[#a5d6a7]/60 text-center font-medium">
+          <div className="pt-6 pb-2 text-xs text-[#c4b5fd]/60 text-center font-medium">
             <p className="tracking-wider">OyaEat Rider App v1.0</p>
           </div>
         </nav>
@@ -272,22 +272,22 @@ export default function RiderDashboardLayout({
       {/* ── Main Content ── */}
       <main
         className="flex-1 flex flex-col h-screen overflow-hidden min-w-0"
-        style={{ backgroundColor: "#F5FAF6" }}
+        style={{ backgroundColor: "#fbf9ff" }}
       >
         {/* Mobile Header */}
         <header className="lg:hidden flex items-center justify-between p-4 bg-white border-b border-gray-200 shrink-0 shadow-sm z-30">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setMobileMenuOpen(true)}
-              className="p-2 -ml-2 text-[#1a5c2a] bg-[#1a5c2a]/10 hover:bg-[#1a5c2a]/20 rounded-lg transition-colors"
+              className="p-2 -ml-2 text-[#5b21b6] bg-[#5b21b6]/10 hover:bg-[#5b21b6]/20 rounded-lg transition-colors"
             >
               <Menu className="w-5 h-5" />
             </button>
             <span className="font-extrabold text-gray-900 tracking-tight leading-none text-lg font-['Bebas_Neue']">
-              <span className="text-[#1a5c2a]">Oya</span>Eat
+              <span className="text-[#5b21b6]">Oya</span>Eat
             </span>
           </div>
-          <div className="w-9 h-9 rounded-full bg-[#1B4332] flex items-center justify-center border-2 border-[#4ade80] shadow-sm relative overflow-hidden">
+          <div className="w-9 h-9 rounded-full bg-[#3b0f7a] flex items-center justify-center border-2 border-[#4ade80] shadow-sm relative overflow-hidden">
             {avatarUrl ? (
               <Image
                 src={avatarUrl}

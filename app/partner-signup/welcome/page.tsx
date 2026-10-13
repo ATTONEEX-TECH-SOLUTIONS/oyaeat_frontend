@@ -13,7 +13,7 @@ const WelcomePage = () => {
       <header className="py-6 px-8">
         <Link href="/" className="flex items-center gap-2">
           <span className="text-xl font-bold">
-            <span className="text-[#2d5f4f]">Oya</span>
+            <span className="text-[#5b21b6]">Oya</span>
             <span className="text-gray-900">Eat</span>
           </span>
         </Link>
@@ -25,7 +25,7 @@ const WelcomePage = () => {
           <div className="flex flex-col md:flex-row items-center justify-between gap-20">
             {/* Left Side - Content */}
             <div className="flex-1 w-full max-w-md">
-              <h2 className="text-[#2d5f4f] text-xl font-semibold mb-4">
+              <h2 className="text-[#5b21b6] text-xl font-semibold mb-4">
                 Welcome
               </h2>
 
@@ -40,14 +40,14 @@ const WelcomePage = () => {
               {/* Steps */}
               <div className="space-y-8 mb-12">
                 <div className="border-b border-gray-200 pb-6">
-                  <h3 className="text-[#2d5f4f] text-lg font-semibold mb-2">
+                  <h3 className="text-[#5b21b6] text-lg font-semibold mb-2">
                     Step 1
                   </h3>
                   <p className="text-gray-900 text-base">Add your business</p>
                 </div>
 
                 <div className="border-b border-gray-200 pb-6">
-                  <h3 className="text-[#2d5f4f] text-lg font-semibold mb-2">
+                  <h3 className="text-[#5b21b6] text-lg font-semibold mb-2">
                     Step 2
                   </h3>
                   <p className="text-gray-900 text-base">
@@ -81,7 +81,7 @@ const WelcomePage = () => {
         <div className="w-full max-w-6xl mx-auto flex justify-between items-center">
           <button
             onClick={() => router.push("/partner-signup")}
-            className="text-[#2d5f4f] font-medium hover:underline flex items-center gap-2"
+            className="text-[#5b21b6] font-medium hover:underline flex items-center gap-2"
           >
             <svg
               className="w-5 h-5"
@@ -101,7 +101,7 @@ const WelcomePage = () => {
 
           <button
             onClick={() => router.push("/partner-signup/add-business")}
-            className="bg-[#2d5f4f] hover:bg-[#234a3d] text-white font-semibold px-8 py-3 rounded-lg transition-all duration-300"
+            className="bg-[#5b21b6] hover:bg-[#3b1a78] text-white font-semibold px-8 py-3 rounded-lg transition-all duration-300"
           >
             Next
           </button>

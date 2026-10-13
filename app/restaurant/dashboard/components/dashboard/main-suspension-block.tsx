@@ -83,7 +83,7 @@ export function MainSuspensionBlock({
 
       <div className="border-t border-gray-100 pt-6">
         {appealSubmitted ? (
-          <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-emerald-800 text-sm">
+          <div className="bg-violet-50 border border-violet-200 rounded-xl p-4 text-violet-800 text-sm">
             <strong>✓ Appeal Received Successfully.</strong> Our operational
             compliance team typically validates restaurant records within 24 to
             48 hours. Please check back regularly.

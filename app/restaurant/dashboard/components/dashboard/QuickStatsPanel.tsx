@@ -41,7 +41,7 @@ export default function QuickStatsPanel({ cards }: QuickStatsPanelProps) {
     <div
       style={{
         background: "#fff",
-        border: "1px solid #c8e6c9",
+        border: "1px solid #ddd6fe",
         borderRadius: 16,
         padding: 24,
         boxShadow: "0 1px 4px rgba(26,92,42,0.06)",
@@ -49,7 +49,7 @@ export default function QuickStatsPanel({ cards }: QuickStatsPanelProps) {
     >
       <h3
         style={{
-          color: "#1a5c2a",
+          color: "#5b21b6",
           fontWeight: 700,
           fontSize: 16,
           margin: "0 0 20px",
@@ -67,23 +67,23 @@ export default function QuickStatsPanel({ cards }: QuickStatsPanelProps) {
               justifyContent: "space-between",
               padding: "14px 0",
               borderBottom:
-                i < quickStats.length - 1 ? "1px solid #e8f5e9" : "none",
+                i < quickStats.length - 1 ? "1px solid #f1ebff" : "none",
             }}
           >
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <div
                 style={{
-                  background: "#e8f5e9",
+                  background: "#f1ebff",
                   borderRadius: 8,
                   padding: 7,
                   display: "flex",
                 }}
               >
-                <Icon size={14} color="#2e7d32" strokeWidth={2.5} />
+                <Icon size={14} color="#6d28d9" strokeWidth={2.5} />
               </div>
-              <span style={{ fontSize: 13, color: "#4a7c59" }}>{label}</span>
+              <span style={{ fontSize: 13, color: "#7c3aed" }}>{label}</span>
             </div>
-            <span style={{ fontWeight: 700, fontSize: 14, color: "#1a5c2a" }}>
+            <span style={{ fontWeight: 700, fontSize: 14, color: "#5b21b6" }}>
               {value}
             </span>
           </div>

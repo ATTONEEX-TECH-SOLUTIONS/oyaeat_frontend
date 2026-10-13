@@ -197,7 +197,7 @@ export default function DashboardLayout({
   return (
     <div
       className="flex h-screen overflow-hidden"
-      style={{ backgroundColor: "#f5faf6" }}
+      style={{ backgroundColor: "#fbf9ff" }}
     >
       {/* Mobile Backdrop */}
       {mobileMenuOpen && (
@@ -209,8 +209,8 @@ export default function DashboardLayout({
 
       {/* ── Sidebar ── */}
       <aside
-        className={`w-64 flex flex-col fixed inset-y-0 left-0 z-50 transform transition-transform duration-300 ${mobileMenuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0 lg:static lg:h-screen"} border-r border-[#1B4332] shadow-2xl lg:shadow-none`}
-        style={{ backgroundColor: "#1B4332" }}
+        className={`w-64 flex flex-col fixed inset-y-0 left-0 z-50 transform transition-transform duration-300 ${mobileMenuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0 lg:static lg:h-screen"} border-r border-[#3b0f7a] shadow-2xl lg:shadow-none`}
+        style={{ backgroundColor: "#3b0f7a" }}
       >
         {/* Logo */}
         <div className="px-5 py-5 flex items-center gap-3">
@@ -233,7 +233,7 @@ export default function DashboardLayout({
                 fontWeight: 600,
                 fontSize: "0.5rem",
                 letterSpacing: "0.18em",
-                color: "#a5d6a7",
+                color: "#c4b5fd",
                 marginTop: "2px",
               }}
             >
@@ -247,7 +247,7 @@ export default function DashboardLayout({
           <p
             className="text-xs"
             style={{
-              color: "#a5d6a7",
+              color: "#c4b5fd",
               fontFamily: "'Montserrat', sans-serif",
               letterSpacing: "0.05em",
             }}
@@ -259,7 +259,7 @@ export default function DashboardLayout({
         {/* Business identity card */}
         <div className="p-4">
           <div className="flex items-center gap-3 p-2.5">
-            <div className="w-10 h-10 rounded-full bg-black/20 flex-shrink-0 flex items-center justify-center overflow-hidden border border-[#a5d6a7]/30 shadow-sm">
+            <div className="w-10 h-10 rounded-full bg-black/20 flex-shrink-0 flex items-center justify-center overflow-hidden border border-[#c4b5fd]/30 shadow-sm">
               {profilePicUrl ? (
                 <img
                   src={profilePicUrl}
@@ -276,7 +276,7 @@ export default function DashboardLayout({
               <span className="text-sm font-extrabold text-white truncate">
                 {businessName}
               </span>
-              <span className="text-[11px] text-[#a5d6a7] font-medium truncate mt-0.5">
+              <span className="text-[11px] text-[#c4b5fd] font-medium truncate mt-0.5">
                 {dashboard?.firstName || "Restaurant"}{" "}
                 {dashboard?.lastName || "Admin"}
               </span>
@@ -295,7 +295,7 @@ export default function DashboardLayout({
                 className={cn(
                   "flex items-center justify-between px-4 py-3 rounded-lg transition-all duration-150 text-sm font-medium group",
                   isActive
-                    ? "bg-[#2D6A4F] text-white shadow-sm"
+                    ? "bg-[#6d28d9] text-white shadow-sm"
                     : "text-white/90 hover:bg-white/10 hover:text-white",
                 )}
               >
@@ -305,7 +305,7 @@ export default function DashboardLayout({
                       "w-5 h-5 flex-shrink-0",
                       isActive
                         ? "text-white"
-                        : "text-[#a5d6a7] group-hover:text-white transition-colors",
+                        : "text-[#c4b5fd] group-hover:text-white transition-colors",
                     )}
                   />
                   <span>{item.label}</span>
@@ -328,12 +328,12 @@ export default function DashboardLayout({
             className={cn(
               "flex items-center justify-between px-4 py-3 rounded-lg transition-all duration-150 text-sm font-medium group",
               pathname === "/restaurant/dashboard/notifications"
-                ? "bg-[#2D6A4F] text-white shadow-sm"
+                ? "bg-[#6d28d9] text-white shadow-sm"
                 : "text-white/90 hover:bg-white/10 hover:text-white",
             )}
           >
             <div className="flex items-center gap-3">
-              <Bell className="w-5 h-5 text-[#a5d6a7] group-hover:text-white transition-colors" />
+              <Bell className="w-5 h-5 text-[#c4b5fd] group-hover:text-white transition-colors" />
               <span>Notifications</span>
             </div>
             {unreadNotifications > 0 && (
@@ -347,11 +347,11 @@ export default function DashboardLayout({
             onClick={handleLogout}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-red-100 hover:bg-red-500/10 hover:text-red-400 transition-colors"
           >
-            <LogOut className="w-5 h-5 text-[#a5d6a7]" /> Logout
+            <LogOut className="w-5 h-5 text-[#c4b5fd]" /> Logout
           </button>
 
-          <div className="mt-auto pt-6 pb-2 text-xs text-[#a5d6a7]/60 text-center">
-            <p className="font-semibold text-[#a5d6a7]/80">Admin Portal v1.0</p>
+          <div className="mt-auto pt-6 pb-2 text-xs text-[#c4b5fd]/60 text-center">
+            <p className="font-semibold text-[#c4b5fd]/80">Admin Portal v1.0</p>
             <p className="mt-1">© 2024 OyaEat</p>
           </div>
         </nav>
@@ -360,22 +360,22 @@ export default function DashboardLayout({
       {/* ── Main content — NO padding, pages own their own spacing ── */}
       <main
         className="flex-1 flex flex-col h-screen overflow-hidden min-w-0"
-        style={{ backgroundColor: "#f0f7f1" }}
+        style={{ backgroundColor: "#f5f3ff" }}
       >
         {/* Mobile Header */}
         <header className="lg:hidden flex items-center justify-between p-4 bg-card border-b border-gray-200 shrink-0 shadow-sm z-30">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setMobileMenuOpen(true)}
-              className="p-2 -ml-2 text-[#1a5c2a] bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors"
+              className="p-2 -ml-2 text-[#5b21b6] bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors"
             >
               <Menu className="w-5 h-5" />
             </button>
             <span className="font-extrabold text-gray-900 tracking-tight leading-none text-lg">
-              <span className="text-[#2e7d32]">Oya</span>Eat
+              <span className="text-[#6d28d9]">Oya</span>Eat
             </span>
           </div>
-          <div className="w-8 h-8 rounded-full bg-[#2e7d32] text-white flex items-center justify-center font-bold text-xs ring-2 ring-white shadow-sm">
+          <div className="w-8 h-8 rounded-full bg-[#6d28d9] text-white flex items-center justify-center font-bold text-xs ring-2 ring-white shadow-sm">
             {profilePicUrl ? (
               <img
                 src={profilePicUrl}

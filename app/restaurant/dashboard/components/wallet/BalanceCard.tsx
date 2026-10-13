@@ -22,12 +22,12 @@ export default function BalanceCard({
 }: BalanceCardProps) {
   if (type === "available") {
     return (
-      <div className="flex flex-col justify-between rounded-2xl border p-6 shadow-sm relative overflow-hidden bg-[#1B4332] border-[#1B4332]">
+      <div className="flex flex-col justify-between rounded-2xl border p-6 shadow-sm relative overflow-hidden bg-[#3b0f7a] border-[#3b0f7a]">
         <div className="absolute right-0 top-0 opacity-10">
           <DollarSign className="h-48 w-48 -mr-10 -mt-10 text-white" />
         </div>
         <div className="relative z-10 space-y-1">
-          <p className="text-sm font-bold uppercase tracking-widest text-[#a5d6a7]">
+          <p className="text-sm font-bold uppercase tracking-widest text-[#c4b5fd]">
             Available Balance
           </p>
           <p className="text-4xl font-black text-white">
@@ -39,7 +39,7 @@ export default function BalanceCard({
             <Button
               onClick={onWithdraw}
               disabled={amount <= 0 || withdrawing}
-              className="w-full sm:w-auto font-bold bg-white text-[#1B4332]"
+              className="w-full sm:w-auto font-bold bg-white text-[#3b0f7a]"
             >
               {withdrawing ? "Processing..." : "Request Payout"}
             </Button>
@@ -57,11 +57,11 @@ export default function BalanceCard({
   }
 
   return (
-    <div className="flex flex-col justify-between rounded-2xl border p-6 shadow-sm bg-white border-[#c8e6c9]">
+    <div className="flex flex-col justify-between rounded-2xl border p-6 shadow-sm bg-white border-[#ddd6fe]">
       <div className="space-y-1">
         <div className="flex items-center gap-2">
-          <Clock className="h-4 w-4 text-amber-500" />
-          <p className="text-sm font-bold uppercase tracking-widest text-[#6B7C6E]">
+          <Clock className="h-4 w-4 text-mango-500" />
+          <p className="text-sm font-bold uppercase tracking-widest text-[#6b6480]">
             Pending Payouts
           </p>
         </div>
@@ -70,7 +70,7 @@ export default function BalanceCard({
         </p>
       </div>
       <div className="mt-4">
-        <p className="text-xs text-[#6B7C6E]">
+        <p className="text-xs text-[#6b6480]">
           These funds are currently being processed by the system.
         </p>
       </div>

@@ -47,7 +47,7 @@ export function MessageItem({
   let bubbleClasses =
     "bg-white border border-gray-100 text-gray-800 rounded-tl-none";
   if (isMe) {
-    bubbleClasses = "bg-[#1a5c2a] text-white rounded-tr-none";
+    bubbleClasses = "bg-[#5b21b6] text-white rounded-tr-none";
   } else if (isAdminSender) {
     bubbleClasses =
       "bg-slate-900 text-slate-50 border border-slate-950 rounded-tl-none ring-1 ring-slate-950/10 shadow-md";
@@ -62,7 +62,7 @@ export function MessageItem({
         <div
           className={`w-8 h-8 rounded-full flex-shrink-0 mr-3 flex items-center justify-center overflow-hidden border-2 shadow-sm mt-auto ${
             isAdminSender
-              ? "bg-slate-900 border-slate-800 text-amber-400"
+              ? "bg-slate-900 border-slate-800 text-mango-400"
               : "bg-gray-200 border-white text-gray-400"
           }`}
         >
@@ -87,7 +87,7 @@ export function MessageItem({
         >
           {/* Support status pill tag overlay for incoming admin statements */}
           {isAdminSender && !isMe && (
-            <span className="absolute -top-2 -right-2 bg-amber-500 text-slate-950 text-[8px] font-black uppercase px-1 rounded shadow-sm border border-amber-400 tracking-wider">
+            <span className="absolute -top-2 -right-2 bg-mango-500 text-slate-950 text-[8px] font-black uppercase px-1 rounded shadow-sm border border-mango-400 tracking-wider">
               Official Support
             </span>
           )}
@@ -97,12 +97,12 @@ export function MessageItem({
         {/* Metadata breadcrumb history path label summary row */}
         <span className="text-[10px] text-gray-400 font-extrabold mt-1.5 px-1 opacity-80 group-hover:opacity-100 transition-opacity uppercase tracking-wider flex flex-wrap items-center gap-1">
           <span
-            className={`${isAdminSender ? "text-slate-900 font-black underline decoration-amber-400 decoration-2" : "text-[#1a5c2a] font-black"}`}
+            className={`${isAdminSender ? "text-slate-900 font-black underline decoration-mango-400 decoration-2" : "text-[#5b21b6] font-black"}`}
           >
             {senderName}
           </span>
           <span
-            className={`text-[9px] font-medium opacity-60 ${isAdminSender ? "text-amber-600 font-bold" : ""}`}
+            className={`text-[9px] font-medium opacity-60 ${isAdminSender ? "text-mango-600 font-bold" : ""}`}
           >
             ({msg.senderRole})
           </span>

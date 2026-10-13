@@ -140,7 +140,7 @@ const VerifyPhone = () => {
       <header className="py-6 px-8">
         <Link href="/" className="flex items-center gap-2">
           <span className="text-xl font-bold">
-            <span className="text-[#2d5f4f]">Oya</span>
+            <span className="text-[#5b21b6]">Oya</span>
             <span className="text-gray-900">Eat</span>
           </span>
         </Link>
@@ -175,7 +175,7 @@ const VerifyPhone = () => {
                     type="tel"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    className="w-full px-4 py-3.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5f4f] focus:border-transparent outline-none text-gray-900 mb-6 text-base"
+                    className="w-full px-4 py-3.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5b21b6] focus:border-transparent outline-none text-gray-900 mb-6 text-base"
                     placeholder="+234 9068603516"
                     disabled={isResending}
                   />
@@ -183,7 +183,7 @@ const VerifyPhone = () => {
                   <button
                     onClick={handleSendCode}
                     disabled={isResending || !phone}
-                    className="w-full bg-[#2d5f4f] hover:bg-[#234a3d] text-white font-semibold py-3.5 rounded-lg transition-all duration-300 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                    className="w-full bg-[#5b21b6] hover:bg-[#3b1a78] text-white font-semibold py-3.5 rounded-lg transition-all duration-300 disabled:bg-gray-300 disabled:cursor-not-allowed"
                   >
                     {isResending ? (
                       <span className="flex items-center justify-center">
@@ -237,7 +237,7 @@ const VerifyPhone = () => {
                         }
                         onKeyDown={(e) => handleKeyDown(index, e)}
                         disabled={isVerifying}
-                        className="w-14 h-16 text-center text-2xl text-gray-900 font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5f4f] focus:border-[#2d5f4f] outline-none disabled:bg-gray-100"
+                        className="w-14 h-16 text-center text-2xl text-gray-900 font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5b21b6] focus:border-[#5b21b6] outline-none disabled:bg-gray-100"
                       />
                     ))}
                   </div>
@@ -245,7 +245,7 @@ const VerifyPhone = () => {
                   <button
                     onClick={handleVerify}
                     disabled={!isCodeComplete || isVerifying}
-                    className="w-full bg-[#2d5f4f] hover:bg-[#234a3d] text-white font-semibold py-3.5 rounded-lg transition-all duration-300 mb-4 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                    className="w-full bg-[#5b21b6] hover:bg-[#3b1a78] text-white font-semibold py-3.5 rounded-lg transition-all duration-300 mb-4 disabled:bg-gray-300 disabled:cursor-not-allowed"
                   >
                     {isVerifying ? (
                       <span className="flex items-center justify-center">
@@ -279,7 +279,7 @@ const VerifyPhone = () => {
                   <button
                     onClick={handleSendCode}
                     disabled={countdown > 0 || isResending}
-                    className="w-full text-[#2d5f4f] font-medium hover:underline disabled:text-gray-400 disabled:no-underline"
+                    className="w-full text-[#5b21b6] font-medium hover:underline disabled:text-gray-400 disabled:no-underline"
                   >
                     {countdown > 0
                       ? `Resend code in ${countdown}s`

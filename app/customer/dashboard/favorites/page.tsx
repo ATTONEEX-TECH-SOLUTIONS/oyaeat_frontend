@@ -90,7 +90,7 @@ export default function CustomerFavoritesPage() {
               here!
             </p>
             <Link href="/customer" className="mt-8">
-              <Button className="rounded-2xl px-8 h-12 font-bold bg-[#2d5f4f] text-white">
+              <Button className="rounded-2xl px-8 h-12 font-bold bg-[#5b21b6] text-white">
                 Browse Restaurants
               </Button>
             </Link>
@@ -107,11 +107,11 @@ export default function CustomerFavoritesPage() {
                     <div className="w-14 h-14 bg-card rounded-xl shadow-sm border border-gray-100 flex items-center justify-center shrink-0">
                       <ShoppingBag className="w-6 h-6 text-orange-500" />
                     </div>
-                    <span className="bg-[#2d5f4f]/10 text-[#2d5f4f] text-xs font-bold px-3 py-1.5 rounded-lg border border-[#2d5f4f]/20">
+                    <span className="bg-[#5b21b6]/10 text-[#5b21b6] text-xs font-bold px-3 py-1.5 rounded-lg border border-[#5b21b6]/20">
                       Ordered {item.orderCount}x
                     </span>
                   </div>
-                  <h3 className="font-extrabold text-lg text-gray-900 leading-tight mb-1 group-hover:text-[#2d5f4f] transition-colors line-clamp-2">
+                  <h3 className="font-extrabold text-lg text-gray-900 leading-tight mb-1 group-hover:text-[#5b21b6] transition-colors line-clamp-2">
                     {item.name}
                   </h3>
                   <p className="text-sm font-semibold text-gray-500 mb-4">
@@ -125,7 +125,7 @@ export default function CustomerFavoritesPage() {
                   </span>
 
                   <Link href={`/customer/restaurant/${item.restaurantId}`}>
-                    <Button className="rounded-xl px-5 h-10 font-extrabold bg-card text-[#2d5f4f] border border-gray-200 hover:border-[#2d5f4f] hover:bg-gray-50 transition-all shadow-sm">
+                    <Button className="rounded-xl px-5 h-10 font-extrabold bg-card text-[#5b21b6] border border-gray-200 hover:border-[#5b21b6] hover:bg-gray-50 transition-all shadow-sm">
                       Order Again
                     </Button>
                   </Link>

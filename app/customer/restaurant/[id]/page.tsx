@@ -117,7 +117,7 @@ export default function RestaurantMenuPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-10 h-10 animate-spin text-[#2d5f4f]" />
+        <Loader2 className="w-10 h-10 animate-spin text-[#5b21b6]" />
       </div>
     );
   }
@@ -139,7 +139,7 @@ export default function RestaurantMenuPage() {
   return (
     <div className="min-h-screen bg-gray-50 pb-32">
       {/* Restaurant Header */}
-      <div className="relative h-64 md:h-80 bg-[#2d5f4f]">
+      <div className="relative h-64 md:h-80 bg-[#5b21b6]">
         <img
           src={restaurant.profilePicUrl || "/categories/jollof.jpg"}
           alt={restaurant.name}
@@ -168,7 +168,7 @@ export default function RestaurantMenuPage() {
           </div>
           <div className="text-white flex-1">
             <div className="flex items-center gap-2 mb-2">
-              <span className="bg-green-500 text-white text-xs font-bold px-2 py-0.5 rounded-md uppercase tracking-wider">
+              <span className="bg-violet-500 text-white text-xs font-bold px-2 py-0.5 rounded-md uppercase tracking-wider">
                 Open
               </span>
               <span className="bg-card/20 backdrop-blur-sm text-white text-xs font-bold px-2 py-0.5 rounded-md">
@@ -184,7 +184,7 @@ export default function RestaurantMenuPage() {
             </p>
             <div className="flex flex-wrap items-center gap-4 text-sm font-bold">
               <div className="flex items-center gap-1.5 bg-card/20 backdrop-blur-md px-3 py-1.5 rounded-xl">
-                <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                <Star className="w-4 h-4 fill-mango-400 text-mango-400" />
                 <span>4.8 (200+ reviews)</span>
               </div>
               <div className="flex items-center gap-1.5 bg-card/20 backdrop-blur-md px-3 py-1.5 rounded-xl">
@@ -224,10 +224,10 @@ export default function RestaurantMenuPage() {
               >
                 <div className="flex gap-4">
                   <div className="flex-1">
-                    <h3 className="font-extrabold text-lg text-gray-900 group-hover:text-[#2d5f4f] transition-colors leading-tight mb-1">
+                    <h3 className="font-extrabold text-lg text-gray-900 group-hover:text-[#5b21b6] transition-colors leading-tight mb-1">
                       {item.name}
                     </h3>
-                    <p className="text-sm font-bold text-[#2d5f4f] mb-2 bg-green-50 inline-block px-2 py-0.5 rounded-md text-xs">
+                    <p className="text-sm font-bold text-[#5b21b6] mb-2 bg-violet-50 inline-block px-2 py-0.5 rounded-md text-xs">
                       {item.category}
                     </p>
                     <p className="text-sm text-gray-500 font-medium line-clamp-2 leading-relaxed mb-4">
@@ -266,7 +266,7 @@ export default function RestaurantMenuPage() {
                       </span>
                       <button
                         onClick={() => addToCart(item)}
-                        className="w-10 h-10 flex items-center justify-center bg-[#2d5f4f] rounded-xl shadow-sm font-bold text-white hover:bg-[#1a382e] transition-colors"
+                        className="w-10 h-10 flex items-center justify-center bg-[#5b21b6] rounded-xl shadow-sm font-bold text-white hover:bg-[#2a1156] transition-colors"
                       >
                         <Plus className="w-4 h-4" />
                       </button>
@@ -278,14 +278,14 @@ export default function RestaurantMenuPage() {
                         onClick={() => addToCart(item)}
                         className="rounded-xl px-4 h-12 font-bold border-gray-200 hover:bg-gray-50"
                       >
-                        <Plus className="w-5 h-5 text-[#2d5f4f]" />
+                        <Plus className="w-5 h-5 text-[#5b21b6]" />
                       </Button>
                       <Button
                         onClick={() => {
                           addToCart(item);
                           router.push("/customer/cart");
                         }}
-                        className="rounded-xl px-6 h-12 flex-1 font-extrabold bg-[#2d5f4f] hover:bg-[#1a382e] text-white shadow-md hover:-translate-y-0.5 transition-all w-full sm:w-auto"
+                        className="rounded-xl px-6 h-12 flex-1 font-extrabold bg-[#5b21b6] hover:bg-[#2a1156] text-white shadow-md hover:-translate-y-0.5 transition-all w-full sm:w-auto"
                       >
                         Order Now
                       </Button>
@@ -301,16 +301,16 @@ export default function RestaurantMenuPage() {
       {/* Floating Cart Bar */}
       {cartItemsCount > 0 && (
         <div className="fixed bottom-0 left-0 right-0 p-4 sm:p-6 z-50 pointer-events-none animate-in slide-in-from-bottom-10">
-          <div className="max-w-4xl mx-auto bg-[#2d5f4f] rounded-[2rem] p-4 sm:p-5 flex items-center justify-between shadow-[0_20px_50px_rgba(45,95,79,0.5)] border border-white/20 backdrop-blur-xl pointer-events-auto">
+          <div className="max-w-4xl mx-auto bg-[#5b21b6] rounded-[2rem] p-4 sm:p-5 flex items-center justify-between shadow-[0_20px_50px_rgba(45,95,79,0.5)] border border-white/20 backdrop-blur-xl pointer-events-auto">
             <div className="flex items-center gap-4 text-white">
               <div className="w-12 h-12 bg-card/20 rounded-full flex items-center justify-center relative">
                 <ShoppingCart className="w-6 h-6" />
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-[#2d5f4f]">
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-[#5b21b6]">
                   {cartItemsCount}
                 </span>
               </div>
               <div className="hidden sm:block">
-                <p className="text-sm font-bold text-green-200 uppercase tracking-wider">
+                <p className="text-sm font-bold text-violet-200 uppercase tracking-wider">
                   Your Order
                 </p>
                 <p className="font-extrabold text-xl">
@@ -319,7 +319,7 @@ export default function RestaurantMenuPage() {
               </div>
             </div>
             <Link href="/customer/cart">
-              <Button className="rounded-2xl px-8 py-6 text-lg font-extrabold bg-card text-[#2d5f4f] hover:bg-gray-100 shadow-xl hover:-translate-y-1 transition-all">
+              <Button className="rounded-2xl px-8 py-6 text-lg font-extrabold bg-card text-[#5b21b6] hover:bg-gray-100 shadow-xl hover:-translate-y-1 transition-all">
                 View Cart
               </Button>
             </Link>

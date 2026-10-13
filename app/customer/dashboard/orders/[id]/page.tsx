@@ -62,7 +62,7 @@ export default function OrderTrackingPage() {
     return (
       <div className="flex h-screen items-center justify-center bg-gray-50">
         <div className="text-center space-y-3">
-          <Loader2 className="w-8 h-8 animate-spin text-[#2d5f4f] mx-auto" />
+          <Loader2 className="w-8 h-8 animate-spin text-[#5b21b6] mx-auto" />
           <p className="text-gray-500 font-medium text-sm">
             Loading tracking details...
           </p>
@@ -125,7 +125,7 @@ export default function OrderTrackingPage() {
         <div className="relative mb-8 px-2 pt-4">
           <div className="absolute top-10 left-8 right-8 h-1.5 bg-gray-100 rounded-full -z-0">
             <div
-              className="h-full bg-[#2d5f4f] transition-all duration-1000 ease-out rounded-full"
+              className="h-full bg-[#5b21b6] transition-all duration-1000 ease-out rounded-full"
               style={{
                 width: `${(currentStep / (statuses.length - 1)) * 100}%`,
               }}
@@ -139,13 +139,13 @@ export default function OrderTrackingPage() {
               return (
                 <div key={s.id} className="flex flex-col items-center gap-2">
                   <div
-                    className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-500 shadow-sm border-2 relative bg-white ${isCompleted ? "border-[#2d5f4f]" : "border-gray-100"}`}
+                    className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-500 shadow-sm border-2 relative bg-white ${isCompleted ? "border-[#5b21b6]" : "border-gray-100"}`}
                   >
                     <Icon
-                      className={`w-5 h-5 ${isCompleted ? "text-[#2d5f4f]" : "text-gray-300"} ${isCurrent ? "animate-pulse" : ""}`}
+                      className={`w-5 h-5 ${isCompleted ? "text-[#5b21b6]" : "text-gray-300"} ${isCurrent ? "animate-pulse" : ""}`}
                     />
                     {isCompleted && (
-                      <CheckCircle2 className="w-4 h-4 text-[#2d5f4f] absolute -bottom-1 -right-1 bg-white rounded-full" />
+                      <CheckCircle2 className="w-4 h-4 text-[#5b21b6] absolute -bottom-1 -right-1 bg-white rounded-full" />
                     )}
                   </div>
                   <span
@@ -183,7 +183,7 @@ export default function OrderTrackingPage() {
               {order.rider?.phone && (
                 <a
                   href={`tel:${order.rider.phone}`}
-                  className="p-3 rounded-full bg-white shadow-sm border border-gray-200 hover:bg-gray-50 text-[#2d5f4f]"
+                  className="p-3 rounded-full bg-white shadow-sm border border-gray-200 hover:bg-gray-50 text-[#5b21b6]"
                 >
                   <Phone className="w-4 h-4" />
                 </a>
@@ -211,7 +211,7 @@ export default function OrderTrackingPage() {
               ))}
 
               {/* ── STYLIZED PAYMENT BAR SPLIT MATCHING YOUR HIGHER LAYOUT MARKUP RULES ── */}
-              <div className="border-t border-dashed border-gray-200 mt-3 pt-3 flex justify-between items-center font-extrabold text-lg text-[#2d5f4f]">
+              <div className="border-t border-dashed border-gray-200 mt-3 pt-3 flex justify-between items-center font-extrabold text-lg text-[#5b21b6]">
                 <span>Total Paid</span>
                 <span>₦{(order.total || 0).toLocaleString()}</span>
               </div>

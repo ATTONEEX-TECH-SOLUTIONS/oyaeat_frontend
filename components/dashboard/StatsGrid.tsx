@@ -8,8 +8,8 @@ export function StatsGrid({ statsData }: { statsData: any }) {
       label: "Today's Earnings",
       value: statsData?.todayEarnings || "₦0",
       icon: Wallet,
-      color: "text-green-600",
-      bg: "bg-green-100",
+      color: "text-violet-600",
+      bg: "bg-violet-100",
     },
     {
       label: "Completed Today",

@@ -102,7 +102,7 @@ export default function CartPage() {
                     </div>
 
                     <div className="flex-1 w-full relative sm:pr-12">
-                      <h3 className="font-extrabold text-lg text-gray-900 leading-tight mb-1 pr-8 sm:pr-0 group-hover:text-[#2d5f4f] transition-colors">
+                      <h3 className="font-extrabold text-lg text-gray-900 leading-tight mb-1 pr-8 sm:pr-0 group-hover:text-[#5b21b6] transition-colors">
                         {item.name}
                       </h3>
                       <p className="text-xs font-bold text-gray-500 mb-4">
@@ -126,7 +126,7 @@ export default function CartPage() {
                           </span>
                           <button
                             onClick={() => updateQuantity(item.menuItemId, 1)}
-                            className="w-8 h-8 flex items-center justify-center bg-[#2d5f4f] rounded-xl shadow-sm font-bold text-white hover:bg-[#1a382e] transition-all"
+                            className="w-8 h-8 flex items-center justify-center bg-[#5b21b6] rounded-xl shadow-sm font-bold text-white hover:bg-[#2a1156] transition-all"
                           >
                             <Plus className="w-3.5 h-3.5" />
                           </button>
@@ -150,7 +150,7 @@ export default function CartPage() {
           <div className="lg:col-span-1">
             <div className="bg-card rounded-[2rem] p-6 sm:p-8 border border-gray-100 shadow-xl sticky top-28 before:content-[''] before:absolute before:inset-0 before:bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] before:opacity-[0.03] before:rounded-[2rem]">
               <h2 className="text-xl font-extrabold text-gray-900 mb-6 flex items-center gap-3 relative z-10">
-                <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center text-[#2d5f4f]">
+                <div className="w-10 h-10 bg-violet-50 rounded-xl flex items-center justify-center text-[#5b21b6]">
                   <Receipt className="w-5 h-5" />
                 </div>
                 Order Summary
@@ -177,9 +177,9 @@ export default function CartPage() {
                 </div>
               </div>
 
-              <div className="flex justify-between items-center mb-8 bg-[#2d5f4f]/5 p-5 rounded-2xl border border-[#2d5f4f]/10 relative z-10">
+              <div className="flex justify-between items-center mb-8 bg-[#5b21b6]/5 p-5 rounded-2xl border border-[#5b21b6]/10 relative z-10">
                 <span className="font-extrabold text-gray-900">Total</span>
-                <span className="text-2xl font-extrabold text-[#2d5f4f]">
+                <span className="text-2xl font-extrabold text-[#5b21b6]">
                   ₦{total.toLocaleString()}
                 </span>
               </div>
@@ -188,7 +188,7 @@ export default function CartPage() {
                 href="/customer/dashboard/checkout"
                 className="block relative z-10"
               >
-                <Button className="w-full h-14 rounded-xl text-lg font-extrabold bg-[#2d5f4f] hover:bg-[#1a382e] text-white shadow-md transition-all hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                <Button className="w-full h-14 rounded-xl text-lg font-extrabold bg-[#5b21b6] hover:bg-[#2a1156] text-white shadow-md transition-all hover:-translate-y-0.5 flex items-center justify-center gap-2">
                   Checkout Now{" "}
                   <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
                 </Button>
@@ -209,7 +209,7 @@ export default function CartPage() {
             exploring restaurants.
           </p>
           <Link href="/customer/dashboard">
-            <Button className="h-14 px-10 rounded-xl text-lg font-extrabold bg-[#2d5f4f] hover:bg-[#1a382e] text-white shadow-md transition-all hover:-translate-y-0.5">
+            <Button className="h-14 px-10 rounded-xl text-lg font-extrabold bg-[#5b21b6] hover:bg-[#2a1156] text-white shadow-md transition-all hover:-translate-y-0.5">
               Browse Menu
             </Button>
           </Link>

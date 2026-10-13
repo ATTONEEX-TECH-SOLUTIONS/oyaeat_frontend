@@ -43,7 +43,7 @@ export default function CustomerSettingsPage() {
     }, 1000);
   };
 
-  const currentTabClass = "bg-[#2d5f4f] text-white shadow-md font-bold";
+  const currentTabClass = "bg-[#5b21b6] text-white shadow-md font-bold";
   const idleTabClass =
     "text-gray-600 hover:bg-gray-100 hover:text-gray-900 font-semibold";
 
@@ -168,7 +168,7 @@ export default function CustomerSettingsPage() {
                     <Button
                       onClick={handleSave}
                       disabled={loading}
-                      className="h-11 rounded-xl px-8 text-sm font-bold bg-[#2d5f4f] hover:bg-[#1a382e] text-white"
+                      className="h-11 rounded-xl px-8 text-sm font-bold bg-[#5b21b6] hover:bg-[#2a1156] text-white"
                     >
                       {loading ? (
                         <Loader2 className="w-4 h-4 animate-spin mr-2" />
@@ -182,7 +182,7 @@ export default function CustomerSettingsPage() {
 
                 <div className="border-t border-gray-100 p-6 sm:p-8 bg-gray-50/30">
                   <h3 className="text-lg font-extrabold text-gray-900 mb-4 flex items-center gap-2">
-                    <ShieldCheck className="w-5 h-5 text-[#2d5f4f]" /> Connected
+                    <ShieldCheck className="w-5 h-5 text-[#5b21b6]" /> Connected
                     Accounts & Security
                   </h3>
                   <div className="space-y-4">
@@ -239,7 +239,7 @@ export default function CustomerSettingsPage() {
               <div className="p-6 sm:p-8 animate-in fade-in zoom-in-95 duration-300">
                 <h3 className="text-xl font-extrabold text-gray-900 mb-6 border-b border-gray-50 pb-3 flex items-center gap-2">
                   Dietary & Allergies{" "}
-                  <Leaf className="w-5 h-5 text-green-500" />
+                  <Leaf className="w-5 h-5 text-violet-500" />
                 </h3>
                 <p className="text-sm text-gray-500 font-medium mb-6">
                   Select any dietary preferences or allergies. We'll highlight
@@ -262,7 +262,7 @@ export default function CustomerSettingsPage() {
                       ].map((diet) => (
                         <button
                           key={diet}
-                          className="px-4 py-2 rounded-lg border border-gray-200 bg-card text-sm font-bold text-gray-600 hover:border-[#2d5f4f] hover:text-[#2d5f4f] transition-all focus:bg-[#2d5f4f] focus:text-white"
+                          className="px-4 py-2 rounded-lg border border-gray-200 bg-card text-sm font-bold text-gray-600 hover:border-[#5b21b6] hover:text-[#5b21b6] transition-all focus:bg-[#5b21b6] focus:text-white"
                         >
                           {diet}
                         </button>
@@ -296,7 +296,7 @@ export default function CustomerSettingsPage() {
                 </div>
 
                 <div className="mt-8 pt-6 border-t border-gray-50 flex justify-end">
-                  <Button className="h-11 rounded-xl px-8 text-sm font-bold bg-[#2d5f4f] hover:bg-[#1a382e] text-white">
+                  <Button className="h-11 rounded-xl px-8 text-sm font-bold bg-[#5b21b6] hover:bg-[#2a1156] text-white">
                     Save Preferences
                   </Button>
                 </div>
@@ -307,7 +307,7 @@ export default function CustomerSettingsPage() {
             {activeTab === "privacy" && (
               <div className="p-6 sm:p-8 animate-in fade-in zoom-in-95 duration-300">
                 <h3 className="text-xl font-extrabold text-gray-900 mb-6 border-b border-gray-50 pb-3 flex items-center gap-2">
-                  Privacy & Data <Shield className="w-5 h-5 text-[#2d5f4f]" />
+                  Privacy & Data <Shield className="w-5 h-5 text-[#5b21b6]" />
                 </h3>
                 <div className="space-y-4">
                   <p className="text-sm font-medium text-gray-500 mb-6">
@@ -357,12 +357,12 @@ export default function CustomerSettingsPage() {
             {/* Referrals Code... */}
             {activeTab === "referrals" && (
               <div className="p-6 sm:p-8 animate-in fade-in zoom-in-95 duration-300">
-                <div className="text-center py-6 px-4 bg-gradient-to-br from-[#2d5f4f] to-[#1e4035] rounded-2xl text-white mb-8">
-                  <Gift className="w-10 h-10 mx-auto text-yellow-300 mb-3" />
+                <div className="text-center py-6 px-4 bg-gradient-to-br from-[#5b21b6] to-[#2a1156] rounded-2xl text-white mb-8">
+                  <Gift className="w-10 h-10 mx-auto text-mango-300 mb-3" />
                   <h3 className="text-xl font-extrabold">
                     Give ₦1,000, Get ₦1,000!
                   </h3>
-                  <p className="text-sm text-green-100 mt-2 max-w-sm mx-auto">
+                  <p className="text-sm text-violet-100 mt-2 max-w-sm mx-auto">
                     Share your code. When a friend signs up and places their
                     first order, you both get ₦1,000 off.
                   </p>
@@ -375,14 +375,14 @@ export default function CustomerSettingsPage() {
                     <Input
                       readOnly
                       value={`OYA-${user.firstName?.toUpperCase()}-8X9`}
-                      className="h-14 rounded-xl bg-gray-50 font-extrabold text-lg text-center tracking-widest border-2 border-dashed border-[#2d5f4f]/30 text-[#2d5f4f]"
+                      className="h-14 rounded-xl bg-gray-50 font-extrabold text-lg text-center tracking-widest border-2 border-dashed border-[#5b21b6]/30 text-[#5b21b6]"
                     />
                     <button
                       onClick={() => {
                         setCopied(true);
                         setTimeout(() => setCopied(false), 2000);
                       }}
-                      className="absolute right-2 top-2 bottom-2 px-4 bg-[#2d5f4f] text-white rounded-lg text-sm font-bold flex items-center hover:bg-[#1a382e] transition-colors"
+                      className="absolute right-2 top-2 bottom-2 px-4 bg-[#5b21b6] text-white rounded-lg text-sm font-bold flex items-center hover:bg-[#2a1156] transition-colors"
                     >
                       {copied ? (
                         <CheckCircle2 className="w-4 h-4" />
@@ -405,14 +405,14 @@ export default function CustomerSettingsPage() {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="rounded-lg border-dashed border-[#2d5f4f] text-[#2d5f4f] bg-[#2d5f4f]/5 hover:bg-[#2d5f4f]/10 font-bold"
+                    className="rounded-lg border-dashed border-[#5b21b6] text-[#5b21b6] bg-[#5b21b6]/5 hover:bg-[#5b21b6]/10 font-bold"
                   >
                     + Add New
                   </Button>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="p-5 border-2 border-[#2d5f4f] bg-[#2d5f4f]/5 rounded-2xl relative">
-                    <span className="absolute top-3 right-3 bg-[#2d5f4f] text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase">
+                  <div className="p-5 border-2 border-[#5b21b6] bg-[#5b21b6]/5 rounded-2xl relative">
+                    <span className="absolute top-3 right-3 bg-[#5b21b6] text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase">
                       Default
                     </span>
                     <h4 className="font-extrabold text-sm text-gray-900 mb-1">
@@ -450,7 +450,7 @@ export default function CustomerSettingsPage() {
                     <input
                       type="checkbox"
                       defaultChecked
-                      className="w-5 h-5 rounded text-[#2d5f4f] focus:ring-[#2d5f4f] cursor-pointer"
+                      className="w-5 h-5 rounded text-[#5b21b6] focus:ring-[#5b21b6] cursor-pointer"
                     />
                   </label>
                 </div>
@@ -466,7 +466,7 @@ export default function CustomerSettingsPage() {
                   <p className="text-gray-500 text-sm font-medium mb-4">
                     You haven't saved any payment cards yet.
                   </p>
-                  <Button className="rounded-xl px-5 bg-[#2d5f4f] text-white font-bold h-10 shadow-sm text-sm">
+                  <Button className="rounded-xl px-5 bg-[#5b21b6] text-white font-bold h-10 shadow-sm text-sm">
                     Add Payment Method
                   </Button>
                 </div>

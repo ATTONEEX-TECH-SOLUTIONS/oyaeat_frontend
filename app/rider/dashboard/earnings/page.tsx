@@ -57,7 +57,7 @@ export default function RiderEarningsView() {
   if (loading) {
     return (
       <div className="flex h-[60vh] flex-col items-center justify-center gap-3">
-        <RefreshCw className="h-8 w-8 animate-spin text-emerald-700" />
+        <RefreshCw className="h-8 w-8 animate-spin text-violet-700" />
         <p className="text-sm font-medium text-gray-500">
           Loading your earnings engine...
         </p>
@@ -81,15 +81,15 @@ export default function RiderEarningsView() {
       <div
         className={`border rounded-2xl p-4 flex items-start gap-3 transition-all ${
           hasBankDetails
-            ? "bg-emerald-50/60 border-emerald-100"
-            : "bg-amber-50/60 border-amber-100"
+            ? "bg-violet-50/60 border-violet-100"
+            : "bg-mango-50/60 border-mango-100"
         }`}
       >
         <div className="mt-0.5 flex-shrink-0">
           {hasBankDetails ? (
-            <ShieldCheck className="w-5 h-5 text-emerald-700" />
+            <ShieldCheck className="w-5 h-5 text-violet-700" />
           ) : (
-            <AlertCircle className="w-5 h-5 text-amber-600" />
+            <AlertCircle className="w-5 h-5 text-mango-600" />
           )}
         </div>
         <div className="flex-1 min-w-0">
@@ -101,7 +101,7 @@ export default function RiderEarningsView() {
               ? `Your delivery payouts are currently bound to: `
               : "No bank verification records found. To receive split cashouts, send your banking parameters to your super-admin via email."}
             {hasBankDetails && (
-              <span className="font-mono bg-emerald-100 text-emerald-950 px-1.5 py-0.5 rounded font-bold text-[11px] inline-block mt-1 sm:mt-0">
+              <span className="font-mono bg-violet-100 text-violet-950 px-1.5 py-0.5 rounded font-bold text-[11px] inline-block mt-1 sm:mt-0">
                 {linkedBankText}
               </span>
             )}

@@ -150,7 +150,7 @@ export default function PartnerForm() {
       <button
         type="submit"
         disabled={isLoading}
-        className="w-full bg-[#2d5f4f] hover:bg-[#234a3d] text-white font-bold py-4 rounded-lg transition-all duration-300 hover:scale-[1.02] shadow-lg mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full bg-[#5b21b6] hover:bg-[#3b1a78] text-white font-bold py-4 rounded-lg transition-all duration-300 hover:scale-[1.02] shadow-lg mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isLoading ? (
           <span className="flex items-center justify-center">

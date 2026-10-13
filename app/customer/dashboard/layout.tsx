@@ -136,10 +136,10 @@ export default function CustomerDashboardLayout({
       >
         <div className="p-6 pb-2 border-b border-gray-50">
           <Link href="/customer" className="flex items-center gap-3 group">
-            {/* <div className="w-9 h-9 rounded-xl bg-[#2d5f4f] flex items-center justify-center text-white font-extrabold shadow-md group-hover:scale-105 transition-transform">
+            {/* <div className="w-9 h-9 rounded-xl bg-[#5b21b6] flex items-center justify-center text-white font-extrabold shadow-md group-hover:scale-105 transition-transform">
               O
             </div> */}
-            <span className="text-xl font-extrabold text-[#2d5f4f] tracking-tight">
+            <span className="text-xl font-extrabold text-[#5b21b6] tracking-tight">
               oyaeat
             </span>
           </Link>
@@ -157,7 +157,7 @@ export default function CustomerDashboardLayout({
                 href={item.href}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all font-bold ${
                   isActive
-                    ? "bg-[#2d5f4f] text-white shadow-md shadow-[#2d5f4f]/20"
+                    ? "bg-[#5b21b6] text-white shadow-md shadow-[#5b21b6]/20"
                     : "text-gray-500 hover:bg-gray-100 hover:text-gray-900 group"
                 }`}
               >
@@ -208,18 +208,18 @@ export default function CustomerDashboardLayout({
               onSubmit={handleSearch}
               className="relative hidden xl:block w-72 group"
             >
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-focus-within:text-[#2d5f4f] transition-colors" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-focus-within:text-[#5b21b6] transition-colors" />
               <Input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search restaurants, food..."
-                className="w-full pl-10 h-10 bg-gray-100/50 border-gray-200 focus-visible:ring-2 focus-visible:ring-[#2d5f4f]/20 rounded-full shadow-inner font-medium text-sm transition-all"
+                className="w-full pl-10 h-10 bg-gray-100/50 border-gray-200 focus-visible:ring-2 focus-visible:ring-[#5b21b6]/20 rounded-full shadow-inner font-medium text-sm transition-all"
               />
             </form>
 
             <Link
               href="/customer/dashboard/cart"
-              className="relative text-gray-600 hover:text-[#2d5f4f] bg-gray-50 hover:bg-[#2d5f4f]/10 rounded-full h-10 w-10 flex items-center justify-center transition-all cursor-pointer"
+              className="relative text-gray-600 hover:text-[#5b21b6] bg-gray-50 hover:bg-[#5b21b6]/10 rounded-full h-10 w-10 flex items-center justify-center transition-all cursor-pointer"
             >
               <ShoppingBag className="h-5 w-5" />
               <span className="absolute top-2 right-2 h-2.5 w-2.5 rounded-full bg-red-500 border-2 border-white"></span>
@@ -245,7 +245,7 @@ export default function CustomerDashboardLayout({
               <div className="relative" ref={dropdownRef}>
                 <div
                   onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#2d5f4f] to-[#1e4035] text-white flex items-center justify-center font-bold text-sm shadow-md border-2 border-white ring-2 ring-gray-50 cursor-pointer hover:scale-105 transition-transform"
+                  className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#5b21b6] to-[#2a1156] text-white flex items-center justify-center font-bold text-sm shadow-md border-2 border-white ring-2 ring-gray-50 cursor-pointer hover:scale-105 transition-transform"
                 >
                   {initials}
                 </div>
@@ -265,7 +265,7 @@ export default function CustomerDashboardLayout({
                       <Link
                         href="/customer/dashboard/orders"
                         onClick={() => setDropdownOpen(false)}
-                        className="flex items-center px-5 py-2 text-sm font-bold text-gray-700 hover:bg-gray-50 hover:text-[#2d5f4f] transition-colors"
+                        className="flex items-center px-5 py-2 text-sm font-bold text-gray-700 hover:bg-gray-50 hover:text-[#5b21b6] transition-colors"
                       >
                         <ShoppingBag className="w-4 h-4 mr-3 text-gray-400" />{" "}
                         My Orders
@@ -273,7 +273,7 @@ export default function CustomerDashboardLayout({
                       <Link
                         href="/customer/dashboard/settings"
                         onClick={() => setDropdownOpen(false)}
-                        className="flex items-center px-5 py-2 text-sm font-bold text-gray-700 hover:bg-gray-50 hover:text-[#2d5f4f] transition-colors"
+                        className="flex items-center px-5 py-2 text-sm font-bold text-gray-700 hover:bg-gray-50 hover:text-[#5b21b6] transition-colors"
                       >
                         <Settings className="w-4 h-4 mr-3 text-gray-400" />{" "}
                         Settings

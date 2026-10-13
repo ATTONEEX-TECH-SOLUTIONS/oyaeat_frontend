@@ -68,7 +68,7 @@ export default function AddressAutocomplete({
         type="text"
         disabled={disabled}
         placeholder="Type your street address, estate, or building name..."
-        className="w-full text-gray-900 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#2d5f4f] focus:border-transparent outline-none disabled:bg-gray-100 transition shadow-sm text-sm"
+        className="w-full text-gray-900 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#5b21b6] focus:border-transparent outline-none disabled:bg-gray-100 transition shadow-sm text-sm"
       />
     </div>
   );

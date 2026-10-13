@@ -201,7 +201,7 @@ const RiderSignup = () => {
           --green-pale: #E8F5EE;
           --green-pale2: #D0EBD9;
           --green-muted: #4A8C63;
-          --green-border: #B8DDC5;
+          --green-border: #d9ccf5;
           --green-dark: #0F4526;
           --white: #FFFFFF;
           --off-white: #F7FAF8;
@@ -218,7 +218,7 @@ const RiderSignup = () => {
 
         .dot-grid {
           position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.35;
-          background-image: radial-gradient(circle, #B8DDC5 1px, transparent 1px);
+          background-image: radial-gradient(circle, #d9ccf5 1px, transparent 1px);
           background-size: 28px 28px;
         }
 
@@ -486,7 +486,7 @@ const RiderSignup = () => {
             <Link href="/" className="flex items-center gap-3 group">
               <div className="flex flex-col">
                 <span className="text-3xl font-black leading-none tracking-tight">
-                  <span className="text-[#2d5f4f]">Oya</span>
+                  <span className="text-[#5b21b6]">Oya</span>
                   <span>Eat</span>
                 </span>
                 <span className="text-[10px] font-medium tracking-wider uppercase text-gray-500">

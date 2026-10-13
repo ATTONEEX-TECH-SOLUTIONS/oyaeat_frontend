@@ -29,7 +29,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return (
     <div
       style={{
-        backgroundColor: "#1a5c2a",
+        backgroundColor: "#5b21b6",
         border: "none",
         borderRadius: "10px",
         padding: "10px 16px",
@@ -38,7 +38,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
     >
       <p
         style={{
-          color: "#a5d6a7",
+          color: "#c4b5fd",
           fontSize: 11,
           fontWeight: 600,
           marginBottom: 6,
@@ -68,7 +68,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
           />
           <span
             style={{
-              color: "#e8f5e9",
+              color: "#f1ebff",
               fontSize: 12,
               textTransform: "capitalize",
             }}
@@ -110,7 +110,7 @@ const CustomLegend = ({ payload }: any) => (
         />
         <span
           style={{
-            color: "#4a7c59",
+            color: "#7c3aed",
             fontSize: 12,
             fontWeight: 500,
             textTransform: "capitalize",
@@ -148,7 +148,7 @@ export default function SalesChart({ data }: SalesChartProps) {
         <div>
           <h3
             style={{
-              color: "#1a5c2a",
+              color: "#5b21b6",
               fontWeight: 700,
               fontSize: 17,
               margin: 0,
@@ -158,7 +158,7 @@ export default function SalesChart({ data }: SalesChartProps) {
           </h3>
           <p
             style={{
-              color: "#4a7c59",
+              color: "#7c3aed",
               fontSize: 12,
               margin: "4px 0 0",
               opacity: 0.8,
@@ -171,13 +171,13 @@ export default function SalesChart({ data }: SalesChartProps) {
         {/* Period pill */}
         <div
           style={{
-            backgroundColor: "#e8f5e9",
-            border: "1px solid #c8e6c9",
+            backgroundColor: "#f1ebff",
+            border: "1px solid #ddd6fe",
             borderRadius: 20,
             padding: "5px 14px",
             fontSize: 12,
             fontWeight: 600,
-            color: "#2e7d32",
+            color: "#6d28d9",
             cursor: "default",
           }}
         >
@@ -193,8 +193,8 @@ export default function SalesChart({ data }: SalesChartProps) {
         >
           <defs>
             <linearGradient id="ordersGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#2e7d32" stopOpacity={0.25} />
-              <stop offset="95%" stopColor="#2e7d32" stopOpacity={0} />
+              <stop offset="5%" stopColor="#6d28d9" stopOpacity={0.25} />
+              <stop offset="95%" stopColor="#6d28d9" stopOpacity={0} />
             </linearGradient>
             <linearGradient id="revenueGrad" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="#81c784" stopOpacity={0.35} />
@@ -203,7 +203,7 @@ export default function SalesChart({ data }: SalesChartProps) {
           </defs>
 
           <CartesianGrid
-            stroke="#e8f5e9"
+            stroke="#f1ebff"
             strokeDasharray="4 4"
             vertical={false}
           />
@@ -212,20 +212,20 @@ export default function SalesChart({ data }: SalesChartProps) {
             dataKey="day"
             axisLine={false}
             tickLine={false}
-            tick={{ fill: "#4a7c59", fontSize: 12, fontWeight: 500 }}
+            tick={{ fill: "#7c3aed", fontSize: 12, fontWeight: 500 }}
             dy={8}
           />
           <YAxis
             axisLine={false}
             tickLine={false}
-            tick={{ fill: "#4a7c59", fontSize: 11 }}
+            tick={{ fill: "#7c3aed", fontSize: 11 }}
             width={32}
           />
 
           <Tooltip
             content={<CustomTooltip />}
             cursor={{
-              stroke: "#c8e6c9",
+              stroke: "#ddd6fe",
               strokeWidth: 1,
               strokeDasharray: "4 4",
             }}
@@ -236,13 +236,13 @@ export default function SalesChart({ data }: SalesChartProps) {
             type="monotone"
             dataKey="orders"
             name="orders"
-            stroke="#1a5c2a"
+            stroke="#5b21b6"
             strokeWidth={2.5}
             fill="url(#ordersGrad)"
-            dot={{ r: 4, fill: "#1a5c2a", strokeWidth: 0 }}
+            dot={{ r: 4, fill: "#5b21b6", strokeWidth: 0 }}
             activeDot={{
               r: 6,
-              fill: "#1a5c2a",
+              fill: "#5b21b6",
               stroke: "#fff",
               strokeWidth: 2,
             }}

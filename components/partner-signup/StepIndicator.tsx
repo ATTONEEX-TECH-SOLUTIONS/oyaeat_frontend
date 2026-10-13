@@ -17,7 +17,7 @@ export default function StepIndicator({
           <div
             className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold text-xs transition-colors duration-200 ${
               currentStep > 1
-                ? "bg-[#2d5f4f] text-white"
+                ? "bg-[#5b21b6] text-white"
                 : "bg-gray-200 text-gray-600"
             }`}
           >
@@ -33,7 +33,7 @@ export default function StepIndicator({
         {/* Connecting Progress Line */}
         <div
           className={`flex-1 h-0.5 transition-colors duration-300 ${
-            currentStep >= 2 ? "bg-[#2d5f4f]" : "bg-gray-200"
+            currentStep >= 2 ? "bg-[#5b21b6]" : "bg-gray-200"
           }`}
         ></div>
 
@@ -42,14 +42,14 @@ export default function StepIndicator({
           <div
             className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold text-xs transition-colors duration-200 ${
               currentStep >= 2
-                ? "bg-[#2d5f4f] text-white"
+                ? "bg-[#5b21b6] text-white"
                 : "bg-gray-200 text-gray-600"
             }`}
           >
             {currentStep > 2 ? "✓" : "2"}
           </div>
           <span
-            className={`font-semibold text-sm ${currentStep >= 2 ? "text-[#2d5f4f]" : "text-gray-400"}`}
+            className={`font-semibold text-sm ${currentStep >= 2 ? "text-[#5b21b6]" : "text-gray-400"}`}
           >
             Verify Business
           </span>

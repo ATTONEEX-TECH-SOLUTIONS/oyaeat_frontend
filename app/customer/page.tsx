@@ -30,7 +30,7 @@ const categories = [
     icon: Flame,
     color: "bg-orange-100 text-orange-600",
   },
-  { id: 2, name: "Healthy", icon: Leaf, color: "bg-green-100 text-green-600" },
+  { id: 2, name: "Healthy", icon: Leaf, color: "bg-violet-100 text-violet-600" },
   { id: 3, name: "Fast Food", icon: Pizza, color: "bg-red-100 text-red-600" },
   { id: 4, name: "Drinks", icon: CupSoda, color: "bg-blue-100 text-blue-600" },
   { id: 5, name: "Desserts", icon: Cookie, color: "bg-pink-100 text-pink-600" },
@@ -128,10 +128,10 @@ export default function CustomerLandingPage() {
               <Menu className="h-5 w-5" />
             </Button>
             <Link href="/" className="flex items-center gap-2">
-              {/* <div className="w-8 h-8 rounded-full bg-[#2d5f4f] flex items-center justify-center text-white font-bold shadow-md">
+              {/* <div className="w-8 h-8 rounded-full bg-[#5b21b6] flex items-center justify-center text-white font-bold shadow-md">
                 O
               </div> */}
-              <span className="text-xl font-bold text-[#2d5f4f] hidden sm:block">
+              <span className="text-xl font-bold text-[#5b21b6] hidden sm:block">
                 oya-eat
               </span>
             </Link>
@@ -139,12 +139,12 @@ export default function CustomerLandingPage() {
 
           <div className="hidden md:flex flex-1 max-w-xl mx-8">
             <div className="relative w-full group">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-[#2d5f4f] transition-colors" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-[#5b21b6] transition-colors" />
               <Input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search for restaurants, cuisines, or dishes..."
-                className="w-full pl-12 h-11 bg-gray-100 border-none focus-visible:ring-2 focus-visible:ring-[#2d5f4f]/20 rounded-full text-base shadow-inner"
+                className="w-full pl-12 h-11 bg-gray-100 border-none focus-visible:ring-2 focus-visible:ring-[#5b21b6]/20 rounded-full text-base shadow-inner"
               />
             </div>
           </div>
@@ -152,7 +152,7 @@ export default function CustomerLandingPage() {
           <div className="flex items-center gap-2 sm:gap-4">
             <Button
               variant="ghost"
-              className="hidden lg:flex text-gray-600 hover:text-[#2d5f4f]"
+              className="hidden lg:flex text-gray-600 hover:text-[#5b21b6]"
             >
               <MapPin className="h-4 w-4 mr-2" />
               <span className="text-sm font-extrabold truncate max-w-[150px] tracking-tight">
@@ -168,7 +168,7 @@ export default function CustomerLandingPage() {
               </Button>
             </Link>
             <Link href="/customer/signup">
-              <Button className="rounded-full bg-[#2d5f4f] hover:bg-[#1e4035] text-white shadow-md font-semibold transition-all">
+              <Button className="rounded-full bg-[#5b21b6] hover:bg-[#2a1156] text-white shadow-md font-semibold transition-all">
                 Sign up
               </Button>
             </Link>
@@ -176,7 +176,7 @@ export default function CustomerLandingPage() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="relative text-gray-600 hover:text-[#2d5f4f] hover:bg-[#2d5f4f]/10 rounded-full h-10 w-10"
+                className="relative text-gray-600 hover:text-[#5b21b6] hover:bg-[#5b21b6]/10 rounded-full h-10 w-10"
               >
                 <ShoppingCart className="h-5 w-5" />
                 <span className="absolute top-1.5 right-1.5 h-2.5 w-2.5 rounded-full bg-red-500 border-2 border-white"></span>
@@ -193,7 +193,7 @@ export default function CustomerLandingPage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search for food..."
-              className="w-full pl-10 h-10 bg-gray-100 border-none focus-visible:ring-[#2d5f4f]/20 rounded-full text-sm"
+              className="w-full pl-10 h-10 bg-gray-100 border-none focus-visible:ring-[#5b21b6]/20 rounded-full text-sm"
             />
           </div>
         </div>
@@ -201,7 +201,7 @@ export default function CustomerLandingPage() {
 
       <main className="flex-1 max-w-[1600px] mx-auto w-full px-4 py-6 md:py-8 space-y-12">
         {/* Hero Banner Showcase */}
-        <section className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-[#2d5f4f] to-[#1a382e] text-white shadow-2xl">
+        <section className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-[#5b21b6] to-[#2a1156] text-white shadow-2xl">
           <div className="absolute inset-0 bg-black/10"></div>
           <div className="relative z-10 flex flex-col md:flex-row items-center justify-between p-8 md:p-14 gap-8">
             <div className="flex-1 space-y-5 max-w-xl">
@@ -210,14 +210,14 @@ export default function CustomerLandingPage() {
               </span>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight">
                 Craving Jollof? <br />
-                <span className="text-green-300">We deliver it hot.</span>
+                <span className="text-violet-300">We deliver it hot.</span>
               </h1>
               <p className="text-gray-200 text-lg md:text-xl font-medium">
                 Get 20% off your first order from selected African restaurants
                 today.
               </p>
               <div className="pt-4">
-                <Button className="rounded-full bg-card text-[#2d5f4f] hover:bg-gray-100 px-8 py-6 text-lg font-bold shadow-xl hover:scale-105 transition-all duration-300">
+                <Button className="rounded-full bg-card text-[#5b21b6] hover:bg-gray-100 px-8 py-6 text-lg font-bold shadow-xl hover:scale-105 transition-all duration-300">
                   Order Now <ChevronRight className="ml-2 h-5 w-5" />
                 </Button>
               </div>
@@ -225,7 +225,7 @@ export default function CustomerLandingPage() {
 
             <div className="relative w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 flex-shrink-0 mt-6 md:mt-0 items-center justify-center flex">
               {/* Animated background glow */}
-              <div className="absolute inset-0 bg-emerald-400/30 rounded-full blur-[60px] animate-pulse"></div>
+              <div className="absolute inset-0 bg-violet-400/30 rounded-full blur-[60px] animate-pulse"></div>
               <img
                 src="/categories/jollof.jpg"
                 alt="Delicious Food"
@@ -236,10 +236,10 @@ export default function CustomerLandingPage() {
                 <span>Fresh</span>
               </div>
               <div
-                className="absolute -bottom-4 -left-4 bg-[#2d5f4f] text-white px-5 py-3 rounded-2xl shadow-xl font-bold flex items-center gap-2 -rotate-6 animate-bounce"
+                className="absolute -bottom-4 -left-4 bg-[#5b21b6] text-white px-5 py-3 rounded-2xl shadow-xl font-bold flex items-center gap-2 -rotate-6 animate-bounce"
                 style={{ animationDelay: "1s" }}
               >
-                <Zap className="w-5 h-5 text-yellow-300" />
+                <Zap className="w-5 h-5 text-mango-300" />
                 <span>30 Min</span>
               </div>
             </div>
@@ -254,7 +254,7 @@ export default function CustomerLandingPage() {
             </h2>
             <Button
               variant="ghost"
-              className="text-[#2d5f4f] hover:bg-[#2d5f4f]/10 font-semibold rounded-full"
+              className="text-[#5b21b6] hover:bg-[#5b21b6]/10 font-semibold rounded-full"
             >
               See all
             </Button>
@@ -271,7 +271,7 @@ export default function CustomerLandingPage() {
                   <div className="absolute inset-0 bg-card/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   <cat.icon className="w-8 h-8 md:w-10 md:h-10 relative z-10" />
                 </div>
-                <span className="text-sm md:text-base font-semibold text-gray-700 group-hover:text-[#2d5f4f] transition-colors">
+                <span className="text-sm md:text-base font-semibold text-gray-700 group-hover:text-[#5b21b6] transition-colors">
                   {cat.name}
                 </span>
               </div>
@@ -290,7 +290,7 @@ export default function CustomerLandingPage() {
 
           {loading ? (
             <div className="flex justify-center py-20">
-              <Loader2 className="h-8 w-8 text-[#2d5f4f] animate-spin" />
+              <Loader2 className="h-8 w-8 text-[#5b21b6] animate-spin" />
             </div>
           ) : restaurants.length === 0 ? (
             <div className="text-center py-20 text-gray-500 font-medium">
@@ -301,7 +301,7 @@ export default function CustomerLandingPage() {
               {restaurants.map((restaurant) => (
                 <div
                   key={restaurant.id}
-                  className="bg-card rounded-[2rem] overflow-hidden shadow-sm border border-gray-100 hover:shadow-2xl hover:border-[#2d5f4f]/20 transition-all duration-300 cursor-pointer group flex flex-col h-full ring-1 ring-black/5"
+                  className="bg-card rounded-[2rem] overflow-hidden shadow-sm border border-gray-100 hover:shadow-2xl hover:border-[#5b21b6]/20 transition-all duration-300 cursor-pointer group flex flex-col h-full ring-1 ring-black/5"
                 >
                   <div className="relative h-56 overflow-hidden">
                     <div className="absolute inset-0 bg-gray-100 animate-pulse"></div>
@@ -319,7 +319,7 @@ export default function CustomerLandingPage() {
                       <Heart className="w-5 h-5 text-gray-400 group-hover/btn:fill-red-500 group-hover/btn:text-red-500 transition-colors" />
                     </button>
                     <div className="absolute bottom-4 left-4 px-3 py-1.5 bg-card/95 backdrop-blur-md rounded-xl shadow-lg text-xs font-bold text-gray-900 z-20 flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                      <span className="w-2 h-2 rounded-full bg-violet-500 animate-pulse"></span>
                       Open Now
                     </div>
                   </div>
@@ -327,10 +327,10 @@ export default function CustomerLandingPage() {
                   <div className="p-5 flex-1 flex flex-col justify-between relative bg-card">
                     <div>
                       <div className="flex justify-between items-start mb-2">
-                        <h3 className="font-bold text-gray-900 text-lg md:text-xl line-clamp-1 pr-2 group-hover:text-[#2d5f4f] transition-colors">
+                        <h3 className="font-bold text-gray-900 text-lg md:text-xl line-clamp-1 pr-2 group-hover:text-[#5b21b6] transition-colors">
                           {restaurant.name}
                         </h3>
-                        <div className="flex items-center gap-1 bg-green-50 px-2 py-1 rounded-lg text-green-700 text-xs font-bold border border-green-100">
+                        <div className="flex items-center gap-1 bg-violet-50 px-2 py-1 rounded-lg text-violet-700 text-xs font-bold border border-violet-100">
                           <span>4.5</span>
                           <Star className="w-3.5 h-3.5 fill-current" />
                         </div>
@@ -349,7 +349,7 @@ export default function CustomerLandingPage() {
                       </div>
                       <Link
                         href={`/customer/dashboard/restaurant/${restaurant.id}`}
-                        className="text-[#2d5f4f] text-sm font-bold bg-[#2d5f4f]/10 hover:bg-[#2d5f4f]/20 px-4 py-2 rounded-xl transition-colors"
+                        className="text-[#5b21b6] text-sm font-bold bg-[#5b21b6]/10 hover:bg-[#5b21b6]/20 px-4 py-2 rounded-xl transition-colors"
                       >
                         View Menu
                       </Link>

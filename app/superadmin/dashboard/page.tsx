@@ -100,17 +100,17 @@ export default function DashboardPage() {
     <div className="flex min-h-screen bg-card">
       <Sidebar />
 
-      <main className="flex-1 overflow-auto bg-[#f5faf6]">
+      <main className="flex-1 overflow-auto bg-[#fbf9ff]">
         <div className="p-8">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-[#1a5c2a]">Dashboard</h1>
+            <h1 className="text-3xl font-bold text-[#5b21b6]">Dashboard</h1>
             <p className="text-primary mt-2">
               Welcome back! Here’s your business overview.
             </p>
           </div>
 
           {loading && (
-            <div className="bg-card rounded-lg border border-[#c8e6c9] p-6">
+            <div className="bg-card rounded-lg border border-[#ddd6fe] p-6">
               <p className="text-primary">Loading dashboard...</p>
             </div>
           )}
@@ -142,8 +142,8 @@ export default function DashboardPage() {
                 </div>
 
                 <div className="space-y-4">
-                  <div className="bg-card rounded-lg border border-[#c8e6c9] p-6 shadow-sm">
-                    <h3 className="text-lg font-semibold text-[#1a5c2a] mb-4">
+                  <div className="bg-card rounded-lg border border-[#ddd6fe] p-6 shadow-sm">
+                    <h3 className="text-lg font-semibold text-[#5b21b6] mb-4">
                       Quick Stats
                     </h3>
 
@@ -159,7 +159,7 @@ export default function DashboardPage() {
                           className="flex justify-between text-sm"
                         >
                           <span className="text-primary">{label}</span>
-                          <span className="font-semibold text-[#1a5c2a]">
+                          <span className="font-semibold text-[#5b21b6]">
                             {value}
                           </span>
                         </div>
@@ -167,19 +167,19 @@ export default function DashboardPage() {
                     </div>
                   </div>
 
-                  <div className="bg-[#e8f5e9] rounded-lg border border-[#a5d6a7] p-6">
-                    <h3 className="text-lg font-semibold text-[#1a5c2a] mb-2">
+                  <div className="bg-[#f1ebff] rounded-lg border border-[#c4b5fd] p-6">
+                    <h3 className="text-lg font-semibold text-[#5b21b6] mb-2">
                       Action Required
                     </h3>
 
                     <ul className="space-y-2 text-sm">
-                      <li className="text-[#2e7d32]">
+                      <li className="text-[#6d28d9]">
                         • {stats?.pending ?? 0} business(es) awaiting approval
                       </li>
-                      <li className="text-[#2e7d32]">
+                      <li className="text-[#6d28d9]">
                         • {stats?.rejected ?? 0} rejected business(es) to review
                       </li>
-                      <li className="text-[#2e7d32]">
+                      <li className="text-[#6d28d9]">
                         • {stats?.suspended ?? 0} suspended business(es) to
                         monitor
                       </li>

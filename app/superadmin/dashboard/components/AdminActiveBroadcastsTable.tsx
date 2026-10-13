@@ -61,12 +61,12 @@ export function AdminActiveBroadcastsTable({
                         </span>
                       )}
                       {isPending && (
-                        <span className="text-amber-600 font-bold bg-amber-50 px-2 py-0.5 rounded-full border border-amber-100 animate-pulse">
+                        <span className="text-mango-600 font-bold bg-mango-50 px-2 py-0.5 rounded-full border border-mango-100 animate-pulse">
                           Pending
                         </span>
                       )}
                       {promo.isActive && (
-                        <span className="text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                        <span className="text-violet-600 font-bold bg-violet-50 px-2 py-0.5 rounded-full border border-violet-200">
                           Live
                         </span>
                       )}
@@ -78,7 +78,7 @@ export function AdminActiveBroadcastsTable({
                         className={`px-3 py-1.5 rounded-xl font-bold text-xs inline-flex items-center gap-1 transition-all ${
                           promo.isActive
                             ? "bg-rose-50 border border-rose-100 text-rose-600 hover:bg-rose-100"
-                            : "bg-emerald-50 border border-emerald-100 text-emerald-600 hover:bg-emerald-100"
+                            : "bg-violet-50 border border-violet-100 text-violet-600 hover:bg-violet-100"
                         }`}
                       >
                         {promo.isActive ? (

@@ -86,7 +86,7 @@ export default function RiderDeliveriesList() {
           onClick={() => setActiveTab("active")}
           className={`flex-1 py-4 text-sm font-bold border-b-2 transition-all ${
             activeTab === "active"
-              ? "border-green-600 text-green-600 bg-white"
+              ? "border-violet-600 text-violet-600 bg-white"
               : "border-transparent text-gray-500 hover:text-gray-700"
           }`}
         >
@@ -102,7 +102,7 @@ export default function RiderDeliveriesList() {
           onClick={() => setActiveTab("completed")}
           className={`flex-1 py-4 text-sm font-bold border-b-2 transition-all ${
             activeTab === "completed"
-              ? "border-green-600 text-green-600 bg-white"
+              ? "border-violet-600 text-violet-600 bg-white"
               : "border-transparent text-gray-500 hover:text-gray-700"
           }`}
         >
@@ -125,7 +125,7 @@ export default function RiderDeliveriesList() {
                 key={index}
                 className={`p-4 rounded-xl border transition-all flex flex-col md:flex-row md:items-center justify-between gap-4 ${
                   activeTab === "active"
-                    ? "border-green-200 bg-green-50/20"
+                    ? "border-violet-200 bg-violet-50/20"
                     : "border-gray-100 bg-white"
                 }`}
               >
@@ -161,8 +161,8 @@ export default function RiderDeliveriesList() {
                     <span
                       className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider mt-1 inline-block ${
                         activeTab === "active"
-                          ? "bg-amber-100 text-amber-800"
-                          : "bg-green-100 text-green-800"
+                          ? "bg-mango-100 text-mango-800"
+                          : "bg-violet-100 text-violet-800"
                       }`}
                     >
                       {activeTab === "active" ? "In Progress" : "Collected"}

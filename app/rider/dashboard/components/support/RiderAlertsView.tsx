@@ -25,13 +25,13 @@ export function RiderAlertsView({ alerts }: RiderAlertsViewProps) {
           className={`p-4 rounded-xl border flex items-start gap-3 bg-white transition-all ${
             alert.type === "warning"
               ? "border-red-200 bg-red-50/10"
-              : "border-green-200 bg-green-50/10"
+              : "border-violet-200 bg-violet-50/10"
           }`}
         >
           {alert.type === "warning" ? (
             <ShieldAlert className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
           ) : (
-            <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+            <CheckCircle2 className="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
           )}
           <div className="space-y-1">
             <h4 className="text-xs font-black text-gray-900">{alert.title}</h4>

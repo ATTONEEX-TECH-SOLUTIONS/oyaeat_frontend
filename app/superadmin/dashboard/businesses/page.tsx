@@ -232,21 +232,21 @@ export default function BusinessesPage() {
       key: "all",
       label: "Total",
       icon: Store,
-      accent: C.green,
+      accent: C.brand,
       value: counts.all,
     },
     {
       key: "pending_review",
       label: "Pending",
       icon: Clock,
-      accent: C.amber,
+      accent: C.mango,
       value: counts.pending_review,
     },
     {
       key: "approved",
       label: "Approved",
       icon: Check,
-      accent: C.greenMid,
+      accent: C.brandMid,
       value: counts.approved,
     },
     {
@@ -260,7 +260,7 @@ export default function BusinessesPage() {
       key: "suspended",
       label: "Suspended",
       icon: PauseCircle,
-      accent: "#6B7C6E",
+      accent: "#6b6480",
       value: counts.suspended,
     },
   ];
@@ -349,7 +349,7 @@ export default function BusinessesPage() {
             <div className="flex items-center justify-center py-20">
               <RefreshCw
                 className="h-6 w-6 animate-spin"
-                style={{ color: C.greenMid }}
+                style={{ color: C.brandMid }}
               />
             </div>
           ) : (

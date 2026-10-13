@@ -24,7 +24,7 @@ export function StatusTabStrip({
           onClick={() => setActiveStatus(t.key)}
           className="px-4 py-1.5 rounded-xl text-sm font-bold transition-all duration-150 whitespace-nowrap"
           style={{
-            backgroundColor: activeStatus === t.key ? C.green : "transparent",
+            backgroundColor: activeStatus === t.key ? C.brand : "transparent",
             color: activeStatus === t.key ? C.white : C.textMuted,
           }}
         >
@@ -32,7 +32,7 @@ export function StatusTabStrip({
           <span
             className="ml-1.5 text-xs font-black"
             style={{
-              color: activeStatus === t.key ? C.greenLight : C.textMuted,
+              color: activeStatus === t.key ? C.brandLight : C.textMuted,
             }}
           >
             {counts[t.key as keyof typeof counts] ?? 0}
