@@ -112,6 +112,11 @@ function Form({ mode }: { mode: Mode }) {
             {show ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
           </button>
         </div>
+        {!signup && (
+          <div className="mt-2 text-right">
+            <Link href="/forgot-password?role=customer" className="text-sm font-bold text-primary hover:underline">Forgot password?</Link>
+          </div>
+        )}
       </div>
 
       <button

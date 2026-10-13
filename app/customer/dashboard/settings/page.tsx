@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChevronRight, Heart, LifeBuoy, LogOut, Mail, Phone, Receipt } from "lucide-react";
 import { PageHeader } from "@/components/customer/ui";
+import ProfileForm from "@/components/customer/ProfileForm";
+import AddressBook from "@/components/customer/AddressBook";
 import { clearSession, getUser, type CustomerUser } from "@/lib/customer";
 
 const LINKS = [
@@ -46,6 +48,11 @@ export default function AccountPage() {
           )}
         </div>
       </section>
+
+      <div className="mt-5 space-y-5">
+        <ProfileForm user={user} onSaved={setUser} />
+        <AddressBook />
+      </div>
 
       <ul className="mt-5 divide-y divide-border overflow-hidden rounded-3xl border border-border bg-card shadow-card">
         {LINKS.map((l) => (

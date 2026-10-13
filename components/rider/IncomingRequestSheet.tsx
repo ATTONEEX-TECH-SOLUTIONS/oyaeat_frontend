@@ -8,7 +8,7 @@ const naira = (n: number) => `₦${Math.round(Number(n) || 0).toLocaleString()}`
 
 /** A new order offer. Shows on any screen while the rider is online. */
 export default function IncomingRequestSheet() {
-  const { incoming, dismissIncoming, accept, busy } = useRider();
+  const { incoming, dismissIncoming, accept, decline, busy } = useRider();
   return (
     <Dialog open={!!incoming} onOpenChange={(o) => !o && dismissIncoming()}>
       <DialogContent className="max-w-sm rounded-3xl p-0 sm:max-w-sm" aria-describedby="offer-desc">
@@ -28,7 +28,7 @@ export default function IncomingRequestSheet() {
             </div>
 
             <div className="mt-5 grid grid-cols-2 gap-3">
-              <button onClick={dismissIncoming} className="h-14 rounded-full border border-border text-base font-bold transition hover:bg-violet-50">Decline</button>
+              <button onClick={() => decline(incoming.orderId)} className="h-14 rounded-full border border-border text-base font-bold transition hover:bg-violet-50">Decline</button>
               <button
                 disabled={busy}
                 onClick={async () => {

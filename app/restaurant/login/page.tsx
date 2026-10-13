@@ -281,6 +281,11 @@ export default function LoginPage() {
               icon={Lock}
               disabled={loading}
             />
+            <div className="-mt-2 text-right">
+              <Link href="/forgot-password?role=owner" className="text-xs font-bold hover:underline" style={{ color: C.brand }}>
+                Forgot password?
+              </Link>
+            </div>
 
             <button
               type="submit"

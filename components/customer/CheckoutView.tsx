@@ -16,7 +16,7 @@ import AddressAutocomplete from "@/components/AddressAutocomplete";
 import { EmptyState, PageHeader } from "./ui";
 import { OrderSummary } from "./CartView";
 import { useCart } from "@/hooks/useCart";
-import { api, getUser, naira, DELIVERY_FEE_ESTIMATE, SERVICE_FEE_ESTIMATE, type CustomerUser } from "@/lib/customer";
+import { api, getToken, getUser, naira, DELIVERY_FEE_ESTIMATE, SERVICE_FEE_ESTIMATE, type CustomerUser } from "@/lib/customer";
 import { cn } from "@/lib/utils";
 
 type Method = "card" | "transfer" | "cash";
@@ -38,6 +38,23 @@ export default function CheckoutView() {
   const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [saved, setSaved] = useState<any[]>([]);
+  const [saveNew, setSaveNew] = useState(false);
+
+  useEffect(() => {
+    if (!getToken()) return;
+    api("/customer/addresses", { auth: true })
+      .then((j) => {
+        const list = j.data?.addresses || [];
+        setSaved(list);
+        const def = list.find((a: any) => a.isDefault);
+        if (def) {
+          setAddress((cur) => cur || def.address);
+          setCoords((cur) => cur || (def.latitude != null && def.longitude != null ? { lat: def.latitude, lng: def.longitude } : null));
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     const u = getUser();
@@ -54,6 +71,14 @@ export default function CheckoutView() {
     if (!phoneOk) return setError("Enter a phone number the rider can call.");
     setLoading(true);
     setError("");
+    if (saveNew && coords) {
+      // best effort: never block the order on saving the address
+      api("/customer/addresses", {
+        method: "POST",
+        auth: true,
+        body: JSON.stringify({ label: address.split(",")[0].slice(0, 40) || "Saved address", address, latitude: coords.lat, longitude: coords.lng }),
+      }).catch(() => {});
+    }
     const order = {
       businessId: cart.restaurantId,
       customerName: `${user?.firstName || "Customer"} ${user?.lastName || ""}`.trim(),
@@ -132,6 +157,32 @@ export default function CheckoutView() {
               <div className="space-y-4">
                 <div>
                   <span className={label}>Delivery address</span>
+                  {saved.length > 0 && (
+                    <div className="mb-3 flex flex-wrap gap-2" role="group" aria-label="Saved addresses">
+                      {saved.map((a) => {
+                        const on = address === a.address;
+                        return (
+                          <button
+                            key={a.id}
+                            type="button"
+                            disabled={loading}
+                            aria-pressed={on}
+                            onClick={() => {
+                              setAddress(a.address);
+                              setCoords(a.latitude != null && a.longitude != null ? { lat: a.latitude, lng: a.longitude } : null);
+                              setSaveNew(false);
+                            }}
+                            className={cn(
+                              "max-w-full truncate rounded-full border px-4 py-2 text-sm font-semibold transition",
+                              on ? "border-primary bg-violet-100 text-primary" : "border-border bg-card hover:bg-violet-50",
+                            )}
+                          >
+                            {a.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
                   <AddressAutocomplete
                     label={null}
                     disabled={loading}
@@ -147,6 +198,12 @@ export default function CheckoutView() {
                   <p className="mt-1.5 text-xs text-muted-foreground">
                     {address ? `✓ ${address}` : "Start typing and pick your address from the list."}
                   </p>
+                  {address && coords && getToken() && !saved.some((a) => a.address === address) && (
+                    <label className="mt-2 flex items-center gap-2 text-sm font-semibold">
+                      <input type="checkbox" checked={saveNew} onChange={(e) => setSaveNew(e.target.checked)} className="h-4 w-4 accent-primary" />
+                      Save this address for next time
+                    </label>
+                  )}
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>

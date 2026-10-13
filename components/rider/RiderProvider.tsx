@@ -28,6 +28,7 @@ type RiderCtx = {
   refresh: () => Promise<void>;
   toggleShift: () => Promise<void>;
   accept: (orderId: string | number) => Promise<boolean>;
+  decline: (orderId: string | number) => Promise<void>;
   complete: (orderId: string | number) => Promise<boolean>;
   dismissIncoming: () => void;
 };
@@ -212,6 +213,19 @@ export function RiderProvider({ children }: { children: React.ReactNode }) {
     [call, refresh, restricted],
   );
 
+  // Tell the server so this offer is not shown to this rider again.
+  const decline = useCallback(
+    async (orderId: string | number) => {
+      setIncoming(null);
+      try {
+        await call(`/rider/orders/${cleanId(orderId)}/decline`, "POST");
+      } catch {
+        // Declining is best-effort; the offer is already dismissed locally.
+      }
+    },
+    [call],
+  );
+
   const complete = useCallback(
     async (orderId: string | number) => {
       setBusy(true);
@@ -231,8 +245,8 @@ export function RiderProvider({ children }: { children: React.ReactNode }) {
   );
 
   const value = useMemo<RiderCtx>(
-    () => ({ data, loading, error, status, restricted, isOnline, busy, gpsIssue, incoming, refresh, toggleShift, accept, complete, dismissIncoming: () => setIncoming(null) }),
-    [data, loading, error, status, restricted, isOnline, busy, gpsIssue, incoming, refresh, toggleShift, accept, complete],
+    () => ({ data, loading, error, status, restricted, isOnline, busy, gpsIssue, incoming, refresh, toggleShift, accept, decline, complete, dismissIncoming: () => setIncoming(null) }),
+    [data, loading, error, status, restricted, isOnline, busy, gpsIssue, incoming, refresh, toggleShift, accept, decline, complete],
   );
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

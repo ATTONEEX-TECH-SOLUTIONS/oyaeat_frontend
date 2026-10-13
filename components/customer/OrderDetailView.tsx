@@ -4,9 +4,11 @@ import React, { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { format } from "date-fns";
-import { ArrowLeft, Bike, Check, ChefHat, Clock, Package, PackageCheck, Phone, Receipt, XCircle } from "lucide-react";
+import { ArrowLeft, Bike, Check, ChefHat, Clock, Loader2, Package, PackageCheck, Phone, Receipt, Star, XCircle } from "lucide-react";
 import { EmptyState, ErrorState, StatusPill } from "./ui";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { toast } from "sonner";
 import CustomerTrackingMap from "@/app/customer/dashboard/orders/[id]/CustomerTrackingMap";
 import { ACTIVE_STATUSES, ORDER_STEPS, api, naira } from "@/lib/customer";
 import { cn } from "@/lib/utils";
@@ -37,6 +39,42 @@ export default function OrderDetailView() {
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [cancelOpen, setCancelOpen] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState("");
+  const [sendingReview, setSendingReview] = useState(false);
+
+  const cancel = async () => {
+    setCancelling(true);
+    try {
+      await api(`/orders/${id}/cancel`, { method: "POST", auth: true });
+      toast.success("Order cancelled");
+      setCancelOpen(false);
+      await load(true);
+    } catch (e: any) {
+      toast.error(e.message || "Couldn't cancel this order.");
+      setCancelOpen(false);
+      await load(true);
+    } finally {
+      setCancelling(false);
+    }
+  };
+
+  const sendReview = async () => {
+    if (!rating) return;
+    setSendingReview(true);
+    try {
+      await api(`/orders/${id}/review`, { method: "POST", auth: true, body: JSON.stringify({ rating, comment: comment.trim() || undefined }) });
+      toast.success("Thanks for your feedback!");
+      await load(true);
+    } catch (e: any) {
+      toast.error(e.message || "Couldn't save your review.");
+      if (/already reviewed/i.test(e.message || "")) await load(true);
+    } finally {
+      setSendingReview(false);
+    }
+  };
 
   const load = useCallback(
     async (silent = false) => {
@@ -185,6 +223,65 @@ export default function OrderDetailView() {
         </section>
       )}
 
+      {order.status === "pending" && (
+        <section className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-border bg-card p-4 shadow-card">
+          <p className="text-sm text-muted-foreground">Changed your mind? You can cancel until the restaurant starts preparing.</p>
+          <button onClick={() => setCancelOpen(true)} className="h-11 rounded-full border border-destructive/30 px-5 text-sm font-bold text-destructive transition hover:bg-destructive/10">
+            Cancel order
+          </button>
+        </section>
+      )}
+
+      {order.status === "delivered" && (
+        <section className="mt-4 rounded-3xl border border-border bg-card p-5 shadow-card">
+          {order.review ? (
+            <div>
+              <h2 className="font-display text-lg font-bold">Your review</h2>
+              <p className="mt-1 flex items-center gap-1" aria-label={`${order.review.rating} out of 5 stars`}>
+                {[1, 2, 3, 4, 5].map((n) => (
+                  <Star key={n} className={cn("h-5 w-5", n <= order.review.rating ? "fill-cta text-cta" : "text-border")} />
+                ))}
+              </p>
+              {order.review.comment && <p className="mt-2 text-sm text-muted-foreground">{order.review.comment}</p>}
+            </div>
+          ) : (
+            <div>
+              <h2 className="font-display text-lg font-bold">How was {order.business?.name || "your order"}?</h2>
+              <div className="mt-2 flex items-center gap-1" role="radiogroup" aria-label="Rating">
+                {[1, 2, 3, 4, 5].map((n) => (
+                  <button
+                    key={n}
+                    type="button"
+                    role="radio"
+                    aria-checked={rating === n}
+                    aria-label={`${n} star${n > 1 ? "s" : ""}`}
+                    onClick={() => setRating(n)}
+                    className="rounded-full p-1 transition hover:scale-110"
+                  >
+                    <Star className={cn("h-8 w-8", n <= rating ? "fill-cta text-cta" : "text-border")} />
+                  </button>
+                ))}
+              </div>
+              {rating > 0 && (
+                <>
+                  <textarea
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    maxLength={500}
+                    rows={3}
+                    placeholder="Anything to add? (optional)"
+                    className="mt-3 w-full rounded-xl border border-input bg-card p-3 text-sm outline-none focus:border-ring focus:ring-4 focus:ring-ring/15"
+                  />
+                  <button onClick={sendReview} disabled={sendingReview} className="mt-3 flex h-11 items-center gap-2 rounded-full bg-primary px-6 text-sm font-bold text-primary-foreground transition hover:bg-violet-800 disabled:opacity-60">
+                    {sendingReview && <Loader2 className="h-4 w-4 animate-spin" />} Submit review
+                  </button>
+                </>
+              )}
+            </div>
+          )}
+        </section>
+      )}
+
       <section className="mt-4 rounded-3xl border border-border bg-card p-5 shadow-card">
         <h2 className="font-display mb-3 text-lg font-bold">Receipt</h2>
         <ul className="space-y-2 text-sm">
@@ -209,6 +306,23 @@ export default function OrderDetailView() {
           <p className="mt-4 rounded-2xl bg-violet-50 p-3 text-sm text-violet-900"><b>Delivering to:</b> {order.address}</p>
         )}
       </section>
+
+      <Dialog open={cancelOpen} onOpenChange={(o) => !cancelling && setCancelOpen(o)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Cancel this order?</DialogTitle>
+            <DialogDescription>
+              {order.paymentStatus === "paid" ? "You've already paid online. Support will refund you after it's cancelled." : "The restaurant hasn't started preparing it yet, so nothing will be charged."}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <button onClick={() => setCancelOpen(false)} disabled={cancelling} className="h-11 rounded-full border border-border px-5 text-sm font-bold hover:bg-violet-50">Keep order</button>
+            <button onClick={cancel} disabled={cancelling} className="flex h-11 items-center gap-2 rounded-full bg-destructive px-5 text-sm font-bold text-white hover:bg-destructive/90 disabled:opacity-60">
+              {cancelling && <Loader2 className="h-4 w-4 animate-spin" />} Cancel order
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Link href="/customer/dashboard/support" className="mt-5 block text-center text-sm font-semibold text-primary hover:underline">
         Problem with this order? Contact support

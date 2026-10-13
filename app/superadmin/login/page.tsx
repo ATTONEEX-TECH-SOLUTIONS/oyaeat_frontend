@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -276,6 +277,11 @@ export default function AdminLoginPage() {
               onChange={(v) => form.setValue("password", v)}
               onBlur={() => form.trigger("password")}
             />
+            <div className="-mt-2 text-right">
+              <Link href="/forgot-password?role=admin" className="text-xs font-bold hover:underline" style={{ color: C.brand }}>
+                Forgot password?
+              </Link>
+            </div>
 
             <button
               type="submit"

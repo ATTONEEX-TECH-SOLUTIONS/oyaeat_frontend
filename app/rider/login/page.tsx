@@ -54,6 +54,8 @@ function LoginForm() {
           </button>
         </div>
       </Field>
+      <div className="-mt-2 text-right"><Link href="/forgot-password?role=rider" className="text-sm font-bold text-primary hover:underline">Forgot password?</Link></div>
+
       <PrimaryButton type="submit" disabled={loading} className="w-full">
         {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : "Log in"}
       </PrimaryButton>

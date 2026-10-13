@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 
 const API = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 const LEN = 6;
+const COOLDOWN = 30;
 
 export default function VerifyPhonePage() {
   const router = useRouter();
@@ -18,6 +19,9 @@ export default function VerifyPhonePage() {
   const [verifying, setVerifying] = useState(false);
   const [error, setError] = useState("");
   const [ready, setReady] = useState(false);
+  const [wait, setWait] = useState(COOLDOWN);
+  const [resending, setResending] = useState(false);
+  const [notice, setNotice] = useState("");
   const refs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
@@ -32,6 +36,38 @@ export default function VerifyPhonePage() {
     setReady(true);
     refs.current[0]?.focus();
   }, []);
+
+  // The code was just sent at sign-up, so the first resend unlocks after a short wait.
+  useEffect(() => {
+    if (wait <= 0) return;
+    const t = setTimeout(() => setWait((w) => w - 1), 1000);
+    return () => clearTimeout(t);
+  }, [wait]);
+
+  const resend = async () => {
+    if (wait > 0 || resending || !userId) return;
+    setResending(true);
+    setError("");
+    setNotice("");
+    try {
+      const res = await fetch(`${API}/auth/resend-otp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.status === 429) setWait(Number(data.retryAfter) || COOLDOWN);
+      if (!res.ok) throw new Error(data.message || "Couldn't send a new code.");
+      setNotice(`A new code was sent to ${phone || "your phone"}.`);
+      setCode(Array(LEN).fill(""));
+      refs.current[0]?.focus();
+      setWait(COOLDOWN);
+    } catch (err) {
+      setError(err instanceof TypeError ? "We couldn't reach OyaEat. Check your connection and try again." : err instanceof Error ? err.message : "Couldn't send a new code.");
+    } finally {
+      setResending(false);
+    }
+  };
 
   const setDigit = (i: number, v: string) => {
     const digit = v.replace(/\D/g, "").slice(-1);
@@ -97,6 +133,7 @@ export default function VerifyPhonePage() {
     >
       <div className="space-y-5">
         <FormError>{error}</FormError>
+        {notice && <p role="status" className="rounded-2xl bg-success-soft px-4 py-3 text-sm font-semibold text-success">{notice}</p>}
 
         <div className="flex justify-between gap-2 sm:justify-start sm:gap-3" onPaste={onPaste} role="group" aria-label="Verification code">
           {code.map((d, i) => (
@@ -125,10 +162,12 @@ export default function VerifyPhonePage() {
           {verifying ? <><Loader2 className="h-5 w-5 animate-spin" /> Verifying…</> : "Verify and continue"}
         </PrimaryButton>
 
-        <p className="flex items-start gap-2 text-sm text-muted-foreground">
-          <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-          Didn&apos;t get a code? Check that {phone || "your number"} is correct and that you have signal. If it still doesn&apos;t arrive, start sign-up again with the right number.
-        </p>
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
+          <span className="inline-flex items-center gap-2"><ShieldCheck className="h-4 w-4 shrink-0 text-primary" /> Didn&apos;t get a code?</span>
+          <button type="button" onClick={resend} disabled={wait > 0 || resending} className="font-bold text-primary hover:underline disabled:cursor-not-allowed disabled:text-muted-foreground disabled:no-underline">
+            {resending ? "Sending…" : wait > 0 ? `Resend in ${wait}s` : "Resend code"}
+          </button>
+        </div>
       </div>
     </FlowShell>
   );
