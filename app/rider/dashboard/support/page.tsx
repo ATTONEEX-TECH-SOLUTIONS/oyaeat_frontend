@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef } from "react";
 import { MessageSquare, Bell, Loader2 } from "lucide-react";
-import { chatApi, type Thread, type Message } from "@/lib/api/chat";
+import { chatApi } from "@/lib/api/chat";
+import type { Thread, Message } from "@/lib/types/chat";
 import { RiderChatSidebar } from "../components/support/RiderChatSidebar";
 import { RiderChatWindow } from "../components/support/RiderChatWindow";
 import { RiderAlertsView } from "../components/support/RiderAlertsView";

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Sidebar } from "@/app/superadmin/dashboard/components/sidebar";
 import { RidersList } from "@/app/superadmin/dashboard/components/riders-list";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
@@ -140,12 +139,10 @@ export default function RidersPage() {
   }
 
   return (
-    <div className="flex min-h-screen bg-slate-100">
-      <Sidebar />
-      <main className="flex-1 overflow-auto">
-        <div className="p-8">
+    <div className="space-y-6">
+<div className="space-y-6">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-slate-900">
+            <h1 className="font-display text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
               Rider Management
             </h1>
             <p className="text-slate-600 mt-2">
@@ -154,7 +151,7 @@ export default function RidersPage() {
           </div>
 
           <Tabs defaultValue="all" className="w-full">
-            <TabsList className="mb-6">
+            <TabsList className="no-scrollbar mb-6 max-w-full justify-start overflow-x-auto">
               <TabsTrigger value="all">
                 All ({(riders || []).length})
               </TabsTrigger>
@@ -205,7 +202,6 @@ export default function RidersPage() {
             ))}
           </Tabs>
         </div>
-      </main>
-    </div>
+          </div>
   );
 }

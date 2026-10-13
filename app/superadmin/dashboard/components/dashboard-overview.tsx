@@ -1,97 +1,19 @@
-import {
-  TrendingUp,
-  Users,
-  Bike,
-  ShoppingCart,
-  AlertCircle,
-  CheckCircle,
-} from "lucide-react";
-import type { DashboardMetrics } from "@/lib/api/superadmin"; // keep types consistent
+import { Banknote, Bike, ClipboardCheck, Receipt, ShoppingBag, Store } from "lucide-react";
+import type { DashboardMetrics } from "@/lib/api/superadmin";
+import { AdminStat } from "@/components/superadmin/ui";
 
-interface DashboardOverviewProps {
-  metrics: DashboardMetrics;
-}
+const money = (n: number) =>
+  n >= 1_000_000 ? `₦${(n / 1_000_000).toFixed(1)}M` : `₦${Math.round(n || 0).toLocaleString()}`;
 
-export function DashboardOverview({ metrics }: DashboardOverviewProps) {
-  const stats = [
-    {
-      label: "Active Restaurants",
-      value: metrics.activeRestaurants,
-      total: metrics.totalRestaurants,
-      icon: Users,
-      color: "bg-blue-500/10 text-blue-500",
-    },
-    {
-      label: "Pending Approvals",
-      value: metrics.pendingApprovals,
-      icon: AlertCircle,
-      color: "bg-mango-500/10 text-mango-500",
-      highlight: true,
-    },
-    {
-      label: "Active Riders",
-      value: metrics.activeRiders,
-      total: metrics.totalRiders,
-      icon: Bike,
-      color: "bg-violet-500/10 text-violet-500",
-    },
-    {
-      label: "Today Orders",
-      value: metrics.todayOrders,
-      total: metrics.totalOrders,
-      icon: ShoppingCart,
-      color: "bg-purple-500/10 text-purple-500",
-    },
-    {
-      label: "Total Revenue",
-      value: `₦${(metrics.totalRevenue / 1_000_000).toFixed(1)}M`,
-      icon: TrendingUp,
-      color: "bg-orange-500/10 text-orange-500",
-    },
-    {
-      label: "Avg Order Value",
-      value: `₦${Number(metrics.avgOrderValue || 0).toLocaleString()}`,
-      icon: CheckCircle,
-      color: "bg-indigo-500/10 text-indigo-500",
-    },
-  ];
-
+export function DashboardOverview({ metrics }: { metrics: DashboardMetrics }) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {stats.map((stat) => {
-        const Icon = stat.icon;
-        return (
-          <div
-            key={stat.label}
-            className={`p-6 rounded-lg border ${
-              stat.highlight
-                ? "bg-mango-50 border-mango-200"
-                : "bg-slate-50 border-slate-200"
-            }`}
-          >
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-600">
-                  {stat.label}
-                </p>
-                <p className="text-2xl font-bold text-slate-900 mt-2">
-                  {stat.value}
-                </p>
-
-                {typeof stat.total === "number" && (
-                  <p className="text-xs text-slate-500 mt-1">
-                    of {stat.total} total
-                  </p>
-                )}
-              </div>
-
-              <div className={`${stat.color} p-3 rounded-lg`}>
-                <Icon className="w-5 h-5" />
-              </div>
-            </div>
-          </div>
-        );
-      })}
+    <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
+      <AdminStat label="Orders today" value={metrics.todayOrders} sub={`${metrics.totalOrders.toLocaleString()} all time`} icon={ShoppingBag} />
+      <AdminStat label="Revenue" value={money(metrics.totalRevenue)} sub={`Avg order ${money(metrics.avgOrderValue)}`} icon={Banknote} tone="success" />
+      <AdminStat label="Awaiting approval" value={metrics.pendingApprovals} sub={metrics.pendingApprovals ? "Review now" : "All clear"} icon={ClipboardCheck} tone="mango" highlight={metrics.pendingApprovals > 0} />
+      <AdminStat label="Active restaurants" value={metrics.activeRestaurants} sub={`of ${metrics.totalRestaurants} registered`} icon={Store} />
+      <AdminStat label="Riders online" value={metrics.activeRiders} sub={`of ${metrics.totalRiders} riders`} icon={Bike} />
+      <AdminStat label="Avg order value" value={money(metrics.avgOrderValue)} icon={Receipt} />
     </div>
   );
 }

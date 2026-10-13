@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Sidebar } from "@/app/superadmin/dashboard/components/sidebar";
 import { Loader2, Archive, ThumbsDown } from "lucide-react";
 
 import { PendingAdvertsList } from "@/app/superadmin/dashboard/components/pending-adverts-list";
@@ -44,7 +43,7 @@ export default function AdminBroadcastPage() {
   const getAuthToken = (): string | null => {
     if (typeof window === "undefined") return null;
     return (
-      localStorage.getItem("admin_token") || localStorage.getItem("authToken")
+      localStorage.getItem("admin_token")
     );
   };
 
@@ -256,11 +255,9 @@ export default function AdminBroadcastPage() {
   }
 
   return (
-    <div className="flex min-h-screen bg-slate-100">
-      <Sidebar />
-      <main className="flex-1 overflow-auto p-8 space-y-8">
+    <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-2">
+          <h1 className="font-display text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
             Advert Tasks Desk
           </h1>
           <p className="text-slate-600 mt-2">
@@ -293,7 +290,6 @@ export default function AdminBroadcastPage() {
           onToggleStatus={handleAdminToggleStatus}
           onDeleteClick={handleAdminDeleteCampaign}
         />
-      </main>
-    </div>
+          </div>
   );
 }

@@ -15,7 +15,7 @@ export function StatusTabStrip({
 }: StatusTabStripProps) {
   return (
     <div
-      className="flex gap-1 mb-5 rounded-2xl p-1.5 border w-fit shadow-sm"
+      className="no-scrollbar mb-5 flex max-w-full gap-1 overflow-x-auto rounded-2xl border p-1.5 shadow-sm sm:w-fit"
       style={{ backgroundColor: C.white, borderColor: C.border }}
     >
       {STATUS_TABS.map((t) => (

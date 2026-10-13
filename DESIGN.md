@@ -39,3 +39,9 @@ use the semantic Tailwind classes below.
 - Every data screen has skeleton, empty (`EmptyState`) and error-with-retry (`ErrorState`) states: `components/customer/ui.tsx`.
 - Home hierarchy: greeting, live order, promos, cuisine filter, order again, restaurants.
 - Never show data the API did not send (no invented ratings, fees or rider details).
+
+## Superadmin patterns (done)
+- One shell in `app/superadmin/dashboard/layout.tsx` (`components/superadmin/AdminShell.tsx`): grouped deep-violet sidebar with a mango active marker and a live pending-approvals badge; on mobile a top bar with a slide-over drawer. It also owns the auth guard. Pages must NOT render their own sidebar or page padding.
+- Shared pieces: `components/superadmin/ui.tsx` (AdminStat, Panel, Badge, OrderBadge) and `components/shared/states.tsx` (PageHeader, EmptyState, ErrorState, TableSkeleton).
+- Tables become stacked cards below `md`. The primary action in a view (Approve, Save) is the single mango button.
+- Admin pages read only `admin_token`; never fall back to another role's token.

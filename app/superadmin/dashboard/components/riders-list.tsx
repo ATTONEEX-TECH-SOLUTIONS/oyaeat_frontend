@@ -83,8 +83,8 @@ export function RidersList({
                 setExpandedId(expandedId === rider.id ? null : rider.id)
               }
             >
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-700">
                       {(() => {
@@ -106,8 +106,8 @@ export function RidersList({
                       </p>
                     </div>
                   </div>
-                  <div className="mt-3 flex items-center gap-6 text-sm">
-                    <span className="text-slate-600 flex items-center gap-1.5">
+                  <div className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-1.5 text-sm">
+                    <span className="text-slate-600 flex min-w-0 items-center gap-1.5 break-all">
                       <Mail className="w-4 h-4 text-slate-400" /> {rider.email}
                     </span>
                     <span className="text-slate-600 flex items-center gap-1.5">
@@ -116,7 +116,7 @@ export function RidersList({
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 sm:justify-end">
                   <div
                     className={`p-2 rounded-lg ${config.color} ${config.bg}`}
                   >

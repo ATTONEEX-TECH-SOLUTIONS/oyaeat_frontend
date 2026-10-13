@@ -53,7 +53,7 @@ export function ChatWindow({
   isClosed = false, // 🚀 DEFAULT TO FALSE
 }: ChatWindowProps) {
   return (
-    <div className="flex-1 flex flex-col bg-white relative">
+    <div className="relative flex min-w-0 flex-1 flex-col bg-white">
       {isCreating ? (
         <div className="flex-1 flex flex-col items-center justify-center p-8 text-center animate-in fade-in zoom-in-95">
           <div className="w-16 h-16 bg-[#f1ebff] rounded-full flex items-center justify-center mb-4">

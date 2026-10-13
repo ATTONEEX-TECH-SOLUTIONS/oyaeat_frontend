@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Sidebar } from "@/app/superadmin/dashboard/components/sidebar";
 import { RestaurantsList } from "@/app/superadmin/dashboard/components/restaurants-list";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -180,18 +179,12 @@ export default function RestaurantsPage() {
   );
 
   return (
-    <div className="flex min-h-screen" style={{ backgroundColor: "#fffbef" }}>
-      <Sidebar />
-
-      <main className="flex-1 min-w-0 overflow-auto">
-        <div className="p-6">
+    <div className="space-y-6">
+<div className="space-y-6">
           {/* Page header */}
           <div className="mb-6 flex items-start justify-between">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#8b5cf6] mb-1">
-                Super Admin
-              </p>
-              <h1 className="text-2xl font-black tracking-tight text-foreground">
+              <h1 className="font-display text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
                 Restaurants
               </h1>
               <p className="text-muted-foreground mt-1 text-sm">
@@ -273,7 +266,6 @@ export default function RestaurantsPage() {
             />
           )}
         </div>
-      </main>
-    </div>
+          </div>
   );
 }
