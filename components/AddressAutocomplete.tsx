@@ -4,13 +4,20 @@ import { useEffect, useRef, useState } from "react";
 import { useMapsLibrary } from "@vis.gl/react-google-maps";
 
 interface AutocompleteProps {
-  onAddressSelected: (address: string, coords: { lat: number; lng: number }) => void;
+  onAddressSelected: (
+    address: string,
+    coords: { lat: number; lng: number },
+  ) => void;
   disabled?: boolean;
 }
 
-export default function AddressAutocomplete({ onAddressSelected, disabled }: AutocompleteProps) {
+export default function AddressAutocomplete({
+  onAddressSelected,
+  disabled,
+}: AutocompleteProps) {
   const placesLibrary = useMapsLibrary("places");
-  const [autocomplete, setAutocomplete] = useState<google.maps.places.Autocomplete | null>(null);
+  const [autocomplete, setAutocomplete] =
+    useState<google.maps.places.Autocomplete | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -32,9 +39,11 @@ export default function AddressAutocomplete({ onAddressSelected, disabled }: Aut
     // Listen for when a customer clicks an address option from the dropdown list
     autocomplete.addListener("place_changed", () => {
       const place = autocomplete.getPlace();
-      
+
       if (!place.geometry || !place.geometry.location) {
-        console.warn("Selected address location is missing valid geometric data.");
+        console.warn(
+          "Selected address location is missing valid geometric data.",
+        );
         return;
       }
 

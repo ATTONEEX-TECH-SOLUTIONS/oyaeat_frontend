@@ -1,10 +1,10 @@
-'use client'
+"use client";
 
-import { useEffect, useMemo, useState } from 'react'
-import { Sidebar } from '@/app/superadmin/dashboard/components/sidebar'
-import { DashboardOverview } from '@/app/superadmin/dashboard/components/dashboard-overview'
-import { PendingBusinessQueue } from '@/app/superadmin/dashboard/components/pending-business-queue'
-import AdminLiveMap from './components/AdminLiveMap' // 📡 IMPORT LIVE MAP LOGISTICS VIEW CANVAS
+import { useEffect, useMemo, useState } from "react";
+import { Sidebar } from "@/app/superadmin/dashboard/components/sidebar";
+import { DashboardOverview } from "@/app/superadmin/dashboard/components/dashboard-overview";
+import { PendingBusinessQueue } from "@/app/superadmin/dashboard/components/pending-business-queue";
+import AdminLiveMap from "./components/AdminLiveMap"; // 📡 IMPORT LIVE MAP LOGISTICS VIEW CANVAS
 
 import {
   fetchBusinessStats,
@@ -13,56 +13,57 @@ import {
   type Business,
   type BusinessStats,
   type DashboardMetrics,
-} from '@/lib/api/superadmin'
+} from "@/lib/api/superadmin";
 
 export default function DashboardPage() {
-  const [stats, setStats] = useState<BusinessStats | null>(null)
-  const [dashboardMetrics, setDashboardMetrics] = useState<DashboardMetrics | null>(null)
-  const [pendingBusinesses, setPendingBusinesses] = useState<Business[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
+  const [stats, setStats] = useState<BusinessStats | null>(null);
+  const [dashboardMetrics, setDashboardMetrics] =
+    useState<DashboardMetrics | null>(null);
+  const [pendingBusinesses, setPendingBusinesses] = useState<Business[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    let cancelled = false
+    let cancelled = false;
 
     const loadDashboard = async () => {
       try {
-        setLoading(true)
-        setError('')
+        setLoading(true);
+        setError("");
 
         const [statsRes, metricsRes, pendingRes] = await Promise.all([
           fetchBusinessStats(),
           fetchDashboardMetrics(),
           fetchBusinesses({
-            status: 'pending_review',
+            status: "pending_review",
             page: 1,
             limit: 5,
           }),
-        ])
+        ]);
 
-        if (cancelled) return
+        if (cancelled) return;
 
-        setStats(statsRes)
-        setDashboardMetrics(metricsRes)
-        setPendingBusinesses(pendingRes.businesses || [])
+        setStats(statsRes);
+        setDashboardMetrics(metricsRes);
+        setPendingBusinesses(pendingRes.businesses || []);
       } catch (e: any) {
-        if (cancelled) return
-        setError(e?.message || 'Failed to load dashboard')
+        if (cancelled) return;
+        setError(e?.message || "Failed to load dashboard");
       } finally {
-        if (!cancelled) setLoading(false)
+        if (!cancelled) setLoading(false);
       }
-    }
+    };
 
-    loadDashboard()
+    loadDashboard();
 
     return () => {
-      cancelled = true
-    }
-  }, [])
+      cancelled = true;
+    };
+  }, []);
 
   const metrics: DashboardMetrics = useMemo(() => {
     // prefer backend metrics (includes orders + revenue)
-    if (dashboardMetrics) return dashboardMetrics
+    if (dashboardMetrics) return dashboardMetrics;
 
     // fallback if metrics endpoint fails (keeps UI stable)
     return {
@@ -76,24 +77,24 @@ export default function DashboardPage() {
       todayOrders: 0,
       totalRevenue: 0,
       avgOrderValue: 0,
-    }
-  }, [stats, dashboardMetrics])
+    };
+  }, [stats, dashboardMetrics]);
 
   const reloadData = async () => {
     const [statsRes, metricsRes, pendingRes] = await Promise.all([
       fetchBusinessStats(),
       fetchDashboardMetrics(),
       fetchBusinesses({
-        status: 'pending_review',
+        status: "pending_review",
         page: 1,
         limit: 5,
       }),
-    ])
+    ]);
 
-    setStats(statsRes)
-    setDashboardMetrics(metricsRes)
-    setPendingBusinesses(pendingRes.businesses || [])
-  }
+    setStats(statsRes);
+    setDashboardMetrics(metricsRes);
+    setPendingBusinesses(pendingRes.businesses || []);
+  };
 
   return (
     <div className="flex min-h-screen bg-card">
@@ -148,14 +149,19 @@ export default function DashboardPage() {
 
                     <div className="space-y-3">
                       {[
-                        { label: 'Total Businesses', value: stats?.total ?? 0 },
-                        { label: 'Approved', value: stats?.approved ?? 0 },
-                        { label: 'Rejected', value: stats?.rejected ?? 0 },
-                        { label: 'Suspended', value: stats?.suspended ?? 0 },
+                        { label: "Total Businesses", value: stats?.total ?? 0 },
+                        { label: "Approved", value: stats?.approved ?? 0 },
+                        { label: "Rejected", value: stats?.rejected ?? 0 },
+                        { label: "Suspended", value: stats?.suspended ?? 0 },
                       ].map(({ label, value }) => (
-                        <div key={label} className="flex justify-between text-sm">
+                        <div
+                          key={label}
+                          className="flex justify-between text-sm"
+                        >
                           <span className="text-primary">{label}</span>
-                          <span className="font-semibold text-[#1a5c2a]">{value}</span>
+                          <span className="font-semibold text-[#1a5c2a]">
+                            {value}
+                          </span>
                         </div>
                       ))}
                     </div>
@@ -174,7 +180,8 @@ export default function DashboardPage() {
                         • {stats?.rejected ?? 0} rejected business(es) to review
                       </li>
                       <li className="text-[#2e7d32]">
-                        • {stats?.suspended ?? 0} suspended business(es) to monitor
+                        • {stats?.suspended ?? 0} suspended business(es) to
+                        monitor
                       </li>
                     </ul>
                   </div>
@@ -185,5 +192,5 @@ export default function DashboardPage() {
         </div>
       </main>
     </div>
-  )
+  );
 }

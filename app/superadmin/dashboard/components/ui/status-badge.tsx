@@ -1,20 +1,26 @@
-'use client'
+"use client";
 
-import { Check, X, PauseCircle } from 'lucide-react'
+import { Check, X, PauseCircle } from "lucide-react";
 
 export const statusConfig = {
-  suspended: { icon: PauseCircle, color: '#D4860B', bg: '#FEF3CD', label: 'Suspended' },
-  approved:  { icon: Check,       color: '#2D6A4F', bg: '#D8F0E4', label: 'Approved'  },
-  rejected:  { icon: X,           color: '#C0392B', bg: '#FDECEA', label: 'Rejected'  },
-}
+  suspended: {
+    icon: PauseCircle,
+    color: "#D4860B",
+    bg: "#FEF3CD",
+    label: "Suspended",
+  },
+  approved: { icon: Check, color: "#2D6A4F", bg: "#D8F0E4", label: "Approved" },
+  rejected: { icon: X, color: "#C0392B", bg: "#FDECEA", label: "Rejected" },
+};
 
 interface StatusBadgeProps {
-  status: string
+  status: string;
 }
 
 export function StatusBadge({ status }: StatusBadgeProps) {
-  const cfg = statusConfig[status as keyof typeof statusConfig] ?? statusConfig.suspended
-  const StatusIcon = cfg.icon
+  const cfg =
+    statusConfig[status as keyof typeof statusConfig] ?? statusConfig.suspended;
+  const StatusIcon = cfg.icon;
 
   return (
     <div className="flex items-center justify-end gap-1.5">
@@ -28,5 +34,5 @@ export function StatusBadge({ status }: StatusBadgeProps) {
         {cfg.label}
       </span>
     </div>
-  )
+  );
 }

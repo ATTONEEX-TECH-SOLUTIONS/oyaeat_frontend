@@ -14,7 +14,7 @@ import {
   Zap,
   Banknote,
   UploadCloud,
-  FileCheck2
+  FileCheck2,
 } from "lucide-react";
 
 type FormData = {
@@ -39,7 +39,7 @@ const RiderRegister = () => {
     plateNumber: "",
     password: "",
   });
-  
+
   const [idFile, setIdFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -63,7 +63,7 @@ const RiderRegister = () => {
         value: "Covered on every active delivery",
       },
     ],
-    []
+    [],
   );
 
   const updateFormData = (field: keyof FormData, value: string) => {
@@ -90,10 +90,13 @@ const RiderRegister = () => {
 
     try {
       const submitData = new FormData();
-      Object.entries(formData).forEach(([key, value]) => submitData.append(key, value));
+      Object.entries(formData).forEach(([key, value]) =>
+        submitData.append(key, value),
+      );
       submitData.append("idDocument", idFile);
-      
-      const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+
+      const API_BASE_URL =
+        process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
       const response = await fetch(`${API_BASE_URL}/auth/rider/register`, {
         method: "POST",
         body: submitData,
@@ -110,7 +113,7 @@ const RiderRegister = () => {
       setError(
         err instanceof Error
           ? err.message
-          : "Registration failed. Please try again."
+          : "Registration failed. Please try again.",
       );
     } finally {
       setIsLoading(false);
@@ -263,8 +266,26 @@ const RiderRegister = () => {
 
       <div className="page">
         <aside className="left-panel">
-          <div className="orb" style={{ width: 400, height: 400, background: "rgba(255,255,255,0.08)", top: -100, right: -100 }} />
-          <div className="orb" style={{ width: 300, height: 300, background: "rgba(0,0,0,0.12)", bottom: -80, left: -80 }} />
+          <div
+            className="orb"
+            style={{
+              width: 400,
+              height: 400,
+              background: "rgba(255,255,255,0.08)",
+              top: -100,
+              right: -100,
+            }}
+          />
+          <div
+            className="orb"
+            style={{
+              width: 300,
+              height: 300,
+              background: "rgba(0,0,0,0.12)",
+              bottom: -80,
+              left: -80,
+            }}
+          />
 
           <Link href="/" className="logo">
             <div className="bebas logo-title">
@@ -282,13 +303,16 @@ const RiderRegister = () => {
             <h1 className="bebas hero-title">
               JOIN THE
               <br />
-              <span style={{ color: "var(--green-pale)" }}>FASTEST GROWING</span>
+              <span style={{ color: "var(--green-pale)" }}>
+                FASTEST GROWING
+              </span>
               <br />
               FLEET.
             </h1>
 
             <p className="hero-text">
-              Sign up today, get approved within 24 hours, and start earning on your own schedule.
+              Sign up today, get approved within 24 hours, and start earning on
+              your own schedule.
             </p>
 
             <div className="stats">
@@ -316,7 +340,8 @@ const RiderRegister = () => {
             </div>
             <h2 className="section-title">Create your account</h2>
             <p className="section-subtitle">
-              Already have an account? <Link href="/rider/login">Sign in here</Link>
+              Already have an account?{" "}
+              <Link href="/rider/login">Sign in here</Link>
             </p>
           </div>
 
@@ -332,17 +357,27 @@ const RiderRegister = () => {
               <div className="field">
                 <label htmlFor="firstName">First Name</label>
                 <input
-                  id="firstName" className="input" type="text" placeholder="John"
-                  value={formData.firstName} onChange={(e) => updateFormData("firstName", e.target.value)}
-                  required disabled={isLoading}
+                  id="firstName"
+                  className="input"
+                  type="text"
+                  placeholder="John"
+                  value={formData.firstName}
+                  onChange={(e) => updateFormData("firstName", e.target.value)}
+                  required
+                  disabled={isLoading}
                 />
               </div>
               <div className="field">
                 <label htmlFor="lastName">Last Name</label>
                 <input
-                  id="lastName" className="input" type="text" placeholder="Doe"
-                  value={formData.lastName} onChange={(e) => updateFormData("lastName", e.target.value)}
-                  required disabled={isLoading}
+                  id="lastName"
+                  className="input"
+                  type="text"
+                  placeholder="Doe"
+                  value={formData.lastName}
+                  onChange={(e) => updateFormData("lastName", e.target.value)}
+                  required
+                  disabled={isLoading}
                 />
               </div>
             </div>
@@ -351,17 +386,27 @@ const RiderRegister = () => {
               <div className="field">
                 <label htmlFor="email">Email Address</label>
                 <input
-                  id="email" className="input" type="email" placeholder="you@example.com"
-                  value={formData.email} onChange={(e) => updateFormData("email", e.target.value)}
-                  required disabled={isLoading}
+                  id="email"
+                  className="input"
+                  type="email"
+                  placeholder="you@example.com"
+                  value={formData.email}
+                  onChange={(e) => updateFormData("email", e.target.value)}
+                  required
+                  disabled={isLoading}
                 />
               </div>
               <div className="field">
                 <label htmlFor="phone">Phone Number</label>
                 <input
-                  id="phone" className="input" type="tel" placeholder="+234 800 000 0000"
-                  value={formData.phone} onChange={(e) => updateFormData("phone", e.target.value)}
-                  required disabled={isLoading}
+                  id="phone"
+                  className="input"
+                  type="tel"
+                  placeholder="+234 800 000 0000"
+                  value={formData.phone}
+                  onChange={(e) => updateFormData("phone", e.target.value)}
+                  required
+                  disabled={isLoading}
                 />
               </div>
             </div>
@@ -369,12 +414,19 @@ const RiderRegister = () => {
             <div className="form-row">
               <div className="field">
                 <label htmlFor="vehicleType">Vehicle Type</label>
-                <select 
-                  id="vehicleType" className="input" 
-                  value={formData.vehicleType} onChange={(e) => updateFormData("vehicleType", e.target.value)}
-                  required disabled={isLoading}
+                <select
+                  id="vehicleType"
+                  className="input"
+                  value={formData.vehicleType}
+                  onChange={(e) =>
+                    updateFormData("vehicleType", e.target.value)
+                  }
+                  required
+                  disabled={isLoading}
                 >
-                  <option value="" disabled>Select vehicle</option>
+                  <option value="" disabled>
+                    Select vehicle
+                  </option>
                   <option value="motorcycle">Motorcycle / Okada</option>
                   <option value="bicycle">Bicycle</option>
                   <option value="car">Car</option>
@@ -383,8 +435,14 @@ const RiderRegister = () => {
               <div className="field">
                 <label htmlFor="plateNumber">Plate Number</label>
                 <input
-                  id="plateNumber" className="input" type="text" placeholder="Optional for bicycles"
-                  value={formData.plateNumber} onChange={(e) => updateFormData("plateNumber", e.target.value)}
+                  id="plateNumber"
+                  className="input"
+                  type="text"
+                  placeholder="Optional for bicycles"
+                  value={formData.plateNumber}
+                  onChange={(e) =>
+                    updateFormData("plateNumber", e.target.value)
+                  }
                   disabled={isLoading}
                 />
               </div>
@@ -393,9 +451,12 @@ const RiderRegister = () => {
             <div className="field">
               <label>Valid ID Document (NIN, Passport, Driver's License)</label>
               <div className="file-upload">
-                <input 
-                  type="file" accept=".jpg,.jpeg,.png,.pdf" 
-                  onChange={handleFileChange} required disabled={isLoading}
+                <input
+                  type="file"
+                  accept=".jpg,.jpeg,.png,.pdf"
+                  onChange={handleFileChange}
+                  required
+                  disabled={isLoading}
                 />
                 {idFile ? (
                   <>
@@ -417,13 +478,19 @@ const RiderRegister = () => {
               <label htmlFor="password">Create Password</label>
               <div className="password-wrap">
                 <input
-                  id="password" className="input password-input"
-                  type={showPassword ? "text" : "password"} placeholder="Min. 8 characters"
-                  value={formData.password} onChange={(e) => updateFormData("password", e.target.value)}
-                  required minLength={8} disabled={isLoading}
+                  id="password"
+                  className="input password-input"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Min. 8 characters"
+                  value={formData.password}
+                  onChange={(e) => updateFormData("password", e.target.value)}
+                  required
+                  minLength={8}
+                  disabled={isLoading}
                 />
                 <button
-                  type="button" className="password-toggle"
+                  type="button"
+                  className="password-toggle"
                   onClick={() => setShowPassword((prev) => !prev)}
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -431,17 +498,27 @@ const RiderRegister = () => {
               </div>
             </div>
 
-            <button type="submit" className="primary-button" disabled={isLoading}>
+            <button
+              type="submit"
+              className="primary-button"
+              disabled={isLoading}
+            >
               {isLoading ? (
-                <><Loader2 size={18} className="animate-spin" /> Submitting...</>
+                <>
+                  <Loader2 size={18} className="animate-spin" /> Submitting...
+                </>
               ) : (
-                <>Submit Application <ArrowRight size={18} /></>
+                <>
+                  Submit Application <ArrowRight size={18} />
+                </>
               )}
             </button>
           </form>
 
           <div className="action-row">
-            <Link href="/" className="ghost-link">Back to Home</Link>
+            <Link href="/" className="ghost-link">
+              Back to Home
+            </Link>
           </div>
         </section>
       </div>

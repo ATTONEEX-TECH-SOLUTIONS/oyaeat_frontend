@@ -21,7 +21,9 @@ export default function SuccessContent() {
 
     if (!queryBusinessId && typeof window !== "undefined") {
       try {
-        const stored = sessionStorage.getItem("businessData") || localStorage.getItem("businessData");
+        const stored =
+          sessionStorage.getItem("businessData") ||
+          localStorage.getItem("businessData");
         if (stored) {
           const parsed = JSON.parse(stored);
           if (parsed?.businessId) baseId = String(parsed.businessId);
@@ -59,7 +61,6 @@ export default function SuccessContent() {
       {/* Main Content Pane */}
       <div className="flex-1 flex flex-col justify-center items-center px-6 py-6">
         <div className="w-full max-w-xl text-center space-y-5 flex flex-col justify-center">
-          
           {/* Success Badge */}
           <div className="flex justify-center flex-shrink-0">
             <div className="w-14 h-14 bg-[#2d5f4f]/10 rounded-full flex items-center justify-center border border-[#2d5f4f]/20 shadow-sm relative">
@@ -73,14 +74,19 @@ export default function SuccessContent() {
               Application Submitted!
             </h1>
             <p className="text-xs text-gray-500 font-medium max-w-md mx-auto leading-relaxed">
-              Thank you for partnering with OyaEat. Your operational documents have been compiled and sent up for legal review.
+              Thank you for partnering with OyaEat. Your operational documents
+              have been compiled and sent up for legal review.
             </p>
           </div>
 
           {/* Reference Document Box */}
           <div className="bg-amber-50/60 border border-dashed border-amber-200 rounded-xl p-2.5 max-w-sm mx-auto text-center space-y-0.5 flex-shrink-0 w-full">
-            <p className="text-[9px] font-bold text-amber-800 uppercase tracking-widest">Application Tracking ID</p>
-            <p className="text-base font-black text-gray-900 tracking-wider font-mono">{trackingId}</p>
+            <p className="text-[9px] font-bold text-amber-800 uppercase tracking-widest">
+              Application Tracking ID
+            </p>
+            <p className="text-base font-black text-gray-900 tracking-wider font-mono">
+              {trackingId}
+            </p>
           </div>
 
           {/* What Happens Next Action Container */}
@@ -94,9 +100,12 @@ export default function SuccessContent() {
                   1
                 </span>
                 <div>
-                  <p className="font-bold text-gray-900 text-xs">Compliance Check</p>
+                  <p className="font-bold text-gray-900 text-xs">
+                    Compliance Check
+                  </p>
                   <p className="text-[11px] text-gray-500 font-medium leading-normal">
-                    Our verification unit will validate your uploaded CAC details and identity mapping within 2 business days.
+                    Our verification unit will validate your uploaded CAC
+                    details and identity mapping within 2 business days.
                   </p>
                 </div>
               </li>
@@ -105,9 +114,12 @@ export default function SuccessContent() {
                   2
                 </span>
                 <div>
-                  <p className="font-bold text-gray-900 text-xs">Dashboard Activation Link</p>
+                  <p className="font-bold text-gray-900 text-xs">
+                    Dashboard Activation Link
+                  </p>
                   <p className="text-[11px] text-gray-500 font-medium leading-normal">
-                    Once approved, an email link will activate access to your desktop OyaEat Merchant Portal.
+                    Once approved, an email link will activate access to your
+                    desktop OyaEat Merchant Portal.
                   </p>
                 </div>
               </li>
@@ -116,9 +128,12 @@ export default function SuccessContent() {
                   3
                 </span>
                 <div>
-                  <p className="font-bold text-gray-900 text-xs">Storefront Setup & Launch</p>
+                  <p className="font-bold text-gray-900 text-xs">
+                    Storefront Setup & Launch
+                  </p>
                   <p className="text-[11px] text-gray-500 font-medium leading-normal">
-                    Log in to add menu items, prices, and food portrait pictures to start taking orders sharp sharp!
+                    Log in to add menu items, prices, and food portrait pictures
+                    to start taking orders sharp sharp!
                   </p>
                 </div>
               </li>
@@ -141,7 +156,6 @@ export default function SuccessContent() {
               <span>Monitor Dashboard Status</span>
             </button>
           </div>
-
         </div>
       </div>
     </div>

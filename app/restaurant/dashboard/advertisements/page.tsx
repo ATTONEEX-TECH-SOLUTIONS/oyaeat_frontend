@@ -10,7 +10,8 @@ export default function RestaurantAdvertPage() {
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  const [targetBusinessId, setTargetBusinessId] = useState<string>("vendor_session"); 
+  const [targetBusinessId, setTargetBusinessId] =
+    useState<string>("vendor_session");
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
   const [durationHours, setDurationHours] = useState<string>("24");
@@ -20,7 +21,8 @@ export default function RestaurantAdvertPage() {
   const [code, setCode] = useState("");
   const [discount, setDiscount] = useState("");
 
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+  const API_BASE_URL =
+    process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
   useEffect(() => {
     async function initPage() {
@@ -42,7 +44,9 @@ export default function RestaurantAdvertPage() {
 
   const getAuthToken = (): string | null => {
     if (typeof window === "undefined") return null;
-    return localStorage.getItem("vendor_token") || localStorage.getItem("authToken");
+    return (
+      localStorage.getItem("vendor_token") || localStorage.getItem("authToken")
+    );
   };
 
   const fetchMyActiveBroadcasts = async () => {
@@ -70,7 +74,9 @@ export default function RestaurantAdvertPage() {
     setSuccessMsg(null);
 
     if (!title || !desc || !selectedFile) {
-      setErrorMsg("Please fill out all fields and choose a campaign broadcast image.");
+      setErrorMsg(
+        "Please fill out all fields and choose a campaign broadcast image.",
+      );
       return;
     }
 
@@ -78,22 +84,28 @@ export default function RestaurantAdvertPage() {
     try {
       const token = getAuthToken();
       const payload = new FormData();
-      payload.append("businessId", "0"); 
+      payload.append("businessId", "0");
       payload.append("title", title);
       payload.append("desc", desc);
       payload.append("durationHours", durationHours);
       payload.append("image", selectedFile);
 
-      const response = await fetch(`${API_BASE_URL}/vendor/broadcasts/request-approval`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-        body: payload,
-      });
+      const response = await fetch(
+        `${API_BASE_URL}/vendor/broadcasts/request-approval`,
+        {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+          body: payload,
+        },
+      );
 
       const resData = await response.json();
 
       if (response.ok) {
-        setSuccessMsg(resData.message || "Campaign sent to administration teams for live review approval.");
+        setSuccessMsg(
+          resData.message ||
+            "Campaign sent to administration teams for live review approval.",
+        );
         setTitle("");
         setDesc("");
         setSelectedFile(null);
@@ -110,7 +122,10 @@ export default function RestaurantAdvertPage() {
     }
   };
 
-  const handleToggleActiveStatus = async (id: number, currentStatus: boolean) => {
+  const handleToggleActiveStatus = async (
+    id: number,
+    currentStatus: boolean,
+  ) => {
     setErrorMsg(null);
     setSuccessMsg(null);
     try {
@@ -119,24 +134,33 @@ export default function RestaurantAdvertPage() {
 
       const nextStatusState = !currentStatus;
 
-      const res = await fetch(`${API_BASE_URL}/vendor/broadcasts/${id}/toggle`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+      const res = await fetch(
+        `${API_BASE_URL}/vendor/broadcasts/${id}/toggle`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ isActive: nextStatusState }),
         },
-        body: JSON.stringify({ isActive: nextStatusState }),
-      });
+      );
 
       const resData = await res.json();
 
       if (res.ok) {
-        setSuccessMsg(resData.message || "Broadcast preference updated successfully.");
+        setSuccessMsg(
+          resData.message || "Broadcast preference updated successfully.",
+        );
         setBroadcasts((prev) =>
-          prev.map((item) => (item.id === id ? { ...item, isActive: nextStatusState } : item))
+          prev.map((item) =>
+            item.id === id ? { ...item, isActive: nextStatusState } : item,
+          ),
         );
       } else {
-        setErrorMsg(resData.message || "Unable to adjust broadcast preference flag.");
+        setErrorMsg(
+          resData.message || "Unable to adjust broadcast preference flag.",
+        );
       }
     } catch (err) {
       console.error(err);
@@ -147,14 +171,26 @@ export default function RestaurantAdvertPage() {
   return (
     <div className="p-4 md:p-6 w-full flex flex-col justify-start items-start gap-6">
       <div className="border-b pb-4 border-slate-100 w-full max-w-7xl">
-        <h1 className="text-xl font-black text-slate-900 tracking-tight">Marketing Campaign Desks</h1>
-        <p className="text-xs text-slate-500 mt-1">Submit visual broadcast promotional assets up for review approval.</p>
+        <h1 className="text-xl font-black text-slate-900 tracking-tight">
+          Marketing Campaign Desks
+        </h1>
+        <p className="text-xs text-slate-500 mt-1">
+          Submit visual broadcast promotional assets up for review approval.
+        </p>
       </div>
 
       {(successMsg || errorMsg) && (
         <div className="w-full max-w-7xl space-y-2">
-          {successMsg && <div className="p-3.5 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl text-xs font-bold shadow-sm">{successMsg}</div>}
-          {errorMsg && <div className="p-3.5 bg-rose-50 border border-rose-200 text-rose-800 rounded-2xl text-xs font-bold shadow-sm">{errorMsg}</div>}
+          {successMsg && (
+            <div className="p-3.5 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl text-xs font-bold shadow-sm">
+              {successMsg}
+            </div>
+          )}
+          {errorMsg && (
+            <div className="p-3.5 bg-rose-50 border border-rose-200 text-rose-800 rounded-2xl text-xs font-bold shadow-sm">
+              {errorMsg}
+            </div>
+          )}
         </div>
       )}
 
@@ -164,32 +200,32 @@ export default function RestaurantAdvertPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 pt-2 w-full max-w-7xl">
-<CreateBannerForm
-  onSubmit={handleCreateBroadcast}
-  targetBusinessId={targetBusinessId}
-  setTargetBusinessId={setTargetBusinessId}
-  approvedBusinesses={[{ id: "vendor_session", name: "Your Restaurant Location" }]}
-  title={title}
-  setTitle={setTitle}
-  desc={desc}
-  setDesc={setDesc}
-  durationHours={durationHours}
-  setDurationHours={setDurationHours}
-  previewUrl={previewUrl}
-  selectedFile={selectedFile}
-  onFileChange={handleFileChange}
-  submitting={submitting}
-  
-  // 🚀 NEW PROP INJECTIONS ADDED HERE:
-  code={code}
-  setCode={setCode}
-  discount={discount}
-  setDiscount={setDiscount}
-/>
+          <CreateBannerForm
+            onSubmit={handleCreateBroadcast}
+            targetBusinessId={targetBusinessId}
+            setTargetBusinessId={setTargetBusinessId}
+            approvedBusinesses={[
+              { id: "vendor_session", name: "Your Restaurant Location" },
+            ]}
+            title={title}
+            setTitle={setTitle}
+            desc={desc}
+            setDesc={setDesc}
+            durationHours={durationHours}
+            setDurationHours={setDurationHours}
+            previewUrl={previewUrl}
+            selectedFile={selectedFile}
+            onFileChange={handleFileChange}
+            submitting={submitting}
 
-        <ActiveBroadcastsTable
-  broadcasts={broadcasts} 
-/>
+            // 🚀 NEW PROP INJECTIONS ADDED HERE:
+            code={code}
+            setCode={setCode}
+            discount={discount}
+            setDiscount={setDiscount}
+          />
+
+          <ActiveBroadcastsTable broadcasts={broadcasts} />
         </div>
       )}
     </div>

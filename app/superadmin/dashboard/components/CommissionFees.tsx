@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { DollarSign } from 'lucide-react';
+import React from "react";
+import { DollarSign } from "lucide-react";
 
 interface CommissionFeesProps {
   platformCommission: number;
@@ -28,22 +28,22 @@ export function CommissionFees({
           <label className="block text-xs font-bold uppercase tracking-widest text-[#1a5c2a] mb-2">
             Global Platform Commission (%)
           </label>
-          <input 
-            type="number" 
-            value={platformCommission} 
-            onChange={e => setPlatformCommission(Number(e.target.value))} 
-            className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 text-gray-900 font-semibold outline-none focus:border-[#1a5c2a] focus:bg-white transition-all text-sm" 
+          <input
+            type="number"
+            value={platformCommission}
+            onChange={(e) => setPlatformCommission(Number(e.target.value))}
+            className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 text-gray-900 font-semibold outline-none focus:border-[#1a5c2a] focus:bg-white transition-all text-sm"
           />
         </div>
         <div>
           <label className="block text-xs font-bold uppercase tracking-widest text-[#1a5c2a] mb-2">
             Base Rider Delivery Fee (₦)
           </label>
-          <input 
-            type="number" 
-            value={baseRiderFee} 
-            onChange={e => setBaseRiderFee(Number(e.target.value))} 
-            className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 text-gray-900 font-semibold outline-none focus:border-[#1a5c2a] focus:bg-white transition-all text-sm" 
+          <input
+            type="number"
+            value={baseRiderFee}
+            onChange={(e) => setBaseRiderFee(Number(e.target.value))}
+            className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 text-gray-900 font-semibold outline-none focus:border-[#1a5c2a] focus:bg-white transition-all text-sm"
           />
         </div>
       </div>

@@ -7,8 +7,6 @@ import { RiderChatSidebar } from "../components/support/RiderChatSidebar";
 import { RiderChatWindow } from "../components/support/RiderChatWindow";
 import { RiderAlertsView } from "../components/support/RiderAlertsView";
 
-
-
 export default function SupportAndNotificationsView() {
   const [activeTab, setActiveTab] = useState<"support" | "alerts">("support");
   const [threads, setThreads] = useState<Thread[]>([]);
@@ -21,19 +19,21 @@ export default function SupportAndNotificationsView() {
 
   // 🚀 LIVE STATE: Stores raw alert objects fetched from your database
   const [alerts, setAlerts] = useState<any[]>([]);
-    const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+  const API_BASE_URL =
+    process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
   const [isCreating, setIsCreating] = useState(false);
   const [newSubject, setNewSubject] = useState("");
 
   const chatEndRef = useRef<HTMLDivElement>(null);
 
-    const fetchRiderData = async (silent = false) => {
+  const fetchRiderData = async (silent = false) => {
     if (!silent) setLoading(true);
     try {
-      const token = localStorage.getItem("rider_token") || 
-                    localStorage.getItem("riderToken") || 
-                    localStorage.getItem("authToken");
+      const token =
+        localStorage.getItem("rider_token") ||
+        localStorage.getItem("riderToken") ||
+        localStorage.getItem("authToken");
 
       // 🚀 FIXED: Fallback native fetch completely bypasses the chatApi object property blockage
       const [threadsRes, alertsRes] = await Promise.all([
@@ -41,18 +41,18 @@ export default function SupportAndNotificationsView() {
         fetch(`${API_BASE_URL}/chat/operations-alerts`, {
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          }
-        }).then(res => res.json())
+            Authorization: `Bearer ${token}`,
+          },
+        }).then((res) => res.json()),
       ]);
 
       const threadData = threadsRes.data || [];
       setThreads(threadData);
-      
+
       if (alertsRes && alertsRes.success) {
         setAlerts(alertsRes.data || []);
       }
-      
+
       if (!activeThreadId && threadData.length > 0) {
         setActiveThreadId(threadData[0].id);
       }
@@ -62,8 +62,6 @@ export default function SupportAndNotificationsView() {
       if (!silent) setLoading(false);
     }
   };
-
-
 
   const fetchRiderMessages = async (threadId: string) => {
     setLoadingMessages(true);
@@ -88,9 +86,12 @@ export default function SupportAndNotificationsView() {
     if (activeThreadId) {
       fetchRiderMessages(activeThreadId);
       const messagePoll = setInterval(() => {
-        chatApi.getMessages("rider", activeThreadId).then((res) => {
-          setMessages(res.data || []);
-        }).catch(() => {});
+        chatApi
+          .getMessages("rider", activeThreadId)
+          .then((res) => {
+            setMessages(res.data || []);
+          })
+          .catch(() => {});
       }, 5000);
       return () => clearInterval(messagePoll);
     } else {
@@ -103,7 +104,11 @@ export default function SupportAndNotificationsView() {
     if (!newSubject.trim()) return;
     setSending(true);
     try {
-      const res = await chatApi.createSupportThread("rider", newSubject.trim(), "support");
+      const res = await chatApi.createSupportThread(
+        "rider",
+        newSubject.trim(),
+        "support",
+      );
       setIsCreating(false);
       setNewSubject("");
       await fetchRiderData(true);
@@ -132,7 +137,7 @@ export default function SupportAndNotificationsView() {
     }
   };
 
-  const activeThread = threads.find(t => t.id === activeThreadId);
+  const activeThread = threads.find((t) => t.id === activeThreadId);
   // Compute unread alert count checks dynamically
   const unreadAlertsCount = alerts.length;
 
@@ -146,14 +151,15 @@ export default function SupportAndNotificationsView() {
 
   return (
     <div className="max-w-6xl mx-auto bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col h-[650px] w-full">
-      
       {/* Navigation Tab Selection Headers */}
       <div className="flex border-b border-gray-100 bg-gray-50/50 flex-shrink-0">
         <button
           type="button"
           onClick={() => setActiveTab("support")}
           className={`flex-1 py-4 text-sm font-bold border-b-2 flex items-center justify-center gap-2 transition-all ${
-            activeTab === "support" ? "border-green-600 text-green-600 bg-white" : "text-gray-500 hover:text-gray-700"
+            activeTab === "support"
+              ? "border-green-600 text-green-600 bg-white"
+              : "text-gray-500 hover:text-gray-700"
           }`}
         >
           <MessageSquare className="w-4 h-4" /> Live Support Chat
@@ -162,7 +168,9 @@ export default function SupportAndNotificationsView() {
           type="button"
           onClick={() => setActiveTab("alerts")}
           className={`flex-1 py-4 text-sm font-bold border-b-2 flex items-center justify-center gap-2 transition-all ${
-            activeTab === "alerts" ? "border-green-600 text-green-600 bg-white" : "text-gray-500 hover:text-gray-700"
+            activeTab === "alerts"
+              ? "border-green-600 text-green-600 bg-white"
+              : "text-gray-500 hover:text-gray-700"
           }`}
         >
           <Bell className="w-4 h-4" /> Operations Alerts ({unreadAlertsCount})

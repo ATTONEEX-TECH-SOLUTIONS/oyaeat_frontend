@@ -1,27 +1,27 @@
-@import 'tailwindcss';
-@import 'tw-animate-css';
+@import "tailwindcss";
+@import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: #F5FAF6;
-  --foreground: #111C14;
+  --background: #f5faf6;
+  --foreground: #111c14;
   --card: #ffffff;
-  --card-foreground: #111C14;
+  --card-foreground: #111c14;
   --popover: #ffffff;
-  --popover-foreground: #111C14;
+  --popover-foreground: #111c14;
   --primary: #1a5c2a;
   --primary-foreground: #ffffff;
-  --secondary: #E8F5E9;
-  --secondary-foreground: #111C14;
-  --muted: #D8E4DC;
-  --muted-foreground: #6B7C6E;
-  --accent: #E8F5E9;
-  --accent-foreground: #111C14;
-  --destructive: #C0392B;
+  --secondary: #e8f5e9;
+  --secondary-foreground: #111c14;
+  --muted: #d8e4dc;
+  --muted-foreground: #6b7c6e;
+  --accent: #e8f5e9;
+  --accent-foreground: #111c14;
+  --destructive: #c0392b;
   --destructive-foreground: #ffffff;
-  --border: #D8E4DC;
-  --input: #D8E4DC;
+  --border: #d8e4dc;
+  --input: #d8e4dc;
   --ring: #1a5c2a;
   --chart-1: #1a5c2a;
   --chart-2: #2e7d32;
@@ -75,8 +75,8 @@
 }
 
 @theme inline {
-  --font-sans: 'Geist', 'Geist Fallback';
-  --font-mono: 'Geist Mono', 'Geist Mono Fallback';
+  --font-sans: "Geist", "Geist Fallback";
+  --font-mono: "Geist Mono", "Geist Mono Fallback";
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -118,9 +118,9 @@
   --animate-bounce-slow: bounceSlow 3s ease-in-out infinite;
 }
 
-
 @keyframes blob {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1) rotate(0deg);
   }
   25% {
@@ -150,7 +150,8 @@
 }
 
 @keyframes bounceSlow {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {

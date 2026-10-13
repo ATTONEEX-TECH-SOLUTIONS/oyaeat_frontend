@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { Wallet } from 'lucide-react';
+import React from "react";
+import { Wallet } from "lucide-react";
 
 interface PayoutPoliciesProps {
   restaurantPayoutThreshold: number;
@@ -32,22 +32,24 @@ export function PayoutPolicies({
           <label className="block text-xs font-bold uppercase tracking-widest text-[#1a5c2a] mb-2">
             Restaurant Min Payout (₦)
           </label>
-          <input 
-            type="number" 
-            value={restaurantPayoutThreshold} 
-            onChange={e => setRestaurantPayoutThreshold(Number(e.target.value))} 
-            className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 text-gray-900 font-semibold outline-none focus:border-[#1a5c2a] focus:bg-white transition-all text-sm" 
+          <input
+            type="number"
+            value={restaurantPayoutThreshold}
+            onChange={(e) =>
+              setRestaurantPayoutThreshold(Number(e.target.value))
+            }
+            className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 text-gray-900 font-semibold outline-none focus:border-[#1a5c2a] focus:bg-white transition-all text-sm"
           />
         </div>
         <div>
           <label className="block text-xs font-bold uppercase tracking-widest text-[#1a5c2a] mb-2">
             Rider Min Payout (₦)
           </label>
-          <input 
-            type="number" 
-            value={riderPayoutThreshold} 
-            onChange={e => setRiderPayoutThreshold(Number(e.target.value))} 
-            className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 text-gray-900 font-semibold outline-none focus:border-[#1a5c2a] focus:bg-white transition-all text-sm" 
+          <input
+            type="number"
+            value={riderPayoutThreshold}
+            onChange={(e) => setRiderPayoutThreshold(Number(e.target.value))}
+            className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 text-gray-900 font-semibold outline-none focus:border-[#1a5c2a] focus:bg-white transition-all text-sm"
           />
         </div>
       </div>
@@ -56,9 +58,9 @@ export function PayoutPolicies({
         <label className="block text-xs font-bold uppercase tracking-widest text-[#1a5c2a] mb-2">
           Automatic Payout Schedule
         </label>
-        <select 
-          value={payoutSchedule} 
-          onChange={e => setPayoutSchedule(e.target.value)} 
+        <select
+          value={payoutSchedule}
+          onChange={(e) => setPayoutSchedule(e.target.value)}
           className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 text-gray-900 font-bold outline-none focus:border-[#1a5c2a] focus:bg-white transition-all text-sm cursor-pointer"
         >
           <option value="daily">Daily</option>

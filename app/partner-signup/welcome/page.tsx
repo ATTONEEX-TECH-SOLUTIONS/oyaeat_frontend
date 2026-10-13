@@ -50,7 +50,9 @@ const WelcomePage = () => {
                   <h3 className="text-[#2d5f4f] text-lg font-semibold mb-2">
                     Step 2
                   </h3>
-                  <p className="text-gray-900 text-base">Verify your business</p>
+                  <p className="text-gray-900 text-base">
+                    Verify your business
+                  </p>
                 </div>
               </div>
             </div>

@@ -1,6 +1,6 @@
-import Image from 'next/image';
-import { Star, Clock, Plus, Sparkles } from 'lucide-react';
-import { ArrowRight } from 'lucide-react';
+import Image from "next/image";
+import { Star, Clock, Plus, Sparkles } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 interface RecommendationItem {
   id: number;
@@ -12,10 +12,13 @@ interface RecommendationItem {
   image: string;
 }
 
-export default function PersonalizedRecommendations({ data }: { data: RecommendationItem[] }) {
+export default function PersonalizedRecommendations({
+  data,
+}: {
+  data: RecommendationItem[];
+}) {
   return (
     <section className="py-20 px-6 lg:px-10 max-w-[1400px] mx-auto">
-
       {/* Header */}
       <div className="flex justify-between items-end mb-10">
         <div>
@@ -77,15 +80,21 @@ export default function PersonalizedRecommendations({ data }: { data: Recommenda
                 <h3 className="font-bold text-gray-900 text-base leading-tight group-hover:text-[#2d5f4f] transition-colors duration-200 line-clamp-1">
                   {item.name}
                 </h3>
-                <p className="text-xs text-gray-400 mt-1 font-medium line-clamp-1">{item.restaurant}</p>
+                <p className="text-xs text-gray-400 mt-1 font-medium line-clamp-1">
+                  {item.restaurant}
+                </p>
               </div>
 
               {/* Footer */}
               <div className="flex items-center justify-between pt-3 border-t border-gray-50">
-                <span className="text-base font-black text-gray-900">{item.price}</span>
+                <span className="text-base font-black text-gray-900">
+                  {item.price}
+                </span>
                 <div className="flex items-center gap-1">
                   <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                  <span className="text-sm font-bold text-gray-900">{item.rating}</span>
+                  <span className="text-sm font-bold text-gray-900">
+                    {item.rating}
+                  </span>
                 </div>
               </div>
             </div>
@@ -100,7 +109,6 @@ export default function PersonalizedRecommendations({ data }: { data: Recommenda
           <ArrowRight className="w-3.5 h-3.5" />
         </button>
       </div>
-
     </section>
   );
 }

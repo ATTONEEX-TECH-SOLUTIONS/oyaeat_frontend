@@ -1,11 +1,12 @@
 "use client";
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
 export function useRiderLocation(isOnline: boolean) {
   const watchIdRef = useRef<number | null>(null);
-  
+
   // Dynamic fallback mapping path to capture your base URL configuration securely
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+  const API_BASE_URL =
+    process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
   useEffect(() => {
     // Kill the tracking process if rider is offline or browser lacks GPS hardware features
@@ -25,11 +26,11 @@ export function useRiderLocation(isOnline: boolean) {
         try {
           // ── CORRECTED ROUTE PATH: Combines base URL with your real /rider/location/ping backend endpoint ──
           const response = await fetch(`${API_BASE_URL}/rider/location/ping`, {
-            method: 'PUT',
+            method: "PUT",
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
               // ── CORRECTED KEY: Pulls riderToken to match your local storage assignment ──
-              'Authorization': `Bearer ${localStorage.getItem('riderToken') || ''}`
+              Authorization: `Bearer ${localStorage.getItem("riderToken") || ""}`,
             },
             body: JSON.stringify({ latitude, longitude }),
           });
@@ -38,9 +39,14 @@ export function useRiderLocation(isOnline: boolean) {
             throw new Error(`Server returned status code: ${response.status}`);
           }
 
-          console.log(`📡 GPS Live Stream Sync Success: [${latitude}, ${longitude}]`);
+          console.log(
+            `📡 GPS Live Stream Sync Success: [${latitude}, ${longitude}]`,
+          );
         } catch (error) {
-          console.error("Failed to forward telemetry data packet down backend server:", error);
+          console.error(
+            "Failed to forward telemetry data packet down backend server:",
+            error,
+          );
         }
       },
       (error) => {
@@ -48,9 +54,9 @@ export function useRiderLocation(isOnline: boolean) {
       },
       {
         enableHighAccuracy: true, // Force phone hardware GPS instead of rough tower triangulation
-        timeout: 10000,           // Throw error code timeout after 10 seconds of no answer
-        maximumAge: 0             // Never use stale cached locations
-      }
+        timeout: 10000, // Throw error code timeout after 10 seconds of no answer
+        maximumAge: 0, // Never use stale cached locations
+      },
     );
 
     // Destructor hook teardown cleanup: prevent background processing leaks

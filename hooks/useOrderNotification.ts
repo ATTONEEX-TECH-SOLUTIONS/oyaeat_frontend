@@ -11,18 +11,22 @@ interface IncomingOrderAlert {
   dropoffAddress: string;
 }
 
-export function useOrderNotification(isOnline: boolean, onNewOrderReceived: (order: IncomingOrderAlert) => void) {
+export function useOrderNotification(
+  isOnline: boolean,
+  onNewOrderReceived: (order: IncomingOrderAlert) => void,
+) {
   useEffect(() => {
     if (!isOnline) return;
 
-    const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+    const API_BASE_URL =
+      process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
     const token = localStorage.getItem("riderToken");
 
     if (!token) return;
 
     // Connect to the backend socket instance securely
     const socket: Socket = io(API_BASE_URL, {
-      auth: { token } // Transmits the JWT signature to our init.js auth middleware block
+      auth: { token }, // Transmits the JWT signature to our init.js auth middleware block
     });
 
     // Handle authentication or socket connection drops gracefully
@@ -32,7 +36,10 @@ export function useOrderNotification(isOnline: boolean, onNewOrderReceived: (ord
 
     // Listen for the instant order matching signal from our Express Orders Controller
     socket.on("NEW_DELIVERY_REQUEST", (orderData: IncomingOrderAlert) => {
-      console.log("🎯 Live incoming delivery match event caught via socket:", orderData);
+      console.log(
+        "🎯 Live incoming delivery match event caught via socket:",
+        orderData,
+      );
       onNewOrderReceived(orderData); // Triggers our visual layout state updates
     });
 

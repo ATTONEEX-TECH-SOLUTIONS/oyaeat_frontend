@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { Shield, Globe } from 'lucide-react';
+import React from "react";
+import { Shield, Globe } from "lucide-react";
 
 interface CoreConfigProps {
   platformName: string;
@@ -33,22 +33,22 @@ export function CoreConfiguration({
             <label className="block text-xs font-bold uppercase tracking-widest text-[#1a5c2a] mb-2">
               Platform Name
             </label>
-            <input 
-              type="text" 
-              value={platformName} 
-              onChange={e => setPlatformName(e.target.value)} 
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 text-gray-900 font-semibold outline-none focus:border-[#1a5c2a] focus:bg-white transition-all text-sm" 
+            <input
+              type="text"
+              value={platformName}
+              onChange={(e) => setPlatformName(e.target.value)}
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 text-gray-900 font-semibold outline-none focus:border-[#1a5c2a] focus:bg-white transition-all text-sm"
             />
           </div>
           <div>
             <label className="block text-xs font-bold uppercase tracking-widest text-[#1a5c2a] mb-2">
               Support Email
             </label>
-            <input 
-              type="email" 
-              value={supportEmail} 
-              onChange={e => setSupportEmail(e.target.value)} 
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 text-gray-900 font-semibold outline-none focus:border-[#1a5c2a] focus:bg-white transition-all text-sm" 
+            <input
+              type="email"
+              value={supportEmail}
+              onChange={(e) => setSupportEmail(e.target.value)}
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 text-gray-900 font-semibold outline-none focus:border-[#1a5c2a] focus:bg-white transition-all text-sm"
             />
           </div>
         </div>
@@ -59,11 +59,11 @@ export function CoreConfiguration({
           </label>
           <div className="relative flex items-center">
             <Globe className="absolute left-4 h-4 w-4 text-gray-400 pointer-events-none" />
-            <input 
-              type="text" 
-              value={webAddress} 
-              onChange={e => setWebAddress(e.target.value)} 
-              className="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 text-gray-900 font-semibold outline-none focus:border-[#1a5c2a] focus:bg-white transition-all text-sm" 
+            <input
+              type="text"
+              value={webAddress}
+              onChange={(e) => setWebAddress(e.target.value)}
+              className="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 text-gray-900 font-semibold outline-none focus:border-[#1a5c2a] focus:bg-white transition-all text-sm"
             />
           </div>
         </div>

@@ -18,7 +18,8 @@ interface DocumentUpload {
   isFromDatabase?: boolean;
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
 export default function VerifyBusinessContent() {
   const router = useRouter();
@@ -37,7 +38,7 @@ export default function VerifyBusinessContent() {
       apiKey: "business_license",
       description: "Corporate Affairs Commission registry scan",
       file: null,
-      uploaded: false
+      uploaded: false,
     },
     {
       id: "firs-tin",
@@ -45,7 +46,7 @@ export default function VerifyBusinessContent() {
       apiKey: "tax_id",
       description: "Federal Joint Tax Board verification",
       file: null,
-      uploaded: false
+      uploaded: false,
     },
     {
       id: "lga-food-permit",
@@ -53,7 +54,7 @@ export default function VerifyBusinessContent() {
       apiKey: "food_certificate",
       description: "Local Government Area sanitary permit",
       file: null,
-      uploaded: false
+      uploaded: false,
     },
     {
       id: "owner-nin-id",
@@ -61,7 +62,7 @@ export default function VerifyBusinessContent() {
       apiKey: "owner_id",
       description: "National Identification Number slip",
       file: null,
-      uploaded: false
+      uploaded: false,
     },
     {
       id: "corporate-bank-proof",
@@ -69,8 +70,8 @@ export default function VerifyBusinessContent() {
       apiKey: "bank_document",
       description: "Statement header matching CAC name",
       file: null,
-      uploaded: false
-    }
+      uploaded: false,
+    },
   ]);
 
   useEffect(() => {
@@ -83,17 +84,23 @@ export default function VerifyBusinessContent() {
 
         const res = await fetch(`${API_BASE_URL}/vendor/business/${bId}`, {
           method: "GET",
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${token}` },
         });
 
         const data = await res.json().catch(() => ({}));
 
-        if (res.ok && data?.business?.documents && data.business.documents.length > 0) {
+        if (
+          res.ok &&
+          data?.business?.documents &&
+          data.business.documents.length > 0
+        ) {
           const dbDocs = data.business.documents;
 
           setDocuments((prevDocs) =>
             prevDocs.map((localDoc) => {
-              const matchingDbDoc = dbDocs.find((d: any) => d.type === localDoc.apiKey);
+              const matchingDbDoc = dbDocs.find(
+                (d: any) => d.type === localDoc.apiKey,
+              );
 
               if (matchingDbDoc) {
                 return {
@@ -102,12 +109,17 @@ export default function VerifyBusinessContent() {
                   isFromDatabase: true,
                   file: {
                     name: matchingDbDoc.fileName || "Uploaded_Document.png",
-                    size: 1024
-                  } as unknown as File
+                    size: 1024,
+                  } as unknown as File,
                 };
               }
-              return { ...localDoc, uploaded: false, isFromDatabase: false, file: null };
-            })
+              return {
+                ...localDoc,
+                uploaded: false,
+                isFromDatabase: false,
+                file: null,
+              };
+            }),
           );
         } else {
           setDocuments((prevDocs) =>
@@ -115,12 +127,15 @@ export default function VerifyBusinessContent() {
               ...localDoc,
               uploaded: false,
               isFromDatabase: false,
-              file: null
-            }))
+              file: null,
+            })),
           );
         }
       } catch (err) {
-        console.error("Failed to merge pre-existing compliance metadata arrays:", err);
+        console.error(
+          "Failed to merge pre-existing compliance metadata arrays:",
+          err,
+        );
       }
     };
 
@@ -145,7 +160,8 @@ export default function VerifyBusinessContent() {
       }
 
       const finalBusinessId = queryBusinessId || storedBusinessId;
-      const finalBusinessName = queryBusinessName || storedBusinessName || "your business";
+      const finalBusinessName =
+        queryBusinessName || storedBusinessName || "your business";
 
       if (!finalBusinessId) {
         setError("Missing business identity tracking keys.");
@@ -167,8 +183,10 @@ export default function VerifyBusinessContent() {
   const handleFileChange = (id: string, file: File | null) => {
     setDocuments((docs) =>
       docs.map((doc) =>
-        doc.id === id ? { ...doc, file, uploaded: !!file, isFromDatabase: false } : doc
-      )
+        doc.id === id
+          ? { ...doc, file, uploaded: !!file, isFromDatabase: false }
+          : doc,
+      ),
     );
     if (error) setError("");
   };
@@ -176,7 +194,9 @@ export default function VerifyBusinessContent() {
   const handleSubmit = async () => {
     const allValid = documents.every((doc) => doc.uploaded);
     if (!allValid) {
-      setError("Please ensure all compliance document items are completed before submitting.");
+      setError(
+        "Please ensure all compliance document items are completed before submitting.",
+      );
       return;
     }
 
@@ -189,7 +209,9 @@ export default function VerifyBusinessContent() {
 
       documents.forEach((doc) => {
         const isFreshFile =
-          doc.file && doc.file instanceof File && (!doc.isFromDatabase || doc.file.size > 1024);
+          doc.file &&
+          doc.file instanceof File &&
+          (!doc.isFromDatabase || doc.file.size > 1024);
 
         if (isFreshFile) {
           formData.append(doc.apiKey, doc.file!);
@@ -223,23 +245,31 @@ export default function VerifyBusinessContent() {
         return;
       }
 
-      const response = await fetch(`${API_BASE_URL}/vendor/${businessId}/upload-documents`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`
+      const response = await fetch(
+        `${API_BASE_URL}/vendor/${businessId}/upload-documents`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
         },
-        body: formData
-      });
+      );
 
       const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        throw new Error(data?.message || "Failed to finalize document changes.");
+        throw new Error(
+          data?.message || "Failed to finalize document changes.",
+        );
       }
 
       clearCacheAndRedirect();
     } catch (err: any) {
-      setError(err?.message || "Failed to sync corrections with the database. Please try again.");
+      setError(
+        err?.message ||
+          "Failed to sync corrections with the database. Please try again.",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -250,7 +280,9 @@ export default function VerifyBusinessContent() {
   if (pageLoading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
-        <p className="text-gray-500 font-medium animate-pulse">Loading details...</p>
+        <p className="text-gray-500 font-medium animate-pulse">
+          Loading details...
+        </p>
       </div>
     );
   }
@@ -266,15 +298,23 @@ export default function VerifyBusinessContent() {
             <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-600">
               Step 2 of 2 - KYB Compliance
             </span>
-            <h1 className="text-lg font-bold text-gray-900 mt-0.5">Verify your business</h1>
+            <h1 className="text-lg font-bold text-gray-900 mt-0.5">
+              Verify your business
+            </h1>
             <p className="text-gray-500 text-xs mt-0.5">
               Upload compliance credentials for{" "}
-              <span className="font-semibold text-gray-700">{businessName}</span>.
+              <span className="font-semibold text-gray-700">
+                {businessName}
+              </span>
+              .
             </p>
           </div>
 
           <div className="mt-3 flex-shrink-0">
-            <UploadProgressBar completedCount={uploadedCount} totalCount={documents.length} />
+            <UploadProgressBar
+              completedCount={uploadedCount}
+              totalCount={documents.length}
+            />
           </div>
 
           {error && (
@@ -289,7 +329,9 @@ export default function VerifyBusinessContent() {
                 key={item.id}
                 doc={item}
                 isSubmitting={isSubmitting}
-                onFileChange={(id: string, file: File | null) => handleFileChange(id, file)}
+                onFileChange={(id: string, file: File | null) =>
+                  handleFileChange(id, file)
+                }
               />
             ))}
           </div>
@@ -300,7 +342,9 @@ export default function VerifyBusinessContent() {
               disabled={isSubmitting}
               className="bg-emerald-600 text-white font-semibold px-8 py-2.5 rounded-xl hover:bg-emerald-700 transition disabled:opacity-50"
             >
-              {isSubmitting ? "Submitting Verification..." : "Submit Verification"}
+              {isSubmitting
+                ? "Submitting Verification..."
+                : "Submit Verification"}
             </button>
           </div>
         </div>

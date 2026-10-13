@@ -1,11 +1,7 @@
-
-
-export default function PartnerSignupBaseLayout({ children }: { children: React.ReactNode }) {
-  return (
-   
-           <div>
-        {children}
-      </div> 
-   
-  )
+export default function PartnerSignupBaseLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return <div>{children}</div>;
 }

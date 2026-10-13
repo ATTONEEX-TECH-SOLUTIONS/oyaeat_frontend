@@ -1,31 +1,31 @@
-'use client'
+"use client";
 
-import React, { useState, useRef } from 'react'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { AlertCircle, Mail, Lock, ArrowRight } from 'lucide-react'
-import Image from 'next/image'
+import React, { useState, useRef } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { AlertCircle, Mail, Lock, ArrowRight } from "lucide-react";
+import Image from "next/image";
 
 // ── Brand tokens ──────────────────────────────────────────────────────────────
 const C = {
-  green: '#1B4332',
-  greenMid: '#2D6A4F',
-  greenLight: '#52B788',
-  amber: '#D4860B',
-  bg: '#F5F1EB',
-  white: '#FFFFFF',
-  textDark: 'inherit',
-  textMuted: '#6B7C6E',
-  border: '#D8E4DC',
-  error: '#C0392B',
-}
+  green: "#1B4332",
+  greenMid: "#2D6A4F",
+  greenLight: "#52B788",
+  amber: "#D4860B",
+  bg: "#F5F1EB",
+  white: "#FFFFFF",
+  textDark: "inherit",
+  textMuted: "#6B7C6E",
+  border: "#D8E4DC",
+  error: "#C0392B",
+};
 
 // ── Left panel (FULL-BLEED IMAGE) ─────────────────────────────────────────────
 function IllustrationPanel() {
   return (
     <div
       className="hidden lg:flex flex-col justify-between p-10 relative overflow-hidden"
-      style={{ minHeight: '100%', backgroundColor: C.green }}
+      style={{ minHeight: "100%", backgroundColor: C.green }}
     >
       {/* Full background image */}
       <div className="absolute inset-0">
@@ -38,7 +38,6 @@ function IllustrationPanel() {
         />
 
         {/* Brand overlay for readability */}
-      
       </div>
 
       {/* Decorative circles (subtle) */}
@@ -59,7 +58,9 @@ function IllustrationPanel() {
       <div className="relative z-10">
         <div className="flex items-center gap-3 mb-2">
           <div>
-            <p className="text-white text-lg font-black tracking-tight">Oya-Eat</p>
+            <p className="text-white text-lg font-black tracking-tight">
+              Oya-Eat
+            </p>
             <p
               className="text-xs font-semibold tracking-[0.2em]"
               style={{ color: C.greenLight }}
@@ -73,15 +74,16 @@ function IllustrationPanel() {
       {/* Quote */}
       <div className="relative z-10 max-w-md">
         <p className="text-white text-2xl font-black leading-snug tracking-tight mb-2">
-          Manage your restaurant,<br />
+          Manage your restaurant,
+          <br />
           grow your business.
         </p>
-        <p className="text-sm" style={{ color: 'rgba(255,255,255,0.85)' }}>
+        <p className="text-sm" style={{ color: "rgba(255,255,255,0.85)" }}>
           Orders, menu, analytics — all in one place.
         </p>
       </div>
     </div>
-  )
+  );
 }
 
 // ── Field ─────────────────────────────────────────────────────────────────────
@@ -94,16 +96,16 @@ function Field({
   icon: Icon,
   disabled,
 }: {
-  label: string
-  type: string
-  value: string
-  onChange: (v: string) => void
-  placeholder: string
-  icon: React.ElementType
-  disabled?: boolean
+  label: string;
+  type: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder: string;
+  icon: React.ElementType;
+  disabled?: boolean;
 }) {
-  const [focused, setFocused] = useState(false)
-  const inputRef = useRef<HTMLInputElement>(null)
+  const [focused, setFocused] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   return (
     <div className="mb-4">
@@ -144,54 +146,54 @@ function Field({
         />
       </div>
     </div>
-  )
+  );
 }
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 export default function LoginPage() {
-  const router = useRouter()
+  const router = useRouter();
 
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
-    setLoading(true)
+    e.preventDefault();
+    setError("");
+    setLoading(true);
 
     try {
       const API_BASE_URL =
-        process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'
+        process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
 
       const res = await fetch(`${API_BASE_URL}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
-      })
+      });
 
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.message || 'Invalid email or password')
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Invalid email or password");
 
       if (data?.token) {
         try {
-          localStorage.setItem('authToken', data.token)
+          localStorage.setItem("authToken", data.token);
         } catch {}
       }
 
       if (data?.dashboard) {
         try {
-          localStorage.setItem('dashboard', JSON.stringify(data.dashboard))
+          localStorage.setItem("dashboard", JSON.stringify(data.dashboard));
         } catch {}
       }
 
-      router.push('/restaurant/dashboard')
+      router.push("/restaurant/dashboard");
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Login failed')
-      setLoading(false)
+      setError(err instanceof Error ? err.message : "Login failed");
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex" style={{ backgroundColor: C.bg }}>
@@ -246,7 +248,7 @@ export default function LoginPage() {
           {error && (
             <div
               className="mb-5 flex items-start gap-3 rounded-xl border px-4 py-3"
-              style={{ borderColor: '#FECACA', backgroundColor: '#FEF2F2' }}
+              style={{ borderColor: "#FECACA", backgroundColor: "#FEF2F2" }}
             >
               <AlertCircle
                 className="h-4 w-4 flex-shrink-0 mt-0.5"
@@ -322,14 +324,21 @@ export default function LoginPage() {
           </form>
 
           {/* Footer */}
-          <p className="mt-6 text-center text-sm" style={{ color: C.textMuted }}>
-            Don&apos;t have an account?{' '}
-            <Link href="/" className="font-bold hover:underline" style={{ color: C.green }}>
+          <p
+            className="mt-6 text-center text-sm"
+            style={{ color: C.textMuted }}
+          >
+            Don&apos;t have an account?{" "}
+            <Link
+              href="/"
+              className="font-bold hover:underline"
+              style={{ color: C.green }}
+            >
               Contact us
             </Link>
           </p>
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -1,122 +1,122 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { Eye, CheckCircle, Clock, AlertCircle, XCircle } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { useState, useEffect } from "react";
+import { Eye, CheckCircle, Clock, AlertCircle, XCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
-type OrderItem = { name: string; quantity: number; price: number }
+type OrderItem = { name: string; quantity: number; price: number };
 
 export type RecentOrder = {
-  id: number
-  customerName: string
+  id: number;
+  customerName: string;
   status:
-    | 'pending'
-    | 'preparing'
-    | 'ready'
-    | 'out_for_delivery'
-    | 'delivered'
-    | 'cancelled'
-  total: number
-  createdAt: string
-  items?: OrderItem[]
-}
+    | "pending"
+    | "preparing"
+    | "ready"
+    | "out_for_delivery"
+    | "delivered"
+    | "cancelled";
+  total: number;
+  createdAt: string;
+  items?: OrderItem[];
+};
 
-function labelStatus(status: RecentOrder['status']) {
+function labelStatus(status: RecentOrder["status"]) {
   switch (status) {
-    case 'pending':
-      return 'Pending'
-    case 'preparing':
-      return 'Preparing'
-    case 'ready':
-      return 'Ready for Pickup'
-    case 'out_for_delivery':
-      return 'Out for Delivery'
-    case 'delivered':
-      return 'Delivered'
-    case 'cancelled':
-      return 'Cancelled'
+    case "pending":
+      return "Pending";
+    case "preparing":
+      return "Preparing";
+    case "ready":
+      return "Ready for Pickup";
+    case "out_for_delivery":
+      return "Out for Delivery";
+    case "delivered":
+      return "Delivered";
+    case "cancelled":
+      return "Cancelled";
     default:
-      return status
+      return status;
   }
 }
 
-const getStatusIcon = (status: RecentOrder['status']) => {
+const getStatusIcon = (status: RecentOrder["status"]) => {
   switch (status) {
-    case 'pending':
-    case 'preparing':
-      return <Clock className="w-5 h-5 text-amber-600" />
-    case 'ready':
-      return <CheckCircle className="w-5 h-5 text-blue-600" />
-    case 'out_for_delivery':
-      return <AlertCircle className="w-5 h-5 text-orange-600" />
-    case 'delivered':
-      return <CheckCircle className="w-5 h-5 text-green-600" />
-    case 'cancelled':
-      return <XCircle className="w-5 h-5 text-red-600" />
+    case "pending":
+    case "preparing":
+      return <Clock className="w-5 h-5 text-amber-600" />;
+    case "ready":
+      return <CheckCircle className="w-5 h-5 text-blue-600" />;
+    case "out_for_delivery":
+      return <AlertCircle className="w-5 h-5 text-orange-600" />;
+    case "delivered":
+      return <CheckCircle className="w-5 h-5 text-green-600" />;
+    case "cancelled":
+      return <XCircle className="w-5 h-5 text-red-600" />;
     default:
-      return null
+      return null;
   }
-}
+};
 
-const getStatusColor = (status: RecentOrder['status']) => {
+const getStatusColor = (status: RecentOrder["status"]) => {
   switch (status) {
-    case 'pending':
-    case 'preparing':
-      return 'bg-amber-50 text-amber-700'
-    case 'ready':
-      return 'bg-blue-50 text-blue-700'
-    case 'out_for_delivery':
-      return 'bg-orange-50 text-orange-700'
-    case 'delivered':
-      return 'bg-green-50 text-green-700'
-    case 'cancelled':
-      return 'bg-red-50 text-red-700'
+    case "pending":
+    case "preparing":
+      return "bg-amber-50 text-amber-700";
+    case "ready":
+      return "bg-blue-50 text-blue-700";
+    case "out_for_delivery":
+      return "bg-orange-50 text-orange-700";
+    case "delivered":
+      return "bg-green-50 text-green-700";
+    case "cancelled":
+      return "bg-red-50 text-red-700";
     default:
-      return 'bg-gray-50 text-gray-700'
+      return "bg-gray-50 text-gray-700";
   }
-}
+};
 
 function timeAgo(iso: string) {
-  const then = new Date(iso).getTime()
-  const now = Date.now()
-  const diff = Math.max(0, now - then)
+  const then = new Date(iso).getTime();
+  const now = Date.now();
+  const diff = Math.max(0, now - then);
 
-  const mins = Math.floor(diff / 60000)
-  if (mins < 1) return 'just now'
-  if (mins < 60) return `${mins} min ago`
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins} min ago`;
 
-  const hrs = Math.floor(mins / 60)
-  if (hrs < 24) return `${hrs} hour${hrs > 1 ? 's' : ''} ago`
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs} hour${hrs > 1 ? "s" : ""} ago`;
 
-  const days = Math.floor(hrs / 24)
-  return `${days} day${days > 1 ? 's' : ''} ago`
+  const days = Math.floor(hrs / 24);
+  return `${days} day${days > 1 ? "s" : ""} ago`;
 }
 
 function itemsText(items?: OrderItem[]) {
-  if (!items?.length) return '—'
+  if (!items?.length) return "—";
   // e.g. "Margherita Pizza x2, Caesar Salad x1"
   return items
     .slice(0, 3)
     .map((i) => `${i.name} x${i.quantity ?? 1}`)
-    .join(', ')
+    .join(", ");
 }
 
 export default function RecentOrders({
   orders,
   onView,
 }: {
-  orders: RecentOrder[]
-  onView?: (orderId: number) => void
+  orders: RecentOrder[];
+  onView?: (orderId: number) => void;
 }) {
-  const [page, setPage] = useState(1)
-  const limit = 5
-  
-  const totalPages = Math.ceil((orders?.length || 0) / limit)
-  const paginatedOrders = orders?.slice((page - 1) * limit, page * limit) || []
+  const [page, setPage] = useState(1);
+  const limit = 5;
+
+  const totalPages = Math.ceil((orders?.length || 0) / limit);
+  const paginatedOrders = orders?.slice((page - 1) * limit, page * limit) || [];
 
   useEffect(() => {
-    setPage(1)
-  }, [orders])
+    setPage(1);
+  }, [orders]);
 
   return (
     <div className="bg-card border border-border rounded-lg p-6">
@@ -199,5 +199,5 @@ export default function RecentOrders({
         </div>
       )}
     </div>
-  )
+  );
 }

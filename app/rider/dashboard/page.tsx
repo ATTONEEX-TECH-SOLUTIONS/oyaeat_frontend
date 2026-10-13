@@ -24,13 +24,16 @@ export default function RiderDashboard() {
   const [dashboardData, setDashboardData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isActionLoading, setIsActionLoading] = useState(false);
-  const [incomingRequest, setIncomingRequest] = useState<IncomingOrderAlert | null>(null);
+  const [incomingRequest, setIncomingRequest] =
+    useState<IncomingOrderAlert | null>(null);
 
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+  const API_BASE_URL =
+    process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
   const watchIdRef = useRef<number | null>(null);
   const socketRef = useRef<Socket | null>(null);
 
-  const riderStatus = dashboardData?.riderProfile?.status || dashboardData?.status || "pending";
+  const riderStatus =
+    dashboardData?.riderProfile?.status || dashboardData?.status || "pending";
   const isAccountRestricted = riderStatus !== "active";
 
   //  Live Telemetry streaming engine
@@ -52,7 +55,7 @@ export default function RiderDashboard() {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
-              "Authorization": `Bearer ${token}`
+              Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({ latitude, longitude }),
           });
@@ -61,7 +64,7 @@ export default function RiderDashboard() {
         }
       },
       (error) => console.error("GPS Process Failure:", error.message),
-      { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
+      { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 },
     );
 
     return () => {
@@ -86,9 +89,12 @@ export default function RiderDashboard() {
     if (!token) return;
 
     socketRef.current = io(API_BASE_URL, { auth: { token } });
-    socketRef.current.on("NEW_DELIVERY_REQUEST", (orderData: IncomingOrderAlert) => {
-      setIncomingRequest(orderData);
-    });
+    socketRef.current.on(
+      "NEW_DELIVERY_REQUEST",
+      (orderData: IncomingOrderAlert) => {
+        setIncomingRequest(orderData);
+      },
+    );
 
     return () => {
       if (socketRef.current) {
@@ -106,12 +112,12 @@ export default function RiderDashboard() {
         return;
       }
       const response = await fetch(`${API_BASE_URL}/rider/dashboard`, {
-        headers: { "Authorization": `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (response.ok) {
         const data = await response.json();
         setDashboardData(data);
-        setIsOnline(data.status === "active" ? data.isOnline : false); 
+        setIsOnline(data.status === "active" ? data.isOnline : false);
       }
     } catch (err) {
       console.error("Dashboard payload fetch failed:", err);
@@ -131,7 +137,10 @@ export default function RiderDashboard() {
       const token = localStorage.getItem("riderToken");
       const response = await fetch(`${API_BASE_URL}/rider/shift/toggle`, {
         method: "POST",
-        headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" }
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       });
       if (response.ok) {
         const result = await response.json();
@@ -151,10 +160,16 @@ export default function RiderDashboard() {
       setIsActionLoading(true);
       const token = localStorage.getItem("riderToken");
       const cleanId = orderIdString.replace("ORD-", "");
-      const response = await fetch(`${API_BASE_URL}/rider/orders/${cleanId}/accept`, {
-        method: "PUT",
-        headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" }
-      });
+      const response = await fetch(
+        `${API_BASE_URL}/rider/orders/${cleanId}/accept`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
       if (response.ok) {
         await fetchDashboard();
       }
@@ -170,10 +185,16 @@ export default function RiderDashboard() {
       setIsActionLoading(true);
       const token = localStorage.getItem("riderToken");
       const cleanId = orderIdString.replace("ORD-", "");
-      const response = await fetch(`${API_BASE_URL}/rider/orders/${cleanId}/complete`, {
-        method: "PUT",
-        headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" }
-      });
+      const response = await fetch(
+        `${API_BASE_URL}/rider/orders/${cleanId}/complete`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
       if (response.ok) {
         await fetchDashboard();
       }
@@ -196,12 +217,15 @@ export default function RiderDashboard() {
     return <StatusBlockOverlay riderStatus={riderStatus} />;
   }
 
-  const activeDelivery = isOnline && dashboardData?.activeDelivery ? dashboardData.activeDelivery : null;
+  const activeDelivery =
+    isOnline && dashboardData?.activeDelivery
+      ? dashboardData.activeDelivery
+      : null;
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-8 relative bg-slate-50 min-h-screen">
-      <DashboardHeader 
-        firstName={dashboardData?.profile?.firstName} 
+      <DashboardHeader
+        firstName={dashboardData?.profile?.firstName}
         currentLocation={dashboardData?.currentLocation || currentLocation}
         isOnline={isOnline}
         isActionLoading={isActionLoading}
@@ -212,7 +236,7 @@ export default function RiderDashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
-          <ActiveDeliveryCard 
+          <ActiveDeliveryCard
             activeDelivery={activeDelivery}
             isOnline={isOnline}
             isActionLoading={isActionLoading}
@@ -220,15 +244,17 @@ export default function RiderDashboard() {
             onComplete={handleCompleteDelivery}
           />
         </div>
-        
+
         <div>
-          <RecentDeliveriesLog recentDeliveries={dashboardData?.recentDeliveries} />
+          <RecentDeliveriesLog
+            recentDeliveries={dashboardData?.recentDeliveries}
+          />
         </div>
       </div>
 
       {incomingRequest && (
-        <LiveMatchModal 
-          incomingRequest={incomingRequest} 
+        <LiveMatchModal
+          incomingRequest={incomingRequest}
           onClose={() => setIncomingRequest(null)}
           onAccept={handleAcceptOrder}
         />

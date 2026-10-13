@@ -8,10 +8,7 @@ export default function SuperAdminDashboardLayout({
 }) {
   return (
     <div className="min-h-screen">
-     <ToastProvider>
-      {children}
-      </ToastProvider> 
-      
+      <ToastProvider>{children}</ToastProvider>
     </div>
   );
 }
