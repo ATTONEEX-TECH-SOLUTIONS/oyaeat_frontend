@@ -1,5 +1,6 @@
 "use client";
 
+import Logo from "@/components/brand/Logo";
 import { useState, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -31,7 +32,7 @@ function IllustrationPanel() {
   return (
     <div className="lp-doodles relative hidden min-h-screen flex-col justify-between p-10 text-white lg:flex">
       <div>
-        <p className="font-display text-3xl font-extrabold tracking-tight">oyaeat</p>
+        <Logo variant="white" className="h-14 w-auto" />
         <p className="mt-1 text-xs font-bold uppercase tracking-[0.2em] text-violet-200">Super admin</p>
       </div>
       <div className="max-w-md">

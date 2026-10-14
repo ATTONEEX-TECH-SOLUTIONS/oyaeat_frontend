@@ -1,5 +1,6 @@
 "use client";
 
+import Logo from "@/components/brand/Logo";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -23,7 +24,7 @@ export default function SuccessContent() {
     <div className="flex min-h-screen flex-col bg-background text-foreground">
       <header className="border-b border-border bg-card">
         <div className="mx-auto flex h-16 max-w-3xl items-center px-4">
-          <Link href="/" className="font-display text-2xl font-extrabold tracking-tight text-primary">oyaeat</Link>
+          <Link href="/" aria-label="OyaEat home"><Logo className="h-9" /></Link>
         </div>
       </header>
       <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-10 sm:py-16">

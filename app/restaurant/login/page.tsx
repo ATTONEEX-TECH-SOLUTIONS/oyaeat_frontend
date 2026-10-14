@@ -1,5 +1,6 @@
 "use client";
 
+import Logo from "@/components/brand/Logo";
 import React, { useState, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -206,29 +207,11 @@ export default function LoginPage() {
       <div className="flex-1 flex items-center justify-center px-6 py-12">
         <div className="w-full max-w-sm">
           {/* Mobile brand (hidden on lg) */}
-          <div className="flex items-center gap-3 mb-8 lg:hidden">
-            <div
-              className="w-9 h-9 rounded-xl flex items-center justify-center"
-              style={{ backgroundColor: C.brand }}
-            >
-              <svg width="14" height="18" viewBox="0 0 16 20" fill="none">
-                <path d="M9 1L1 11h7l-1 8 8-10H8l1-8z" fill="white" />
-              </svg>
-            </div>
-            <div>
-              <p
-                className="font-black text-base tracking-tight"
-                style={{ color: C.textDark }}
-              >
-                OyaEat
-              </p>
-              <p
-                className="text-xs font-semibold tracking-widest"
-                style={{ color: C.textMuted }}
-              >
-                VENDOR PORTAL
-              </p>
-            </div>
+          <div className="mb-8 lg:hidden">
+            <Logo className="h-10" />
+            <p className="mt-1 text-xs font-semibold tracking-widest" style={{ color: C.textMuted }}>
+              VENDOR PORTAL
+            </p>
           </div>
 
           {/* Heading */}

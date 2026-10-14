@@ -64,8 +64,9 @@ use the semantic Tailwind classes below.
 - Marketing copy must come from what the product does. No invented earnings figures, ratings or insurance promises.
 
 ## Logo
-Files live in `public/brand/` (SVG is the source of truth; PNGs are exports).
-- **Mark**: a steaming bowl. Mango bowl, steam and rim in violet on light backgrounds (`oyaeat-mark.svg`), white steam on dark.
-- **App icon**: the mark on a violet-to-deep-violet rounded square (`oyaeat-icon.svg`, `oyaeat-icon-192/512.png`, `apple-touch-icon.png`). `app/icon.svg` and `app/apple-icon.png` are copies Next.js serves as the favicon.
-- **Lockup**: mark + "oyaeat" wordmark set in Baloo 2 ExtraBold, converted to outlines so it renders without the font (`oyaeat-logo.svg` for light backgrounds, `oyaeat-logo-white.svg` for dark).
-- Keep clear space of at least the bowl-rim height on all sides; don't recolour the bowl (always mango), don't stretch, and don't place the violet lockup on violet.
+Source files live in `public/brand/` (SVG is the source of truth; PNGs are exports). Use `components/brand/Logo.tsx` in the UI, never retype "oyaeat" as text.
+- **Wordmark**: "oyaeat" in Baloo 2 ExtraBold (converted to outlines, so no font needed), leaning forward for speed ("oya" = let's go). Steam rises from the first "o"; a mango swoosh runs from the tail of the "y" under the word and ends in a spoon: a smile, a ladle, a hot meal served fast.
+- `oyaeat-logo.svg` for light backgrounds (violet word, mango swoosh); `oyaeat-logo-white.svg` for violet / dark backgrounds.
+- `oyaeat-sticker.svg`: the same logo with a white outline, for photos, banners and social posts.
+- `oyaeat-icon.svg` (+ `oyaeat-icon-192/512.png`, `apple-touch-icon.png`): the "o" with steam and the spoon smile on a violet tile. `app/icon.svg` and `app/apple-icon.png` are copies Next.js serves as the favicon.
+- Rules: keep clear space of at least the height of the "o" around the logo; the swoosh is always mango; never stretch, recolour the word, or put the violet logo on a violet background (use the white one).

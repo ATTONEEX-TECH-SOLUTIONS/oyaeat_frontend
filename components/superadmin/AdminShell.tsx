@@ -1,5 +1,6 @@
 "use client";
 
+import Logo from "@/components/brand/Logo";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -98,9 +99,8 @@ function NavList({ pending, onNavigate }: { pending: number; onNavigate?: () => 
 function Brand() {
   return (
     <div className="flex items-center gap-2.5 px-5 py-5">
-      <span className="grid h-9 w-9 place-items-center rounded-xl bg-cta font-display text-lg font-extrabold text-cta-foreground">o</span>
       <div className="leading-tight">
-        <p className="font-display text-lg font-extrabold text-white">oyaeat</p>
+        <Logo variant="white" className="h-9" />
         <p className="text-[11px] font-semibold uppercase tracking-widest text-violet-300">Admin</p>
       </div>
     </div>
