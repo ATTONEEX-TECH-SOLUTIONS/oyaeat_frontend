@@ -112,6 +112,7 @@ export type VendorDashboard = {
     hasBankDetails: boolean;
   };
   summary: null | {
+    totalSales?: number;
     totalOrders: number;
     revenueToday: number;
     activeOrders: number;
@@ -170,7 +171,9 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     throw new Error((json as any)?.message || "Request failed");
   }
 
-  return (json as any).data as T;
+  // Most endpoints wrap their payload in `data`; a few (e.g. /vendor/dashboard) return it at the top level.
+  const body = json as any;
+  return (body.data !== undefined ? body.data : body) as T;
 }
 
 function makeMenuFormData(body: MenuItemPayload) {
