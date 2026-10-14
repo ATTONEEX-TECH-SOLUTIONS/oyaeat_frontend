@@ -32,6 +32,12 @@ export default function SuperAdminPayoutsDashboard() {
         },
       );
 
+      if (response.status === 401) {
+        localStorage.removeItem("admin_token");
+        localStorage.removeItem("admin_user");
+        window.location.href = "/superadmin/login";
+        return;
+      }
       if (response.ok) {
         const data = await response.json();
         setRequests(data.pendingWithdrawals || []);
