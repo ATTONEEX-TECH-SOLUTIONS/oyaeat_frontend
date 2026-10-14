@@ -29,11 +29,14 @@ export default function ReviewsPage() {
     setLoading(true);
     setError("");
     try {
-      const res = await vendorApi.getReviews({ page, limit: 10 });
-      setData(res.data || null);
-      if (res.pagination) {
-        setTotalPages(res.pagination.totalPages);
-      }
+      // vendorApi unwraps the API's `data` envelope, so `res` is the reviews payload itself.
+      const res = (await vendorApi.getReviews({ page, limit: 10 })) as any;
+      const payload = (res?.data && res.data.reviews ? res.data : res) as ReviewsData & {
+        pagination?: { totalPages: number };
+      };
+      setData(payload?.reviews ? payload : null);
+      const pg = payload?.pagination || res?.pagination;
+      if (pg) setTotalPages(pg.totalPages);
     } catch (e: any) {
       if (
         e?.message?.toLowerCase().includes("not found") ||
