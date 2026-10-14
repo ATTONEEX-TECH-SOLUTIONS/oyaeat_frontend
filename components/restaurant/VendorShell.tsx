@@ -202,7 +202,7 @@ export default function VendorShell({ children }: { children: React.ReactNode })
           </p>
         </div>
       </div>
-      <nav className="flex-1 space-y-4 overflow-y-auto px-3 py-3" aria-label="Restaurant">
+      <nav className="flex-1 space-y-4 no-scrollbar overflow-y-auto px-3 py-3" aria-label="Restaurant">
         {GROUPS.map((g, gi) => (
           <div key={gi}>
             {g.title && <p className="mb-1.5 px-3 text-[11px] font-bold uppercase tracking-widest text-violet-300/70">{g.title}</p>}
