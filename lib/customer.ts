@@ -130,3 +130,25 @@ export const statusMeta = (status: string) => {
       return { label: status.replace(/_/g, " "), tone: "violet" as const };
   }
 };
+
+/** An online-payment order whose payment we have not confirmed yet. */
+export const isAwaitingPayment = (o: any) =>
+  o?.paymentMethod === "paystack" && o?.paymentStatus !== "paid" && !!o?.paymentReference && o?.status === "pending";
+
+/**
+ * Asks the server to confirm any online payments that are still unconfirmed
+ * (the customer has just returned from Paystack, or the page was reloaded).
+ * Returns how many orders turned out to be paid. Never throws: a payment that is
+ * simply not finished yet is not an error.
+ */
+export async function confirmPendingPayments(orders: any[]): Promise<number> {
+  const waiting = orders.filter(isAwaitingPayment);
+  const results = await Promise.all(
+    waiting.map((o) =>
+      api(`/orders/verify-payment/${encodeURIComponent(o.paymentReference)}`, { auth: true })
+        .then(() => true)
+        .catch(() => false),
+    ),
+  );
+  return results.filter(Boolean).length;
+}
