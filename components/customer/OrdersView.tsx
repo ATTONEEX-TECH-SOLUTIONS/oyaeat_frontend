@@ -7,7 +7,7 @@ import { format } from "date-fns";
 import { ChevronRight, MapPin, Receipt, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 import { EmptyState, ErrorState, PageHeader, RowSkeleton, StatusPill } from "./ui";
-import { ACTIVE_STATUSES, api, naira } from "@/lib/customer";
+import { ACTIVE_STATUSES, api, confirmPendingPayments, isAwaitingPayment, naira } from "@/lib/customer";
 import { useCart } from "@/hooks/useCart";
 import { cn } from "@/lib/utils";
 
@@ -30,8 +30,14 @@ export default function OrdersView() {
     setLoading(true);
     setError("");
     try {
-      const json = await api("/orders/my", { auth: true });
-      const list: any[] = json.data?.orders || [];
+      let json = await api("/orders/my", { auth: true });
+      let list: any[] = json.data?.orders || [];
+      // Back from Paystack (or reloaded): confirm payments the server has not recorded yet.
+      if (list.some(isAwaitingPayment) && (await confirmPendingPayments(list)) > 0) {
+        json = await api("/orders/my", { auth: true });
+        list = json.data?.orders || [];
+        toast.success("Payment confirmed. The restaurant has your order.");
+      }
       setOrders(list);
       if (list.some((o) => ACTIVE_STATUSES.includes(o.status))) setTab("active");
     } catch (e: any) {
@@ -47,7 +53,6 @@ export default function OrdersView() {
     if (sessionStorage.getItem("oyaeat_pending_payment")) {
       sessionStorage.removeItem("oyaeat_pending_payment");
       cart.clear();
-      toast.success("Payment received. The restaurant is confirming your order.");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [load]);

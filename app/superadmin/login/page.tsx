@@ -242,7 +242,7 @@ export default function AdminLoginPage() {
             <Field
               label="Email"
               type="email"
-              placeholder="admin@oya-eat.com"
+              placeholder="admin@oyaeat.com"
               icon={Mail}
               error={errors.email?.message}
               value={emailVal}

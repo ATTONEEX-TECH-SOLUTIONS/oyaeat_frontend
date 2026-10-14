@@ -57,19 +57,12 @@ function IllustrationPanel() {
 
       {/* Brand mark */}
       <div className="relative z-10">
-        <div className="flex items-center gap-3 mb-2">
-          <div>
-            <p className="text-white text-lg font-black tracking-tight">
-              Oya-Eat
-            </p>
-            <p
-              className="text-xs font-semibold tracking-[0.2em]"
-              style={{ color: C.brandLight }}
-            >
-              VENDOR PORTAL
-            </p>
-          </div>
-        </div>
+        <Logo variant="white" className="h-20 w-auto" />
+        <p
+          className="mt-1 text-xs font-bold tracking-[0.2em] text-white/90 drop-shadow"
+        >
+          VENDOR PORTAL
+        </p>
       </div>
 
       {/* Quote */}

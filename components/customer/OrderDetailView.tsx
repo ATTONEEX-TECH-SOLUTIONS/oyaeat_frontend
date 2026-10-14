@@ -10,7 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import CustomerTrackingMap from "@/app/customer/dashboard/orders/[id]/CustomerTrackingMap";
-import { ACTIVE_STATUSES, ORDER_STEPS, api, naira } from "@/lib/customer";
+import { ACTIVE_STATUSES, ORDER_STEPS, api, confirmPendingPayments, isAwaitingPayment, naira } from "@/lib/customer";
 import { cn } from "@/lib/utils";
 
 const ICONS: Record<string, React.ElementType> = {
@@ -79,8 +79,14 @@ export default function OrderDetailView() {
   const load = useCallback(
     async (silent = false) => {
       try {
-        const json = await api("/orders/my", { auth: true });
-        setOrder((json.data?.orders || []).find((o: any) => o.id === Number(id)) || null);
+        let json = await api("/orders/my", { auth: true });
+        let found = (json.data?.orders || []).find((o: any) => o.id === Number(id)) || null;
+        // Paid on Paystack but not yet recorded? Ask the server to confirm it.
+        if (found && isAwaitingPayment(found) && (await confirmPendingPayments([found])) > 0) {
+          json = await api("/orders/my", { auth: true });
+          found = (json.data?.orders || []).find((o: any) => o.id === Number(id)) || null;
+        }
+        setOrder(found);
         setError("");
       } catch (e: any) {
         if (!silent) setError(e.message);
@@ -151,7 +157,7 @@ export default function OrderDetailView() {
               {order.business?.name} · Order #{order.id}
             </p>
             <h1 className="font-display mt-1 text-2xl font-extrabold leading-tight sm:text-3xl">
-              {HEADLINE[order.status] || "Order update"}
+              {isAwaitingPayment(order) ? "Waiting for your payment" : HEADLINE[order.status] || "Order update"}
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
               Placed {format(new Date(order.createdAt), "d MMM, h:mm a")}
@@ -220,6 +226,15 @@ export default function OrderDetailView() {
               <Phone className="h-5 w-5" />
             </a>
           )}
+        </section>
+      )}
+
+      {isAwaitingPayment(order) && (
+        <section role="status" className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-mango-300 bg-cream p-4 shadow-card">
+          <p className="text-sm font-semibold text-mango-800">We haven&apos;t received your online payment yet. The restaurant only sees your order once it is confirmed.</p>
+          <button onClick={() => load()} className="h-11 rounded-full bg-cta px-5 text-sm font-bold text-cta-foreground transition hover:bg-mango-300">
+            Check payment
+          </button>
         </section>
       )}
 
