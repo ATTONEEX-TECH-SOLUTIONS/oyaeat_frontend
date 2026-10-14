@@ -128,7 +128,7 @@ export default function DashboardPage() {
       )}
 
       <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-        <AdminStat label="Revenue today" value={money(s?.revenueToday ?? s?.totalSales ?? 0)} icon={Banknote} tone="success" />
+        <AdminStat label="Revenue today" value={money(s?.revenueToday ?? 0)} icon={Banknote} tone="success" sub={`${money(s?.totalSales ?? 0)} all time`} />
         <AdminStat label="Active orders" value={active} icon={Package} tone="mango" highlight={active > 0} />
         <AdminStat label="Total orders" value={(s?.totalOrders ?? 0).toLocaleString()} icon={ChefHat} />
         <AdminStat label="Customers" value={(s?.totalCustomers ?? 0).toLocaleString()} icon={Users} />
@@ -142,8 +142,8 @@ export default function DashboardPage() {
           <dl className="space-y-4 text-sm">
             {[
               { icon: Banknote, label: "Average order", value: money(s?.avgOrderValue ?? 0) },
-              { icon: Zap, label: "Delivery time", value: `${s?.avgDeliveryTimeMins ?? 0} min` },
-              { icon: Clock, label: "Prep time", value: `${s?.avgPrepTimeMins ?? 0} min` },
+              { icon: Zap, label: "Delivery time", value: s?.avgDeliveryTimeMins ? `${s.avgDeliveryTimeMins} min` : "—" },
+              { icon: Clock, label: "Prep time", value: s?.avgPrepTimeMins ? `${s.avgPrepTimeMins} min` : "—" },
               { icon: Star, label: "Customer rating", value: s?.customerRating ? `${Number(s.customerRating).toFixed(1)} / 5` : "No ratings yet" },
             ].map(({ icon: Icon, label, value }) => (
               <div key={label} className="flex items-center gap-3">
