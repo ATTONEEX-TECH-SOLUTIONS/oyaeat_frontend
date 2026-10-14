@@ -32,7 +32,7 @@ export default function RecoveryShell({
   return (
     <main className="grid min-h-screen place-items-center bg-background px-5 py-10">
       <div className="w-full max-w-md">
-        <Logo className="mb-6 h-11" />
+        <Logo className="mb-6 h-14" />
         <div className="rounded-3xl border border-border bg-card p-6 shadow-card sm:p-8">
           <h1 className="font-display text-2xl font-extrabold tracking-tight sm:text-3xl">{title}</h1>
           {subtitle && <p className="mt-2 text-sm text-muted-foreground">{subtitle}</p>}

@@ -1,3 +1,4 @@
+import Logo from "@/components/brand/Logo";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -16,10 +17,9 @@ export default function RestaurantPage() {
       {/* Navigation */}
       <nav className="fixed top-0 w-full bg-background/95 backdrop-blur-sm border-b border-border z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
-          <div className="flex items-center gap-2 text-2xl font-bold text-primary">
-            <UtensilsCrossed className="w-8 h-8" />
-            oyaeat
-          </div>
+          <Link href="/" aria-label="OyaEat home" className="flex items-center">
+            <Logo className="h-11" />
+          </Link>
           <Button asChild>
             <Link href="/restaurant/login">Admin Login</Link>
           </Button>
@@ -176,8 +176,9 @@ export default function RestaurantPage() {
 
       {/* Footer */}
       <footer className="border-t border-border py-12 px-4 bg-card/30">
-        <div className="max-w-6xl mx-auto text-center text-muted-foreground">
-          <p>&copy; 2024 oyaeat. Empowering restaurants worldwide.</p>
+        <div className="max-w-6xl mx-auto flex flex-col items-center gap-4 text-center text-muted-foreground">
+          <Logo className="h-14" />
+          <p>&copy; {new Date().getFullYear()} OyaEat. Empowering restaurants worldwide.</p>
         </div>
       </footer>
     </main>

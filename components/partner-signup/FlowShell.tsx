@@ -1,5 +1,6 @@
 "use client";
 
+import Logo from "@/components/brand/Logo";
 import React from "react";
 import Link from "next/link";
 import { Check } from "lucide-react";
@@ -27,8 +28,8 @@ export default function FlowShell({
     <div className="flex min-h-screen flex-col bg-background text-foreground">
       <header className="border-b border-border bg-card/90 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-3xl items-center justify-between px-4">
-          <Link href="/" className="font-display text-2xl font-extrabold tracking-tight text-primary">
-            oyaeat
+          <Link href="/" aria-label="OyaEat home">
+            <Logo className="h-12" />
           </Link>
           <Link href="/restaurant/login" className="text-sm font-bold text-primary hover:underline">
             Already a partner? Log in

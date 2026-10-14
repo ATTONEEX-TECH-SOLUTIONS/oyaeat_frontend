@@ -1,5 +1,6 @@
 "use client";
 
+import Logo from "@/components/brand/Logo";
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -12,7 +13,6 @@ import {
   Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import logo from "@/public/spalsh_oyaeat (3).png";
 
 export default function GalleryFormContent() {
   const router = useRouter();
@@ -115,19 +115,8 @@ export default function GalleryFormContent() {
   return (
     <div className="min-h-screen bg-card flex flex-col">
       <header className="py-6 px-8 border-b border-gray-100">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="relative w-8 h-8">
-            <Image
-              src={logo}
-              alt="OyaEat Logo"
-              fill
-              className="object-contain"
-            />
-          </div>
-          <span className="text-xl font-bold">
-            <span className="text-[#5b21b6]">Oya</span>
-            <span className="text-gray-900">Eat</span>
-          </span>
+        <Link href="/" aria-label="OyaEat home" className="inline-flex">
+          <Logo className="h-12" />
         </Link>
       </header>
 

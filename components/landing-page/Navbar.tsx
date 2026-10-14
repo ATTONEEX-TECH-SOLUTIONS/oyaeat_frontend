@@ -42,14 +42,14 @@ const joinLinks = [
   },
 ];
 
-export function Logo({ className = "" }: { className?: string }) {
+export function Logo({ className = "", size = "md" }: { className?: string; size?: "md" | "lg" }) {
   return (
     <Link
       href="/"
       aria-label="OyaEat home"
       className={`flex items-center flex-shrink-0 ${className}`}
     >
-      <BrandLogo variant="white" className="h-11 w-auto" />
+      <BrandLogo variant="white" className={size === "lg" ? "h-20 w-auto" : "h-14 w-auto"} />
     </Link>
   );
 }

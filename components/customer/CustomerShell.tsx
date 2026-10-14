@@ -134,7 +134,7 @@ export default function CustomerShell({
       <header className="sticky top-0 z-40 border-b border-border bg-card/90 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-7xl items-center gap-3 px-4 sm:gap-5 lg:px-6">
           <Link href="/customer" aria-label="OyaEat home" className="shrink-0">
-            <Logo className="h-9" />
+            <Logo className="h-11" />
           </Link>
 
           <div

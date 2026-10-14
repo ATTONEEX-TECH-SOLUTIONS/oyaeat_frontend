@@ -100,7 +100,7 @@ function Brand() {
   return (
     <div className="flex items-center gap-2.5 px-5 py-5">
       <div className="leading-tight">
-        <Logo variant="white" className="h-9" />
+        <Logo variant="white" className="h-12" />
         <p className="text-[11px] font-semibold uppercase tracking-widest text-violet-300">Admin</p>
       </div>
     </div>

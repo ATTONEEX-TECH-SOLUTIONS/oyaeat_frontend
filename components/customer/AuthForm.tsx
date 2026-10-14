@@ -148,7 +148,7 @@ export default function AuthScreen({ mode }: { mode: Mode }) {
           <ArrowLeft className="h-4 w-4" /> Back to restaurants
         </Link>
         <div className="max-w-md">
-          <Logo variant="white" className="h-20 w-auto" />
+          <Logo variant="white" className="h-28 w-auto" />
           <h2 className="font-display mt-6 text-4xl font-extrabold leading-tight">
             {signup ? "Your next favourite meal is a few taps away." : "Good food, delivered hot."}
           </h2>
@@ -163,7 +163,7 @@ export default function AuthScreen({ mode }: { mode: Mode }) {
           <Link href="/customer" className="mb-8 inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm font-bold text-primary hover:bg-violet-50 lg:hidden">
             <ArrowLeft className="h-4 w-4" /> Back
           </Link>
-          <Logo className="mb-6 h-10 lg:hidden" />
+          <Logo className="mb-6 h-12 lg:hidden" />
           <h1 className="font-display text-3xl font-extrabold tracking-tight sm:text-4xl">
             {signup ? "Create your account" : "Welcome back"}
           </h1>
