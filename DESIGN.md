@@ -62,3 +62,11 @@ use the semantic Tailwind classes below.
 - `RiderShell`: the online/offline switch is in the top bar on every screen; mobile gets a bottom tab bar (Home, Trips, Earnings, Profile, More). New order offers (`IncomingRequestSheet`) appear on any screen with a vibrate + chime.
 - Money and irreversible actions (confirm delivery, payout) use a confirmation dialog. No `alert()`.
 - Marketing copy must come from what the product does. No invented earnings figures, ratings or insurance promises.
+
+## Logo
+Source files live in `public/brand/` (SVG is the source of truth; PNGs are exports). Use `components/brand/Logo.tsx` in the UI, never retype "oyaeat" as text.
+- **Wordmark**: "oyaeat" in Baloo 2 ExtraBold (converted to outlines, so no font needed), leaning forward for speed ("oya" = let's go). Steam rises from the first "o"; a mango swoosh runs from the tail of the "y" under the word and ends in a spoon: a smile, a ladle, a hot meal served fast.
+- `oyaeat-logo.svg` for light backgrounds (violet word, mango swoosh); `oyaeat-logo-white.svg` for violet / dark backgrounds.
+- `oyaeat-sticker.svg`: the same logo with a white outline, for photos, banners and social posts.
+- `oyaeat-icon.svg` (+ `oyaeat-icon-192/512.png`, `apple-touch-icon.png`): the "o" with steam and the spoon smile on a violet tile. `app/icon.svg` and `app/apple-icon.png` are copies Next.js serves as the favicon.
+- Rules: keep clear space of at least the height of the "o" around the logo; the swoosh is always mango; never stretch, recolour the word, or put the violet logo on a violet background (use the white one).

@@ -1,5 +1,6 @@
 "use client";
 
+import Logo from "@/components/brand/Logo";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -63,7 +64,7 @@ function Frame({ children }: { children: React.ReactNode }) {
   const sidebar = (
     <div className="flex h-full flex-col bg-sidebar text-sidebar-foreground">
       <div className="px-5 pb-3 pt-5">
-        <p className="font-display text-xl font-extrabold text-white">oyaeat</p>
+        <Logo variant="white" className="h-12" />
         <p className="text-[11px] font-semibold uppercase tracking-widest text-violet-300">Rider</p>
       </div>
       <div className="mx-3 mb-2 flex items-center gap-3 rounded-2xl bg-white/5 p-3">

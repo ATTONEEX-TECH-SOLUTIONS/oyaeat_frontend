@@ -1,3 +1,4 @@
+import Logo from "@/components/brand/Logo";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
@@ -9,7 +10,7 @@ export default function RiderAuthShell({ title, subtitle, children, footer }: { 
           <ArrowLeft className="h-4 w-4" /> Back
         </Link>
         <div className="max-w-md">
-          <p className="font-display text-5xl font-extrabold tracking-tight">oyaeat</p>
+          <Logo variant="white" className="h-28 w-auto" />
           <p className="mt-1 text-xs font-bold uppercase tracking-[0.2em] text-violet-200">Riders</p>
           <h2 className="font-display mt-8 text-4xl font-extrabold leading-tight">Ride on your schedule. <span className="text-cta">Deliver with OyaEat.</span></h2>
           <p className="mt-3 text-lg text-violet-100">Go online when you want, accept the orders you like, and track every naira you earn.</p>
@@ -22,7 +23,7 @@ export default function RiderAuthShell({ title, subtitle, children, footer }: { 
           <Link href="/rider" className="mb-6 inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm font-bold text-primary hover:bg-violet-50 lg:hidden">
             <ArrowLeft className="h-4 w-4" /> Back
           </Link>
-          <p className="font-display mb-5 text-3xl font-extrabold text-primary lg:hidden">oyaeat</p>
+          <Logo className="mb-5 h-12 lg:hidden" />
           <h1 className="font-display text-3xl font-extrabold tracking-tight sm:text-4xl">{title}</h1>
           {subtitle && <p className="mt-2 text-muted-foreground">{subtitle}</p>}
           <div className="mt-7">{children}</div>

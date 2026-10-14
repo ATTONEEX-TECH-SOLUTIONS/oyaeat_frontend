@@ -1,5 +1,6 @@
 "use client";
 
+import Logo from "@/components/brand/Logo";
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -132,11 +133,8 @@ export default function CustomerShell({
       {/* Top bar */}
       <header className="sticky top-0 z-40 border-b border-border bg-card/90 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-7xl items-center gap-3 px-4 sm:gap-5 lg:px-6">
-          <Link
-            href="/customer"
-            className="font-display text-2xl font-extrabold tracking-tight text-primary"
-          >
-            oyaeat
+          <Link href="/customer" aria-label="OyaEat home" className="shrink-0">
+            <Logo className="h-11" />
           </Link>
 
           <div

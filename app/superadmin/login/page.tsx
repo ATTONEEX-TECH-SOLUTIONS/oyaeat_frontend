@@ -1,5 +1,6 @@
 "use client";
 
+import Logo from "@/components/brand/Logo";
 import { useState, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -31,7 +32,7 @@ function IllustrationPanel() {
   return (
     <div className="lp-doodles relative hidden min-h-screen flex-col justify-between p-10 text-white lg:flex">
       <div>
-        <p className="font-display text-3xl font-extrabold tracking-tight">oyaeat</p>
+        <Logo variant="white" className="h-24 w-auto" />
         <p className="mt-1 text-xs font-bold uppercase tracking-[0.2em] text-violet-200">Super admin</p>
       </div>
       <div className="max-w-md">
@@ -186,29 +187,11 @@ export default function AdminLoginPage() {
       <div className="flex-1 flex items-center justify-center px-6 py-12">
         <div className="w-full max-w-sm">
           {/* Mobile brand */}
-          <div className="flex items-center gap-3 mb-8 lg:hidden">
-            <div
-              className="w-9 h-9 rounded-xl flex items-center justify-center"
-              style={{ backgroundColor: C.brand }}
-            >
-              <svg width="14" height="18" viewBox="0 0 16 20" fill="none">
-                <path d="M9 1L1 11h7l-1 8 8-10H8l1-8z" fill="white" />
-              </svg>
-            </div>
-            <div>
-              <p
-                className="font-black text-base tracking-tight"
-                style={{ color: C.textDark }}
-              >
-                OyaEats
-              </p>
-              <p
-                className="text-xs font-semibold tracking-widest"
-                style={{ color: C.textMuted }}
-              >
-                SUPER ADMIN
-              </p>
-            </div>
+          <div className="mb-8 lg:hidden">
+            <Logo className="h-12" />
+            <p className="mt-1 text-xs font-semibold tracking-widest" style={{ color: C.textMuted }}>
+              SUPER ADMIN
+            </p>
           </div>
 
           {/* Shield badge */}
