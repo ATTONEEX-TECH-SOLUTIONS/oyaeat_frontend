@@ -8,6 +8,7 @@ import {
   Banknote,
   Bike,
   Building2,
+  Landmark,
   LayoutDashboard,
   LogOut,
   Megaphone,
@@ -39,6 +40,7 @@ const GROUPS: { title?: string; items: Item[] }[] = [
     title: "Growth & money",
     items: [
       { href: `${BASE}/broadcasts`, label: "Advert broadcasts", icon: Megaphone },
+      { href: `${BASE}/payment-accounts`, label: "Payment accounts", icon: Landmark },
       { href: `${BASE}/payout`, label: "Payouts", icon: Banknote },
     ],
   },
