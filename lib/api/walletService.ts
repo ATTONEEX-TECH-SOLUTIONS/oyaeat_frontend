@@ -46,7 +46,36 @@ export type PaymentAccountRow = {
   submittedBank: { bankName: string; accountNumber: string; accountName: string } | null;
 };
 
+export type RiderAccountRow = {
+  userId: number;
+  name: string;
+  email: string;
+  account: { bankName: string; bankCode: string | null; accountName: string; accountNumber: string; active: boolean } | null;
+  submittedBank: { bankName: string; accountNumber: string; accountName: string } | null;
+};
+export type CashCommissionRow = { userId: number; businessId: number | null; name: string; owed: number };
+
 export const paymentAccountsApi = {
+  listRiders: async (): Promise<RiderAccountRow[]> =>
+    (await adminRequest("/admin/rider-payout-accounts", {}, "Couldn't load riders")).data,
+  saveRider: async (userId: number, body: { bankCode: string; bankName: string; accountNumber: string }) =>
+    (
+      await adminRequest(
+        `/admin/riders/${userId}/payout-account`,
+        { method: "PUT", body: JSON.stringify(body) },
+        "Couldn't save the rider's payout account",
+      )
+    ).data,
+  listCashCommissions: async (): Promise<CashCommissionRow[]> =>
+    (await adminRequest("/admin/cash-commissions", {}, "Couldn't load cash commissions")).data,
+  settleCashCommission: async (userId: number, amount: number) =>
+    (
+      await adminRequest(
+        `/admin/cash-commissions/${userId}/settle`,
+        { method: "POST", body: JSON.stringify({ amount }) },
+        "Couldn't record that payment",
+      )
+    ).data,
   list: async (): Promise<PaymentAccountRow[]> =>
     (await adminRequest("/admin/payment-accounts", {}, "Couldn't load restaurants")).data,
   banks: async (): Promise<{ name: string; code: string }[]> =>
