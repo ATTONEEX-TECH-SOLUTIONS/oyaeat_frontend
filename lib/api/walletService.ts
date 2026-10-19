@@ -28,6 +28,58 @@ async function adminRequest(path: string, init: RequestInit, fallback: string) {
   return data;
 }
 
+export type PaymentAccount = {
+  bankName: string;
+  bankCode: string | null;
+  accountName: string;
+  accountNumber: string;
+  commissionPercent: number | null;
+  subaccountCode: string | null;
+  active: boolean;
+};
+export type PaymentAccountRow = {
+  businessId: number;
+  name: string;
+  city?: string | null;
+  email?: string | null;
+  account: PaymentAccount | null;
+  submittedBank: { bankName: string; accountNumber: string; accountName: string } | null;
+};
+
+export const paymentAccountsApi = {
+  list: async (): Promise<PaymentAccountRow[]> =>
+    (await adminRequest("/admin/payment-accounts", {}, "Couldn't load restaurants")).data,
+  banks: async (): Promise<{ name: string; code: string }[]> =>
+    (await adminRequest("/admin/banks", {}, "Couldn't load the bank list")).data,
+  resolve: async (accountNumber: string, bankCode: string): Promise<{ accountName: string }> =>
+    (
+      await adminRequest(
+        "/admin/payment-accounts/resolve",
+        { method: "POST", body: JSON.stringify({ accountNumber, bankCode }) },
+        "Couldn't verify that account",
+      )
+    ).data,
+  save: async (
+    businessId: number,
+    body: { bankCode: string; bankName: string; accountNumber: string; commissionPercent: number | null },
+  ): Promise<PaymentAccount> =>
+    (
+      await adminRequest(
+        `/admin/businesses/${businessId}/payment-account`,
+        { method: "PUT", body: JSON.stringify(body) },
+        "Couldn't save the payment account",
+      )
+    ).data,
+  deactivate: async (businessId: number): Promise<PaymentAccount> =>
+    (
+      await adminRequest(
+        `/admin/businesses/${businessId}/payment-account`,
+        { method: "DELETE" },
+        "Couldn't deactivate the payment account",
+      )
+    ).data,
+};
+
 export const walletApi = {
   // ── FOR VENDORS & RIDERS ──
   getWalletSummary: async (roleType: "authToken" | "riderToken") => {
