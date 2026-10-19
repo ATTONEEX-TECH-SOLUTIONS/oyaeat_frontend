@@ -47,7 +47,7 @@ const GROUPS: { title?: string; items: Item[] }[] = [
   {
     title: "Business",
     items: [
-      { href: `${BASE}/wallet`, label: "Wallet", icon: Banknote },
+      { href: `${BASE}/wallet`, label: "Earnings", icon: Banknote },
       { href: `${BASE}/staff`, label: "Staff", icon: Users },
     ],
   },
@@ -61,7 +61,7 @@ const GROUPS: { title?: string; items: Item[] }[] = [
   },
 ];
 const ALL = GROUPS.flatMap((g) => g.items);
-const TABS: Item[] = [ALL[0], ALL[1], ALL[2], { href: `${BASE}/wallet`, label: "Wallet", icon: Banknote }];
+const TABS: Item[] = [ALL[0], ALL[1], ALL[2], { href: `${BASE}/wallet`, label: "Earnings", icon: Banknote }];
 
 const titleFor = (p: string) =>
   [...ALL].sort((a, b) => b.href.length - a.href.length).find((i) => p === i.href || p.startsWith(i.href + "/"))?.label || "Dashboard";

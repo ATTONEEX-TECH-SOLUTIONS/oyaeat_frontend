@@ -126,6 +126,31 @@ export type VendorDashboard = {
   salesSeries: SalesPoint[];
 };
 
+export type EarningsRow = {
+  id: number;
+  createdAt: string;
+  status: OrderStatus;
+  mode: "online" | "cash" | "wallet";
+  total: number;
+  platformFee: number | null;
+  youReceive: number | null;
+  note: string;
+};
+
+export type EarningsData = {
+  account: { bankName: string; accountName: string; accountNumber: string; active: boolean } | null;
+  summary: {
+    paidToBank: number;
+    platformFees: number;
+    onlineSales: number;
+    cashOwed: number;
+    walletBalance: number;
+    pendingPayouts: number;
+  };
+  orders: EarningsRow[];
+  pagination: { total: number; page: number; limit: number; totalPages: number };
+};
+
 export type MenuItemPayload = {
   name: string;
   category: string;
@@ -318,6 +343,8 @@ export const vendorApi = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ amount }),
     }),
+
+  getEarnings: (page = 1) => request<EarningsData>(`/vendor/earnings?page=${page}&limit=15`),
 
   // Reviews
   getReviews: (params?: { page?: number; limit?: number }) => {
