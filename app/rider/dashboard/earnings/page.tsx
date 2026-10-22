@@ -1,136 +1,144 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { toast } from "sonner";
+import { ArrowDownLeft, ArrowUpRight, Banknote, Clock, Info, Loader2, Wallet } from "lucide-react";
 import { walletApi } from "@/lib/api/walletService";
-import { RefreshCw, ShieldCheck, AlertCircle, HelpCircle } from "lucide-react";
-import FinancialGrid from "../components/rider/FinaincialGrid";
-import CashoutForm from "../components/rider/CashoutForm";
-import LedgerHistory from "../components/rider/LedgerHistory";
+import { EmptyState, ErrorState, PageHeader } from "@/components/shared/states";
+import { Badge, Panel, adminField } from "@/components/superadmin/ui";
+import { Skeleton } from "@/components/ui/skeleton";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
-export default function RiderEarningsView() {
-  const [metrics, setMetrics] = useState<any>(null);
-  const [transactions, setTransactions] = useState<any[]>([]);
-  const [linkedBankText, setLinkedBankText] = useState("");
-  const [hasBankDetails, setHasBankDetails] = useState(false);
-  const [processingCashout, setProcessingCashout] = useState(false);
+const naira = (n: number) => `₦${Math.round(Number(n) || 0).toLocaleString("en-NG")}`;
+
+export default function RiderEarningsPage() {
+  const [summary, setSummary] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [amount, setAmount] = useState("");
+  const [amountError, setAmountError] = useState("");
+  const [confirming, setConfirming] = useState<number | null>(null);
+  const [sending, setSending] = useState(false);
 
-  const fetchRiderLedger = async () => {
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError("");
     try {
-      setLoading(true);
-      const data = await walletApi.getWalletSummary("riderToken");
-
-      setMetrics({
-        balance: data.wallet?.balance || 0,
-        todayEarnings: data.todayEarnings || "₦0",
-        weeklyEarnings: data.weeklyEarnings || "₦0",
-      });
-      setTransactions(data.wallet?.transactions || []);
-
-      // 🌟 FIX: Updated from data.linkedBankAccount to match your backend JSON key!
-      setLinkedBankText(data.linkedBankAccount || "");
-      setHasBankDetails(data.hasBankDetails || false);
-    } catch (err) {
-      console.error("Failed to track rider statement details", err);
+      setSummary(await walletApi.getWalletSummary("riderToken"));
+    } catch (e: any) {
+      setError(e?.message || "We couldn't load your earnings.");
     } finally {
       setLoading(false);
     }
+  }, []);
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  const balance = Number(summary?.wallet?.balance) || 0;
+  const hasBank = !!summary?.hasBankDetails;
+  const txns: any[] = summary?.wallet?.transactions || [];
+
+  const review = (e: React.FormEvent) => {
+    e.preventDefault();
+    const n = parseFloat(amount);
+    if (!n || n <= 0) return setAmountError("Enter an amount to withdraw.");
+    if (n > balance) return setAmountError(`You can withdraw up to ${naira(balance)}.`);
+    setAmountError("");
+    setConfirming(n);
   };
 
-  useEffect(() => {
-    fetchRiderLedger();
-  }, []);
-
-  const handleCashoutSubmission = async (amountNum: number) => {
-    setProcessingCashout(true);
+  const send = async () => {
+    if (confirming === null) return;
+    const n = confirming;
+    setConfirming(null);
+    setSending(true);
     try {
-      await walletApi.submitWithdrawal(amountNum, "riderToken");
-      alert("Withdrawal request dispatched to admin pool successfully!");
-      fetchRiderLedger();
-    } catch (err: any) {
-      alert(err.message || "Failed to process transaction dispatch");
+      await walletApi.submitWithdrawal(n, "riderToken");
+      toast.success("Payout requested. We'll notify you when it's sent.");
+      setAmount("");
+      await load();
+    } catch (e: any) {
+      toast.error(e?.message || "Couldn't submit the payout request.");
     } finally {
-      setProcessingCashout(false);
+      setSending(false);
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex h-[60vh] flex-col items-center justify-center gap-3">
-        <RefreshCw className="h-8 w-8 animate-spin text-emerald-700" />
-        <p className="text-sm font-medium text-gray-500">
-          Loading your earnings engine...
-        </p>
-      </div>
-    );
-  }
+  if (loading) return <div className="space-y-4" aria-busy="true"><Skeleton className="h-40 rounded-3xl bg-muted" /><Skeleton className="h-64 rounded-3xl bg-muted" /></div>;
+  if (error) return <ErrorState title="We couldn't load your earnings" message={error} onRetry={load} />;
 
   return (
-    <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
-      {/* Page Title & Context Header */}
-      <div>
-        <h1 className="text-2xl font-black tracking-tight text-gray-950">
-          Earnings & Payout Control
-        </h1>
-        <p className="mt-1 text-sm font-medium text-gray-500">
-          Track your delivery order split balances and request manual payouts.
-        </p>
-      </div>
+    <div className="space-y-5 sm:space-y-6">
+      <PageHeader title="Earnings" subtitle="Your balance and payouts." />
 
-      {/* ─LIVE BANK ACCOUNT BINDING CARD ── */}
-      <div
-        className={`border rounded-2xl p-4 flex items-start gap-3 transition-all ${
-          hasBankDetails
-            ? "bg-emerald-50/60 border-emerald-100"
-            : "bg-amber-50/60 border-amber-100"
-        }`}
-      >
-        <div className="mt-0.5 flex-shrink-0">
-          {hasBankDetails ? (
-            <ShieldCheck className="w-5 h-5 text-emerald-700" />
-          ) : (
-            <AlertCircle className="w-5 h-5 text-amber-600" />
-          )}
-        </div>
-        <div className="flex-1 min-w-0">
-          <h4 className="text-sm font-bold text-gray-900">
-            Settlement Account Node
-          </h4>
-          <p className="text-xs text-gray-600 mt-0.5 leading-relaxed">
-            {hasBankDetails
-              ? `Your delivery payouts are currently bound to: `
-              : "No bank verification records found. To receive split cashouts, send your banking parameters to your super-admin via email."}
-            {hasBankDetails && (
-              <span className="font-mono bg-emerald-100 text-emerald-950 px-1.5 py-0.5 rounded font-bold text-[11px] inline-block mt-1 sm:mt-0">
-                {linkedBankText}
-              </span>
-            )}
-          </p>
-        </div>
-        <div className="hidden sm:flex items-center gap-1 text-[11px] text-gray-400 font-semibold cursor-help bg-white border px-2.5 py-1 rounded-lg shadow-xs">
-          <HelpCircle className="w-3.5 h-3.5" /> Security Note
+      <section className="lp-doodles rounded-3xl p-5 text-white shadow-card sm:p-6">
+        <p className="text-xs font-bold uppercase tracking-widest text-violet-200">Available balance</p>
+        <p className="font-display mt-1 text-4xl font-extrabold tracking-tight">{naira(balance)}</p>
+        <dl className="mt-4 grid grid-cols-2 gap-3 text-sm">
+          <div className="rounded-2xl bg-white/10 p-3"><dt className="text-violet-200">Today</dt><dd className="font-extrabold">{summary?.todayEarnings || "₦0"}</dd></div>
+          <div className="rounded-2xl bg-white/10 p-3"><dt className="text-violet-200">This week</dt><dd className="font-extrabold">{summary?.weeklyEarnings || "₦0"}</dd></div>
+        </dl>
+      </section>
+
+      <div className={`flex items-start gap-3 rounded-2xl border p-4 ${hasBank ? "border-border bg-card" : "border-mango-300 bg-mango-50"}`}>
+        <Info className={`mt-0.5 h-5 w-5 shrink-0 ${hasBank ? "text-primary" : "text-mango-700"}`} />
+        <div>
+          <p className="text-sm font-bold">Payout destination</p>
+          <p className="mt-0.5 text-sm text-muted-foreground">{hasBank ? `Payouts go to ${summary.linkedBankAccount}.` : "No bank account is linked yet. Email your bank details to support to enable payouts."}</p>
         </div>
       </div>
 
-      {/* Financial Numbers Component */}
-      <FinancialGrid metrics={metrics} />
+      <Panel title="Request a payout">
+        <form onSubmit={review} noValidate className="space-y-3">
+          <div>
+            <label htmlFor="amt" className="mb-1.5 block text-sm font-bold">Amount (₦)</label>
+            <input id="amt" type="number" inputMode="decimal" min="0" value={amount} onChange={(e) => { setAmount(e.target.value); setAmountError(""); }} placeholder="0" disabled={!hasBank || sending} aria-invalid={!!amountError} className={adminField} />
+            {amountError && <p role="alert" className="mt-1.5 text-sm font-semibold text-destructive">{amountError}</p>}
+          </div>
+          <button type="submit" disabled={!hasBank || balance <= 0 || sending} className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-cta text-base font-extrabold text-cta-foreground shadow-sm transition hover:bg-mango-300 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:px-8">
+            {sending ? <Loader2 className="h-5 w-5 animate-spin" /> : <><Banknote className="h-5 w-5" /> Review payout</>}
+          </button>
+        </form>
+      </Panel>
 
-      {/* Main Structural Columns split grid layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-        <div className="lg:col-span-1">
-          <CashoutForm
-            balance={metrics?.balance || 0}
-            onCashout={handleCashoutSubmission}
-            processing={processingCashout}
-            linkedAccountText={
-              hasBankDetails ? linkedBankText : "No Account Linked"
-            }
-          />
-        </div>
-        <div className="lg:col-span-2">
-          <LedgerHistory transactions={transactions} />
-        </div>
-      </div>
+      <Panel title="Activity">
+        {txns.length === 0 ? (
+          <EmptyState icon={Wallet} title="No activity yet" body="Earnings and payouts will be listed here." className="border-0 py-8" />
+        ) : (
+          <ul className="divide-y divide-border">
+            {txns.map((t) => {
+              const out = t.type === "withdrawal";
+              return (
+                <li key={t.id} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
+                  <span className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl ${out ? "bg-mango-100 text-mango-800" : "bg-success-soft text-success"}`}>{out ? <ArrowUpRight className="h-5 w-5" /> : <ArrowDownLeft className="h-5 w-5" />}</span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate font-bold">{t.description}</span>
+                    <span className="block text-sm text-muted-foreground">{new Date(t.createdAt).toLocaleString(undefined, { day: "numeric", month: "short", hour: "numeric", minute: "2-digit" })}</span>
+                  </span>
+                  <span className="flex shrink-0 flex-col items-end gap-1">
+                    <span className="font-extrabold">{out ? "−" : "+"}{naira(Number(t.amount))}</span>
+                    <Badge tone={t.status === "completed" ? "success" : "mango"}>{t.status === "completed" ? "Completed" : <><Clock className="mr-1 h-3 w-3" />{t.status}</>}</Badge>
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </Panel>
+
+      <AlertDialog open={confirming !== null} onOpenChange={(o) => !o && setConfirming(null)}>
+        <AlertDialogContent className="rounded-3xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Request a payout of {naira(confirming || 0)}?</AlertDialogTitle>
+            <AlertDialogDescription>It will be sent to {summary?.linkedBankAccount || "your linked bank account"}.</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="rounded-full">Not now</AlertDialogCancel>
+            <AlertDialogAction className="rounded-full bg-primary" onClick={send}>Request payout</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

@@ -9,9 +9,9 @@ interface AdminMetrics {
   restaurantOwedPool: number;
 }
 
-export default function MetricsSummary({ metrics }: { metrics: AdminMetrics }) {
-  const formatCurrency = (value: number) =>
-    `₦${Math.round(value).toLocaleString("en-NG")}`;
+export default function MetricsSummary({ metrics }: { metrics?: Partial<AdminMetrics> | null }) {
+  const formatCurrency = (value?: number) =>
+    `₦${Math.round(Number(value) || 0).toLocaleString("en-NG")}`;
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -22,7 +22,7 @@ export default function MetricsSummary({ metrics }: { metrics: AdminMetrics }) {
             Total Gross Sales
           </p>
           <h3 className="text-xl font-black text-gray-900 mt-1">
-            {formatCurrency(metrics.totalPlatformVolume)}
+            {formatCurrency(metrics?.totalPlatformVolume)}
           </h3>
         </div>
         <div className="w-10 h-10 bg-gray-50 rounded-lg flex items-center justify-center text-gray-500">
@@ -31,16 +31,16 @@ export default function MetricsSummary({ metrics }: { metrics: AdminMetrics }) {
       </div>
 
       {/* Admin Commission */}
-      <div className="bg-emerald-950 p-5 rounded-xl text-white flex items-center justify-between">
+      <div className="bg-violet-950 p-5 rounded-xl text-white flex items-center justify-between">
         <div>
-          <p className="text-xs font-bold text-emerald-300 uppercase tracking-wider">
+          <p className="text-xs font-bold text-violet-300 uppercase tracking-wider">
             Admin Commission
           </p>
-          <h3 className="text-xl font-black text-emerald-50 mt-1">
-            {formatCurrency(metrics.totalAdminCommission)}
+          <h3 className="text-xl font-black text-violet-50 mt-1">
+            {formatCurrency(metrics?.totalAdminCommission)}
           </h3>
         </div>
-        <div className="w-10 h-10 bg-emerald-900 rounded-lg flex items-center justify-center text-emerald-400">
+        <div className="w-10 h-10 bg-violet-900 rounded-lg flex items-center justify-center text-violet-400">
           <Percent className="w-5 h-5" />
         </div>
       </div>
@@ -52,7 +52,7 @@ export default function MetricsSummary({ metrics }: { metrics: AdminMetrics }) {
             Owed to Restaurants
           </p>
           <h3 className="text-xl font-black text-gray-900 mt-1">
-            {formatCurrency(metrics.restaurantOwedPool)}
+            {formatCurrency(metrics?.restaurantOwedPool)}
           </h3>
         </div>
         <div className="w-10 h-10 bg-orange-50 rounded-lg flex items-center justify-center text-orange-600">
@@ -67,7 +67,7 @@ export default function MetricsSummary({ metrics }: { metrics: AdminMetrics }) {
             Owed to Riders
           </p>
           <h3 className="text-xl font-black text-gray-900 mt-1">
-            {formatCurrency(metrics.riderOwedPool)}
+            {formatCurrency(metrics?.riderOwedPool)}
           </h3>
         </div>
         <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600">

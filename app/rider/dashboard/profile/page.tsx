@@ -1,255 +1,132 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import Image from "next/image";
-import { User, ShieldCheck, Loader2, Camera, CheckCircle2 } from "lucide-react";
-import { RiderProfileFields } from "@/components/rider/RiderProfileFields";
+import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
+import { BadgeCheck, Camera, Loader2, ShieldCheck } from "lucide-react";
+import { useRider } from "@/components/rider/RiderProvider";
+import { ErrorState, PageHeader } from "@/components/shared/states";
+import { Badge, Panel, adminField } from "@/components/superadmin/ui";
+import { Skeleton } from "@/components/ui/skeleton";
 
-export default function RiderProfileSetup() {
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    phone: "",
-    vehicleType: "Motorcycle",
-    plateNumber: "",
-  });
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [isVerified, setIsVerified] = useState(false);
-  const [loading, setLoading] = useState(true);
+const API = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+const VEHICLES = ["Motorcycle", "Bicycle", "Car"];
+
+export default function RiderProfilePage() {
+  const { data, loading, error, refresh } = useRider();
+  const [f, setF] = useState({ firstName: "", lastName: "", phone: "", vehicleType: "Motorcycle", plateNumber: "" });
+  const [file, setFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
-  const [phoneError, setPhoneError] = useState<string | null>(null);
+  const [errors, setErrors] = useState<{ phone?: string; firstName?: string }>({});
+  const picker = useRef<HTMLInputElement>(null);
+  const loaded = useRef(false);
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const API_BASE_URL =
-    process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
-
+  // fill the form once from the shared dashboard data
   useEffect(() => {
-    const fetchCurrentProfile = async () => {
-      try {
-        const token = localStorage.getItem("riderToken");
-        const response = await fetch(`${API_BASE_URL}/rider/dashboard`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+    const p = data?.profile;
+    if (!p || loaded.current) return;
+    loaded.current = true;
+    setF({ firstName: p.firstName || "", lastName: p.lastName || "", phone: p.phone || "", vehicleType: p.vehicleType || "Motorcycle", plateNumber: p.plateNumber || "" });
+    if (p.avatarUrl) setPreview(p.avatarUrl.startsWith("http") ? p.avatarUrl : `${API}${p.avatarUrl}`);
+  }, [data]);
 
-        if (response.ok) {
-          const data = await response.json();
-          setFormData({
-            firstName: data.profile?.firstName || "",
-            lastName: data.profile?.lastName || "",
-            phone: data.profile?.phone || "",
-            vehicleType: data.profile?.vehicleType || "Motorcycle",
-            plateNumber: data.profile?.plateNumber || "",
-          });
-          setIsVerified(!!data.profile?.isVerified);
+  if (loading) return <div className="space-y-4" aria-busy="true"><Skeleton className="h-32 rounded-3xl bg-muted" /><Skeleton className="h-72 rounded-3xl bg-muted" /></div>;
+  if (error && !data) return <ErrorState title="We couldn't load your profile" message={error} onRetry={refresh} />;
 
-          if (data.profile?.avatarUrl) {
-            setPreviewUrl(
-              data.profile.avatarUrl.startsWith("http")
-                ? data.profile.avatarUrl
-                : `${API_BASE_URL}${data.profile.avatarUrl}`,
-            );
-          }
-        }
-      } catch (err) {
-        console.error("Failed loading configuration profiles", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCurrentProfile();
-  }, [API_BASE_URL]);
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setSelectedFile(file);
-      setPreviewUrl(URL.createObjectURL(file));
-    }
+  const verified = !!data?.profile?.isVerified;
+  const initials = `${f.firstName[0] || ""}${f.lastName[0] || ""}`.toUpperCase() || "R";
+  const set = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const v = k === "phone" ? e.target.value.replace(/\D/g, "").slice(0, 11) : e.target.value;
+    setF((p) => ({ ...p, [k]: v }));
+    setErrors((p) => ({ ...p, [k]: undefined }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const save = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.phone.length !== 11) {
-      setPhoneError(
-        "Cannot save profile. Phone number must be exactly 11 digits.",
-      );
-      return;
-    }
+    const errs: typeof errors = {};
+    if (!f.firstName.trim()) errs.firstName = "Enter your first name.";
+    if (f.phone.length !== 11) errs.phone = "Phone number must be 11 digits.";
+    setErrors(errs);
+    if (Object.keys(errs).length) return;
 
     setSaving(true);
     try {
-      const token = localStorage.getItem("riderToken");
-      const dataPayload = new FormData();
-      dataPayload.append("firstName", formData.firstName);
-      dataPayload.append("lastName", formData.lastName);
-      dataPayload.append("phone", formData.phone);
-      dataPayload.append("vehicleType", formData.vehicleType);
-      dataPayload.append("plateNumber", formData.plateNumber);
-
-      if (selectedFile) {
-        dataPayload.append("avatar", selectedFile);
-      }
-
-      const response = await fetch(`${API_BASE_URL}/rider/profile/update`, {
-        method: "PUT",
-        headers: { Authorization: `Bearer ${token}` },
-        body: dataPayload,
-      });
-
-      if (response.ok) {
-        alert("Profile saved successfully!");
-      }
-    } catch (err) {
-      console.error("Update request error", err);
+      const body = new FormData();
+      Object.entries(f).forEach(([k, v]) => body.append(k, v));
+      if (file) body.append("avatar", file);
+      const res = await fetch(`${API}/rider/profile/update`, { method: "PUT", headers: { Authorization: `Bearer ${localStorage.getItem("riderToken")}` }, body });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(json.message || "Couldn't save your profile.");
+      toast.success("Profile saved");
+      setFile(null);
+      await refresh();
+    } catch (err: any) {
+      toast.error(err?.message || "Couldn't save your profile.");
     } finally {
       setSaving(false);
     }
   };
 
-  const getInitials = () => {
-    return (
-      `${formData.firstName?.substring(0, 1) || ""}${formData.lastName?.substring(0, 1) || ""}`.toUpperCase() ||
-      "R"
-    );
-  };
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-48">
-        <Loader2 className="w-6 h-6 animate-spin text-green-600" />
-      </div>
-    );
-  }
-
+  const label = "mb-1.5 block text-sm font-bold";
   return (
-    // 💡 THE SPACE FIX: Wrap in a container with a flexible background, removing min-h-screen/stretch from the card block
-    <div className="p-4 md:p-6 w-full flex flex-col justify-start items-start">
-      <div className="w-full  bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        {/* Header Section */}
-        <div className="px-4 py-3 bg-slate-50 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <div>
-            <h2 className="text-sm font-bold text-slate-900 tracking-tight">
-              Profile Settings
-            </h2>
-            <p className="text-[11px] text-slate-500">
-              Update account particulars, avatar registration data and vehicle
-              type indicators.
-            </p>
+    <div className="mx-auto max-w-2xl space-y-5">
+      <PageHeader title="Profile" action={<Badge tone={verified ? "success" : "mango"}>{verified ? <><BadgeCheck className="mr-1 h-3.5 w-3.5" />Verified</> : <><ShieldCheck className="mr-1 h-3.5 w-3.5" />Awaiting verification</>}</Badge>} />
+
+      <form onSubmit={save} noValidate className="space-y-5">
+        <Panel>
+          <div className="flex items-center gap-4">
+            <button type="button" onClick={() => picker.current?.click()} aria-label="Change profile photo" className="group relative h-20 w-20 shrink-0 overflow-hidden rounded-full bg-primary text-xl font-extrabold text-primary-foreground">
+              {preview ? <img src={preview} alt="" className="h-full w-full object-cover" /> : <span className="grid h-full place-items-center">{initials}</span>}
+              <span className="absolute inset-0 grid place-items-center bg-black/40 opacity-0 transition group-hover:opacity-100 group-focus-visible:opacity-100"><Camera className="h-5 w-5 text-white" /></span>
+            </button>
+            <input ref={picker} type="file" accept="image/*" className="sr-only" tabIndex={-1} onChange={(e) => { const x = e.target.files?.[0]; if (x) { setFile(x); setPreview(URL.createObjectURL(x)); } }} />
+            <div>
+              <p className="font-bold">Profile photo</p>
+              <p className="text-sm text-muted-foreground">Customers see this when you deliver. Tap to change.</p>
+            </div>
           </div>
-          <div
-            className={`flex items-center gap-1 px-2.5 py-0.5 rounded text-[10px] font-bold ${
-              isVerified
-                ? "bg-green-50 border border-green-200 text-green-700"
-                : "bg-amber-50 border border-amber-200 text-amber-700"
-            }`}
-          >
-            {isVerified ? (
-              <CheckCircle2 className="w-3 h-3" />
-            ) : (
-              <ShieldCheck className="w-3 h-3" />
-            )}
-            {isVerified ? "Verified Operator" : "Awaiting Verification"}
+        </Panel>
+
+        <Panel title="Your details">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label htmlFor="fn" className={label}>First name</label>
+              <input id="fn" value={f.firstName} onChange={set("firstName")} autoComplete="given-name" aria-invalid={!!errors.firstName} className={adminField} />
+              {errors.firstName && <p role="alert" className="mt-1.5 text-sm font-semibold text-destructive">{errors.firstName}</p>}
+            </div>
+            <div>
+              <label htmlFor="ln" className={label}>Last name</label>
+              <input id="ln" value={f.lastName} onChange={set("lastName")} autoComplete="family-name" className={adminField} />
+            </div>
+            <div className="sm:col-span-2">
+              <label htmlFor="ph" className={label}>Phone number</label>
+              <input id="ph" type="tel" inputMode="numeric" value={f.phone} onChange={set("phone")} placeholder="08012345678" autoComplete="tel" aria-invalid={!!errors.phone} className={adminField} />
+              {errors.phone ? <p role="alert" className="mt-1.5 text-sm font-semibold text-destructive">{errors.phone}</p> : <p className="mt-1.5 text-xs text-muted-foreground">{f.phone.length}/11 digits</p>}
+            </div>
           </div>
+        </Panel>
+
+        <Panel title="Vehicle">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label htmlFor="vt" className={label}>Type</label>
+              <select id="vt" value={f.vehicleType} onChange={set("vehicleType")} className={adminField}>
+                {VEHICLES.map((v) => <option key={v}>{v}</option>)}
+              </select>
+            </div>
+            <div>
+              <label htmlFor="pl" className={label}>Plate number</label>
+              <input id="pl" value={f.plateNumber} onChange={set("plateNumber")} placeholder="e.g. KJA-123XD" className={adminField} />
+            </div>
+          </div>
+        </Panel>
+
+        <div className="sticky bottom-20 z-20 lg:static">
+          <button type="submit" disabled={saving} className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-cta text-base font-extrabold text-cta-foreground shadow-pop transition hover:bg-mango-300 active:scale-[0.98] disabled:opacity-60 sm:w-auto sm:px-10">
+            {saving ? <Loader2 className="h-5 w-5 animate-spin" /> : "Save changes"}
+          </button>
         </div>
-
-        {/* Content Row: Explicitly avoids forcing stretch behavior */}
-        <form
-          onSubmit={handleSubmit}
-          className="p-4 grid grid-cols-1 md:grid-cols-3 gap-4 items-start"
-        >
-          {/* Avatar Area */}
-          <div className="flex flex-col items-center justify-center p-4 bg-slate-50 rounded-lg border border-slate-200/60 text-center">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">
-              Profile Image
-            </span>
-            <div
-              onClick={() => fileInputRef.current?.click()}
-              className="group relative w-16 h-16 rounded-full bg-emerald-800 border-2 border-white shadow-sm flex items-center justify-center cursor-pointer overflow-hidden"
-            >
-              {previewUrl ? (
-                <Image
-                  src={previewUrl}
-                  alt="Avatar Preview"
-                  fill
-                  className="object-cover group-hover:brightness-75 transition-all"
-                  unoptimized
-                />
-              ) : (
-                <span className="text-white font-bold text-sm tracking-wider group-hover:opacity-20 transition-opacity">
-                  {getInitials()}
-                </span>
-              )}
-              <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                <Camera className="w-3.5 h-3.5 text-white" />
-              </div>
-            </div>
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleFileChange}
-              accept="image/*"
-              className="hidden"
-            />
-            <p className="text-[9px] text-slate-400 mt-2 font-medium">
-              Click image to update
-            </p>
-          </div>
-
-          {/* Form Content Block */}
-          <div className="md:col-span-2 space-y-3">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {/* First Name */}
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
-                  First Name
-                </label>
-                <div className="relative">
-                  <User className="absolute left-2.5 top-2 w-3.5 h-3.5 text-slate-400" />
-                  <input
-                    type="text"
-                    required
-                    value={formData.firstName}
-                    onChange={(e) =>
-                      setFormData((p) => ({ ...p, firstName: e.target.value }))
-                    }
-                    className="w-full bg-white border border-slate-200 rounded-lg py-1.5 pl-8 pr-2.5 text-xs text-slate-900 focus:outline-none focus:border-green-600 focus:ring-1 focus:ring-green-600"
-                  />
-                </div>
-              </div>
-
-              {/* Last Name */}
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
-                  Last Name
-                </label>
-                <div className="relative">
-                  <User className="absolute left-2.5 top-2 w-3.5 h-3.5 text-slate-400" />
-                  <input
-                    type="text"
-                    required
-                    value={formData.lastName}
-                    onChange={(e) =>
-                      setFormData((p) => ({ ...p, lastName: e.target.value }))
-                    }
-                    className="w-full bg-white border border-slate-200 rounded-lg py-1.5 pl-8 pr-2.5 text-xs text-slate-900 focus:outline-none focus:border-green-600 focus:ring-1 focus:ring-green-600"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Split Input Form Block */}
-            <RiderProfileFields
-              formData={formData}
-              setFormData={setFormData}
-              saving={saving}
-              phoneError={phoneError}
-              setPhoneError={setPhoneError}
-            />
-          </div>
-        </form>
-      </div>
+      </form>
     </div>
   );
 }

@@ -1,156 +1,157 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { vendorApi, type WalletData } from "@/lib/api/vendor";
-import { Wallet, RefreshCw, XCircle, Info } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useCallback, useEffect, useState } from "react";
+import { toast } from "sonner";
+import { Banknote, Info, Loader2, Wallet } from "lucide-react";
+import { vendorApi, type EarningsData } from "@/lib/api/vendor";
+import { EmptyState, ErrorState, PageHeader } from "@/components/shared/states";
+import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 
-import BalanceCard from "../components/wallet/BalanceCard";
-import TransactionList from "../components/wallet/TransactionList";
+const naira = (n: number | null | undefined) =>
+  n == null ? "—" : `₦${(Math.round(n * 100) / 100).toLocaleString("en-NG", { maximumFractionDigits: 2 })}`;
 
-export default function WalletPage() {
-  const [wallet, setWallet] = useState<WalletData | null>(null);
+function Stat({ label, value, sub, tone = "default" }: { label: string; value: string; sub?: string; tone?: "default" | "warn" | "good" }) {
+  return (
+    <div
+      className={cn(
+        "rounded-3xl border p-5 shadow-card",
+        tone === "warn" ? "border-mango-300 bg-mango-50" : "border-border bg-card",
+      )}
+    >
+      <p className="text-sm font-semibold text-muted-foreground">{label}</p>
+      <p className={cn("font-display mt-2 text-2xl font-extrabold tracking-tight sm:text-3xl", tone === "good" && "text-success")}>{value}</p>
+      {sub && <p className="mt-1 text-xs text-muted-foreground">{sub}</p>}
+    </div>
+  );
+}
+
+export default function EarningsPage() {
+  const [data, setData] = useState<EarningsData | null>(null);
+  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [withdrawing, setWithdrawing] = useState(false);
 
-  const [hasBankDetails, setHasBankDetails] = useState(false);
-  const [linkedBankText, setLinkedBankText] = useState("");
-
-  const load = async () => {
+  const load = useCallback(async () => {
     setLoading(true);
     setError("");
     try {
-      const res = await vendorApi.getWallet();
-      setWallet(res.wallet || null);
-      setHasBankDetails(res.hasBankDetails || false);
-      setLinkedBankText(res.linkedBankAccount || "");
+      setData(await vendorApi.getEarnings(page));
     } catch (e: any) {
-      if (
-        e?.message?.toLowerCase().includes("not found") ||
-        e?.message?.includes("404")
-      ) {
-        setWallet(null);
-      } else {
-        setError(e?.message || "Failed to load wallet data");
-      }
+      setError(e?.message || "We couldn't load your earnings.");
     } finally {
       setLoading(false);
     }
-  };
+  }, [page]);
 
   useEffect(() => {
     load();
-  }, []);
+  }, [load]);
 
-  const handleWithdraw = async () => {
-    if (!wallet || wallet.balance <= 0) return;
+  const withdrawEarlierBalance = async () => {
+    if (!data || data.summary.walletBalance <= 0) return;
     setWithdrawing(true);
     try {
-      await vendorApi.requestWithdrawal(wallet.balance);
-      alert("Withdrawal request submitted successfully!");
-      load();
+      await vendorApi.requestWithdrawal(data.summary.walletBalance);
+      toast.success("Payout requested. We'll notify you when it's sent.");
+      await load();
     } catch (e: any) {
-      alert(e?.message || "Failed to submit withdrawal request");
+      toast.error(e?.message || "Couldn't submit the payout request");
     } finally {
       setWithdrawing(false);
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex h-[60vh] flex-col items-center justify-center gap-3">
-        <RefreshCw className="h-8 w-8 animate-spin text-[#2D6A4F]" />
-        <p className="font-medium text-[#6B7C6E]">Loading wallet...</p>
-      </div>
-    );
-  }
-
   return (
-    <div className="w-full space-y-6 pb-10">
-      <div>
-        <h1 className="text-2xl font-black tracking-tight text-[#1B4332]">
-          Wallet & Earnings
-        </h1>
-        <p className="mt-1 text-sm font-medium text-[#6B7C6E]">
-          Manage your restaurant earnings and request payouts.
-        </p>
-      </div>
+    <div className="space-y-5 sm:space-y-6">
+      <PageHeader title="Earnings" subtitle="What you've earned, and what OyaEat keeps from each order." />
 
-      {/* ── 🌟 NEW: INFORMATIONAL BANNER DISPLAYING BOUND BANK DETAILS FROM ADMIN EMAIL LINKING ── */}
-      <div
-        className={`rounded-xl p-4 flex items-start gap-3 max-w-xl border ${
-          hasBankDetails
-            ? "bg-gray-50 border-gray-200"
-            : "bg-red-50 border-red-200"
-        }`}
-      >
-        <Info
-          className={`w-5 h-5 mt-0.5 flex-shrink-0 ${hasBankDetails ? "text-[#2D6A4F]" : "text-red-600"}`}
-        />
-        <div>
-          <h4 className="text-sm font-bold text-gray-900">
-            Settlement Destination Profile
-          </h4>
-          <p
-            className={`text-xs mt-1 ${hasBankDetails ? "text-gray-600" : "text-red-600 font-semibold"}`}
-          >
-            {hasBankDetails
-              ? `Your wallet payouts are pinned to: ${linkedBankText}.`
-              : "No verified settlement bank linked yet. Please submit your business bank details to support via email."}
-          </p>
-        </div>
-      </div>
-
-      {error ? (
-        <div className="flex flex-col items-center justify-center rounded-2xl border p-12 text-center bg-white border-[#c8e6c9]">
-          <XCircle className="mb-3 h-12 w-12 text-[#C0392B]" />
-          <h2 className="text-xl font-bold text-gray-900">
-            Failed to load wallet
-          </h2>
-          <p className="mt-2 text-sm text-[#6B7C6E]">{error}</p>
-          <Button
-            onClick={load}
-            className="mt-6"
-            variant="outline"
-            style={{ borderColor: "#2D6A4F", color: "#2D6A4F" }}
-          >
-            Try Again
-          </Button>
-        </div>
-      ) : !wallet ? (
-        <div className="flex flex-col items-center justify-center rounded-2xl border p-12 text-center bg-white border-[#c8e6c9]">
-          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#f0f7f1]">
-            <Wallet className="h-8 w-8 text-[#2D6A4F]" />
+      {loading && !data ? (
+        <div className="space-y-4" aria-busy="true">
+          <div className="grid gap-4 sm:grid-cols-3">
+            {[0, 1, 2].map((i) => <Skeleton key={i} className="h-32 rounded-3xl bg-muted" />)}
           </div>
-          <h2 className="text-xl font-bold text-gray-900">No Wallet Data</h2>
-          <p className="mt-2 max-w-md text-sm text-[#6B7C6E]">
-            Your wallet tracking will begin automatically once your first orders
-            are delivered and paid.
-          </p>
-          <Button onClick={load} className="mt-6 gap-2 bg-[#1B4332] text-white">
-            <RefreshCw className="h-4 w-4" /> Refresh
-          </Button>
+          <Skeleton className="h-64 rounded-3xl bg-muted" />
         </div>
-      ) : (
+      ) : error ? (
+        <ErrorState title="We couldn't load your earnings" message={error} onRetry={load} />
+      ) : !data ? null : (
         <>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <BalanceCard
-              type="available"
-              amount={wallet.balance}
-              hasBankDetails={hasBankDetails}
-              withdrawing={withdrawing}
-              onWithdraw={handleWithdraw}
-              onLinkBank={() =>
-                alert(
-                  "Please submit your updated bank information to support via your registered email.",
-                )
-              }
-            />
-            <BalanceCard type="pending" amount={wallet.pendingPayouts} />
+          <div className={cn("flex items-start gap-3 rounded-2xl border p-4", data.account?.active ? "border-border bg-card" : "border-mango-300 bg-mango-50")}>
+            <Info className={cn("mt-0.5 h-5 w-5 shrink-0", data.account?.active ? "text-primary" : "text-mango-700")} />
+            <div>
+              <p className="text-sm font-bold">Where your money goes</p>
+              <p className="mt-0.5 text-sm text-muted-foreground">
+                {data.account?.active
+                  ? `When a customer pays online, your share is sent straight to ${data.account.bankName} · ${data.account.accountNumber} (${data.account.accountName}) by Paystack, usually the next business day. You don't need to withdraw anything.`
+                  : data.account
+                    ? "Online payments are paused for your restaurant. Contact support to turn them back on."
+                    : "Your payout account hasn't been set up yet, so customers can't pay online. Contact support and we'll set it up."}
+              </p>
+            </div>
           </div>
 
-          <TransactionList transactions={wallet.transactions} />
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <Stat label="Sent to your bank" value={naira(data.summary.paidToBank)} sub={`from ${naira(data.summary.onlineSales)} of online sales`} tone="good" />
+            <Stat label="OyaEat fees" value={naira(data.summary.platformFees)} sub="Kept from online payments" />
+            {data.summary.cashOwed > 0 && (
+              <Stat label="You owe OyaEat" value={naira(data.summary.cashOwed)} sub="Fee on orders customers paid you in cash. We'll collect it from you." tone="warn" />
+            )}
+          </div>
+
+          {data.summary.walletBalance > 0 && (
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-card p-4">
+              <div>
+                <p className="text-sm font-bold">Earlier balance: {naira(data.summary.walletBalance)}</p>
+                <p className="mt-0.5 text-sm text-muted-foreground">From orders paid before your payout account was set up. You can withdraw this once.</p>
+              </div>
+              <button
+                onClick={withdrawEarlierBalance}
+                disabled={withdrawing}
+                className="flex h-11 items-center gap-2 rounded-full bg-primary px-6 text-sm font-bold text-primary-foreground transition hover:bg-violet-800 disabled:opacity-60"
+              >
+                {withdrawing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wallet className="h-4 w-4" />} Withdraw
+              </button>
+            </div>
+          )}
+
+          {data.orders.length === 0 ? (
+            <EmptyState icon={Banknote} title="No earnings yet" body="Paid orders show up here with the fee OyaEat kept and what you received." />
+          ) : (
+            <section className="rounded-3xl border border-border bg-card shadow-card">
+              <h2 className="font-display border-b border-border px-5 py-4 text-lg font-bold">Orders</h2>
+              <ul className="divide-y divide-border">
+                {data.orders.map((o) => (
+                  <li key={o.id} className="flex flex-wrap items-center justify-between gap-3 px-5 py-4">
+                    <div className="min-w-0">
+                      <p className="font-semibold">
+                        Order #{o.id}{" "}
+                        <span className="ml-1 rounded-full bg-muted px-2 py-0.5 text-xs font-bold text-muted-foreground">
+                          {o.mode === "cash" ? "Cash" : "Online"}
+                        </span>
+                      </p>
+                      <p className="mt-0.5 text-xs text-muted-foreground">
+                        {new Date(o.createdAt).toLocaleString("en-NG", { dateStyle: "medium", timeStyle: "short" })} · {o.note}
+                      </p>
+                    </div>
+                    <dl className="flex gap-6 text-right text-sm">
+                      <div><dt className="text-xs text-muted-foreground">Order total</dt><dd className="font-semibold">{naira(o.total)}</dd></div>
+                      <div><dt className="text-xs text-muted-foreground">OyaEat fee</dt><dd className="font-semibold">{naira(o.platformFee)}</dd></div>
+                      <div><dt className="text-xs text-muted-foreground">You get</dt><dd className="font-bold text-success">{naira(o.youReceive)}</dd></div>
+                    </dl>
+                  </li>
+                ))}
+              </ul>
+              {data.pagination.totalPages > 1 && (
+                <div className="flex items-center justify-between border-t border-border px-5 py-3 text-sm">
+                  <button disabled={page <= 1 || loading} onClick={() => setPage((p) => p - 1)} className="font-semibold text-primary disabled:opacity-40">Previous</button>
+                  <span className="text-muted-foreground">Page {data.pagination.page} of {data.pagination.totalPages}</span>
+                  <button disabled={page >= data.pagination.totalPages || loading} onClick={() => setPage((p) => p + 1)} className="font-semibold text-primary disabled:opacity-40">Next</button>
+                </div>
+              )}
+            </section>
+          )}
         </>
       )}
     </div>

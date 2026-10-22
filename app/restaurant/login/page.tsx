@@ -1,5 +1,6 @@
 "use client";
 
+import Logo from "@/components/brand/Logo";
 import React, { useState, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -8,16 +9,16 @@ import Image from "next/image";
 
 // ── Brand tokens ──────────────────────────────────────────────────────────────
 const C = {
-  green: "#1B4332",
-  greenMid: "#2D6A4F",
-  greenLight: "#52B788",
-  amber: "#D4860B",
-  bg: "#F5F1EB",
+  brand: "#3b0f7a",
+  brandMid: "#6d28d9",
+  brandLight: "#8b5cf6",
+  mango: "#d97f06",
+  bg: "#fffbef",
   white: "#FFFFFF",
   textDark: "inherit",
-  textMuted: "#6B7C6E",
-  border: "#D8E4DC",
-  error: "#C0392B",
+  textMuted: "#6b6480",
+  border: "#e6e0f3",
+  error: "#c8372d",
 };
 
 // ── Left panel (FULL-BLEED IMAGE) ─────────────────────────────────────────────
@@ -25,7 +26,7 @@ function IllustrationPanel() {
   return (
     <div
       className="hidden lg:flex flex-col justify-between p-10 relative overflow-hidden"
-      style={{ minHeight: "100%", backgroundColor: C.green }}
+      style={{ minHeight: "100%", backgroundColor: C.brand }}
     >
       {/* Full background image */}
       <div className="absolute inset-0">
@@ -43,32 +44,25 @@ function IllustrationPanel() {
       {/* Decorative circles (subtle) */}
       <div
         className="absolute -top-20 -right-20 w-64 h-64 rounded-full opacity-15"
-        style={{ backgroundColor: C.greenMid }}
+        style={{ backgroundColor: C.brandMid }}
       />
       <div
         className="absolute -bottom-16 -left-16 w-80 h-80 rounded-full opacity-10"
-        style={{ backgroundColor: C.greenLight }}
+        style={{ backgroundColor: C.brandLight }}
       />
       <div
         className="absolute top-1/2 right-8 w-24 h-24 rounded-full opacity-10"
-        style={{ backgroundColor: C.greenLight }}
+        style={{ backgroundColor: C.brandLight }}
       />
 
       {/* Brand mark */}
       <div className="relative z-10">
-        <div className="flex items-center gap-3 mb-2">
-          <div>
-            <p className="text-white text-lg font-black tracking-tight">
-              Oya-Eat
-            </p>
-            <p
-              className="text-xs font-semibold tracking-[0.2em]"
-              style={{ color: C.greenLight }}
-            >
-              VENDOR PORTAL
-            </p>
-          </div>
-        </div>
+        <Logo variant="white" className="h-20 w-auto" />
+        <p
+          className="mt-1 text-xs font-bold tracking-[0.2em] text-white/90 drop-shadow"
+        >
+          VENDOR PORTAL
+        </p>
       </div>
 
       {/* Quote */}
@@ -119,16 +113,16 @@ function Field({
       <div
         className="flex items-center gap-3 rounded-xl border transition-all duration-200 overflow-hidden"
         style={{
-          borderColor: focused ? C.greenMid : C.border,
+          borderColor: focused ? C.brandMid : C.border,
           backgroundColor: C.white,
-          boxShadow: focused ? `0 0 0 3px ${C.greenMid}18` : undefined,
+          boxShadow: focused ? `0 0 0 3px ${C.brandMid}18` : undefined,
         }}
         onClick={() => inputRef.current?.focus()}
       >
         <div className="pl-4">
           <Icon
             className="h-4 w-4 flex-shrink-0"
-            style={{ color: focused ? C.greenMid : C.textMuted }}
+            style={{ color: focused ? C.brandMid : C.textMuted }}
           />
         </div>
 
@@ -206,29 +200,11 @@ export default function LoginPage() {
       <div className="flex-1 flex items-center justify-center px-6 py-12">
         <div className="w-full max-w-sm">
           {/* Mobile brand (hidden on lg) */}
-          <div className="flex items-center gap-3 mb-8 lg:hidden">
-            <div
-              className="w-9 h-9 rounded-xl flex items-center justify-center"
-              style={{ backgroundColor: C.green }}
-            >
-              <svg width="14" height="18" viewBox="0 0 16 20" fill="none">
-                <path d="M9 1L1 11h7l-1 8 8-10H8l1-8z" fill="white" />
-              </svg>
-            </div>
-            <div>
-              <p
-                className="font-black text-base tracking-tight"
-                style={{ color: C.textDark }}
-              >
-                OyaEat
-              </p>
-              <p
-                className="text-xs font-semibold tracking-widest"
-                style={{ color: C.textMuted }}
-              >
-                VENDOR PORTAL
-              </p>
-            </div>
+          <div className="mb-8 lg:hidden">
+            <Logo className="h-10" />
+            <p className="mt-1 text-xs font-semibold tracking-widest" style={{ color: C.textMuted }}>
+              VENDOR PORTAL
+            </p>
           </div>
 
           {/* Heading */}
@@ -281,13 +257,18 @@ export default function LoginPage() {
               icon={Lock}
               disabled={loading}
             />
+            <div className="-mt-2 text-right">
+              <Link href="/forgot-password?role=owner" className="text-xs font-bold hover:underline" style={{ color: C.brand }}>
+                Forgot password?
+              </Link>
+            </div>
 
             <button
               type="submit"
               disabled={loading}
               className="mt-2 w-full flex items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-bold text-white transition-opacity"
               style={{
-                backgroundColor: C.green,
+                backgroundColor: C.brand,
                 opacity: loading ? 0.7 : 1,
               }}
             >
@@ -332,7 +313,7 @@ export default function LoginPage() {
             <Link
               href="/"
               className="font-bold hover:underline"
-              style={{ color: C.green }}
+              style={{ color: C.brand }}
             >
               Contact us
             </Link>

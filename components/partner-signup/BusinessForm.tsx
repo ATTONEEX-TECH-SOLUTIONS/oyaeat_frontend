@@ -1,67 +1,34 @@
-// components/partner-signup/BusinessForm.tsx
 "use client";
 
 import { APIProvider, Map, Marker } from "@vis.gl/react-google-maps";
+import { Crosshair, Loader2 } from "lucide-react";
+import { Field, fieldClass } from "./ui";
 
 interface BusinessFormProps {
   subStep: number;
   formData: any;
   markerPos: { lat: number; lng: number };
+  pinMoved: boolean;
+  locating: boolean;
   isLoading: boolean;
-  handleChange: (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >,
-  ) => void;
+  handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
   handleMapClick: (e: any) => void;
+  onLocate: () => void;
 }
 
-const inputClass =
-  "w-full text-gray-900 px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#2d5f4f] focus:border-transparent outline-none disabled:bg-gray-50 text-sm font-medium placeholder:text-gray-400 transition-shadow";
+export default function BusinessForm({ subStep, formData, markerPos, pinMoved, locating, isLoading, handleChange, handleMapClick, onLocate }: BusinessFormProps) {
+  const common = { onChange: handleChange, disabled: isLoading, className: fieldClass };
 
-const labelClass =
-  "block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5";
-
-export default function BusinessForm({
-  subStep,
-  formData,
-  markerPos,
-  isLoading,
-  handleChange,
-  handleMapClick,
-}: BusinessFormProps) {
-  return (
-    <>
-      {subStep === 1 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-          {/* Business Name — full width */}
-          <div className="sm:col-span-2">
-            <label className={labelClass}>Business Name *</label>
-            <input
-              type="text"
-              name="businessName"
-              value={formData.businessName}
-              onChange={handleChange}
-              required
-              disabled={isLoading}
-              className={inputClass}
-              placeholder="e.g. Mama Titi's Kitchen"
-            />
-          </div>
-
-          {/* Type */}
-          <div>
-            <label className={labelClass}>Business Type *</label>
-            <select
-              name="businessType"
-              value={formData.businessType}
-              onChange={handleChange}
-              required
-              disabled={isLoading}
-              className={inputClass}
-            >
-              <option value="">Select type</option>
-              <option value="buka_mamaput">Local Buka / Mama Put</option>
+  if (subStep === 1) {
+    return (
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field id="businessName" label="Business name" className="sm:col-span-2">
+          <input id="businessName" name="businessName" value={formData.businessName} placeholder="e.g. Mama Titi's Kitchen" {...common} />
+        </Field>
+        <Field id="businessType" label="Business type">
+          <select id="businessType" name="businessType" value={formData.businessType} {...common}>
+            <option value="">Select a type</option>
+            <option value="buka_mamaput">Local Buka / Mama Put</option>
               <option value="fastfood_qsr">Fast Food / QSR Chain</option>
               <option value="casual_dining">
                 Casual / Continental Restaurant
@@ -76,167 +43,63 @@ export default function BusinessForm({
                 Groceries & Supermarket
               </option>
               <option value="drinks_liquor">Drinks & Wholesale Beverage</option>
-            </select>
-          </div>
+            
+          </select>
+        </Field>
+        <Field id="businessPhone" label="Business phone">
+          <input id="businessPhone" name="businessPhone" type="tel" inputMode="tel" autoComplete="tel" value={formData.businessPhone} placeholder="0803 000 0000" {...common} />
+        </Field>
+        <Field id="businessEmail" label="Business email">
+          <input id="businessEmail" name="businessEmail" type="email" autoComplete="email" value={formData.businessEmail} placeholder="hello@yourbusiness.com" {...common} />
+        </Field>
+        <Field id="website" label="Website" optional>
+          <input id="website" name="website" type="url" value={formData.website} placeholder="https://" {...common} />
+        </Field>
+        <Field id="description" label="Description" hint="A sentence or two about what makes you special." className="sm:col-span-2">
+          <textarea id="description" name="description" rows={3} value={formData.description} placeholder="Tell customers what you cook and what you're known for" onChange={handleChange} disabled={isLoading} className={`${fieldClass} h-auto resize-none py-3`} />
+        </Field>
+      </div>
+    );
+  }
 
-          {/* Phone */}
-          <div>
-            <label className={labelClass}>Business Phone *</label>
-            <input
-              type="text"
-              name="businessPhone"
-              value={formData.businessPhone}
-              onChange={handleChange}
-              required
-              disabled={isLoading}
-              className={inputClass}
-              placeholder="+234 XXX XXX XXXX"
-            />
-          </div>
+  return (
+    <div className="grid gap-4 sm:grid-cols-3">
+      <Field id="streetAddress" label="Street address" className="sm:col-span-3">
+        <input id="streetAddress" name="streetAddress" autoComplete="street-address" value={formData.streetAddress} placeholder="e.g. 14 Awolowo Road" {...common} />
+      </Field>
+      <Field id="city" label="City">
+        <input id="city" name="city" autoComplete="address-level2" value={formData.city} {...common} />
+      </Field>
+      <Field id="state" label="State">
+        <input id="state" name="state" autoComplete="address-level1" value={formData.state} {...common} />
+      </Field>
+      <Field id="zipCode" label="Postcode" optional>
+        <input id="zipCode" name="zipCode" autoComplete="postal-code" value={formData.zipCode} placeholder="100001" {...common} />
+      </Field>
 
-          {/* Email */}
-          <div>
-            <label className={labelClass}>Business Email *</label>
-            <input
-              type="email"
-              name="businessEmail"
-              value={formData.businessEmail}
-              onChange={handleChange}
-              required
-              disabled={isLoading}
-              className={inputClass}
-              placeholder="business@example.com"
-            />
-          </div>
-
-          {/* Website */}
-          <div>
-            <label className={labelClass}>
-              Website{" "}
-              <span className="normal-case font-medium text-gray-400">
-                (optional)
-              </span>
-            </label>
-            <input
-              type="url"
-              name="website"
-              value={formData.website}
-              onChange={handleChange}
-              disabled={isLoading}
-              className={inputClass}
-              placeholder="https://oyaeat.com"
-            />
-          </div>
-
-          {/* Description — full width */}
-          <div className="sm:col-span-2">
-            <label className={labelClass}>Business Description *</label>
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              required
-              rows={3}
-              disabled={isLoading}
-              className={`${inputClass} resize-none`}
-              placeholder="Tell customers what makes your business special…"
-            />
-          </div>
+      <div className="sm:col-span-3">
+        <div className="mb-1.5 flex flex-wrap items-center justify-between gap-2">
+          <p className="text-sm font-bold">Pin your storefront</p>
+          <button
+            type="button"
+            onClick={onLocate}
+            disabled={locating || isLoading}
+            className="flex h-9 items-center gap-2 rounded-full bg-violet-100 px-4 text-xs font-bold text-violet-900 transition hover:bg-violet-200 disabled:opacity-60"
+          >
+            {locating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Crosshair className="h-4 w-4" />} Use my current location
+          </button>
         </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-          {/* Street — full width */}
-          <div className="sm:col-span-3">
-            <label className={labelClass}>Street Address *</label>
-            <input
-              type="text"
-              name="streetAddress"
-              value={formData.streetAddress}
-              onChange={handleChange}
-              required
-              disabled={isLoading}
-              className={inputClass}
-              placeholder="e.g. 14 Awolowo Road"
-            />
-          </div>
-
-          {/* City */}
-          <div>
-            <label className={labelClass}>City *</label>
-            <input
-              type="text"
-              name="city"
-              value={formData.city}
-              onChange={handleChange}
-              required
-              disabled={isLoading}
-              className={inputClass}
-              placeholder="City"
-            />
-          </div>
-
-          {/* State */}
-          <div>
-            <label className={labelClass}>State *</label>
-            <input
-              type="text"
-              name="state"
-              value={formData.state}
-              onChange={handleChange}
-              required
-              disabled={isLoading}
-              className={inputClass}
-              placeholder="State"
-            />
-          </div>
-
-          {/* Zip */}
-          <div>
-            <label className={labelClass}>Zip Code</label>
-            <input
-              type="text"
-              name="zipCode"
-              value={formData.zipCode}
-              onChange={handleChange}
-              disabled={isLoading}
-              className={inputClass}
-              placeholder="100001"
-            />
-          </div>
-
-          {/* Map pin */}
-          <div className="sm:col-span-3">
-            <div className="flex items-center justify-between mb-1.5">
-              <label className={labelClass + " mb-0"}>
-                Pin your storefront *
-              </label>
-              <span className="text-[10px] text-gray-400 font-medium">
-                Tap the map to move the pin
-              </span>
-            </div>
-            <div className="h-40 w-full rounded-xl overflow-hidden border border-gray-200">
-              <APIProvider
-                apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ""}
-              >
-                <Map
-                  defaultZoom={13}
-                  center={markerPos}
-                  onClick={handleMapClick}
-                  mapId={process.env.NEXT_PUBLIC_MAP_ID || "DEMO_MAP_ID"}
-                  disableDefaultUI={true}
-                  zoomControl={true}
-                >
-                  <Marker position={markerPos} />
-                </Map>
-              </APIProvider>
-            </div>
-            <div className="flex gap-4 mt-2 text-[11px] font-mono text-gray-400">
-              <span>Lat: {markerPos.lat.toFixed(6)}</span>
-              <span>Lng: {markerPos.lng.toFixed(6)}</span>
-            </div>
-          </div>
+        <div className="h-56 w-full overflow-hidden rounded-2xl border border-border sm:h-64">
+          <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ""}>
+            <Map defaultZoom={13} center={markerPos} onClick={handleMapClick} mapId={process.env.NEXT_PUBLIC_MAP_ID || "DEMO_MAP_ID"} disableDefaultUI={true} zoomControl={true}>
+              <Marker position={markerPos} />
+            </Map>
+          </APIProvider>
         </div>
-      )}
-    </>
+        <p className={`mt-1.5 text-xs ${pinMoved ? "font-semibold text-success" : "text-muted-foreground"}`}>
+          {pinMoved ? "✓ Pin placed. Tap the map to adjust it." : "Tap the map where your storefront is, or use your current location."}
+        </p>
+      </div>
+    </div>
   );
 }

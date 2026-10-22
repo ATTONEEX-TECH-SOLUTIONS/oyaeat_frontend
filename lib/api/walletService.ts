@@ -3,11 +3,111 @@ const API_BASE_URL =
 
 // Helper to grab authorization headers safely
 const getAuthHeaders = (
-  tokenKey: "authToken" | "riderToken" | "adminToken" = "authToken",
+  tokenKey: "authToken" | "riderToken" | "admin_token" = "authToken",
 ) => ({
   "Content-Type": "application/json",
   Authorization: `Bearer ${localStorage.getItem(tokenKey)}`,
 });
+
+// Superadmin requests use the admin token only, and send an expired or missing session back to the login page.
+async function adminRequest(path: string, init: RequestInit, fallback: string) {
+  let res: Response;
+  try {
+    res = await fetch(`${API_BASE_URL}${path}`, { ...init, headers: getAuthHeaders("admin_token") });
+  } catch {
+    throw new Error("Couldn't reach the server. Check your connection and try again.");
+  }
+  const data = await res.json().catch(() => ({}));
+  if (res.status === 401) {
+    localStorage.removeItem("admin_token");
+    localStorage.removeItem("admin_user");
+    if (typeof window !== "undefined") window.location.href = "/superadmin/login";
+    throw new Error("Your admin session has expired. Please log in again.");
+  }
+  if (!res.ok) throw new Error(data.message || fallback);
+  return data;
+}
+
+export type PaymentAccount = {
+  bankName: string;
+  bankCode: string | null;
+  accountName: string;
+  accountNumber: string;
+  commissionPercent: number | null;
+  subaccountCode: string | null;
+  active: boolean;
+};
+export type PaymentAccountRow = {
+  businessId: number;
+  name: string;
+  city?: string | null;
+  email?: string | null;
+  account: PaymentAccount | null;
+  submittedBank: { bankName: string; accountNumber: string; accountName: string } | null;
+};
+
+export type RiderAccountRow = {
+  userId: number;
+  name: string;
+  email: string;
+  account: { bankName: string; bankCode: string | null; accountName: string; accountNumber: string; active: boolean } | null;
+  submittedBank: { bankName: string; accountNumber: string; accountName: string } | null;
+};
+export type CashCommissionRow = { userId: number; businessId: number | null; name: string; owed: number };
+
+export const paymentAccountsApi = {
+  listRiders: async (): Promise<RiderAccountRow[]> =>
+    (await adminRequest("/admin/rider-payout-accounts", {}, "Couldn't load riders")).data,
+  saveRider: async (userId: number, body: { bankCode: string; bankName: string; accountNumber: string }) =>
+    (
+      await adminRequest(
+        `/admin/riders/${userId}/payout-account`,
+        { method: "PUT", body: JSON.stringify(body) },
+        "Couldn't save the rider's payout account",
+      )
+    ).data,
+  listCashCommissions: async (): Promise<CashCommissionRow[]> =>
+    (await adminRequest("/admin/cash-commissions", {}, "Couldn't load cash commissions")).data,
+  settleCashCommission: async (userId: number, amount: number) =>
+    (
+      await adminRequest(
+        `/admin/cash-commissions/${userId}/settle`,
+        { method: "POST", body: JSON.stringify({ amount }) },
+        "Couldn't record that payment",
+      )
+    ).data,
+  list: async (): Promise<PaymentAccountRow[]> =>
+    (await adminRequest("/admin/payment-accounts", {}, "Couldn't load restaurants")).data,
+  banks: async (): Promise<{ name: string; code: string }[]> =>
+    (await adminRequest("/admin/banks", {}, "Couldn't load the bank list")).data,
+  resolve: async (accountNumber: string, bankCode: string): Promise<{ accountName: string }> =>
+    (
+      await adminRequest(
+        "/admin/payment-accounts/resolve",
+        { method: "POST", body: JSON.stringify({ accountNumber, bankCode }) },
+        "Couldn't verify that account",
+      )
+    ).data,
+  save: async (
+    businessId: number,
+    body: { bankCode: string; bankName: string; accountNumber: string; commissionPercent: number | null },
+  ): Promise<PaymentAccount> =>
+    (
+      await adminRequest(
+        `/admin/businesses/${businessId}/payment-account`,
+        { method: "PUT", body: JSON.stringify(body) },
+        "Couldn't save the payment account",
+      )
+    ).data,
+  deactivate: async (businessId: number): Promise<PaymentAccount> =>
+    (
+      await adminRequest(
+        `/admin/businesses/${businessId}/payment-account`,
+        { method: "DELETE" },
+        "Couldn't deactivate the payment account",
+      )
+    ).data,
+};
 
 export const walletApi = {
   // ── FOR VENDORS & RIDERS ──
@@ -51,31 +151,19 @@ export const walletApi = {
     accountNumber: string;
     accountName: string;
   }) => {
-    const res = await fetch(`${API_BASE_URL}/api/wallet/admin/onboard-bank`, {
-      method: "POST",
-      headers: getAuthHeaders("authToken"), // Assumes admin token is stored here or dedicated key
-      body: JSON.stringify(formData),
-    });
-    const data = await res.json();
-    if (!res.ok)
-      throw new Error(
-        data.message || "Failed to commit manual banking binding row",
-      );
-    return data;
+    return adminRequest(
+      "/api/wallet/admin/onboard-bank",
+      { method: "POST", body: JSON.stringify(formData) },
+      "Failed to commit manual banking binding row",
+    );
   },
 
   // Mark a pending withdrawal row as paid after completing a real wire transfer
   confirmPayoutCompleted: async (transactionId: string) => {
-    const res = await fetch(
-      `${API_BASE_URL}/api/wallet/admin/resolve-payout/${transactionId}`,
-      {
-        method: "PUT",
-        headers: getAuthHeaders("authToken"),
-      },
+    return adminRequest(
+      `/api/wallet/admin/resolve-payout/${transactionId}`,
+      { method: "PUT" },
+      "Failed to confirm payout settlement",
     );
-    const data = await res.json();
-    if (!res.ok)
-      throw new Error(data.message || "Failed to confirm payout settlement");
-    return data;
   },
 };

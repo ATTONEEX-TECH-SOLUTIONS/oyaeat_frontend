@@ -9,7 +9,7 @@ export default function PartnerSignupGalleryPage() {
     <Suspense
       fallback={
         <div className="min-h-screen flex items-center justify-center bg-slate-50">
-          <Loader2 className="w-8 h-8 animate-spin text-[#2d5f4f]" />
+          <Loader2 className="w-8 h-8 animate-spin text-[#5b21b6]" />
         </div>
       }
     >

@@ -1,5 +1,6 @@
 "use client";
 
+import BrandLogo from "@/components/brand/Logo";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -10,7 +11,6 @@ import {
   Briefcase,
   Menu,
   X,
-  UtensilsCrossed,
 } from "lucide-react";
 
 const navLinks = [
@@ -42,20 +42,14 @@ const joinLinks = [
   },
 ];
 
-export function Logo({ className = "" }: { className?: string }) {
+export function Logo({ className = "", size = "md" }: { className?: string; size?: "md" | "lg" }) {
   return (
     <Link
       href="/"
       aria-label="OyaEat home"
-      className={`flex items-center gap-2 flex-shrink-0 ${className}`}
+      className={`flex items-center flex-shrink-0 ${className}`}
     >
-      <span className="w-9 h-9 rounded-full bg-[var(--lp-mango)] text-[var(--lp-violet-900)] flex items-center justify-center shadow-[0_2px_0_rgba(0,0,0,0.18)]">
-        <UtensilsCrossed className="w-[18px] h-[18px]" strokeWidth={2.6} />
-      </span>
-      <span className="lp-display text-[26px] font-extrabold leading-none">
-        <span className="text-[var(--lp-mango)]">Oya</span>
-        <span className="text-white">Eat</span>
-      </span>
+      <BrandLogo variant="white" className={size === "lg" ? "h-20 w-auto" : "h-14 w-auto"} />
     </Link>
   );
 }

@@ -1,346 +1,167 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { ShoppingCart, DollarSign, Users, Package } from "lucide-react";
-import StatCard from "./components/stat-card";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import { ArrowRight, Banknote, ChefHat, Clock, Package, Star, Users, Zap } from "lucide-react";
 import RecentOrders from "./components/recent-orders";
 import SalesChart from "./components/sales-chart";
 import DashboardReview from "@/app/restaurant/dashboard/components/dashboard/DashboardReview";
-import QuickStatsPanel from "@/app/restaurant/dashboard/components/dashboard/QuickStatsPanel";
-import Link from "next/link";
-import { Spinner } from "@/components/ui/spinner";
-import { vendorApi } from "@/lib/api/vendor";
-
-// IMPORT SPLIT COMPONENT LAYERS RIGHT HERE
 import { ShadowSuspensionBanner } from "./components/dashboard/shadow-suspension-banner";
 import { MainSuspensionBlock } from "./components/dashboard/main-suspension-block";
+import { ErrorState, PageHeader } from "@/components/shared/states";
+import { AdminStat, Badge, Panel } from "@/components/superadmin/ui";
+import { Skeleton } from "@/components/ui/skeleton";
+import { vendorApi } from "@/lib/api/vendor";
+
+const PENDING = ["pending_review", "under_review", "pending"];
 
 export default function DashboardPage() {
-  const [businessProfile, setBusinessProfile] = useState<any | null>(null);
-  const [dashData, setDashData] = useState<any | null>(null);
+  const [business, setBusiness] = useState<any | null>(null);
+  const [dash, setDash] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // 🚀 EXTRACT AND EVALUATE SUSPENSION LAYERS FROM REJECTION TEXT PATTERNS
-  const suspensionStrategy = useMemo(() => {
-    if (
-      !businessProfile ||
-      businessProfile.status?.trim()?.toLowerCase() !== "suspended"
-    ) {
-      return { type: "", reason: "" };
-    }
+  const status = String(business?.status || "draft").trim().toLowerCase();
 
-    const rawReason = String(businessProfile.rejectionReason || "").trim();
+  // Suspension is encoded in the rejection reason: "MAIN:" = hard lockout, otherwise shadow (hidden storefront).
+  const suspension = useMemo(() => {
+    if (status !== "suspended") return { type: "", reason: "" };
+    const raw = String(business?.rejectionReason || "").trim();
+    return /^MAIN:/i.test(raw)
+      ? { type: "main", reason: raw.replace(/^MAIN:\s*/i, "") }
+      : { type: "shadow", reason: raw.replace(/^SHADOW:\s*/i, "") };
+  }, [business, status]);
 
-    if (/^MAIN:/i.test(rawReason)) {
-      return {
-        type: "main",
-        reason: rawReason.replace(/^MAIN:\s*/i, ""),
-      };
-    }
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const res: any = await vendorApi.getVendorStatus();
+      const biz = res?.business || res?.data?.business || null;
+      setBusiness(biz);
 
-    // Default fallback layer if no strict prefix patterns match
-    return {
-      type: "shadow",
-      reason: rawReason.replace(/^SHADOW:\s*/i, ""),
-    };
-  }, [businessProfile]);
+      const st = String(biz?.status || "draft").trim().toLowerCase();
+      const raw = String(biz?.rejectionReason || "").trim().toUpperCase();
+      const mainLock = st === "suspended" && raw.startsWith("MAIN:");
 
-  useEffect(() => {
-    let cancelled = false;
-
-    const initializeDashboard = async () => {
-      try {
-        setLoading(true);
-        setError("");
-
-        const statusResponse = await vendorApi.getVendorStatus();
-        if (cancelled) return;
-
-        const biz =
-          statusResponse?.business ||
-          (statusResponse as any)?.data?.business ||
-          null;
-        setBusinessProfile(biz);
-
-        const status = biz?.status?.trim()?.toLowerCase() || "draft";
-
-        // Dynamic detection wrapper matching zero-migration parsing schemas
-        const rawReason = String(biz?.rejectionReason || "")
-          .trim()
-          .toUpperCase();
-        const computedSuspensionType =
-          status === "suspended" && rawReason.startsWith("MAIN:")
-            ? "main"
-            : "shadow";
-
-        if (
-          status === "pending_review" ||
-          status === "under_review" ||
-          status === "pending" ||
-          (status === "suspended" && computedSuspensionType === "main")
-        ) {
-          setLoading(false);
-          return;
-        }
-
-        if (
-          status === "approved" ||
-          status === "live" ||
-          (status === "suspended" && computedSuspensionType === "shadow")
-        ) {
-          const dashboardResponse = await vendorApi.getDashboard();
-          if (cancelled) return;
-          setDashData(dashboardResponse?.dashboard || dashboardResponse);
-        }
-      } catch (err: any) {
-        if (cancelled) return;
-        console.error("Initialization failed:", err);
-        setError(
-          err?.message || "Failed to sync authorization profile routing.",
-        );
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
+      if (st === "approved" || st === "live" || (st === "suspended" && !mainLock)) {
+        const d: any = await vendorApi.getDashboard();
+        setDash(d?.dashboard || d);
       }
-    };
-
-    initializeDashboard();
-    return () => {
-      cancelled = true;
-    };
+    } catch (e: any) {
+      setError(e?.message || "We couldn't load your dashboard.");
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  const currentStatusString = useMemo(() => {
-    if (!businessProfile || !businessProfile.status) return "draft";
-    return String(businessProfile.status).trim().toLowerCase();
-  }, [businessProfile]);
+  useEffect(() => {
+    load();
+  }, [load]);
 
-  const cards = useMemo(() => {
-    const summary = dashData?.summary;
-    return {
-      totalOrders: summary?.totalOrders ?? 0,
-      revenueToday: summary?.revenueToday ?? summary?.totalSales ?? 0,
-      activeOrders: summary?.activeOrders ?? 0,
-      totalCustomers: summary?.totalCustomers ?? 0,
-      avgOrderValue: summary?.avgOrderValue ?? 0,
-      avgDeliveryTimeMins: summary?.avgDeliveryTimeMins ?? 0,
-      customerRating: summary?.customerRating ?? 0,
-      avgPrepTimeMins: summary?.avgPrepTimeMins ?? 0,
-    };
-  }, [dashData]);
+  const s = dash?.summary;
+  const money = (n: number) => `₦${Math.round(n || 0).toLocaleString()}`;
 
   if (loading)
     return (
-      <div className="flex items-center justify-center h-[60vh]">
-        <Spinner />
+      <div className="space-y-5" aria-busy="true">
+        <Skeleton className="h-10 w-64 bg-muted" />
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} className="h-28 rounded-2xl bg-muted" />
+          ))}
+        </div>
+        <Skeleton className="h-72 rounded-2xl bg-muted" />
       </div>
     );
 
-  if (error && !businessProfile)
-    return (
-      <div
-        style={{
-          background: "#fff",
-          border: "1px solid #fde8c9",
-          borderRadius: 16,
-          padding: 24,
-        }}
-      >
-        <p style={{ color: "#e53935", fontWeight: 600, margin: 0 }}>
-          Initialization Error
-        </p>
-        <p style={{ color: "#b45309", marginTop: 4, fontSize: 14 }}>{error}</p>
-      </div>
-    );
+  if (error && !business) return <ErrorState title="We couldn't load your dashboard" message={error} onRetry={load} />;
 
-  // ── GATE 1: PENDING REVIEW WORKFLOW ──
-  if (
-    currentStatusString === "pending_review" ||
-    currentStatusString === "under_review" ||
-    currentStatusString === "pending"
-  ) {
-    return (
-      <div className="p-6 max-w-4xl mx-auto">
-        <DashboardReview
-          business={businessProfile}
-          localSubmissionSync={false}
-        />
-      </div>
-    );
-  }
+  if (PENDING.includes(status)) return <div className="mx-auto max-w-4xl"><DashboardReview business={business} localSubmissionSync={false} /></div>;
 
-  // ── GATE 2: REJECTED STATE ONBOARDING ──
-  if (currentStatusString === "rejected") {
+  if (status === "rejected")
     return (
-      <div className="p-8 max-w-2xl mx-auto my-12 bg-white border border-red-200 rounded-2xl shadow-sm">
-        <span className="bg-red-50 text-red-600 border border-red-200 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider">
-          Rejected
-        </span>
-        <h2 className="text-2xl font-black text-gray-900 mt-4 mb-2 tracking-tight">
-          Business Verification Rejected
-        </h2>
-        <p className="text-gray-500 text-sm leading-relaxed mb-6">
-          Your restaurant account onboarding was declined for the following
-          reason:
-          <br />
-          <strong className="text-red-600 block mt-2 text-base font-bold bg-red-50/50 border border-red-100 p-3 rounded-xl">
-            "
-            {businessProfile?.rejectionReason ||
-              "Please review compliance requirements."}
-            "
-          </strong>
+      <div className="mx-auto max-w-xl rounded-3xl border border-destructive/20 bg-card p-6 shadow-card sm:p-8">
+        <Badge tone="danger">Rejected</Badge>
+        <h2 className="font-display mt-4 text-2xl font-extrabold">Verification was rejected</h2>
+        <p className="mt-2 text-sm text-muted-foreground">Your restaurant couldn&apos;t be approved for this reason:</p>
+        <p className="mt-3 rounded-2xl bg-destructive/10 p-4 text-sm font-semibold text-destructive">
+          {business?.rejectionReason || "Please review the compliance requirements."}
         </p>
         <Link
-          href={`/partner-signup/verify-business?businessId=${businessProfile?.id}&businessName=${encodeURIComponent(businessProfile?.name || "")}`}
+          href={`/partner-signup/verify-business?businessId=${business?.id}&businessName=${encodeURIComponent(business?.name || "")}`}
+          className="mt-6 inline-flex h-12 items-center rounded-full bg-cta px-6 text-sm font-extrabold text-cta-foreground transition hover:bg-mango-300"
         >
-          <button className="bg-[#2d5f4f] text-white font-black text-sm px-6 py-3 rounded-xl hover:bg-[#234a3d] transition shadow-sm">
-            Update Submission
-          </button>
+          Update submission
         </Link>
       </div>
     );
-  }
 
-  // ── GATE 3: 🔒 ACCOUNT SUSPENDED (MAIN HARD LOCKOUT LAYER) ──
-  if (
-    currentStatusString === "suspended" &&
-    suspensionStrategy.type === "main"
-  ) {
-    return (
-      <MainSuspensionBlock
-        businessName={businessProfile?.name}
-        rejectionReason={suspensionStrategy.reason}
-        businessId={businessProfile?.id}
-      />
-    );
-  }
+  if (status === "suspended" && suspension.type === "main")
+    return <MainSuspensionBlock businessName={business?.name} rejectionReason={suspension.reason} businessId={business?.id} />;
 
-  // ── VIEW 4: APPROVED / FULL LIVE PRODUCTION ANALYTICS ──
+  const hidden = suspension.type === "shadow";
+  const active = s?.activeOrders ?? 0;
+
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
-      {/* 🚀 INJECTED SUB-LAYER: Renders cleanly using dynamic regex reason filters */}
-      {currentStatusString === "suspended" &&
-        suspensionStrategy.type === "shadow" && (
-          <ShadowSuspensionBanner rejectionReason={suspensionStrategy.reason} />
-        )}
+    <div className="space-y-5 sm:space-y-6">
+      {hidden && <ShadowSuspensionBanner rejectionReason={suspension.reason} />}
 
-      {/* Header Row */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "flex-end",
-          justifyContent: "space-between",
-        }}
-      >
-        <div>
-          <h1
-            className="truncate max-w-[80vw] lg:max-w-2xl capitalize"
-            style={{
-              color: "#1a5c2a",
-              fontWeight: 800,
-              fontSize: 28,
-              margin: 0,
-            }}
-          >
-            {businessProfile?.name
-              ? `${businessProfile.name} Dashboard`
-              : "Dashboard"}
-          </h1>
-          <p style={{ color: "#4a7c59", fontSize: 13, margin: "4px 0 0" }}>
-            Welcome back! Here's your restaurant overview.
-          </p>
-        </div>
+      <PageHeader
+        title={business?.name || "Dashboard"}
+        subtitle="Today at a glance."
+        action={<Badge tone={hidden ? "mango" : "success"}>{hidden ? "Hidden storefront" : "Live"}</Badge>}
+      />
 
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 7,
-            background:
-              suspensionStrategy.type === "shadow" ? "#fff3e0" : "#e8f5e9",
-            border:
-              suspensionStrategy.type === "shadow"
-                ? "1px solid #ffe0b2"
-                : "1px solid #c8e6c9",
-            borderRadius: 20,
-            padding: "6px 14px",
-          }}
+      {active > 0 && (
+        <Link
+          href="/restaurant/dashboard/orders"
+          className="group flex items-center gap-4 rounded-3xl border border-mango-300 bg-mango-50 p-4 shadow-card transition hover:shadow-pop sm:p-5"
         >
-          <span
-            style={{
-              width: 8,
-              height: 8,
-              borderRadius: "50%",
-              background:
-                suspensionStrategy.type === "shadow" ? "#ef6c00" : "#2e7d32",
-              display: "inline-block",
-              boxShadow:
-                suspensionStrategy.type === "shadow"
-                  ? "0 0 0 3px rgba(239,108,0,0.2)"
-                  : "0 0 0 3px rgba(46,125,50,0.2)",
-            }}
-          />
-          <span
-            style={{
-              fontSize: 12,
-              fontWeight: 600,
-              color:
-                suspensionStrategy.type === "shadow" ? "#ef6c00" : "#2e7d32",
-            }}
-          >
-            {suspensionStrategy.type === "shadow"
-              ? "Hidden Storefront"
-              : "Live"}
+          <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-cta text-cta-foreground"><ChefHat className="h-6 w-6" /></span>
+          <span className="min-w-0 flex-1">
+            <span className="block font-display text-lg font-extrabold">{active} active order{active === 1 ? "" : "s"}</span>
+            <span className="block text-sm text-mango-800">Open the kitchen view to accept and prepare them.</span>
           </span>
-        </div>
+          <ArrowRight className="h-5 w-5 text-primary transition group-hover:translate-x-1" />
+        </Link>
+      )}
+
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+        <AdminStat label="Revenue today" value={money(s?.revenueToday ?? 0)} icon={Banknote} tone="success" sub={`${money(s?.totalSales ?? 0)} all time`} />
+        <AdminStat label="Active orders" value={active} icon={Package} tone="mango" highlight={active > 0} />
+        <AdminStat label="Total orders" value={(s?.totalOrders ?? 0).toLocaleString()} icon={ChefHat} />
+        <AdminStat label="Customers" value={(s?.totalCustomers ?? 0).toLocaleString()} icon={Users} />
       </div>
 
-      {/* Analytics Grid Row */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4,1fr)",
-          gap: 18,
-        }}
+      <div className="grid gap-5 xl:grid-cols-3 sm:gap-6">
+        <Panel title="Revenue" subtitle="Last 7 days" className="xl:col-span-2">
+          <SalesChart data={dash?.salesSeries || []} />
+        </Panel>
+        <Panel title="Performance">
+          <dl className="space-y-4 text-sm">
+            {[
+              { icon: Banknote, label: "Average order", value: money(s?.avgOrderValue ?? 0) },
+              { icon: Zap, label: "Delivery time", value: s?.avgDeliveryTimeMins ? `${s.avgDeliveryTimeMins} min` : "—" },
+              { icon: Clock, label: "Prep time", value: s?.avgPrepTimeMins ? `${s.avgPrepTimeMins} min` : "—" },
+              { icon: Star, label: "Customer rating", value: s?.customerRating ? `${Number(s.customerRating).toFixed(1)} / 5` : "No ratings yet" },
+            ].map(({ icon: Icon, label, value }) => (
+              <div key={label} className="flex items-center gap-3">
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-violet-100 text-violet-700"><Icon className="h-4 w-4" /></span>
+                <dt className="flex-1 text-muted-foreground">{label}</dt>
+                <dd className="font-extrabold">{value}</dd>
+              </div>
+            ))}
+          </dl>
+        </Panel>
+      </div>
+
+      <Panel
+        title="Recent orders"
+        action={<Link href="/restaurant/dashboard/orders" className="text-sm font-bold text-primary hover:underline">View all</Link>}
       >
-        <StatCard
-          title="Total Orders"
-          value={cards.totalOrders.toLocaleString()}
-          icon={ShoppingCart}
-          change={0}
-          trend="up"
-        />
-        <StatCard
-          title="Revenue Today"
-          value={`₦${Math.round(cards.revenueToday).toLocaleString()}`}
-          icon={DollarSign}
-          change={0}
-          trend="up"
-        />
-        <StatCard
-          title="Active Orders"
-          value={cards.activeOrders.toLocaleString()}
-          icon={Package}
-          change={0}
-          trend="up"
-        />
-        <StatCard
-          title="Total Customers"
-          value={cards.totalCustomers.toLocaleString()}
-          icon={Users}
-          change={0}
-          trend="up"
-        />
-      </div>
-
-      <div style={{ display: "grid", gridTemplateColumns: "3fr 1fr", gap: 24 }}>
-        <SalesChart data={dashData?.salesSeries || []} />
-        <QuickStatsPanel cards={cards} />
-      </div>
-
-      <RecentOrders orders={dashData?.recentOrders || []} />
+        <RecentOrders orders={dash?.recentOrders || []} />
+      </Panel>
     </div>
   );
 }

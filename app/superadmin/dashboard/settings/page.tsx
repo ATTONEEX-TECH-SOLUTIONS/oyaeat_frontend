@@ -1,10 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Sidebar } from "@/app/superadmin/dashboard/components/sidebar";
 import { Save, Loader2 } from "lucide-react";
 import { CoreConfiguration } from "../components/CoreConfiguration";
-import { CommissionFees } from "../components/CommissionFees";
+import { CommissionFees, DELIVERY_DEFAULTS, type DeliverySettings } from "../components/CommissionFees";
 import { PayoutPolicies } from "../components/PayoutPolicies";
 import { GlobalNotifications } from "../components/GlobalNotifications";
 
@@ -24,6 +23,7 @@ export default function SettingsPage() {
   // 2. Commission States
   const [platformCommission, setPlatformCommission] = useState(15);
   const [baseRiderFee, setBaseRiderFee] = useState(1200);
+  const [delivery, setDelivery] = useState<DeliverySettings>(DELIVERY_DEFAULTS);
 
   // 3. Payout Policy States
   const [restaurantPayoutThreshold, setRestaurantPayoutThreshold] =
@@ -41,8 +41,7 @@ export default function SettingsPage() {
     const loadInitialConfigurations = async () => {
       try {
         const token =
-          localStorage.getItem("admin_token") ||
-          localStorage.getItem("authToken");
+          localStorage.getItem("admin_token");
         const res = await fetch(`${API_BASE_URL}/admin/settings`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -56,6 +55,13 @@ export default function SettingsPage() {
           setMaintenanceMode(d["core.maintenanceMode"]);
           setPlatformCommission(d["fees.platformCommission"]);
           setBaseRiderFee(d["fees.baseRiderFee"]);
+          setDelivery((cur) => {
+            const next = { ...cur };
+            for (const k of Object.keys(cur) as (keyof DeliverySettings)[]) {
+              if (typeof d[k] === "number") next[k] = d[k];
+            }
+            return next;
+          });
           setRestaurantPayoutThreshold(d["payouts.restaurantThreshold"]);
           setRiderPayoutThreshold(d["payouts.riderThreshold"]);
           setPayoutSchedule(d["payouts.schedule"]);
@@ -78,8 +84,7 @@ export default function SettingsPage() {
     setSaving(true);
     try {
       const token =
-        localStorage.getItem("admin_token") ||
-        localStorage.getItem("authToken");
+        localStorage.getItem("admin_token");
 
       // 🌟 FIX: Fetch using 'PATCH' to perfectly align with your backend router config!
       const res = await fetch(`${API_BASE_URL}/admin/settings`, {
@@ -95,6 +100,7 @@ export default function SettingsPage() {
           "core.maintenanceMode": maintenanceMode, // Passes toggle state
           "fees.platformCommission": platformCommission,
           "fees.baseRiderFee": baseRiderFee,
+          ...delivery,
           "payouts.restaurantThreshold": restaurantPayoutThreshold,
           "payouts.riderThreshold": riderPayoutThreshold,
           "payouts.schedule": payoutSchedule,
@@ -122,17 +128,11 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="flex h-screen w-screen bg-slate-50/50 overflow-hidden">
-      <Sidebar />
-
-      <main className="flex-1 min-w-0 flex flex-col h-full">
+    <div className="space-y-6">
         {/* Sticky Header */}
-        <div className="sticky top-0 z-20 bg-white/80 backdrop-blur-md px-8 py-6 border-b border-gray-100 flex items-center justify-between shrink-0">
+        <div className="sticky top-14 lg:top-16 z-20 -mx-4 sm:-mx-6 lg:-mx-8 bg-background/90 backdrop-blur-md px-4 sm:px-6 lg:px-8 py-4 border-b border-border flex items-center justify-between gap-3 shrink-0">
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#52B788] mb-1">
-              Super Admin
-            </p>
-            <h1 className="text-2xl font-black tracking-tight text-gray-900">
+            <h1 className="font-display text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
               Platform Settings
             </h1>
             <p className="text-gray-500 text-xs sm:text-sm font-medium mt-1">
@@ -143,7 +143,7 @@ export default function SettingsPage() {
           <button
             onClick={handleSave}
             disabled={saving}
-            className="flex items-center gap-2 px-6 py-3 rounded-xl bg-[#1a5c2a] hover:bg-[#13441e] text-white font-bold shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm shrink-0 cursor-pointer"
+            className="flex items-center gap-2 px-6 py-3 rounded-xl bg-cta hover:bg-mango-300 text-cta-foreground font-extrabold shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm shrink-0 cursor-pointer"
           >
             {saving ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -155,7 +155,7 @@ export default function SettingsPage() {
         </div>
 
         {/* Scrollable Workspace Panels */}
-        <div className="flex-1 overflow-y-auto p-8 space-y-6 w-full">
+        <div className="flex-1 overflow-y-auto space-y-6 pt-6 w-full">
           <CoreConfiguration
             platformName={platformName}
             setPlatformName={setPlatformName}
@@ -170,6 +170,8 @@ export default function SettingsPage() {
             setPlatformCommission={setPlatformCommission}
             baseRiderFee={baseRiderFee}
             setBaseRiderFee={setBaseRiderFee}
+            delivery={delivery}
+            setDelivery={setDelivery}
           />
 
           <PayoutPolicies
@@ -192,7 +194,6 @@ export default function SettingsPage() {
             setMaintenanceMode={setMaintenanceMode}
           />
         </div>
-      </main>
-    </div>
+          </div>
   );
 }

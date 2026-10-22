@@ -68,7 +68,7 @@ export default function NotificationsPage() {
   if (loading) {
     return (
       <div className="w-full h-full min-h-[400px] flex items-center justify-center gap-2">
-        <Loader2 className="w-5 h-5 animate-spin text-[#2d6a4f]" />
+        <Loader2 className="w-5 h-5 animate-spin text-[#6d28d9]" />
         <span className="text-xs font-bold text-slate-500">
           Synchronizing notification arrays...
         </span>
@@ -81,17 +81,14 @@ export default function NotificationsPage() {
     <div className="w-full h-full flex flex-col pb-20">
       <div className="flex items-center justify-between mb-8 shrink-0">
         <div>
-          <p className="text-xs font-bold uppercase tracking-[0.2em] mb-1 text-[#52b788]">
-            Vendor Portal
-          </p>
-          <h1 className="text-2xl font-black tracking-tight text-[#111c14]">
+          <h1 className="font-display text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
             Notifications
           </h1>
         </div>
         {notifications.some((n) => !n.read) && (
           <button
             onClick={handleMarkAllRead}
-            className="bg-white border border-[#d8e4dc] px-4 py-2 rounded-xl text-sm font-bold text-[#2d6a4f] shadow-sm flex items-center gap-2 hover:bg-[#f0f7f3] transition-colors cursor-pointer"
+            className="bg-white border border-[#e6e0f3] px-4 py-2 rounded-xl text-sm font-bold text-[#6d28d9] shadow-sm flex items-center gap-2 hover:bg-[#f5f3ff] transition-colors cursor-pointer"
           >
             <CheckCircle2 className="w-4 h-4" /> Mark all read
           </button>
@@ -103,24 +100,24 @@ export default function NotificationsPage() {
         {notifications.map((n) => (
           <div
             key={n.id}
-            className={`border border-[#d8e4dc] bg-white rounded-2xl p-5 shadow-sm flex gap-4 transition-all ${
-              n.read ? "opacity-60" : "border-l-4 border-l-[#2d6a4f]"
+            className={`border border-[#e6e0f3] bg-white rounded-2xl p-5 shadow-sm flex gap-4 transition-all ${
+              n.read ? "opacity-60" : "border-l-4 border-l-[#6d28d9]"
             }`}
           >
             <div
               className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 ${
                 n.read
                   ? "bg-slate-100 text-slate-400"
-                  : "bg-[#e8f5ed] text-[#2d6a4f]"
+                  : "bg-[#f1ebff] text-[#6d28d9]"
               }`}
             >
               <Bell className="w-6 h-6" />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="font-extrabold text-[#111c14] text-base sm:text-lg truncate">
+              <h3 className="font-extrabold text-[#1a1033] text-base sm:text-lg truncate">
                 {n.title}
               </h3>
-              <p className="font-medium text-[#6b7c6e] mt-1 text-xs sm:text-sm leading-relaxed">
+              <p className="font-medium text-[#6b6480] mt-1 text-xs sm:text-sm leading-relaxed">
                 {n.text}
               </p>
               <span className="text-[10px] font-bold text-slate-400 mt-3 inline-block uppercase tracking-wider">

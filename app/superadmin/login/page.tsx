@@ -1,6 +1,8 @@
 "use client";
 
+import Logo from "@/components/brand/Logo";
 import { useState, useRef } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -9,15 +11,15 @@ import { AlertCircle, Mail, Lock, ArrowRight, ShieldCheck } from "lucide-react";
 
 // ── Brand tokens ──────────────────────────────────────────────────────────────
 const C = {
-  green: "#1B4332",
-  greenMid: "#2D6A4F",
-  greenLight: "#52B788",
-  bg: "#F5F1EB",
+  brand: "#3b0f7a",
+  brandMid: "#6d28d9",
+  brandLight: "#8b5cf6",
+  bg: "#fffbef",
   white: "#FFFFFF",
   textDark: "#111827",
-  textMuted: "#6B7C6E",
-  border: "#D8E4DC",
-  error: "#C0392B",
+  textMuted: "#6b6480",
+  border: "#e6e0f3",
+  error: "#c8372d",
 };
 
 const schema = z.object({
@@ -28,43 +30,16 @@ const schema = z.object({
 // ── Admin illustration ────────────────────────────────────────────────────────
 function IllustrationPanel() {
   return (
-    <div
-      className="hidden lg:flex flex-col justify-between p-10 relative overflow-hidden bg-cover bg-center"
-      style={{
-        backgroundImage: "url('https://unsplash.com')",
-        minHeight: "100%",
-      }}
-    >
-      <div className="absolute inset-0 bg-black/60" />
-
-      {/* Brand */}
-      <div className="relative z-10">
-        <div className="flex items-center gap-3 mb-2">
-          <div>
-            <p className="text-white text-lg font-black tracking-tight">
-              OyaEat
-            </p>
-            <p
-              className="text-xs font-semibold tracking-[0.2em]"
-              style={{ color: C.greenLight }}
-            >
-              SUPER ADMIN
-            </p>
-          </div>
-        </div>
+    <div className="lp-doodles relative hidden min-h-screen flex-col justify-between p-10 text-white lg:flex">
+      <div>
+        <Logo variant="white" className="h-24 w-auto" />
+        <p className="mt-1 text-xs font-bold uppercase tracking-[0.2em] text-violet-200">Super admin</p>
       </div>
-
-      {/* Quote */}
-      <div className="relative z-10">
-        <p className="text-white text-xl font-black leading-snug tracking-tight mb-2">
-          Full control,
-          <br />
-          total visibility.
-        </p>
-        <p className="text-sm text-gray-300">
-          Manage every restaurant, rider, and order on the platform.
-        </p>
+      <div className="max-w-md">
+        <h2 className="font-display text-4xl font-extrabold leading-tight">Full control, total visibility.</h2>
+        <p className="mt-3 text-lg text-violet-100">Approve vendors, watch the fleet and keep every order moving.</p>
       </div>
+      <span className="h-1.5 w-24 rounded-full bg-cta" />
     </div>
   );
 }
@@ -103,10 +78,10 @@ function Field({
       <div
         className="flex items-center gap-3 rounded-xl border transition-all duration-200 overflow-hidden cursor-text"
         style={{
-          borderColor: error ? C.error : focused ? C.greenMid : C.border,
+          borderColor: error ? C.error : focused ? C.brandMid : C.border,
           backgroundColor: C.white,
           boxShadow: focused
-            ? `0 0 0 3px ${error ? C.error : C.greenMid}18`
+            ? `0 0 0 3px ${error ? C.error : C.brandMid}18`
             : undefined,
         }}
         onClick={() => ref.current?.focus()}
@@ -115,7 +90,7 @@ function Field({
           <Icon
             className="h-4 w-4 flex-shrink-0"
             style={{
-              color: error ? C.error : focused ? C.greenMid : C.textMuted,
+              color: error ? C.error : focused ? C.brandMid : C.textMuted,
             }}
           />
         </div>
@@ -174,13 +149,8 @@ export default function AdminLoginPage() {
       const data = await res.json();
 
       if (data?.token) {
-        //  SUCCESS SYNC: Tokens save here now automatically match your broadcast dropdown engine code queries
-        localStorage.setItem("authToken", data.token);
+                // Admin has its own key so it never overwrites a vendor session.
         localStorage.setItem("admin_token", data.token);
-
-        // Clean old lingering vendor configurations out to bypass fallback loops completely
-        localStorage.removeItem("vendor_token");
-        localStorage.removeItem("vendor_dashboard");
       }
 
       if (data?.admin) {
@@ -217,29 +187,11 @@ export default function AdminLoginPage() {
       <div className="flex-1 flex items-center justify-center px-6 py-12">
         <div className="w-full max-w-sm">
           {/* Mobile brand */}
-          <div className="flex items-center gap-3 mb-8 lg:hidden">
-            <div
-              className="w-9 h-9 rounded-xl flex items-center justify-center"
-              style={{ backgroundColor: C.green }}
-            >
-              <svg width="14" height="18" viewBox="0 0 16 20" fill="none">
-                <path d="M9 1L1 11h7l-1 8 8-10H8l1-8z" fill="white" />
-              </svg>
-            </div>
-            <div>
-              <p
-                className="font-black text-base tracking-tight"
-                style={{ color: C.textDark }}
-              >
-                OyaEats
-              </p>
-              <p
-                className="text-xs font-semibold tracking-widest"
-                style={{ color: C.textMuted }}
-              >
-                SUPER ADMIN
-              </p>
-            </div>
+          <div className="mb-8 lg:hidden">
+            <Logo className="h-12" />
+            <p className="mt-1 text-xs font-semibold tracking-widest" style={{ color: C.textMuted }}>
+              SUPER ADMIN
+            </p>
           </div>
 
           {/* Shield badge */}
@@ -247,7 +199,7 @@ export default function AdminLoginPage() {
             className="flex items-center gap-2 mb-6 rounded-xl border px-4 py-3 w-fit"
             style={{ borderColor: C.border, backgroundColor: C.white }}
           >
-            <ShieldCheck className="h-4 w-4" style={{ color: C.greenMid }} />
+            <ShieldCheck className="h-4 w-4" style={{ color: C.brandMid }} />
             <span
               className="text-xs font-bold uppercase tracking-widest"
               style={{ color: C.textMuted }}
@@ -290,7 +242,7 @@ export default function AdminLoginPage() {
             <Field
               label="Email"
               type="email"
-              placeholder="admin@oya-eat.com"
+              placeholder="admin@oyaeat.com"
               icon={Mail}
               error={errors.email?.message}
               value={emailVal}
@@ -308,13 +260,18 @@ export default function AdminLoginPage() {
               onChange={(v) => form.setValue("password", v)}
               onBlur={() => form.trigger("password")}
             />
+            <div className="-mt-2 text-right">
+              <Link href="/forgot-password?role=admin" className="text-xs font-bold hover:underline" style={{ color: C.brand }}>
+                Forgot password?
+              </Link>
+            </div>
 
             <button
               type="submit"
               disabled={submitting}
               className="mt-2 w-full flex items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-bold text-white transition-opacity"
               style={{
-                backgroundColor: C.green,
+                backgroundColor: C.brand,
                 opacity: submitting ? 0.7 : 1,
               }}
             >

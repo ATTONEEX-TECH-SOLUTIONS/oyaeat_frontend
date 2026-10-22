@@ -112,6 +112,7 @@ export type VendorDashboard = {
     hasBankDetails: boolean;
   };
   summary: null | {
+    totalSales?: number;
     totalOrders: number;
     revenueToday: number;
     activeOrders: number;
@@ -123,6 +124,31 @@ export type VendorDashboard = {
   };
   recentOrders: Order[];
   salesSeries: SalesPoint[];
+};
+
+export type EarningsRow = {
+  id: number;
+  createdAt: string;
+  status: OrderStatus;
+  mode: "online" | "cash" | "wallet";
+  total: number;
+  platformFee: number | null;
+  youReceive: number | null;
+  note: string;
+};
+
+export type EarningsData = {
+  account: { bankName: string; accountName: string; accountNumber: string; active: boolean } | null;
+  summary: {
+    paidToBank: number;
+    platformFees: number;
+    onlineSales: number;
+    cashOwed: number;
+    walletBalance: number;
+    pendingPayouts: number;
+  };
+  orders: EarningsRow[];
+  pagination: { total: number; page: number; limit: number; totalPages: number };
 };
 
 export type MenuItemPayload = {
@@ -170,7 +196,9 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     throw new Error((json as any)?.message || "Request failed");
   }
 
-  return (json as any).data as T;
+  // Most endpoints wrap their payload in `data`; a few (e.g. /vendor/dashboard) return it at the top level.
+  const body = json as any;
+  return (body.data !== undefined ? body.data : body) as T;
 }
 
 function makeMenuFormData(body: MenuItemPayload) {
@@ -315,6 +343,8 @@ export const vendorApi = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ amount }),
     }),
+
+  getEarnings: (page = 1) => request<EarningsData>(`/vendor/earnings?page=${page}&limit=15`),
 
   // Reviews
   getReviews: (params?: { page?: number; limit?: number }) => {

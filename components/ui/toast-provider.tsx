@@ -53,13 +53,13 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
               key={t.id}
               variant={isDestructive ? "destructive" : "default"}
               className={`pointer-events-auto shadow-xl bg-white border border-border transition-all duration-300 transform translate-y-0 animate-in slide-in-from-bottom-5 opacity-100 ${
-                t.type === "success" ? "border-[#52B788]/40 bg-[#F0F7F3]" : ""
+                t.type === "success" ? "border-[#8b5cf6]/40 bg-[#f5f3ff]" : ""
               }`}
               style={{ opacity: 1 }} // Explicit safeguard check override
             >
               <div className="flex items-start gap-3 w-full pr-4">
                 {t.type === "success" && (
-                  <CheckCircle className="h-5 w-5 text-[#2D6A4F] shrink-0" />
+                  <CheckCircle className="h-5 w-5 text-[#6d28d9] shrink-0" />
                 )}
                 {t.type === "error" && (
                   <AlertCircle className="h-5 w-5 text-destructive shrink-0" />
@@ -70,13 +70,13 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
 
                 <div className="flex-1">
                   <AlertTitle
-                    className={`font-bold ${t.type === "success" ? "text-[#1B4332] text-sm" : "text-sm"}`}
+                    className={`font-bold ${t.type === "success" ? "text-[#3b0f7a] text-sm" : "text-sm"}`}
                   >
                     {t.title}
                   </AlertTitle>
                   {t.description && (
                     <AlertDescription
-                      className={`text-xs mt-0.5 ${t.type === "success" ? "text-[#2D6A4F]/90" : "text-muted-foreground"}`}
+                      className={`text-xs mt-0.5 ${t.type === "success" ? "text-[#6d28d9]/90" : "text-muted-foreground"}`}
                     >
                       {t.description}
                     </AlertDescription>

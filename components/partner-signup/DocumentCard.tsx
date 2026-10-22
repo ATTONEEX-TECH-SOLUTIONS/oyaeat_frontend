@@ -1,8 +1,8 @@
-// DocumentCard.tsx
 "use client";
 
-import { useState } from "react";
-import { FileText, CheckCircle2, AlertCircle, Upload, X } from "lucide-react";
+import { useRef, useState } from "react";
+import { AlertCircle, CheckCircle2, FileText, Upload, X } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface DocumentUpload {
   id: string;
@@ -14,113 +14,49 @@ interface DocumentUpload {
   isFromDatabase?: boolean;
 }
 
-interface DocumentCardProps {
-  doc: DocumentUpload;
-  isSubmitting: boolean;
-  onFileChange: (id: string, file: File | null) => void;
-}
+const OK = ["application/pdf", "image/jpeg", "image/png"];
+const MAX = 5 * 1024 * 1024;
 
-export default function DocumentCard({
-  doc,
-  isSubmitting,
-  onFileChange,
-}: DocumentCardProps) {
+export default function DocumentCard({ doc, isSubmitting, onFileChange }: { doc: DocumentUpload; isSubmitting: boolean; onFileChange: (id: string, file: File | null) => void }) {
   const [localError, setLocalError] = useState("");
+  const input = useRef<HTMLInputElement>(null);
 
-  const handleValidation = (file: File | null) => {
+  const pick = (file: File | null) => {
     setLocalError("");
-
     if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        setLocalError("File size exceeds 5MB limit.");
-        return;
-      }
+      if (file.type && !OK.includes(file.type)) return setLocalError("Use a PDF, JPG or PNG file.");
+      if (file.size > MAX) return setLocalError("This file is over the 5MB limit.");
     }
-
     onFileChange(doc.id, file);
   };
 
+  const size = doc.file ? (doc.file.size / 1024 / 1024).toFixed(1) : "";
+
   return (
-    <div
-      className={`rounded-md border transition-colors duration-200 px-2.5 py-2 h-full flex flex-col justify-between ${
-        doc.uploaded
-          ? "border-[#2d5f4f]/30 bg-[#2d5f4f]/[0.04]"
-          : localError
-            ? "border-red-200 bg-red-50/40"
-            : "border-gray-200 bg-white hover:border-[#2d5f4f]/30"
-      }`}
-    >
-      <div className="flex items-center gap-2.5">
-        <div
-          className={`flex-shrink-0 w-6 h-6 rounded-md flex items-center justify-center ${
-            doc.uploaded
-              ? "bg-[#2d5f4f] text-white"
-              : "bg-gray-100 text-gray-400"
-          }`}
-        >
-          {doc.uploaded ? (
-            <CheckCircle2 className="w-3.5 h-3.5" />
-          ) : (
-            <FileText className="w-3.5 h-3.5" />
-          )}
-        </div>
-
-        <div className="min-w-0 flex-1">
-          <p className="text-xs font-bold text-gray-900 truncate leading-tight">
-            {doc.name}
-          </p>
-
-          {localError ? (
-            <p className="text-[11px] text-red-600 font-semibold truncate leading-tight flex items-center gap-1">
-              <AlertCircle className="w-3 h-3 flex-shrink-0" />
-              {localError}
-            </p>
-          ) : doc.file ? (
-            <p className="text-[11px] text-gray-500 truncate leading-tight">
-              {doc.file.name} · {(doc.file.size / 1024 / 1024).toFixed(1)}MB
-            </p>
-          ) : (
-            <p className="text-[11px] text-gray-400 truncate leading-tight">
-              {doc.description}
-            </p>
-          )}
-        </div>
-
-        <div className="flex items-center gap-1 flex-shrink-0">
-          {doc.uploaded && (
-            <button
-              type="button"
-              disabled={isSubmitting}
-              onClick={() => handleValidation(null)}
-              aria-label={`Remove ${doc.name}`}
-              className="w-6 h-6 flex items-center justify-center rounded-md text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors disabled:opacity-30"
-            >
-              <X className="w-3 h-3" />
-            </button>
-          )}
-
-          <label className="cursor-pointer block">
-            <input
-              type="file"
-              accept=".pdf,.jpg,.jpeg,.png"
-              className="hidden"
-              disabled={isSubmitting}
-              onChange={(e) => handleValidation(e.target.files?.[0] || null)}
-            />
-            <div
-              className={`px-2.5 py-1 rounded-md font-bold text-center text-[11px] transition-colors duration-150 select-none flex items-center gap-1 whitespace-nowrap ${
-                isSubmitting
-                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                  : doc.uploaded
-                    ? "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
-                    : "bg-[#2d5f4f] text-white hover:bg-[#234a3d]"
-              }`}
-            >
-              {!doc.uploaded && <Upload className="w-2.5 h-2.5" />}
-              {doc.uploaded ? "Replace" : "Upload"}
-            </div>
-          </label>
-        </div>
+    <div className={cn("flex flex-wrap items-center gap-x-3 gap-y-2.5 rounded-2xl border p-3.5 transition", doc.uploaded ? "border-primary/30 bg-violet-50" : localError ? "border-destructive/40 bg-destructive/5" : "border-border bg-card")}>
+      <span className={cn("grid h-11 w-11 shrink-0 place-items-center rounded-xl", doc.uploaded ? "bg-primary text-primary-foreground" : "bg-violet-100 text-violet-600")}>
+        {doc.uploaded ? <CheckCircle2 className="h-5 w-5" /> : <FileText className="h-5 w-5" />}
+      </span>
+      <div className="min-w-0 flex-1 basis-40">
+        <p className="truncate text-sm font-bold">{doc.name}</p>
+        {localError ? (
+          <p role="alert" className="flex items-center gap-1 text-xs font-semibold text-destructive"><AlertCircle className="h-3.5 w-3.5 shrink-0" /> {localError}</p>
+        ) : doc.file ? (
+          <p className="truncate text-xs text-muted-foreground">{doc.file.name}{doc.isFromDatabase ? " · already uploaded" : ` · ${size}MB`}</p>
+        ) : (
+          <p className="truncate text-xs text-muted-foreground">{doc.description}</p>
+        )}
+      </div>
+      <input ref={input} type="file" accept=".pdf,.jpg,.jpeg,.png" className="sr-only" tabIndex={-1} disabled={isSubmitting} onChange={(e) => { pick(e.target.files?.[0] || null); e.target.value = ""; }} />
+      <div className="ml-auto flex items-center gap-1.5">
+      {doc.uploaded && (
+        <button type="button" disabled={isSubmitting} onClick={() => pick(null)} aria-label={`Remove ${doc.name}`} className="grid h-10 w-10 shrink-0 place-items-center rounded-full text-muted-foreground transition hover:bg-destructive/10 hover:text-destructive disabled:opacity-40">
+          <X className="h-4 w-4" />
+        </button>
+      )}
+      <button type="button" disabled={isSubmitting} onClick={() => input.current?.click()} className="flex h-10 shrink-0 items-center gap-1.5 rounded-full bg-primary px-4 text-xs font-bold text-primary-foreground transition hover:bg-violet-800 disabled:opacity-50">
+        <Upload className="h-3.5 w-3.5" /> {doc.uploaded ? "Replace" : "Upload"}
+      </button>
       </div>
     </div>
   );

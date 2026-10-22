@@ -2,19 +2,15 @@
 
 import React from "react";
 import { ChatInterface } from "@/components/chat/chat-interface";
+import { PageHeader } from "@/components/customer/ui";
 
 export default function CustomerSupportPage() {
   return (
-    <div className="w-full flex flex-col h-[calc(100vh-120px)]">
-      <div className="mb-4">
-        <h1 className="text-2xl font-extrabold text-gray-900">
-          Support Center
-        </h1>
-        <p className="text-sm text-gray-500 font-bold">
-          Chat directly with the administration team.
-        </p>
+    <div className="mx-auto flex h-[calc(100dvh-13rem)] max-w-3xl flex-col md:h-[calc(100dvh-9rem)]">
+      <PageHeader title="Help & support" subtitle="Chat with the OyaEat team." />
+      <div className="min-h-0 flex-1">
+        <ChatInterface role="customer" />
       </div>
-      <ChatInterface role="customer" />
     </div>
   );
 }

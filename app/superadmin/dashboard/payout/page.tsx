@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Sidebar } from "@/app/superadmin/dashboard/components/sidebar";
 import MetricsSummary from "../components/payouts/MetricsSummary";
 import AccountOnboarding from "../components/payouts/AccountOnboarding";
 import PendingPayoutsTable from "../components/payouts/PendingPayoutsTable";
@@ -22,9 +21,9 @@ export default function SuperAdminPayoutsDashboard() {
   const loadAdminDashboardData = async () => {
     try {
       const token =
-        localStorage.getItem("adminToken") || localStorage.getItem("authToken");
+        localStorage.getItem("admin_token");
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/wallet/admin/financial-queue-logs`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000"}/api/wallet/admin/financial-queue-logs`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -33,11 +32,17 @@ export default function SuperAdminPayoutsDashboard() {
         },
       );
 
+      if (response.status === 401) {
+        localStorage.removeItem("admin_token");
+        localStorage.removeItem("admin_user");
+        window.location.href = "/superadmin/login";
+        return;
+      }
       if (response.ok) {
         const data = await response.json();
         setRequests(data.pendingWithdrawals || []);
         setLinkedAccounts(data.linkedAccounts || []); // 🌟 SAVE ONBOARDED PROFILES TO STATE
-        setMetrics(data.globalMetrics);
+        setMetrics((prev) => ({ ...prev, ...(data.globalMetrics || {}) }));
       }
     } catch (err) {
       console.error("Failed to load global administrative finance matrix", err);
@@ -72,12 +77,10 @@ export default function SuperAdminPayoutsDashboard() {
   };
 
   return (
-    <div className="flex min-h-screen bg-card">
-      <Sidebar />
-      <main className="flex-1 overflow-auto bg-[#f5faf6]">
-        <div className="p-8 space-y-8">
+    <div className="space-y-6">
+<div className="space-y-6">
           <div>
-            <h1 className="text-3xl font-bold text-[#1a5c2a] tracking-tight">
+            <h1 className="font-display text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
               Platform Split Management
             </h1>
             <p className="text-sm font-medium text-gray-500 mt-2">
@@ -108,7 +111,6 @@ export default function SuperAdminPayoutsDashboard() {
             />
           </div>
         </div>
-      </main>
-    </div>
+          </div>
   );
 }

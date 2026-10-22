@@ -37,7 +37,7 @@ export function RestaurantsList({
   if (restaurants.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center rounded-2xl border border-border bg-card py-16 px-6 text-center">
-        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[#D8E4DC]">
+        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[#e6e0f3]">
           <FileText className="h-6 w-6 text-muted-foreground" />
         </div>
         <p className="text-base font-bold text-foreground">

@@ -35,7 +35,7 @@ export function SearchToolbar({
         onClick={onRefresh}
         disabled={loading}
         className="flex items-center gap-2 h-10 rounded-xl border px-4 text-sm font-semibold bg-white transition-colors"
-        style={{ borderColor: C.border, color: C.greenMid }}
+        style={{ borderColor: C.border, color: C.brandMid }}
       >
         <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
         {loading ? "Loading..." : "Refresh"}

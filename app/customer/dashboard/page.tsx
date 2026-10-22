@@ -1,17 +1,11 @@
-"use client";
-import { Suspense } from "react";
-import { DashboardContent } from "./components/dashbaord/dashboard-content";
+import { redirect } from "next/navigation";
 
-export default function CustomerDashboardPage() {
-  return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen flex items-center justify-center text-gray-500 font-bold bg-gray-50">
-          Loading dashboard...
-        </div>
-      }
-    >
-      <DashboardContent />
-    </Suspense>
-  );
+// The signed-in home is the same feed as the public one.
+export default async function CustomerDashboardIndex({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>;
+}) {
+  const { q } = await searchParams;
+  redirect(q ? `/customer?q=${encodeURIComponent(q)}` : "/customer");
 }

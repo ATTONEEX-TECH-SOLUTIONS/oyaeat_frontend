@@ -14,6 +14,8 @@ interface ChatInterfaceProps {
 export function ChatInterface({ role, currentUserId }: ChatInterfaceProps) {
   const [threads, setThreads] = useState<Thread[]>([]);
   const [activeThreadId, setActiveThreadId] = useState<string | null>(null);
+  // On small screens show either the list or the open conversation.
+  const [chatOpen, setChatOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [loadingThreads, setLoadingThreads] = useState(true);
   const [loadingMessages, setLoadingMessages] = useState(false);
@@ -125,41 +127,65 @@ export function ChatInterface({ role, currentUserId }: ChatInterfaceProps) {
   const activeThread = threads.find((t) => t.id === activeThreadId);
   const isThreadClosed = activeThread?.status === "closed";
 
+  const openThread = (id: string | null) => {
+    setActiveThreadId(id);
+    if (id) setChatOpen(true);
+  };
+  const startCreating = (v: boolean) => {
+    setIsCreating(v);
+    if (v) setChatOpen(true);
+  };
+  const showChat = chatOpen || isCreating;
+
   return (
-    // 🚀 FIXED: Replaced h-[calc(100vh-120px)] with h-full and w-full to span out across the entire screen right-side grid area canvas beautifully
-    <div className="flex h-full w-full bg-card rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-      <ChatSidebar
-        role={role}
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        loadingThreads={loadingThreads}
-        filteredThreads={filteredThreads}
-        activeThreadId={activeThreadId}
-        isCreating={isCreating}
-        setIsCreating={setIsCreating}
-        setActiveThreadId={setActiveThreadId}
-        onRefresh={fetchThreads}
-      />
-      <ChatWindow
-        role={role}
-        currentUserId={currentUserId}
-        isCreating={isCreating}
-        activeThreadId={activeThreadId}
-        threads={threads}
-        loadingMessages={loadingMessages}
-        messages={messages}
-        inputText={inputText}
-        sending={sending}
-        newSubject={newSubject}
-        setNewSubject={setNewSubject}
-        setInputText={setInputText}
-        setIsCreating={setIsCreating}
-        setActiveThreadId={setActiveThreadId}
-        handleCreateThread={handleCreateThread}
-        handleSendMessage={handleSendMessage}
-        messagesEndRef={messagesEndRef}
-        isClosed={isThreadClosed}
-      />
+    <div className="flex h-full w-full overflow-hidden rounded-2xl border border-border bg-card shadow-card">
+      <div className={`min-h-0 w-full flex-col lg:flex lg:w-80 lg:shrink-0 ${showChat ? "hidden" : "flex"}`}>
+        <ChatSidebar
+          role={role}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          loadingThreads={loadingThreads}
+          filteredThreads={filteredThreads}
+          activeThreadId={activeThreadId}
+          isCreating={isCreating}
+          setIsCreating={startCreating}
+          setActiveThreadId={openThread}
+          onRefresh={fetchThreads}
+        />
+      </div>
+      <div className={`min-w-0 flex-1 flex-col lg:flex ${showChat ? "flex" : "hidden"}`}>
+        <button
+          onClick={() => {
+            setChatOpen(false);
+            setIsCreating(false);
+          }}
+          className="flex items-center gap-2 border-b border-border px-4 py-3 text-sm font-bold text-primary lg:hidden"
+        >
+          ← Conversations
+        </button>
+        <div className="flex min-h-0 flex-1">
+          <ChatWindow
+            role={role}
+            currentUserId={currentUserId}
+            isCreating={isCreating}
+            activeThreadId={activeThreadId}
+            threads={threads}
+            loadingMessages={loadingMessages}
+            messages={messages}
+            inputText={inputText}
+            sending={sending}
+            newSubject={newSubject}
+            setNewSubject={setNewSubject}
+            setInputText={setInputText}
+            setIsCreating={setIsCreating}
+            setActiveThreadId={openThread}
+            handleCreateThread={handleCreateThread}
+            handleSendMessage={handleSendMessage}
+            messagesEndRef={messagesEndRef}
+            isClosed={isThreadClosed}
+          />
+        </div>
+      </div>
     </div>
   );
 }

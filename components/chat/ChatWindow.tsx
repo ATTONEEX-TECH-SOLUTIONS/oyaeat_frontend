@@ -53,11 +53,11 @@ export function ChatWindow({
   isClosed = false, // 🚀 DEFAULT TO FALSE
 }: ChatWindowProps) {
   return (
-    <div className="flex-1 flex flex-col bg-white relative">
+    <div className="relative flex min-w-0 flex-1 flex-col bg-white">
       {isCreating ? (
         <div className="flex-1 flex flex-col items-center justify-center p-8 text-center animate-in fade-in zoom-in-95">
-          <div className="w-16 h-16 bg-[#e8f5e9] rounded-full flex items-center justify-center mb-4">
-            <MessageSquare className="w-8 h-8 text-[#1a5c2a]" />
+          <div className="w-16 h-16 bg-[#f1ebff] rounded-full flex items-center justify-center mb-4">
+            <MessageSquare className="w-8 h-8 text-[#5b21b6]" />
           </div>
           <h2 className="text-xl font-extrabold text-gray-900 mb-2">
             Start a New Conversation
@@ -71,14 +71,14 @@ export function ChatWindow({
               placeholder="Subject of your inquiry..."
               value={newSubject}
               onChange={(e) => setNewSubject(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border-2 border-gray-100 focus:border-[#1a5c2a] outline-none font-bold text-gray-900 shadow-sm transition-all mb-4"
+              className="w-full px-4 py-3 rounded-xl border-2 border-gray-100 focus:border-[#5b21b6] outline-none font-bold text-gray-900 shadow-sm transition-all mb-4"
               maxLength={60}
               required
             />
             <button
               type="submit"
               disabled={sending || !newSubject.trim()}
-              className="w-full py-3 rounded-xl bg-[#1a5c2a] text-white font-extrabold shadow-md hover:bg-[#14491f] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-2"
+              className="w-full py-3 rounded-xl bg-[#5b21b6] text-white font-extrabold shadow-md hover:bg-[#3b0f7a] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-2"
             >
               {sending ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -115,7 +115,7 @@ export function ChatWindow({
           <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-gray-50/30">
             {loadingMessages ? (
               <div className="flex justify-center py-10">
-                <Loader2 className="w-6 h-6 animate-spin text-[#1a5c2a]" />
+                <Loader2 className="w-6 h-6 animate-spin text-[#5b21b6]" />
               </div>
             ) : messages.length === 0 ? (
               <div className="text-center text-sm font-bold text-gray-400 py-10">
@@ -138,8 +138,8 @@ export function ChatWindow({
           {/* 🚀 CONDITIONAL INPUT FORM OR LOCKED BAR */}
           <div className="p-4 bg-white border-t border-gray-100">
             {isClosed ? (
-              <div className="w-full flex items-center justify-center gap-2 p-3.5 bg-amber-50 border border-amber-200 text-amber-800 rounded-full font-bold text-xs select-none">
-                <Lock className="w-4 h-4 text-amber-700 shrink-0" />
+              <div className="w-full flex items-center justify-center gap-2 p-3.5 bg-mango-50 border border-mango-200 text-mango-800 rounded-full font-bold text-xs select-none">
+                <Lock className="w-4 h-4 text-mango-700 shrink-0" />
                 This conversation thread is closed.
               </div>
             ) : (
@@ -152,12 +152,12 @@ export function ChatWindow({
                   placeholder="Type your message..."
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
-                  className="flex-1 bg-gray-50 border-transparent focus:border-[#1a5c2a]/30 focus:bg-white focus:ring-0 outline-none px-4 py-3 rounded-full text-sm font-semibold transition-all shadow-inner"
+                  className="flex-1 bg-gray-50 border-transparent focus:border-[#5b21b6]/30 focus:bg-white focus:ring-0 outline-none px-4 py-3 rounded-full text-sm font-semibold transition-all shadow-inner"
                 />
                 <button
                   type="submit"
                   disabled={!inputText.trim() || sending}
-                  className="w-12 h-12 flex flex-shrink-0 items-center justify-center rounded-full bg-[#1a5c2a] text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#14491f] hover:-translate-y-0.5 hover:shadow-md transition-all"
+                  className="w-12 h-12 flex flex-shrink-0 items-center justify-center rounded-full bg-[#5b21b6] text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#3b0f7a] hover:-translate-y-0.5 hover:shadow-md transition-all"
                 >
                   {sending ? (
                     <Loader2 className="w-5 h-5 animate-spin" />

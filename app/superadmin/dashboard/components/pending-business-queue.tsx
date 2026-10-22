@@ -1,156 +1,124 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
+import { CheckCircle2 } from "lucide-react";
 import type { Business } from "@/lib/api/superadmin";
-import {
-  approveBusiness,
-  rejectBusiness,
-  suspendBusiness,
-} from "@/lib/api/superadmin";
+import { approveBusiness, rejectBusiness, suspendBusiness } from "@/lib/api/superadmin";
+import { useToast } from "@/components/ui/toast-provider";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Badge, Panel, adminField } from "@/components/superadmin/ui";
 
-function formatDate(value?: string) {
-  if (!value) return "-";
-  const d = new Date(value);
-  if (Number.isNaN(d.getTime())) return value;
-  return d.toLocaleString();
-}
+const nameOf = (b: Business) => b.businessName || b.name || `Business #${b.id}`;
+const when = (v?: string) => {
+  const d = v ? new Date(v) : null;
+  return d && !Number.isNaN(d.getTime()) ? d.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" }) : "-";
+};
 
-function businessDisplayName(b: Business) {
-  return b.businessName || b.name || `Business #${b.id}`;
-}
-
-export function PendingBusinessQueue({
-  businesses,
-  onChanged,
-}: {
-  businesses: Business[];
-  onChanged?: () => void;
-}) {
+export function PendingBusinessQueue({ businesses, onChanged }: { businesses: Business[]; onChanged?: () => void }) {
+  const { toast } = useToast();
   const [busyId, setBusyId] = useState<number | null>(null);
+  const [dialog, setDialog] = useState<{ type: "reject" | "suspend"; b: Business } | null>(null);
+  const [reason, setReason] = useState("");
 
-  const pending = useMemo(
-    () => businesses.filter((b) => b.status === "pending_review"),
-    [businesses],
-  );
+  const pending = useMemo(() => businesses.filter((b) => b.status === "pending_review"), [businesses]);
 
-  const handleApprove = async (id: number) => {
+  const run = async (b: Business, fn: () => Promise<unknown>, ok: string) => {
+    setBusyId(b.id);
     try {
-      setBusyId(id);
-      await approveBusiness(id);
+      await fn();
+      toast(ok, nameOf(b), "success");
       onChanged?.();
+    } catch (e: any) {
+      toast("Action failed", e?.message || "Please try again.", "error");
     } finally {
       setBusyId(null);
     }
   };
 
-  const handleReject = async (id: number) => {
-    const reason = window.prompt("Rejection reason?");
-    if (!reason?.trim()) return;
-
-    try {
-      setBusyId(id);
-      await rejectBusiness(id, reason.trim());
-      onChanged?.();
-    } finally {
-      setBusyId(null);
-    }
-  };
-
-  const handleSuspend = async (id: number) => {
-    const reason = window.prompt("Suspension reason? (optional)") || "";
-    try {
-      setBusyId(id);
-      await suspendBusiness(id, reason.trim());
-      onChanged?.();
-    } finally {
-      setBusyId(null);
-    }
+  const confirm = async () => {
+    if (!dialog) return;
+    const { type, b } = dialog;
+    if (type === "reject" && !reason.trim()) return;
+    setDialog(null);
+    await run(b, () => (type === "reject" ? rejectBusiness(b.id, reason.trim()) : suspendBusiness(b.id, reason.trim())), type === "reject" ? "Business rejected" : "Business suspended");
+    setReason("");
   };
 
   return (
-    <div className="bg-card rounded-lg border border-slate-200 p-6">
-      <div className="flex items-center justify-between mb-4">
-        <div>
-          <h3 className="text-lg font-semibold text-slate-900">
-            Pending Businesses
-          </h3>
-          <p className="text-sm text-slate-600">
-            Review and approve or reject new business registrations.
-          </p>
-        </div>
-
-        <span className="text-sm font-medium text-slate-700">
-          {pending.length} pending
-        </span>
-      </div>
-
+    <Panel
+      title="Awaiting approval"
+      subtitle="New business registrations to review."
+      action={<Link href="/superadmin/dashboard/businesses" className="text-sm font-bold text-primary hover:underline">View all</Link>}
+    >
       {pending.length === 0 ? (
-        <div className="text-slate-600 text-sm">
-          No pending businesses right now.
+        <div className="flex flex-col items-center py-10 text-center">
+          <span className="grid h-14 w-14 place-items-center rounded-2xl bg-success-soft text-success"><CheckCircle2 className="h-7 w-7" /></span>
+          <p className="font-display mt-3 text-lg font-bold">You&apos;re all caught up</p>
+          <p className="text-sm text-muted-foreground">No businesses are waiting for review.</p>
         </div>
       ) : (
-        <div className="divide-y divide-slate-100">
+        <ul className="divide-y divide-border">
           {pending.map((b) => {
-            const owner = b.owner;
-            const isBusy = busyId === b.id;
-
+            const busy = busyId === b.id;
             return (
-              <div key={b.id} className="py-4 flex flex-col gap-3">
-                <div className="flex items-start justify-between gap-4">
+              <li key={b.id} className="py-4 first:pt-0 last:pb-0">
+                <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="font-semibold text-slate-900 truncate">
-                      {businessDisplayName(b)}
+                    <p className="truncate font-bold">{nameOf(b)}</p>
+                    <p className="truncate text-sm text-muted-foreground">
+                      {b.owner ? `${b.owner.firstName} ${b.owner.lastName} · ${b.owner.email}` : "Owner unknown"}
                     </p>
-
-                    <p className="text-sm text-slate-600">
-                      Owner:{" "}
-                      <span className="text-slate-800">
-                        {owner
-                          ? `${owner.firstName} ${owner.lastName} (${owner.email})`
-                          : "—"}
-                      </span>
-                    </p>
-
-                    <p className="text-xs text-slate-500 mt-1">
-                      Submitted: {formatDate(b.createdAt)}
-                    </p>
+                    <p className="mt-0.5 text-xs text-muted-foreground">Submitted {when(b.createdAt)}</p>
                   </div>
-
-                  <span className="shrink-0 rounded-full bg-amber-50 text-amber-700 border border-amber-200 px-3 py-1 text-xs font-semibold">
-                    Pending review
-                  </span>
+                  <Badge tone="mango">Pending</Badge>
                 </div>
-
-                <div className="flex flex-wrap gap-2">
-                  <button
-                    onClick={() => handleApprove(b.id)}
-                    disabled={isBusy}
-                    className="px-3 py-2 text-sm rounded-md bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-60"
-                  >
-                    {isBusy ? "Processing…" : "Approve"}
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <button disabled={busy} onClick={() => run(b, () => approveBusiness(b.id), "Business approved")}
+                    className="h-10 rounded-full bg-cta px-5 text-sm font-extrabold text-cta-foreground transition hover:bg-mango-300 disabled:opacity-60">
+                    {busy ? "Working…" : "Approve"}
                   </button>
-
-                  <button
-                    onClick={() => handleReject(b.id)}
-                    disabled={isBusy}
-                    className="px-3 py-2 text-sm rounded-md bg-rose-600 text-white hover:bg-rose-700 disabled:opacity-60"
-                  >
+                  <button disabled={busy} onClick={() => { setReason(""); setDialog({ type: "reject", b }); }}
+                    className="h-10 rounded-full border border-destructive/30 px-4 text-sm font-bold text-destructive transition hover:bg-destructive/10 disabled:opacity-60">
                     Reject
                   </button>
-
-                  <button
-                    onClick={() => handleSuspend(b.id)}
-                    disabled={isBusy}
-                    className="px-3 py-2 text-sm rounded-md border border-slate-300 text-slate-800 hover:bg-slate-50 disabled:opacity-60"
-                  >
+                  <button disabled={busy} onClick={() => { setReason(""); setDialog({ type: "suspend", b }); }}
+                    className="h-10 rounded-full border border-border px-4 text-sm font-bold text-foreground transition hover:bg-violet-50 disabled:opacity-60">
                     Suspend
                   </button>
                 </div>
-              </div>
+              </li>
             );
           })}
-        </div>
+        </ul>
       )}
-    </div>
+
+      <Dialog open={!!dialog} onOpenChange={(o) => !o && setDialog(null)}>
+        <DialogContent className="rounded-3xl">
+          <DialogHeader>
+            <DialogTitle>{dialog?.type === "reject" ? "Reject" : "Suspend"} {dialog && nameOf(dialog.b)}?</DialogTitle>
+            <DialogDescription>
+              {dialog?.type === "reject" ? "The owner will see this reason, so keep it clear and specific." : "Add an optional note for the audit trail."}
+            </DialogDescription>
+          </DialogHeader>
+          <textarea
+            autoFocus
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+            rows={3}
+            placeholder={dialog?.type === "reject" ? "e.g. CAC document is unreadable" : "Optional reason"}
+            className={`${adminField} h-auto py-3`}
+            aria-label="Reason"
+          />
+          <DialogFooter className="gap-2">
+            <button onClick={() => setDialog(null)} className="h-11 rounded-full border border-border px-5 text-sm font-bold hover:bg-violet-50">Cancel</button>
+            <button onClick={confirm} disabled={dialog?.type === "reject" && !reason.trim()}
+              className="h-11 rounded-full bg-destructive px-5 text-sm font-extrabold text-destructive-foreground disabled:opacity-50">
+              {dialog?.type === "reject" ? "Reject business" : "Suspend business"}
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </Panel>
   );
 }

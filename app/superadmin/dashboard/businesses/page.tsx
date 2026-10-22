@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Sidebar } from "@/app/superadmin/dashboard/components/sidebar";
 import { useToast } from "@/components/ui/toast-provider";
 import { ReasonModal } from "../components/ui/reason-modal";
 
@@ -232,21 +231,21 @@ export default function BusinessesPage() {
       key: "all",
       label: "Total",
       icon: Store,
-      accent: C.green,
+      accent: C.brand,
       value: counts.all,
     },
     {
       key: "pending_review",
       label: "Pending",
       icon: Clock,
-      accent: C.amber,
+      accent: C.mango,
       value: counts.pending_review,
     },
     {
       key: "approved",
       label: "Approved",
       icon: Check,
-      accent: C.greenMid,
+      accent: C.brandMid,
       value: counts.approved,
     },
     {
@@ -260,7 +259,7 @@ export default function BusinessesPage() {
       key: "suspended",
       label: "Suspended",
       icon: PauseCircle,
-      accent: "#6B7C6E",
+      accent: "#6b6480",
       value: counts.suspended,
     },
   ];
@@ -292,13 +291,11 @@ export default function BusinessesPage() {
   };
 
   return (
-    <div className="flex min-h-screen" style={{ backgroundColor: C.bg }}>
-      <Sidebar />
-      <main className="flex-1 min-w-0 overflow-auto">
-        <div className="p-6">
+    <div className="space-y-6">
+<div className="space-y-6">
           <PageHeader />
 
-          <div className="grid grid-cols-5 gap-3 mb-6">
+          <div className="mb-6 hidden gap-3 sm:grid sm:grid-cols-5">
             {statChips.map(({ key, ...rest }) => (
               <StatChip
                 key={key}
@@ -349,7 +346,7 @@ export default function BusinessesPage() {
             <div className="flex items-center justify-center py-20">
               <RefreshCw
                 className="h-6 w-6 animate-spin"
-                style={{ color: C.greenMid }}
+                style={{ color: C.brandMid }}
               />
             </div>
           ) : (
@@ -387,8 +384,7 @@ export default function BusinessesPage() {
             />
           )}
         </div>
-      </main>
-
+      
       <ReasonModal
         isOpen={modal.isOpen}
         onClose={() =>

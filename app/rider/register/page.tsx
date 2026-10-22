@@ -1,529 +1,124 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {
-  Bike,
-  CircleAlert,
-  Eye,
-  EyeOff,
-  Loader2,
-  ArrowRight,
-  ShieldCheck,
-  Zap,
-  Banknote,
-  UploadCloud,
-  FileCheck2,
-} from "lucide-react";
+import { Eye, EyeOff, FileCheck2, Loader2, Upload, X } from "lucide-react";
+import RiderAuthShell from "@/components/rider/RiderAuthShell";
+import { Field, FormError, PrimaryButton, fieldClass } from "@/components/partner-signup/ui";
 
-type FormData = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  vehicleType: string;
-  plateNumber: string;
-  password: string;
-};
+const API = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+const MAX = 5 * 1024 * 1024;
+const OK = ["application/pdf", "image/jpeg", "image/png"];
 
-const RiderRegister = () => {
+type F = { firstName: string; lastName: string; email: string; phone: string; vehicleType: string; plateNumber: string; password: string };
+type Errs = Partial<Record<keyof F | "idFile", string>>;
+
+export default function RiderRegisterPage() {
   const router = useRouter();
-
-  const [formData, setFormData] = useState<FormData>({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    vehicleType: "",
-    plateNumber: "",
-    password: "",
-  });
-
+  const [f, setF] = useState<F>({ firstName: "", lastName: "", email: "", phone: "", vehicleType: "", plateNumber: "", password: "" });
   const [idFile, setIdFile] = useState<File | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+  const [errs, setErrs] = useState<Errs>({});
+  const [formError, setFormError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [show, setShow] = useState(false);
+  const picker = useRef<HTMLInputElement>(null);
 
-  const perks = useMemo(
-    () => [
-      {
-        icon: Banknote,
-        label: "Competitive Earnings",
-        value: "Earn up to ₦50k+ weekly",
-      },
-      {
-        icon: Zap,
-        label: "Fast Payouts",
-        value: "Daily or weekly withdrawals",
-      },
-      {
-        icon: ShieldCheck,
-        label: "Rider Insurance",
-        value: "Covered on every active delivery",
-      },
-    ],
-    [],
-  );
-
-  const updateFormData = (field: keyof FormData, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-    if (error) setError("");
+  const set = (k: keyof F) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const v = k === "phone" ? e.target.value.replace(/\D/g, "").slice(0, 11) : e.target.value;
+    setF((p) => ({ ...p, [k]: v }));
+    setErrs((p) => ({ ...p, [k]: undefined }));
+    setFormError("");
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setIdFile(e.target.files[0]);
-    }
+  const pick = (file: File | null) => {
+    if (!file) return;
+    if (file.type && !OK.includes(file.type)) return setErrs((p) => ({ ...p, idFile: "Use a PDF, JPG or PNG file." }));
+    if (file.size > MAX) return setErrs((p) => ({ ...p, idFile: "This file is over the 5MB limit." }));
+    setIdFile(file);
+    setErrs((p) => ({ ...p, idFile: undefined }));
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError("");
+  const validate = (): Errs => {
+    const e: Errs = {};
+    if (!f.firstName.trim()) e.firstName = "Enter your first name";
+    if (!f.lastName.trim()) e.lastName = "Enter your last name";
+    if (!/^\S+@\S+\.\S+$/.test(f.email)) e.email = "Enter a valid email address";
+    if (f.phone.length !== 11) e.phone = "Phone number must be 11 digits";
+    if (!f.vehicleType) e.vehicleType = "Choose your vehicle";
+    if (!f.plateNumber.trim()) e.plateNumber = "Enter your plate number";
+    if (f.password.length < 8) e.password = "Use at least 8 characters";
+    if (!idFile) e.idFile = "Upload a valid ID document";
+    return e;
+  };
 
-    if (!idFile) {
-      setError("Please upload a valid ID document.");
-      setIsLoading(false);
-      return;
-    }
-
+  const submit = async (ev: React.FormEvent) => {
+    ev.preventDefault();
+    const v = validate();
+    setErrs(v);
+    if (Object.keys(v).length) return;
+    setLoading(true);
+    setFormError("");
     try {
-      const submitData = new FormData();
-      Object.entries(formData).forEach(([key, value]) =>
-        submitData.append(key, value),
-      );
-      submitData.append("idDocument", idFile);
-
-      const API_BASE_URL =
-        process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
-      const response = await fetch(`${API_BASE_URL}/auth/rider/register`, {
-        method: "POST",
-        body: submitData,
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Registration failed.");
-      }
-
+      const body = new FormData();
+      Object.entries(f).forEach(([k, val]) => body.append(k, val));
+      body.append("idDocument", idFile!);
+      const res = await fetch(`${API}/auth/rider/register`, { method: "POST", body });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.message || "Registration failed. Please try again.");
       router.push("/rider/login?registered=true");
     } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Registration failed. Please try again.",
-      );
-    } finally {
-      setIsLoading(false);
+      setFormError(err instanceof TypeError ? "We couldn't reach OyaEat. Check your connection and try again." : err instanceof Error ? err.message : "Something went wrong.");
+      setLoading(false);
     }
   };
 
   return (
-    <>
-      <style>{`
-        @import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap");
+    <RiderAuthShell title="Apply to ride" subtitle="Tell us about you and your vehicle. We'll review your ID and get you started." footer={<>Already a rider? <Link href="/rider/login" className="font-bold text-primary hover:underline">Log in</Link></>}>
+      <form onSubmit={submit} noValidate className="space-y-4">
+        <FormError>{formError}</FormError>
+        <div className="grid grid-cols-2 gap-3">
+          <Field id="firstName" label="First name" error={errs.firstName}><input id="firstName" autoComplete="given-name" value={f.firstName} onChange={set("firstName")} className={fieldClass} aria-invalid={!!errs.firstName} disabled={loading} /></Field>
+          <Field id="lastName" label="Last name" error={errs.lastName}><input id="lastName" autoComplete="family-name" value={f.lastName} onChange={set("lastName")} className={fieldClass} aria-invalid={!!errs.lastName} disabled={loading} /></Field>
+        </div>
+        <Field id="email" label="Email" error={errs.email}><input id="email" type="email" autoComplete="email" value={f.email} onChange={set("email")} className={fieldClass} aria-invalid={!!errs.email} disabled={loading} /></Field>
+        <Field id="phone" label="Phone number" hint={`${f.phone.length}/11 digits`} error={errs.phone}><input id="phone" type="tel" inputMode="numeric" autoComplete="tel" value={f.phone} onChange={set("phone")} placeholder="08012345678" className={fieldClass} aria-invalid={!!errs.phone} disabled={loading} /></Field>
+        <div className="grid grid-cols-2 gap-3">
+          <Field id="vehicleType" label="Vehicle" error={errs.vehicleType}>
+            <select id="vehicleType" value={f.vehicleType} onChange={set("vehicleType")} className={fieldClass} aria-invalid={!!errs.vehicleType} disabled={loading}>
+              <option value="">Select</option>
+              <option value="motorcycle">Motorcycle / Okada</option>
+              <option value="bicycle">Bicycle</option>
+              <option value="car">Car</option>
+            </select>
+          </Field>
+          <Field id="plateNumber" label="Plate number" error={errs.plateNumber}><input id="plateNumber" value={f.plateNumber} onChange={set("plateNumber")} placeholder="KJA-123XD" className={fieldClass} aria-invalid={!!errs.plateNumber} disabled={loading} /></Field>
+        </div>
 
-        :root {
-          --green: #1A6B3C;
-          --green-light: #22883F;
-          --green-pale: #E8F5EE;
-          --green-muted: #4A8C63;
-          --green-border: #B8DDC5;
-          --green-dark: #0F4526;
-          --white: #FFFFFF;
-          --text-dark: #0D2218;
-          --text-mid: #3A5A47;
-          --text-muted: #7A9A85;
-          --shadow-green: rgba(26, 107, 60, 0.15);
-          --danger-bg: rgba(239, 68, 68, 0.08);
-          --danger-border: rgba(239, 68, 68, 0.3);
-          --danger-text: #dc2626;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        html, body { font-family: "DM Sans", sans-serif; background: var(--white); color: var(--text-dark); }
-        .bebas { font-family: "Bebas Neue", sans-serif; letter-spacing: 0.04em; }
-
-        .page { min-height: 100vh; display: flex; position: relative; z-index: 1; }
-        
-        .dot-grid {
-          position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.3;
-          background-image: radial-gradient(circle, #B8DDC5 1px, transparent 1px);
-          background-size: 28px 28px;
-        }
-
-        .left-panel {
-          flex: 1; min-height: 100vh; position: relative; overflow: hidden; padding: 48px;
-          display: flex; flex-direction: column; justify-content: space-between;
-          background: linear-gradient(145deg, var(--green-dark) 0%, var(--green) 55%, var(--green-light) 100%);
-          position: sticky; top: 0;
-        }
-
-        .right-panel {
-          width: 550px; flex-shrink: 0; padding: 48px; display: flex; flex-direction: column;
-          background: var(--white); overflow-y: auto;
-        }
-
-        .orb { position: absolute; border-radius: 999px; filter: blur(80px); pointer-events: none; }
-        .logo { text-decoration: none; display: inline-block; }
-        .logo-title { font-size: 36px; line-height: 1; }
-        .logo-subtitle { margin-top: 2px; font-size: 9px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255, 255, 255, 0.55); }
-
-        .hero-icon {
-          width: 96px; height: 96px; border-radius: 24px; display: inline-flex; align-items: center; justify-content: center;
-          background: rgba(255, 255, 255, 0.12); border: 1.5px solid rgba(255, 255, 255, 0.25); margin-bottom: 32px;
-        }
-
-        .hero-title { font-size: clamp(48px, 5.5vw, 68px); line-height: 0.95; color: #fff; margin-bottom: 20px; }
-        .hero-text { max-width: 380px; font-size: 1rem; line-height: 1.7; color: rgba(255, 255, 255, 0.72); }
-
-        .stats { display: flex; flex-direction: column; gap: 12px; margin-top: 40px; }
-        .stat-pill {
-          display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px;
-          border: 1px solid rgba(255, 255, 255, 0.18); background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(8px);
-        }
-        .stat-icon { color: #fff; opacity: 0.92; flex-shrink: 0; }
-        .stat-label { font-size: 0.75rem; font-weight: 600; color: rgba(255, 255, 255, 0.65); }
-        .stat-value { font-size: 0.95rem; font-weight: 700; color: #fff; }
-
-        .section-head { margin-bottom: 32px; }
-        .status-row { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
-        .status-dot { width: 8px; height: 8px; border-radius: 999px; background: var(--green); }
-        .status-text { font-size: 0.8rem; font-weight: 600; color: var(--green); }
-        .section-title { font-size: 2rem; font-weight: 700; color: var(--text-dark); margin-bottom: 8px; }
-        .section-subtitle { font-size: 0.9rem; color: var(--text-muted); }
-        .section-subtitle a { color: var(--green); font-weight: 600; text-decoration: none; }
-
-        .error-box {
-          display: flex; align-items: center; gap: 8px; margin-bottom: 20px; padding: 12px 16px;
-          border-radius: 10px; background: var(--danger-bg); border: 1px solid var(--danger-border);
-          color: var(--danger-text); font-size: 0.875rem;
-        }
-
-        .form { display: flex; flex-direction: column; gap: 16px; }
-        
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-
-        .field label { display: block; margin-bottom: 8px; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-mid); }
-        .input {
-          width: 100%; padding: 14px 16px; font-size: 0.95rem; font-family: "DM Sans", sans-serif;
-          color: var(--text-dark); border: 1.5px solid var(--green-border); border-radius: 10px;
-          background: var(--white); outline: none; transition: border-color 0.2s, box-shadow 0.2s;
-        }
-        .input::placeholder { color: var(--text-muted); }
-        .input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(26, 107, 60, 0.10); }
-
-        select.input { appearance: none; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%231A6B3C%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 16px center; background-size: 16px; padding-right: 40px; }
-
-        .file-upload {
-          position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center;
-          padding: 24px; border: 1.5px dashed var(--green-border); border-radius: 10px; background: var(--green-pale);
-          cursor: pointer; transition: all 0.2s; text-align: center;
-        }
-        .file-upload:hover { border-color: var(--green); background: #e0f2e9; }
-        .file-upload input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-        .file-icon { color: var(--green); margin-bottom: 8px; }
-        .file-text { font-size: 0.875rem; color: var(--text-mid); font-weight: 500; }
-        .file-hint { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; }
-
-        .password-wrap { position: relative; }
-        .password-input { padding-right: 48px; }
-        .password-toggle {
-          position: absolute; top: 50%; right: 14px; transform: translateY(-50%); display: inline-flex;
-          align-items: center; justify-content: center; padding: 0; border: none; background: transparent;
-          color: var(--text-muted); cursor: pointer;
-        }
-        .password-toggle:hover { color: var(--green); }
-
-        .primary-button {
-          width: 100%; padding: 15px 32px; border: none; border-radius: 10px; display: inline-flex;
-          align-items: center; justify-content: center; gap: 8px; font-size: 1rem; font-weight: 700;
-          font-family: "DM Sans", sans-serif; background: var(--green); color: #fff; cursor: pointer;
-          box-shadow: 0 4px 20px var(--shadow-green); transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
-          margin-top: 8px;
-        }
-        .primary-button:hover { background: var(--green-light); transform: translateY(-2px); box-shadow: 0 8px 28px var(--shadow-green); }
-        .primary-button:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-
-        .action-row { display: flex; gap: 12px; margin-top: 32px; padding-top: 32px; border-top: 1.5px solid var(--green-border); }
-        .ghost-link {
-          flex: 1; display: block; text-align: center; text-decoration: none; padding: 13px; border-radius: 10px;
-          font-size: 0.875rem; color: var(--text-muted); font-weight: 600; border: 1.5px solid var(--green-border); transition: all 0.2s ease;
-        }
-        .ghost-link:hover { color: var(--green); background: #fafdfa; }
-
-        @media (max-width: 1024px) {
-          .page { flex-direction: column; }
-          .left-panel { min-height: auto; padding: 32px 24px; position: static; }
-          .right-panel { width: 100%; padding: 32px 24px 40px; }
-          .form-row { grid-template-columns: 1fr; gap: 16px; }
-        }
-      `}</style>
-
-      <div className="dot-grid" />
-
-      <div className="page">
-        <aside className="left-panel">
-          <div
-            className="orb"
-            style={{
-              width: 400,
-              height: 400,
-              background: "rgba(255,255,255,0.08)",
-              top: -100,
-              right: -100,
-            }}
-          />
-          <div
-            className="orb"
-            style={{
-              width: 300,
-              height: 300,
-              background: "rgba(0,0,0,0.12)",
-              bottom: -80,
-              left: -80,
-            }}
-          />
-
-          <Link href="/" className="logo">
-            <div className="bebas logo-title">
-              <span style={{ color: "#fff" }}>Oya</span>
-              <span style={{ color: "rgba(255,255,255,0.55)" }}>Eat</span>
+        <Field id="idDoc" label="ID document" hint="NIN, driver's licence or international passport. PDF, JPG or PNG, up to 5MB." error={errs.idFile}>
+          <input ref={picker} id="idDoc" type="file" accept=".pdf,.jpg,.jpeg,.png" className="sr-only" disabled={loading} onChange={(e) => { pick(e.target.files?.[0] || null); e.target.value = ""; }} />
+          {idFile ? (
+            <div className="flex items-center gap-3 rounded-xl border border-primary/30 bg-violet-50 p-3">
+              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-primary text-primary-foreground"><FileCheck2 className="h-5 w-5" /></span>
+              <span className="min-w-0 flex-1 truncate text-sm font-bold">{idFile.name}</span>
+              <button type="button" onClick={() => setIdFile(null)} aria-label="Remove file" className="grid h-9 w-9 place-items-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"><X className="h-4 w-4" /></button>
             </div>
-            <div className="logo-subtitle">Rider Registration</div>
-          </Link>
-
-          <div>
-            <div className="hero-icon">
-              <Bike size={42} color="#ffffff" strokeWidth={2} />
-            </div>
-
-            <h1 className="bebas hero-title">
-              JOIN THE
-              <br />
-              <span style={{ color: "var(--green-pale)" }}>
-                FASTEST GROWING
-              </span>
-              <br />
-              FLEET.
-            </h1>
-
-            <p className="hero-text">
-              Sign up today, get approved within 24 hours, and start earning on
-              your own schedule.
-            </p>
-
-            <div className="stats">
-              {perks.map((stat) => {
-                const Icon = stat.icon;
-                return (
-                  <div key={stat.label} className="stat-pill">
-                    <Icon className="stat-icon" size={20} strokeWidth={2} />
-                    <div>
-                      <div className="stat-label">{stat.label}</div>
-                      <div className="stat-value">{stat.value}</div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </aside>
-
-        <section className="right-panel">
-          <div className="section-head">
-            <div className="status-row">
-              <span className="status-dot" />
-              <span className="status-text">Registration Open</span>
-            </div>
-            <h2 className="section-title">Create your account</h2>
-            <p className="section-subtitle">
-              Already have an account?{" "}
-              <Link href="/rider/login">Sign in here</Link>
-            </p>
-          </div>
-
-          {error && (
-            <div className="error-box">
-              <CircleAlert size={16} />
-              <span>{error}</span>
-            </div>
-          )}
-
-          <form className="form" onSubmit={handleSubmit}>
-            <div className="form-row">
-              <div className="field">
-                <label htmlFor="firstName">First Name</label>
-                <input
-                  id="firstName"
-                  className="input"
-                  type="text"
-                  placeholder="John"
-                  value={formData.firstName}
-                  onChange={(e) => updateFormData("firstName", e.target.value)}
-                  required
-                  disabled={isLoading}
-                />
-              </div>
-              <div className="field">
-                <label htmlFor="lastName">Last Name</label>
-                <input
-                  id="lastName"
-                  className="input"
-                  type="text"
-                  placeholder="Doe"
-                  value={formData.lastName}
-                  onChange={(e) => updateFormData("lastName", e.target.value)}
-                  required
-                  disabled={isLoading}
-                />
-              </div>
-            </div>
-
-            <div className="form-row">
-              <div className="field">
-                <label htmlFor="email">Email Address</label>
-                <input
-                  id="email"
-                  className="input"
-                  type="email"
-                  placeholder="you@example.com"
-                  value={formData.email}
-                  onChange={(e) => updateFormData("email", e.target.value)}
-                  required
-                  disabled={isLoading}
-                />
-              </div>
-              <div className="field">
-                <label htmlFor="phone">Phone Number</label>
-                <input
-                  id="phone"
-                  className="input"
-                  type="tel"
-                  placeholder="+234 800 000 0000"
-                  value={formData.phone}
-                  onChange={(e) => updateFormData("phone", e.target.value)}
-                  required
-                  disabled={isLoading}
-                />
-              </div>
-            </div>
-
-            <div className="form-row">
-              <div className="field">
-                <label htmlFor="vehicleType">Vehicle Type</label>
-                <select
-                  id="vehicleType"
-                  className="input"
-                  value={formData.vehicleType}
-                  onChange={(e) =>
-                    updateFormData("vehicleType", e.target.value)
-                  }
-                  required
-                  disabled={isLoading}
-                >
-                  <option value="" disabled>
-                    Select vehicle
-                  </option>
-                  <option value="motorcycle">Motorcycle / Okada</option>
-                  <option value="bicycle">Bicycle</option>
-                  <option value="car">Car</option>
-                </select>
-              </div>
-              <div className="field">
-                <label htmlFor="plateNumber">Plate Number</label>
-                <input
-                  id="plateNumber"
-                  className="input"
-                  type="text"
-                  placeholder="Optional for bicycles"
-                  value={formData.plateNumber}
-                  onChange={(e) =>
-                    updateFormData("plateNumber", e.target.value)
-                  }
-                  disabled={isLoading}
-                />
-              </div>
-            </div>
-
-            <div className="field">
-              <label>Valid ID Document (NIN, Passport, Driver's License)</label>
-              <div className="file-upload">
-                <input
-                  type="file"
-                  accept=".jpg,.jpeg,.png,.pdf"
-                  onChange={handleFileChange}
-                  required
-                  disabled={isLoading}
-                />
-                {idFile ? (
-                  <>
-                    <FileCheck2 size={28} className="file-icon" />
-                    <span className="file-text">{idFile.name}</span>
-                    <span className="file-hint">Click to replace</span>
-                  </>
-                ) : (
-                  <>
-                    <UploadCloud size={28} className="file-icon" />
-                    <span className="file-text">Click to upload your ID</span>
-                    <span className="file-hint">PNG, JPG or PDF (Max 5MB)</span>
-                  </>
-                )}
-              </div>
-            </div>
-
-            <div className="field">
-              <label htmlFor="password">Create Password</label>
-              <div className="password-wrap">
-                <input
-                  id="password"
-                  className="input password-input"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Min. 8 characters"
-                  value={formData.password}
-                  onChange={(e) => updateFormData("password", e.target.value)}
-                  required
-                  minLength={8}
-                  disabled={isLoading}
-                />
-                <button
-                  type="button"
-                  className="password-toggle"
-                  onClick={() => setShowPassword((prev) => !prev)}
-                >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              className="primary-button"
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 size={18} className="animate-spin" /> Submitting...
-                </>
-              ) : (
-                <>
-                  Submit Application <ArrowRight size={18} />
-                </>
-              )}
+          ) : (
+            <button type="button" onClick={() => picker.current?.click()} disabled={loading} className="flex h-14 w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-input text-sm font-bold text-primary transition hover:bg-violet-50">
+              <Upload className="h-4 w-4" /> Choose a file
             </button>
-          </form>
+          )}
+        </Field>
 
-          <div className="action-row">
-            <Link href="/" className="ghost-link">
-              Back to Home
-            </Link>
+        <Field id="password" label="Password" hint="At least 8 characters." error={errs.password}>
+          <div className="relative">
+            <input id="password" type={show ? "text" : "password"} autoComplete="new-password" value={f.password} onChange={set("password")} className={`${fieldClass} pr-12`} aria-invalid={!!errs.password} disabled={loading} />
+            <button type="button" onClick={() => setShow(!show)} aria-label={show ? "Hide password" : "Show password"} className="absolute right-1.5 top-1/2 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-full text-muted-foreground hover:bg-violet-50">{show ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}</button>
           </div>
-        </section>
-      </div>
-    </>
-  );
-};
+        </Field>
 
-export default RiderRegister;
+        <PrimaryButton type="submit" disabled={loading} className="w-full">{loading ? <><Loader2 className="h-5 w-5 animate-spin" /> Submitting…</> : "Submit application"}</PrimaryButton>
+      </form>
+    </RiderAuthShell>
+  );
+}

@@ -24,9 +24,9 @@ export function StatChip({
       onClick={onClick}
       className="flex flex-col gap-2 rounded-2xl border p-4 text-left w-full transition-all duration-200"
       style={{
-        borderColor: active ? C.green : C.border,
-        backgroundColor: active ? C.green : C.white,
-        boxShadow: active ? `0 4px 16px ${C.green}30` : undefined,
+        borderColor: active ? C.brand : C.border,
+        backgroundColor: active ? C.brand : C.white,
+        boxShadow: active ? `0 4px 16px ${C.brand}30` : undefined,
       }}
     >
       <div
@@ -46,7 +46,7 @@ export function StatChip({
         </p>
         <p
           className="text-xs font-semibold uppercase tracking-widest mt-0.5"
-          style={{ color: active ? C.greenLight : C.textMuted }}
+          style={{ color: active ? C.brandLight : C.textMuted }}
         >
           {label}
         </p>

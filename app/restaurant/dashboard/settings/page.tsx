@@ -117,7 +117,7 @@ function Label({ children }: { children: React.ReactNode }) {
   return (
     <label
       className="block text-[11px] font-bold uppercase tracking-widest mb-1.5"
-      style={{ color: "#5a8a6a" }}
+      style={{ color: "#8b7fb0" }}
     >
       {children}
     </label>
@@ -128,10 +128,10 @@ function Input({ ...props }: React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
       {...props}
-      className="w-full px-4 py-3 rounded-xl text-sm border-2 outline-none transition-all duration-150 focus:border-[#2e7d32] bg-card"
+      className="w-full px-4 py-3 rounded-xl text-sm border-2 outline-none transition-all duration-150 focus:border-[#6d28d9] bg-card"
       style={{
-        borderColor: "#ddeee0",
-        color: "#1a3d20",
+        borderColor: "#ede9fe",
+        color: "#2a1156",
         ...(props.style ?? {}),
       }}
     />
@@ -146,8 +146,8 @@ function Textarea({
     <textarea
       {...props}
       value={value ?? ""} // ✅ FIX: Force empty string if description is null
-      className="w-full px-4 py-3 rounded-xl text-sm border-2 outline-none transition-all duration-150 focus:border-[#2e7d32] bg-card resize-none"
-      style={{ borderColor: "#ddeee0", color: "#1a3d20" }}
+      className="w-full px-4 py-3 rounded-xl text-sm border-2 outline-none transition-all duration-150 focus:border-[#6d28d9] bg-card resize-none"
+      style={{ borderColor: "#ede9fe", color: "#2a1156" }}
     />
   );
 }
@@ -162,12 +162,12 @@ function SectionTitle({
   return (
     <div
       className="flex items-center gap-2 pb-3 mb-1 border-b"
-      style={{ borderColor: "#ddeee0" }}
+      style={{ borderColor: "#ede9fe" }}
     >
-      <span style={{ color: "#2e7d32" }}>{icon}</span>
+      <span style={{ color: "#6d28d9" }}>{icon}</span>
       <h2
         className="text-xs font-bold uppercase tracking-widest"
-        style={{ color: "#1a5c2a", fontFamily: "'Montserrat', sans-serif" }}
+        style={{ color: "#5b21b6", fontFamily: "'Montserrat', sans-serif" }}
       >
         {children}
       </h2>
@@ -397,11 +397,11 @@ export default function SettingsPage() {
     return (
       <div
         className="w-full h-full flex items-center justify-center"
-        style={{ minHeight: "100vh", backgroundColor: "#f0f7f1" }}
+        style={{ minHeight: "100vh", backgroundColor: "#f5f3ff" }}
       >
         <Loader2
           className="w-8 h-8 animate-spin"
-          style={{ color: "#1a5c2a" }}
+          style={{ color: "#5b21b6" }}
         />
       </div>
     );
@@ -410,13 +410,13 @@ export default function SettingsPage() {
   const picSrc = picPreview || settings.profilePicUrl;
 
   return (
-    <div className="w-full min-h-screen" style={{ backgroundColor: "#f0f7f1" }}>
+    <div className="w-full">
       {/* Toast notifications */}
       {toast && (
         <div
           className="fixed top-5 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2.5 px-5 py-3 rounded-2xl shadow-xl text-sm font-semibold"
           style={{
-            backgroundColor: toast.type === "success" ? "#1a5c2a" : "#b91c1c",
+            backgroundColor: toast.type === "success" ? "#5b21b6" : "#b91c1c",
             color: "#fff",
             boxShadow: "0 8px 32px rgba(0,0,0,0.18)",
           }}
@@ -430,20 +430,20 @@ export default function SettingsPage() {
         </div>
       )}
 
-      <div className="w-full px-6 py-8 space-y-5">
+      <div className="w-full space-y-5">
         {/* ══ Hero card ══ */}
         <div
           className="w-full rounded-2xl overflow-hidden"
           style={{
             backgroundColor: "#ffffff",
-            border: "1px solid #ddeee0",
+            border: "1px solid #ede9fe",
             boxShadow: "0 2px 12px rgba(0,0,0,0.05)",
           }}
         >
           {/* Banner cover upload target photo */}
           <div
             className="relative w-full cursor-pointer group"
-            style={{ height: "168px", backgroundColor: "#c8e6c9" }}
+            style={{ height: "168px", backgroundColor: "#ddd6fe" }}
             onClick={() => thumbRef.current?.click()}
           >
             {thumbSrc ? (
@@ -455,7 +455,7 @@ export default function SettingsPage() {
             ) : (
               <div
                 className="w-full h-full flex flex-col items-center justify-center gap-2"
-                style={{ color: "#4a7c59" }}
+                style={{ color: "#7c3aed" }}
               >
                 <ImagePlus className="w-6 h-6" />
                 <span className="text-xs font-bold uppercase tracking-widest">
@@ -491,8 +491,8 @@ export default function SettingsPage() {
           </div>
 
           {/* Profile strip branding row */}
-          <div className="px-8 pb-6" style={{ marginTop: "-44px" }}>
-            <div className="flex items-end gap-5">
+          <div className="px-4 pb-5 sm:px-8 sm:pb-6" style={{ marginTop: "-44px" }}>
+            <div className="flex flex-wrap items-end gap-x-4 gap-y-3 sm:flex-nowrap sm:gap-5">
               {/* Avatar logo layout circle container */}
               <div
                 className="relative flex-shrink-0 cursor-pointer group"
@@ -502,7 +502,7 @@ export default function SettingsPage() {
                   borderRadius: "50%",
                   overflow: "hidden",
                   border: "4px solid #ffffff",
-                  backgroundColor: "#2e7d32",
+                  backgroundColor: "#6d28d9",
                   boxShadow: "0 4px 16px rgba(0,0,0,0.18)",
                   flexShrink: 0,
                 }}
@@ -553,11 +553,11 @@ export default function SettingsPage() {
               </div>
 
               {/* Text metadata identities descriptors block */}
-              <div className="flex-1 min-w-0 pb-1">
+              <div className="min-w-0 flex-1 basis-40 pb-1">
                 <p
                   className="text-lg font-bold truncate"
                   style={{
-                    color: "#1a3d20",
+                    color: "#2a1156",
                     fontFamily: "'Montserrat', sans-serif",
                   }}
                 >
@@ -565,7 +565,7 @@ export default function SettingsPage() {
                 </p>
                 <p
                   className="text-xs mt-0.5 truncate"
-                  style={{ color: "#5a8a6a" }}
+                  style={{ color: "#8b7fb0" }}
                 >
                   {settings.city && settings.state
                     ? `${settings.city}, ${settings.state}`
@@ -578,11 +578,8 @@ export default function SettingsPage() {
                 <button
                   onClick={handleSave}
                   disabled={saving}
-                  className="flex-shrink-0 flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-all disabled:opacity-60"
-                  style={{
-                    backgroundColor: "#1a5c2a",
-                    boxShadow: "0 2px 8px rgba(26,92,42,0.25)",
-                  }}
+                  className="flex-shrink-0 flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-extrabold transition-all disabled:opacity-60"
+                  style={{ backgroundColor: "#fdba2d", color: "#1a1033" }}
                 >
                   {saving ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -598,22 +595,22 @@ export default function SettingsPage() {
 
         {/* ══ Tab Navigation items matrix selection rows ══ */}
         <div
-          className="w-full flex gap-1 p-1 rounded-2xl"
-          style={{ backgroundColor: "#ddeee0" }}
+          className="no-scrollbar flex w-full gap-1 overflow-x-auto rounded-2xl p-1"
+          style={{ backgroundColor: "#ede9fe" }}
         >
           {TABS.map((t) => (
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
-              className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold transition-all duration-150"
+              className="flex min-w-fit flex-1 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-xl px-4 py-2.5 text-xs font-bold transition-all duration-150"
               style={
                 tab === t.id
                   ? {
                       backgroundColor: "#ffffff",
-                      color: "#1a5c2a",
+                      color: "#5b21b6",
                       boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
                     }
-                  : { color: "#4a7c59" }
+                  : { color: "#7c3aed" }
               }
             >
               {t.icon}
@@ -627,7 +624,7 @@ export default function SettingsPage() {
           className="w-full rounded-2xl"
           style={{
             backgroundColor: "#ffffff",
-            border: "1px solid #ddeee0",
+            border: "1px solid #ede9fe",
             boxShadow: "0 2px 12px rgba(0,0,0,0.05)",
           }}
         >
@@ -717,7 +714,7 @@ export default function SettingsPage() {
                 <div className="relative">
                   <Globe
                     className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4"
-                    style={{ color: "#5a8a6a" }}
+                    style={{ color: "#8b7fb0" }}
                   />
                   <Input
                     name="websiteUrl"
@@ -751,11 +748,11 @@ export default function SettingsPage() {
                 {/* Active Live List Panel */}
                 <div
                   className="p-5 rounded-2xl border space-y-4"
-                  style={{ backgroundColor: "#f9fbf9", borderColor: "#ddeee0" }}
+                  style={{ backgroundColor: "#f9fbf9", borderColor: "#ede9fe" }}
                 >
                   <h4
                     className="text-[11px] font-bold uppercase tracking-wider flex items-center gap-1.5"
-                    style={{ color: "#1a5c2a" }}
+                    style={{ color: "#5b21b6" }}
                   >
                     Active Showcase Photos ({currentGallery.length}/5)
                   </h4>
@@ -763,7 +760,7 @@ export default function SettingsPage() {
                   {currentGallery.length === 0 ? (
                     <div
                       className="border border-dashed rounded-xl p-8 text-center text-xs text-slate-400 bg-white"
-                      style={{ borderColor: "#ddeee0" }}
+                      style={{ borderColor: "#ede9fe" }}
                     >
                       No showcase photos found. Add images below to build your
                       grid view layout.
@@ -774,7 +771,7 @@ export default function SettingsPage() {
                         <div
                           key={img.id}
                           className="relative h-24 border bg-white rounded-xl overflow-hidden shadow-sm group"
-                          style={{ borderColor: "#ddeee0" }}
+                          style={{ borderColor: "#ede9fe" }}
                         >
                           <img
                             src={img.imageUrl}
@@ -794,7 +791,7 @@ export default function SettingsPage() {
                               <Trash2 className="w-3.5 h-3.5" />
                             )}
                           </button>
-                          <div className="absolute top-1.5 left-1.5 bg-green-600 text-white p-0.5 rounded shadow group-hover:opacity-0 transition-opacity">
+                          <div className="absolute top-1.5 left-1.5 bg-violet-600 text-white p-0.5 rounded shadow group-hover:opacity-0 transition-opacity">
                             <CheckCircle2 className="w-3 h-3" />
                           </div>
                         </div>
@@ -803,7 +800,7 @@ export default function SettingsPage() {
                   )}
                   <p
                     className="text-[10px] leading-relaxed"
-                    style={{ color: "#5a8a6a" }}
+                    style={{ color: "#8b7fb0" }}
                   >
                     💡 Tip: Enforced design constraint requires **at least 3
                     photos** to format the multi-image mosaic layout cleanly on
@@ -816,7 +813,7 @@ export default function SettingsPage() {
                   <div className="space-y-4">
                     <h4
                       className="text-[11px] font-bold uppercase tracking-wider flex items-center gap-1.5"
-                      style={{ color: "#1a5c2a" }}
+                      style={{ color: "#5b21b6" }}
                     >
                       <Upload className="w-3.5 h-3.5" /> Stage New Images
                     </h4>
@@ -825,16 +822,16 @@ export default function SettingsPage() {
                       className="border-2 border-dashed rounded-xl p-6 text-center relative transition-all group cursor-pointer"
                       style={{
                         backgroundColor: "#f9fbf9",
-                        borderColor: "#ddeee0",
+                        borderColor: "#ede9fe",
                       }}
                     >
                       <ImagePlus
                         className="w-6 h-6 mx-auto mb-1.5 group-hover:scale-105 transition-transform"
-                        style={{ color: "#4a7c59" }}
+                        style={{ color: "#7c3aed" }}
                       />
                       <span
                         className="text-xs font-bold block"
-                        style={{ color: "#1a3d20" }}
+                        style={{ color: "#2a1156" }}
                       >
                         Browse Disk Files
                       </span>
@@ -857,7 +854,7 @@ export default function SettingsPage() {
                             <div
                               key={idx}
                               className="relative h-14 rounded-lg overflow-hidden border bg-white shadow-sm"
-                              style={{ borderColor: "#ddeee0" }}
+                              style={{ borderColor: "#ede9fe" }}
                             >
                               <img
                                 src={blob}
@@ -883,7 +880,7 @@ export default function SettingsPage() {
                     disabled={saving || selectedFiles.length === 0}
                     className="w-full py-2.5 rounded-xl text-sm font-bold text-white transition-all disabled:opacity-60 flex items-center justify-center gap-2 mt-4"
                     style={{
-                      backgroundColor: "#1a5c2a",
+                      backgroundColor: "#5b21b6",
                       boxShadow: "0 2px 8px rgba(26,92,42,0.25)",
                     }}
                   >
@@ -928,19 +925,19 @@ export default function SettingsPage() {
               <div
                 className="flex items-center justify-between px-5 py-4 rounded-xl"
                 style={{
-                  backgroundColor: "#f0f7f1",
-                  border: "1px solid #ddeee0",
+                  backgroundColor: "#f5f3ff",
+                  border: "1px solid #ede9fe",
                 }}
               >
                 <span
                   className="text-sm font-semibold"
-                  style={{ color: "#1a5c2a" }}
+                  style={{ color: "#5b21b6" }}
                 >
                   Open window
                 </span>
                 <span
                   className="flex items-center gap-2 text-sm font-bold"
-                  style={{ color: "#2e7d32" }}
+                  style={{ color: "#6d28d9" }}
                 >
                   {settings.openingHour}{" "}
                   <ChevronRight className="w-4 h-4 opacity-40" />{" "}
@@ -997,19 +994,19 @@ export default function SettingsPage() {
                     key={c.label}
                     className="rounded-xl p-4 text-center"
                     style={{
-                      backgroundColor: "#f0f7f1",
-                      border: "1px solid #ddeee0",
+                      backgroundColor: "#f5f3ff",
+                      border: "1px solid #ede9fe",
                     }}
                   >
                     <p
                       className="text-xl font-bold"
-                      style={{ color: "#1a5c2a" }}
+                      style={{ color: "#5b21b6" }}
                     >
                       {c.value}
                     </p>
                     <p
                       className="text-[10px] uppercase tracking-widest font-semibold mt-1"
-                      style={{ color: "#5a8a6a" }}
+                      style={{ color: "#8b7fb0" }}
                     >
                       {c.label}
                     </p>
@@ -1036,20 +1033,20 @@ export default function SettingsPage() {
                     key={key}
                     className="flex items-center justify-between px-5 py-4 rounded-xl cursor-pointer transition-all border-2"
                     style={{
-                      backgroundColor: val ? "#f0f7f1" : "#fafafa",
-                      borderColor: val ? "#a5d6a7" : "#eeeeee",
+                      backgroundColor: val ? "#f5f3ff" : "#fafafa",
+                      borderColor: val ? "#c4b5fd" : "#eeeeee",
                     }}
                   >
                     <div>
                       <p
                         className="text-sm font-semibold capitalize"
-                        style={{ color: "#1a3d20" }}
+                        style={{ color: "#2a1156" }}
                       >
                         {key.replace(/([A-Z])/g, " $1").trim()}
                       </p>
                       <p
                         className="text-xs mt-0.5"
-                        style={{ color: "#5a8a6a" }}
+                        style={{ color: "#8b7fb0" }}
                       >
                         {key === "newOrders" &&
                           "Get notified when a new order arrives"}
@@ -1073,7 +1070,7 @@ export default function SettingsPage() {
                     >
                       <div
                         className="w-full h-full rounded-full transition-colors duration-200"
-                        style={{ backgroundColor: val ? "#1a5c2a" : "#d1d5db" }}
+                        style={{ backgroundColor: val ? "#5b21b6" : "#d1d5db" }}
                       />
                       <div
                         className="absolute top-0.5 w-5 h-5 bg-card rounded-full shadow transition-transform duration-200"
@@ -1099,11 +1096,11 @@ export default function SettingsPage() {
                       value={audioVol}
                       onChange={handleVolumeChange}
                       className="flex-1 h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer"
-                      style={{ accentColor: "#1a5c2a" }}
+                      style={{ accentColor: "#5b21b6" }}
                     />
                     <span
                       className="text-sm font-bold w-9 text-right"
-                      style={{ color: "#1a5c2a" }}
+                      style={{ color: "#5b21b6" }}
                     >
                       {audioVol}%
                     </span>
@@ -1141,7 +1138,7 @@ export default function SettingsPage() {
                         } catch (e) {}
                       }}
                       className="px-4 py-2 text-xs font-bold rounded-xl border-2 hover:bg-gray-50 transition-colors"
-                      style={{ borderColor: "#ddeee0", color: "#1a5c2a" }}
+                      style={{ borderColor: "#ede9fe", color: "#5b21b6" }}
                     >
                       Test
                     </button>
@@ -1154,14 +1151,14 @@ export default function SettingsPage() {
 
         {/* ══ Bottom save bar ══ */}
         <div
-          className="w-full flex items-center justify-between px-6 py-4 rounded-2xl mb-8"
+          className="flex w-full flex-col gap-3 rounded-2xl px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6"
           style={{
             backgroundColor: "#ffffff",
-            border: "1px solid #ddeee0",
+            border: "1px solid #ede9fe",
             boxShadow: "0 2px 12px rgba(0,0,0,0.05)",
           }}
         >
-          <p className="text-xs" style={{ color: "#5a8a6a" }}>
+          <p className="text-xs" style={{ color: "#8b7fb0" }}>
             {tab === "gallery"
               ? "Showcase photos publish to the marketplace immediately after saving."
               : "Changes apply to all customers immediately after saving."}
@@ -1170,7 +1167,7 @@ export default function SettingsPage() {
             <button
               onClick={() => window.location.reload()}
               className="px-4 py-2 rounded-xl text-sm font-semibold border-2 transition-all hover:bg-gray-50"
-              style={{ borderColor: "#ddeee0", color: "#4a7c59" }}
+              style={{ borderColor: "#ede9fe", color: "#7c3aed" }}
             >
               Discard
             </button>
@@ -1180,11 +1177,8 @@ export default function SettingsPage() {
               disabled={
                 saving || (tab === "gallery" && selectedFiles.length === 0)
               }
-              className="flex items-center gap-2 px-6 py-2 rounded-xl text-sm font-bold text-white transition-all disabled:opacity-60"
-              style={{
-                backgroundColor: "#1a5c2a",
-                boxShadow: "0 2px 8px rgba(26,92,42,0.25)",
-              }}
+              className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-extrabold transition-all disabled:opacity-60"
+              style={{ backgroundColor: "#fdba2d", color: "#1a1033" }}
             >
               {saving ? (
                 <Loader2 className="w-4 h-4 animate-spin" />

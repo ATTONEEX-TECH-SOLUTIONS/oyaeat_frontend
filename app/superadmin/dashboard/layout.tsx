@@ -1,4 +1,5 @@
 import { ToastProvider } from "@/components/ui/toast-provider";
+import AdminShell from "@/components/superadmin/AdminShell";
 import type { ReactNode } from "react";
 
 export default function SuperAdminDashboardLayout({
@@ -7,8 +8,8 @@ export default function SuperAdminDashboardLayout({
   children: ReactNode;
 }) {
   return (
-    <div className="min-h-screen">
-      <ToastProvider>{children}</ToastProvider>
-    </div>
+    <ToastProvider>
+      <AdminShell>{children}</AdminShell>
+    </ToastProvider>
   );
 }

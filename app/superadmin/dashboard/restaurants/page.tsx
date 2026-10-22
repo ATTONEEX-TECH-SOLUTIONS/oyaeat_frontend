@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Sidebar } from "@/app/superadmin/dashboard/components/sidebar";
 import { RestaurantsList } from "@/app/superadmin/dashboard/components/restaurants-list";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -180,18 +179,12 @@ export default function RestaurantsPage() {
   );
 
   return (
-    <div className="flex min-h-screen" style={{ backgroundColor: "#F5F1EB" }}>
-      <Sidebar />
-
-      <main className="flex-1 min-w-0 overflow-auto">
-        <div className="p-6">
+    <div className="space-y-6">
+<div className="space-y-6">
           {/* Page header */}
           <div className="mb-6 flex items-start justify-between">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#52B788] mb-1">
-                Super Admin
-              </p>
-              <h1 className="text-2xl font-black tracking-tight text-foreground">
+              <h1 className="font-display text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
                 Restaurants
               </h1>
               <p className="text-muted-foreground mt-1 text-sm">
@@ -205,7 +198,7 @@ export default function RestaurantsPage() {
                   className="flex h-9 w-9 items-center justify-center rounded-xl"
                   style={{ backgroundColor: "#1B433218" }}
                 >
-                  <Store className="h-5 w-5" style={{ color: "#1B4332" }} />
+                  <Store className="h-5 w-5" style={{ color: "#3b0f7a" }} />
                 </div>
                 <div>
                   <p className="text-xl font-black tracking-tight text-foreground">
@@ -225,7 +218,7 @@ export default function RestaurantsPage() {
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search by name or email..."
-                className="pl-10 h-10 rounded-xl border-border bg-card text-foreground placeholder:text-muted-foreground focus-visible:ring-[#1B4332]"
+                className="pl-10 h-10 rounded-xl border-border bg-card text-foreground placeholder:text-muted-foreground focus-visible:ring-[#3b0f7a]"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -234,7 +227,7 @@ export default function RestaurantsPage() {
               variant="outline"
               onClick={fetchAll}
               disabled={loading}
-              className="h-10 rounded-xl border-border bg-card text-[#2D6A4F] font-semibold hover:bg-[#F0F7F3] transition-all gap-2 px-4"
+              className="h-10 rounded-xl border-border bg-card text-[#6d28d9] font-semibold hover:bg-[#f5f3ff] transition-all gap-2 px-4"
             >
               <RefreshCw
                 className={`h-4 w-4 ${loading ? "animate-spin" : ""}`}
@@ -253,7 +246,7 @@ export default function RestaurantsPage() {
 
           {loading && (
             <div className="flex items-center justify-center py-20">
-              <RefreshCw className="h-6 w-6 animate-spin text-[#2D6A4F]" />
+              <RefreshCw className="h-6 w-6 animate-spin text-[#6d28d9]" />
             </div>
           )}
 
@@ -273,7 +266,6 @@ export default function RestaurantsPage() {
             />
           )}
         </div>
-      </main>
-    </div>
+          </div>
   );
 }

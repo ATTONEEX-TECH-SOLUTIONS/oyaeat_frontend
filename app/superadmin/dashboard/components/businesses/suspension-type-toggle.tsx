@@ -22,7 +22,7 @@ export function SuspensionTypeToggle({
           onClick={() => onChange("shadow")}
           className={`px-3 py-2.5 rounded-lg text-xs font-bold transition-all border ${
             activeType === "shadow"
-              ? "bg-amber-500 border-amber-600 text-white shadow-sm"
+              ? "bg-mango-500 border-mango-600 text-white shadow-sm"
               : "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
           }`}
         >

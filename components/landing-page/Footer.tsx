@@ -10,7 +10,7 @@ const Footer = () => {
         <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-10 pb-12 border-b border-white/10">
           {/* Brand */}
           <div className="max-w-xs">
-            <Logo className="mb-4" />
+            <Logo size="lg" className="mb-4" />
             <p className="text-white/60 text-sm leading-relaxed mb-5">
               Better chow, no wahala. Hot local food and essentials delivered
               sharp sharp to your door across Abuja.

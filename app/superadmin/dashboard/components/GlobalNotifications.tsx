@@ -26,7 +26,7 @@ const Toggle = ({
     type="button"
     onClick={onChange}
     className={`w-12 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors shrink-0优化 outline-none ${
-      checked ? "bg-[#1a5c2a]" : "bg-gray-200"
+      checked ? "bg-[#5b21b6]" : "bg-gray-200"
     }`}
   >
     <div
@@ -50,7 +50,7 @@ export function GlobalNotifications({
   return (
     <div className="bg-card rounded-2xl border border-gray-100 p-8 shadow-sm bg-white w-full">
       <div className="flex items-center gap-3 border-b border-gray-100 pb-4 mb-6">
-        <Bell className="w-6 h-6 text-[#1a5c2a]" />
+        <Bell className="w-6 h-6 text-[#5b21b6]" />
         <h2 className="text-xl font-bold text-gray-900">
           Global Notifications & Platform State
         </h2>
