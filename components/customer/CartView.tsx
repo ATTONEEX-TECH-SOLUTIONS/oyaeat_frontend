@@ -6,34 +6,39 @@ import { ArrowRight, Store, Trash2, ShoppingBag } from "lucide-react";
 import { EmptyState, PageHeader, QtyStepper } from "./ui";
 import { RestaurantImage } from "./RestaurantCard";
 import { useCart } from "@/hooks/useCart";
-import {
-  DELIVERY_FEE_ESTIMATE,
-  SERVICE_FEE_ESTIMATE,
-  getUser,
-  naira,
-} from "@/lib/customer";
+import { getUser, naira } from "@/lib/customer";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export const CHECKOUT_PATH = "/customer/dashboard/checkout";
 
+/**
+ * `deliveryFee` is the fee the server quoted for the address: a number once known,
+ * null while it is being worked out, and left out on the cart page, where there is
+ * no address yet (the fee is added at checkout).
+ */
 export function OrderSummary({
   subtotal,
+  deliveryFee,
   className = "",
 }: {
   subtotal: number;
+  deliveryFee?: number | null;
   className?: string;
 }) {
-  const total = subtotal + DELIVERY_FEE_ESTIMATE + SERVICE_FEE_ESTIMATE;
+  const atCheckout = deliveryFee === undefined;
+  const total = subtotal + (deliveryFee ?? 0);
   return (
     <dl className={`space-y-2.5 text-sm ${className}`}>
       <Row label="Subtotal" value={naira(subtotal)} />
-      <Row label="Delivery (estimate)" value={naira(DELIVERY_FEE_ESTIMATE)} />
-      <Row label="Service fee" value={naira(SERVICE_FEE_ESTIMATE)} />
+      <Row
+        label="Delivery"
+        value={atCheckout ? "Added at checkout" : deliveryFee === null ? "Calculating…" : naira(deliveryFee)}
+      />
       <div className="my-3 border-t border-dashed border-border" />
       <div className="flex items-baseline justify-between">
-        <dt className="font-bold">Total</dt>
+        <dt className="font-bold">{atCheckout ? "Subtotal" : "Total"}</dt>
         <dd className="font-display text-2xl font-extrabold text-primary">
-          {naira(total)}
+          {deliveryFee === null ? "…" : naira(total)}
         </dd>
       </div>
     </dl>
@@ -152,7 +157,7 @@ export default function CartView() {
               Checkout <ArrowRight className="h-5 w-5" />
             </Link>
             <p className="mt-3 text-center text-xs text-muted-foreground">
-              Final delivery fee is confirmed at checkout.
+              The delivery fee is worked out from your address at checkout.
             </p>
           </div>
         </aside>
@@ -161,10 +166,8 @@ export default function CartView() {
       <div className="fixed inset-x-0 bottom-16 z-30 border-t border-border bg-card/95 p-4 backdrop-blur-xl lg:hidden">
         <div className="mx-auto flex max-w-xl items-center gap-4">
           <div>
-            <p className="text-xs text-muted-foreground">Estimated total</p>
-            <p className="font-display text-xl font-extrabold">
-              {naira(cart.subtotal + DELIVERY_FEE_ESTIMATE + SERVICE_FEE_ESTIMATE)}
-            </p>
+            <p className="text-xs text-muted-foreground">Subtotal</p>
+            <p className="font-display text-xl font-extrabold">{naira(cart.subtotal)}</p>
           </div>
           <Link
             href={checkoutHref}
