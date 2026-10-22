@@ -5,10 +5,6 @@ export const API_URL =
   process.env.NEXT_PUBLIC_API_URL ||
   "http://localhost:5000";
 
-// Estimated fees shown before checkout. The server is the source of truth at order time.
-export const DELIVERY_FEE_ESTIMATE = 1000;
-export const SERVICE_FEE_ESTIMATE = 250;
-
 export const naira = (n: number) => `₦${Math.round(n || 0).toLocaleString()}`;
 
 export const resolveImg = (url?: string | null) => {

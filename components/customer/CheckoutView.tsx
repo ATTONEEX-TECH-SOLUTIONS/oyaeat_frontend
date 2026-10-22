@@ -16,7 +16,7 @@ import AddressAutocomplete from "@/components/AddressAutocomplete";
 import { EmptyState, PageHeader } from "./ui";
 import { OrderSummary } from "./CartView";
 import { useCart } from "@/hooks/useCart";
-import { api, getToken, getUser, naira, DELIVERY_FEE_ESTIMATE, SERVICE_FEE_ESTIMATE, type CustomerUser } from "@/lib/customer";
+import { api, getToken, getUser, naira, type CustomerUser } from "@/lib/customer";
 import { cn } from "@/lib/utils";
 
 type Method = "card" | "transfer" | "cash";
@@ -62,9 +62,32 @@ export default function CheckoutView() {
     setPhone(u?.phone || "");
   }, []);
 
-  const total = cart.subtotal + DELIVERY_FEE_ESTIMATE + SERVICE_FEE_ESTIMATE;
+  // The server prices delivery from the restaurant-to-address distance; it recalculates the
+  // same fee when the order is placed, so what is shown here is what is charged.
+  const [deliveryFee, setDeliveryFee] = useState<number | null>(null);
+  const [quoteError, setQuoteError] = useState("");
+  const [quoteTry, setQuoteTry] = useState(0);
+  const restaurantId = cart.restaurantId;
+  useEffect(() => {
+    if (!restaurantId || !address) return;
+    let stale = false;
+    setDeliveryFee(null);
+    setQuoteError("");
+    api("/orders/delivery-quote", {
+      method: "POST",
+      auth: true,
+      body: JSON.stringify({ businessId: restaurantId, customerLatitude: coords?.lat ?? null, customerLongitude: coords?.lng ?? null }),
+    })
+      .then((j) => !stale && setDeliveryFee(Number(j.data?.deliveryFee)))
+      .catch((e) => !stale && setQuoteError(e.message || "We couldn't work out the delivery fee."));
+    return () => {
+      stale = true;
+    };
+  }, [restaurantId, address, coords?.lat, coords?.lng, quoteTry]);
+
+  const total = cart.subtotal + (deliveryFee ?? 0);
   const phoneOk = phone.replace(/\D/g, "").length >= 10;
-  const canPlace = cart.items.length > 0 && !!address && phoneOk && !loading;
+  const canPlace = cart.items.length > 0 && !!address && phoneOk && !loading && deliveryFee !== null;
 
   const place = async () => {
     if (!address) return setError("Choose your delivery address from the suggestions.");
@@ -266,9 +289,15 @@ export default function CheckoutView() {
                 ))}
               </ul>
               <div className="border-t border-border pt-4">
-                <OrderSummary subtotal={cart.subtotal} />
+                <OrderSummary subtotal={cart.subtotal} deliveryFee={address ? deliveryFee : undefined} />
+                {quoteError && (
+                  <p role="alert" className="mt-3 text-xs font-semibold text-destructive">
+                    {quoteError}{" "}
+                    <button type="button" className="underline" onClick={() => setQuoteTry((n) => n + 1)}>Try again</button>
+                  </p>
+                )}
               </div>
-              <PlaceButton loading={loading} disabled={!canPlace} onClick={place} total={total} method={method} />
+              <PlaceButton loading={loading} disabled={!canPlace} onClick={place} total={deliveryFee === null ? null : total} method={method} />
               <p className="mt-3 flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
                 <ShieldCheck className="h-4 w-4" /> Encrypted checkout
               </p>
@@ -279,7 +308,7 @@ export default function CheckoutView() {
         {/* Mobile dock */}
         <div className="fixed inset-x-0 bottom-16 z-30 border-t border-border bg-card/95 p-4 backdrop-blur-xl lg:hidden">
           <div className="mx-auto max-w-xl [&>button]:mt-0">
-            <PlaceButton loading={loading} disabled={!canPlace} onClick={place} total={total} method={method} />
+            <PlaceButton loading={loading} disabled={!canPlace} onClick={place} total={deliveryFee === null ? null : total} method={method} />
           </div>
         </div>
       </div>
@@ -297,7 +326,7 @@ function StepTitle({ n, icon: Icon, children }: { n: number; icon: React.Element
   );
 }
 
-function PlaceButton({ loading, disabled, onClick, total, method }: { loading: boolean; disabled: boolean; onClick: () => void; total: number; method: Method }) {
+function PlaceButton({ loading, disabled, onClick, total, method }: { loading: boolean; disabled: boolean; onClick: () => void; total: number | null; method: Method }) {
   return (
     <>
     <button
@@ -305,7 +334,7 @@ function PlaceButton({ loading, disabled, onClick, total, method }: { loading: b
       disabled={disabled}
       className="mt-5 flex h-12 w-full items-center justify-center gap-2 rounded-full bg-cta text-base font-extrabold text-cta-foreground shadow-sm transition hover:bg-mango-300 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 lg:mt-6"
     >
-      {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : method === "cash" ? `Place order · ${naira(total)}` : `Pay ${naira(total)}`}
+      {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : total === null ? "Calculating delivery…" : method === "cash" ? `Place order · ${naira(total)}` : `Pay ${naira(total)}`}
     </button>
     {disabled && !loading && (
       <p className="mt-2 text-center text-xs text-muted-foreground">Add your delivery address and phone number to continue.</p>

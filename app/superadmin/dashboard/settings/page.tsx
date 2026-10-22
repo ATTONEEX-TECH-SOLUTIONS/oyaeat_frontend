@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Save, Loader2 } from "lucide-react";
 import { CoreConfiguration } from "../components/CoreConfiguration";
-import { CommissionFees } from "../components/CommissionFees";
+import { CommissionFees, DELIVERY_DEFAULTS, type DeliverySettings } from "../components/CommissionFees";
 import { PayoutPolicies } from "../components/PayoutPolicies";
 import { GlobalNotifications } from "../components/GlobalNotifications";
 
@@ -23,6 +23,7 @@ export default function SettingsPage() {
   // 2. Commission States
   const [platformCommission, setPlatformCommission] = useState(15);
   const [baseRiderFee, setBaseRiderFee] = useState(1200);
+  const [delivery, setDelivery] = useState<DeliverySettings>(DELIVERY_DEFAULTS);
 
   // 3. Payout Policy States
   const [restaurantPayoutThreshold, setRestaurantPayoutThreshold] =
@@ -54,6 +55,13 @@ export default function SettingsPage() {
           setMaintenanceMode(d["core.maintenanceMode"]);
           setPlatformCommission(d["fees.platformCommission"]);
           setBaseRiderFee(d["fees.baseRiderFee"]);
+          setDelivery((cur) => {
+            const next = { ...cur };
+            for (const k of Object.keys(cur) as (keyof DeliverySettings)[]) {
+              if (typeof d[k] === "number") next[k] = d[k];
+            }
+            return next;
+          });
           setRestaurantPayoutThreshold(d["payouts.restaurantThreshold"]);
           setRiderPayoutThreshold(d["payouts.riderThreshold"]);
           setPayoutSchedule(d["payouts.schedule"]);
@@ -92,6 +100,7 @@ export default function SettingsPage() {
           "core.maintenanceMode": maintenanceMode, // Passes toggle state
           "fees.platformCommission": platformCommission,
           "fees.baseRiderFee": baseRiderFee,
+          ...delivery,
           "payouts.restaurantThreshold": restaurantPayoutThreshold,
           "payouts.riderThreshold": riderPayoutThreshold,
           "payouts.schedule": payoutSchedule,
@@ -161,6 +170,8 @@ export default function SettingsPage() {
             setPlatformCommission={setPlatformCommission}
             baseRiderFee={baseRiderFee}
             setBaseRiderFee={setBaseRiderFee}
+            delivery={delivery}
+            setDelivery={setDelivery}
           />
 
           <PayoutPolicies
